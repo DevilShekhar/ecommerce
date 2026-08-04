@@ -120,7 +120,7 @@
             <div class="col-lg-8 col-md-6 d-none d-lg-block">
 
                 <div class="card">
-                    <img src="{{ asset('assets/admin/images/signin.svg') }}" alt="Sign In">
+                    <img src="{{ asset('assets/admin/images/signin.png') }}" alt="Sign In">
                 </div>
 
             </div>
