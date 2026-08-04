@@ -4,28 +4,20 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=Edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
         <meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
-
         <title>{{ config('app.name', 'Ecommerce') }}</title>
-
         <!-- Favicon -->
-        <link rel="icon" href="{{ asset('assets/favicon.ico') }}" type="image/x-icon">
-
+        <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
         <!-- Bootstrap -->
-        <link rel="stylesheet" href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}">
-
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
         <!-- jVectorMap -->
-        <link rel="stylesheet" href="{{ asset('assets/plugins/jvectormap/jquery-jvectormap-2.0.3.min.css') }}">
-
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/jvectormap/jquery-jvectormap-2.0.3.min.css') }}">
         <!-- C3 Charts -->
-        <link rel="stylesheet" href="{{ asset('assets/plugins/charts-c3/plugin.css') }}">
-
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/charts-c3/plugin.css') }}">
         <!-- Morris Charts -->
-        <link rel="stylesheet" href="{{ asset('assets/plugins/morrisjs/morris.min.css') }}">
-
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/morrisjs/morris.min.css') }}">
         <!-- Custom CSS -->
-        <link rel="stylesheet" href="{{ asset('assets/css/style.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
     </head>
     <body class="theme-blush">        
         <!-- Right Icon menu Sidebar -->
@@ -582,30 +574,22 @@
             @yield('content')
         </main>        
     </body>
-    <!-- Lib Scripts Plugin Js -->
-    <script src="{{ asset('assets/bundles/libscripts.bundle.js') }}"></script>
-
-    <!-- Vendor Scripts Plugin Js -->
-    <script src="{{ asset('assets/bundles/vendorscripts.bundle.js') }}"></script>
-
-    <!-- Morris Plugin Js -->
-    <script src="{{ asset('assets/bundles/morrisscripts.bundle.js') }}"></script>
-
-    <!-- JVectorMap Plugin Js -->
-    <script src="{{ asset('assets/bundles/jvectormap.bundle.js') }}"></script>
-
-    <!-- Sparkline Plugin Js -->
-    <script src="{{ asset('assets/bundles/sparkline.bundle.js') }}"></script>
-
-    <!-- Jquery Knob Plugin Js -->
-    <script src="{{ asset('assets/bundles/knob.bundle.js') }}"></script>
-
+    <!-- Lib Scripts -->
+    <script src="{{ asset('assets/admin/bundles/libscripts.bundle.js') }}"></script>
+    <!-- Vendor Scripts -->
+    <script src="{{ asset('assets/admin/bundles/vendorscripts.bundle.js') }}"></script>
+    <!-- Morris Plugin -->
+    <script src="{{ asset('assets/admin/bundles/morrisscripts.bundle.js') }}"></script>
+    <!-- JVectorMap Plugin -->
+    <script src="{{ asset('assets/admin/bundles/jvectormap.bundle.js') }}"></script>
+    <!-- Sparkline Plugin -->
+    <script src="{{ asset('assets/admin/bundles/sparkline.bundle.js') }}"></script>
+    <!-- JQuery Knob Plugin -->
+    <script src="{{ asset('assets/admin/bundles/knob.bundle.js') }}"></script>
     <!-- Main Scripts -->
-    <script src="{{ asset('assets/bundles/mainscripts.bundle.js') }}"></script>
-
+    <script src="{{ asset('assets/admin/bundles/mainscripts.bundle.js') }}"></script>
     <!-- Ecommerce Page -->
-    <script src="{{ asset('assets/js/pages/ecommerce.js') }}"></script>
-
+    <script src="{{ asset('assets/admin/js/pages/ecommerce.js') }}"></script>
     <!-- JQuery Knob -->
-    <script src="{{ asset('assets/js/pages/charts/jquery-knob.min.js') }}"></script>
+    <script src="{{ asset('assets/admin/js/pages/charts/jquery-knob.min.js') }}"></script>
 </html>
