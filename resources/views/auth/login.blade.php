@@ -106,7 +106,19 @@
                                 class="btn btn-primary btn-block waves-effect waves-light">
                             SIGN IN
                         </button>
+                        <hr>
 
+                        <a href="{{ route('google.login') }}"
+                        class="btn btn-danger btn-block mb-2">
+                            <i class="zmdi zmdi-google"></i>
+                            Continue with Google
+                        </a>
+
+                        <a href="{{ route('facebook.login') }}"
+                        class="btn btn-primary btn-block">
+                            <i class="zmdi zmdi-facebook"></i>
+                            Continue with Facebook
+                        </a>
                     </div>
                 </form>
 
