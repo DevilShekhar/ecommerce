@@ -13,12 +13,14 @@ class WarehouseController extends Controller
     public function index()
     {
         $warehouses = Warehouse::with('branch')->get();
+
         return view('admin.warehouses.index', compact('warehouses'));
     }
 
     public function create()
     {
         $branches = Branch::all();
+
         return view('admin.warehouses.create', compact('branches'));
     }
 
@@ -51,13 +53,14 @@ class WarehouseController extends Controller
     public function edit(Warehouse $warehouse)
     {
         $branches = Branch::all();
+
         return view('admin.warehouses.edit', compact('warehouse', 'branches'));
     }
 
     public function update(Request $request, Warehouse $warehouse)
     {
         $validated = $request->validate([
-            'warehouse_code' => 'required|string|max:255|unique:warehouses,warehouse_code,' . $warehouse->id,
+            'warehouse_code' => 'required|string|max:255|unique:warehouses,warehouse_code,'.$warehouse->id,
             'warehouse_name' => 'required|string|max:255',
             'branch_id' => 'required|exists:branches,id',
             'phone' => 'nullable|string|max:20',
@@ -76,5 +79,15 @@ class WarehouseController extends Controller
 
         return redirect()->route('warehouses.index')
             ->with('success', 'Warehouse updated successfully.');
+    }
+
+    public function destroy(Warehouse $warehouse)
+    {
+         $warehouse->update([
+            'status' => 0,
+        ]);
+
+        return redirect()->route('warehouses.index')
+            ->with('success', 'Warehouse deleted successfully.');
     }
 }
