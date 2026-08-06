@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\admin\BranchController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\admin\WarehouseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
@@ -32,5 +33,6 @@ Route::middleware('auth')->group(function () {
         ->name('roles.permissions');
     Route::resource('users', UserController::class);
     Route::resource('branches', BranchController::class);
+    Route::resource('warehouses', WarehouseController::class);
 });
 require __DIR__.'/auth.php';
