@@ -128,6 +128,28 @@
                                  @enderror
                               </div>
                            </div>
+
+                           <!-- Address Field -->
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label>
+                                    Address
+                                 </label>
+
+                                 <textarea
+                                    name="address"
+                                    rows="3"
+                                    class="form-control @error('address') is-invalid @enderror"
+                                    placeholder="Enter Branch Address"
+                                 >{{ old('address', $branch->address) }}</textarea>
+
+                                 @error('address')
+                                    <span class="invalid-feedback" role="alert">
+                                       <strong>{{ $message }}</strong>
+                                    </span>
+                                 @enderror
+                              </div>
+                           </div>
                         </div>
                      </div>
                   </div>

@@ -62,6 +62,7 @@
                                             <th width="50">#</th>
                                             <th>Branch Name</th>
                                             <th>Branch Code</th>
+                                            <th>Address</th>
                                             <th>Status</th>
                                             <th>Created At</th>
                                             <th width="150">Action</th>
@@ -75,6 +76,7 @@
                                                 <td>{{ $key + 1 }}</td>
                                                 <td>{{ $branch->name }}</td>
                                                 <td>{{ $branch->code ?? '-' }}</td>
+                                                <td>{{ $branch->address ?? '-' }}</td>
                                                 <td>
                                                     @if($branch->status == 1)
                                                         <span class="badge badge-success">Active</span>
@@ -97,7 +99,7 @@
                                                     <form action="{{ route('branches.destroy', $branch->id) }}"
                                                           method="POST"
                                                           style="display:inline-block"
-                                                          onsubmit="return confirm('Are you sure you want to delete/inactivate this branch?')">
+                                                          onsubmit="return confirm('Are you sure you want to delete this branch?')">
 
                                                         @csrf
                                                         @method('DELETE')
@@ -110,7 +112,7 @@
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center">
+                                                <td colspan="7" class="text-center">
                                                     No branches found.
                                                 </td>
                                             </tr>
