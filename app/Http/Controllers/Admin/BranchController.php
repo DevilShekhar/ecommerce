@@ -10,7 +10,8 @@ class BranchController extends Controller
 {
     public function index()
     {
-        return view('admin.branches.index');
+        $branches = Branch::all();
+        return view('admin.branches.index', compact('branches'));
     }
 
     public function create()
@@ -24,10 +25,12 @@ class BranchController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            'branch_code' => 'required|string|max:10|unique:branches,branch_code',
         ]);
         $branch = new Branch();
         $branch->name = $request->name;
         $branch->address = $request->address;
+        $branch->branch_code = $request->branch_code;
         $branch->save();
 
         return redirect()->route('branches.index')
