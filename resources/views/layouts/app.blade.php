@@ -701,36 +701,6 @@
         });
     </script>
     @yield('scripts')
-    <script>
-    $(document).ready(function() {
-        // Sidebar toggle functionality
-        $('.ls-toggle-btn').on('click', function(e) {
-            e.preventDefault();
-            $('body').toggleClass('ls-collapsed');
-            $('.sidebar').toggleClass('open');
-        });
-
-        // Menu toggle functionality
-        $('.menu-toggle').on('click', function(e) {
-            e.preventDefault();
-            var parentLi = $(this).closest('li');
-
-            // Close other open menus
-            if (!parentLi.hasClass('open')) {
-                $('.menu .list > li.open').not(parentLi).removeClass('open');
-                $('.menu .list > li.open .ml-menu').slideUp(300);
-            }
-
-            // Toggle current menu
-            parentLi.toggleClass('open');
-            parentLi.find('.ml-menu').slideToggle(300);
-        });
-
-        // Keep active menu open
-        $('.menu .list > li.active').find('.ml-menu').show();
-        $('.menu .list > li.active').addClass('open');
-    });
-</script>
 </body>
 
 </html>

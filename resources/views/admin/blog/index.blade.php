@@ -59,11 +59,11 @@
 
                                     <thead>
                                     <tr>
-                                        <th  >#</th>
+                                        <th>SrNo.</th>
                                         <th>Image</th>
                                         <th>Name</th>
                                         <th>Title</th>
-                                        <th>Slug</th>                                         
+                                        <th>Slug</th>
                                         <th>Created By</th>
                                         <th>Created At</th>
                                         <th width="170">Action</th>
@@ -93,7 +93,7 @@
                                             </td>
                                             <td>{{ $blog->name }}</td>
                                             <td>{{ $blog->title }}</td>
-                                            <td>{{ $blog->slug }}</td>                                         
+                                            <td>{{ $blog->slug }}</td>
                                             <td>{{ optional($blog->creator)->name ?? '-' }}</td>
                                             <td>{{ $blog->created_at->format('d M Y') }}</td>
                                             <td>

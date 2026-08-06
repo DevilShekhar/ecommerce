@@ -48,7 +48,7 @@
 
                                         <thead>
                                             <tr>
-                                                <th width="50">#</th>
+                                                <th width="50">SrNo.</th>
                                                 <th>Branch Name</th>
                                                 <th>Branch Code</th>
                                                 <th>Address</th>

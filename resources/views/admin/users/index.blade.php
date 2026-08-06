@@ -43,7 +43,7 @@
                             <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
                                 <thead>
                                     <tr>
-                                        <th width="60">#</th>
+                                        <th width="60">SrNo.</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Address</th>
