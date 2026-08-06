@@ -82,7 +82,7 @@
                               </div>
                            </div>
 
-                           <!-- Branch Code / Phone (Optional Additional Field) -->
+                           <!-- Branch Code -->
                            <div class="col-md-6">
                               <div class="form-group">
                                  <label>
@@ -106,20 +106,21 @@
                               </div>
                            </div>
 
-                           <!-- Status -->
-                           <div class="col-md-6">
+                           <!-- Address Field -->
+                           <div class="col-md-12">
                               <div class="form-group">
                                  <label>
-                                    Status
-                                    <span class="text-danger">*</span>
+                                    Address
                                  </label>
 
-                                 <select name="status" class="form-control show-tick @error('status') is-invalid @enderror">
-                                    <option value="1" {{ old('status', '1') == '1' ? 'selected' : '' }}>Active</option>
-                                    <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Inactive</option>
-                                 </select>
+                                 <textarea
+                                    name="address"
+                                    rows="3"
+                                    class="form-control @error('address') is-invalid @enderror"
+                                    placeholder="Enter Branch Address"
+                                 >{{ old('address') }}</textarea>
 
-                                 @error('status')
+                                 @error('address')
                                     <span class="invalid-feedback" role="alert">
                                        <strong>{{ $message }}</strong>
                                     </span>
