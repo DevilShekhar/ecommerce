@@ -62,6 +62,7 @@
                                             <th width="50">SrNo.</th>
                                             <th>Role Name</th>
                                             <th>Guard</th>
+                                            <th>Status</th>
                                             <th>Created At</th>
                                             <th width="200">Action</th>
                                         </tr>
@@ -72,9 +73,16 @@
                                         @forelse($roles as $key => $role)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $role->name }}</td>
+                                                <td><strong>{{ $role->name }}</strong></td>
                                                 <td>{{ $role->guard_name ?? 'web' }}</td>
                                                 <td>
+                                                    @if(($role->status ?? 1) == 1)
+                                                        <span class="badge badge-success">Active</span>
+                                                    @else
+                                                        <span class="badge badge-danger">Inactive</span>
+                                                    @endif
+                                                </td>
+                                                 <td>
                                                     {{ $role->created_at ? $role->created_at->format('d M Y') : '-' }}
                                                 </td>
                                                 <td>
