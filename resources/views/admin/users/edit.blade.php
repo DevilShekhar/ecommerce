@@ -42,16 +42,6 @@
 
             <div class="container-fluid">
 
-                @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
                 <form method="POST" action="{{ route('users.update', $user->id) }}">
                     @csrf
                     @method('PUT')
@@ -69,7 +59,7 @@
 
                                     <div class="row">
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Name <span class="text-danger">*</span></label>
 
@@ -78,7 +68,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Email <span class="text-danger">*</span></label>
 
@@ -87,7 +77,21 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Role</label>
+
+                                                <select name="role_id" class="form-control">
+                                                    <option value="">Select Role</option>
+                                                    @foreach($roles as $role)
+                                                        <option value="{{ $role->id }}" {{ old('role_id', $user->role_id) == $role->id ? 'selected' : '' }}>
+                                                            {{ $role->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                    </div>
+                                    <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Address</label>
 
@@ -109,8 +113,6 @@
                                                 </select>
                                             </div>
                                         </div>
-
-                                    </div>
 
                                 </div>
 

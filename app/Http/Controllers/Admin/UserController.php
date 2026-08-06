@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,8 @@ class UserController extends Controller
 {
     public function create()
     {
-        return view('admin.users.create');
+        $roles = Role::all();
+        return view('admin.users.create', compact('roles'));
     }
 
     public function index()
@@ -27,8 +29,9 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'address' => 'nullable|string|max:1000',
-            'status' => 1,
+            'role_id' => 'nullable|exists:roles,id',
         ]);
+        $validated['status'] = 1;
 
         User::create($validated);
 
@@ -38,7 +41,8 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('admin.users.edit', compact('user'));
+        $roles = Role::all();
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
     public function update(Request $request, User $user)
@@ -48,6 +52,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,'.$user->id,
             'address' => 'nullable|string|max:1000',
             'status' => 'required|boolean',
+            'role_id' => 'nullable|exists:roles,id',
         ]);
         $user->update($validated);
 
