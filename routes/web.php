@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\admin\BranchController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\ProfileController;
@@ -30,6 +31,6 @@ Route::middleware('auth')->group(function () {
     Route::get('roles/{role}/permissions', [RoleController::class, 'managePermissions'])
         ->name('roles.permissions');
     Route::resource('users', UserController::class);
-
+    Route::resource('branches', BranchController::class);
 });
 require __DIR__.'/auth.php';

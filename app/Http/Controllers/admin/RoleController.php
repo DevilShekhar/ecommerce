@@ -28,7 +28,6 @@ class RoleController extends Controller
 
     public function create()
     {
-
         return view('admin.roles.create');
     }
 
@@ -88,7 +87,7 @@ class RoleController extends Controller
 
     public function managePermissions(Role $role)
     {
-        $permissions = Permission::all();           // ← Flat collection
+        $permissions = Permission::all();
         $rolePermissions = $role->permissions->pluck('name')->toArray();
 
         return view('admin.roles.permissions', compact('role', 'permissions', 'rolePermissions'));
