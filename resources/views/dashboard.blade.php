@@ -16,7 +16,7 @@
                     </ul>
                     <button class="btn btn-primary btn-icon mobile_menu" type="button"><i class="zmdi zmdi-sort-amount-desc"></i></button>
                 </div>
-                <div class="col-lg-5 col-md-6 col-sm-12">                
+                <div class="col-lg-5 col-md-6 col-sm-12">
                     <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn" type="button"><i class="zmdi zmdi-arrow-right"></i></button>
                 </div>
             </div>
@@ -25,7 +25,7 @@
             <div class="row clearfix">
                 <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
                     <div class="card">
-                        <div class="body">                            
+                        <div class="body">
                             <input type="text" class="knob" value="42" data-linecap="round" data-width="100" data-height="100" data-thickness="0.08" data-fgColor="#00adef" readonly>
                             <p>Customers</p>
                             <div class="d-flex bd-highlight text-center mt-4">
@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
                     <div class="card">
-                        <div class="body">                            
+                        <div class="body">
                             <input type="text" class="knob" value="81" data-linecap="round" data-width="100" data-height="100" data-thickness="0.08" data-fgColor="#ee2558" readonly>
                             <p>Total Orders</p>
                             <div class="d-flex bd-highlight text-center mt-4">
@@ -61,7 +61,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
                     <div class="card">
-                        <div class="body">                            
+                        <div class="body">
                             <input type="text" class="knob" value="62" data-linecap="round" data-width="100" data-height="100" data-thickness="0.08" data-fgColor="#8f78db" readonly>
                             <p>Investiment</p>
                             <div class="d-flex bd-highlight text-center mt-4">
@@ -79,7 +79,7 @@
                 </div>
                 <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
                     <div class="card">
-                        <div class="body">                            
+                        <div class="body">
                             <input type="text" class="knob" value="38" data-linecap="round" data-width="100" data-height="100" data-thickness="0.08" data-fgColor="#f67a82" readonly>
                             <p>Revenue</p>
                             <div class="d-flex bd-highlight text-center mt-4">
@@ -120,21 +120,21 @@
                                     <div class="icon xl-amber m-b-15"><i class="zmdi zmdi-chart-donut"></i></div>
                                     <div class="col-in">
                                         <small class="text-muted mt-0">Sales Report</small>
-                                        <h4 class="mt-0">$4,516</h4>                                        
+                                        <h4 class="mt-0">$4,516</h4>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4">
                                     <div class="icon xl-blue m-b-15"><i class="zmdi zmdi-chart"></i></div>
                                     <div class="col-in">
                                         <small class="text-muted mt-0">Annual Revenue</small>
-                                        <h4 class="mt-0">$6,481</h4>                                        
+                                        <h4 class="mt-0">$6,481</h4>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4">
                                     <div class="icon xl-purple m-b-15"><i class="zmdi zmdi-card"></i></div>
                                     <div class="col-in">
                                         <small class="text-muted mt-0">Total Profit</small>
-                                        <h4 class="mt-0">$3,915</h4>                                        
+                                        <h4 class="mt-0">$3,915</h4>
                                     </div>
                                 </div>
                             </div>
@@ -184,7 +184,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>              
+                        </div>
                     </div>
                 </div>
             </div>
@@ -196,7 +196,7 @@
                                 <li class="col-12">
                                     <div class="avatar">
                                         <a href="javascript:void(0);"><img class="rounded" src="assets/images/sm/avatar2.jpg" alt="user" width="60"></a>
-                                    </div>                                
+                                    </div>
                                     <div class="comment-action">
                                         <h6 class="c_name">Hossein Shams</h6>
                                         <p class="c_msg m-b-0">Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. </p>
@@ -209,12 +209,12 @@
                                             <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
                                         </span>
                                         <small class="comment-date float-sm-right">Dec 21, 2019</small>
-                                    </div>                                
+                                    </div>
                                 </li>
                                 <li class="col-12">
                                     <div class="avatar">
                                         <a href="javascript:void(0);"><img class="rounded" src="assets/images/sm/avatar3.jpg" alt="user" width="60"></a>
-                                    </div>                                
+                                    </div>
                                     <div class="comment-action">
                                         <h6 class="c_name">Tim Hank</h6>
                                         <p class="c_msg m-b-0">It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout</p>
@@ -227,12 +227,12 @@
                                             <a href="javascript:void(0);"><i class="zmdi zmdi-star-outline text-muted"></i></a>
                                         </span>
                                         <small class="comment-date float-sm-right">Dec 18, 2019</small>
-                                    </div>                                
+                                    </div>
                                 </li>
                                 <li class="col-12">
                                     <div class="avatar">
                                         <a href="javascript:void(0);"><img class="rounded" src="assets/images/sm/avatar4.jpg" alt="user" width="60"></a>
-                                    </div>                                
+                                    </div>
                                     <div class="comment-action">
                                         <h6 class="c_name">Maryam Amiri</h6>
                                         <p class="c_msg m-b-0">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour,</p>
@@ -245,12 +245,12 @@
                                             <a href="javascript:void(0);"><i class="zmdi zmdi-star-outline text-muted"></i></a>
                                         </span>
                                         <small class="comment-date float-sm-right">Dec 18, 2019</small>
-                                    </div>                                
+                                    </div>
                                 </li>
                                 <li class="col-12">
                                     <div class="avatar">
                                         <a href="javascript:void(0);"><img class="rounded" src="assets/images/sm/avatar5.jpg" alt="user" width="60"></a>
-                                    </div>                                
+                                    </div>
                                     <div class="comment-action">
                                         <h6 class="c_name">Gary Camara</h6>
                                         <p class="c_msg m-b-0">Lorem Ipsum is simply dummy text of the printing and typesetting industry</p>
@@ -263,7 +263,7 @@
                                             <a href="javascript:void(0);"><i class="zmdi zmdi-star-outline text-muted"></i></a>
                                         </span>
                                         <small class="comment-date float-sm-right">Dec 13, 2019</small>
-                                    </div>                                
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -278,7 +278,7 @@
                             <div class="user">
                                 <img src="assets/images/sm/avatar1.jpg" class="rounded-circle img-raised" alt="profile-image">
                                 <h5 class="mt-3 mb-1">Eliana Smith</h5>
-                                <span>Designer, Developer, Traveler</span>                                
+                                <span>Designer, Developer, Traveler</span>
                             </div>
                             <button class="btn btn-primary">FOLLOW</button>
                             <div class="d-flex bd-highlight text-center mt-4">
@@ -304,7 +304,7 @@
                     <div class="card visitors-map">
                         <div class="header">
                             <h2><strong>Top</strong> Selling Country</h2>
-                        </div>                        
+                        </div>
                         <div class="row">
                             <div class="col-xl-8 col-lg-8 col-md-12">
                                 <div class="body">
@@ -364,9 +364,9 @@
                                                 <td>4,236</td>
                                                 <td>4,591</td>
                                                 <td>9.15% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                            </tr>                                            											
+                                            </tr>
                                         </tbody>
-                                    </table>                                    
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -395,11 +395,11 @@
                             <table class="table table-hover c_table">
                                 <thead>
                                     <tr>
-                                        <th style="width:60px;">#</th>
+                                        <th style="width:60px;">SrNo.</th>
                                         <th>Name</th>
                                         <th>Item</th>
                                         <th>Address</th>
-                                        <th>Quantity</th>                                    
+                                        <th>Quantity</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
@@ -449,7 +449,7 @@
                         </div>
                     </div>
                 </div>
-            </div>        
+            </div>
         </div>
     </div>
 </section>

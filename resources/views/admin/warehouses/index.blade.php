@@ -60,7 +60,7 @@
 
                                     <thead>
                                         <tr>
-                                            <th width="50">#</th>
+                                            <th width="50">SrNo.</th>
                                             <th>Code</th>
                                             <th>Warehouse Name</th>
                                             <th>Branch</th>
