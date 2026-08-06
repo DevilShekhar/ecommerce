@@ -12,7 +12,8 @@ class WarehouseController extends Controller
 {
     public function index()
     {
-        return view('admin.warehouses.index');
+        $warehouses = Warehouse::with('branch')->get();
+        return view('admin.warehouses.index', compact('warehouses'));
     }
 
     public function create()
@@ -45,5 +46,35 @@ class WarehouseController extends Controller
 
         return redirect()->route('warehouses.create')
             ->with('success', 'Warehouse created successfully.');
+    }
+
+    public function edit(Warehouse $warehouse)
+    {
+        $branches = Branch::all();
+        return view('admin.warehouses.edit', compact('warehouse', 'branches'));
+    }
+
+    public function update(Request $request, Warehouse $warehouse)
+    {
+        $validated = $request->validate([
+            'warehouse_code' => 'required|string|max:255|unique:warehouses,warehouse_code,' . $warehouse->id,
+            'warehouse_name' => 'required|string|max:255',
+            'branch_id' => 'required|exists:branches,id',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'address' => 'nullable|string|max:1000',
+            'city' => 'nullable|string|max:255',
+            'state' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'pincode' => 'nullable|string|max:20',
+            'capacity' => 'nullable|numeric|min:0',
+            'status' => 'nullable|boolean',
+        ]);
+        $validated['updated_by'] = Auth::id();
+
+        $warehouse->update($validated);
+
+        return redirect()->route('warehouses.index')
+            ->with('success', 'Warehouse updated successfully.');
     }
 }
