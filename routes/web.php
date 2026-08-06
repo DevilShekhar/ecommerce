@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BranchController;
+use App\Http\Controllers\admin\ProductCategoryController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\WarehouseController;
@@ -40,6 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('branches', BranchController::class);
     Route::resource('warehouses', WarehouseController::class);
+    Route::resource('product_categories', ProductCategoryController::class);
 
 });
 require __DIR__.'/auth.php';
