@@ -82,6 +82,28 @@
                                  @enderror
                               </div>
                            </div>
+
+                           <!-- Status Field -->
+                           <div class="col-md-6">
+                              <div class="form-group">
+                                 <label>
+                                    Status
+                                    <span class="text-danger">*</span>
+                                 </label>
+
+                                 <select name="status" class="form-control show-tick @error('status') is-invalid @enderror">
+                                    <option value="1" {{ old('status', $role->status ?? 1) == 1 ? 'selected' : '' }}>Active</option>
+                                    <option value="0" {{ old('status', $role->status ?? 1) == 0 ? 'selected' : '' }}>Inactive</option>
+                                 </select>
+
+                                 @error('status')
+                                    <span class="invalid-feedback" role="alert">
+                                       <strong>{{ $message }}</strong>
+                                    </span>
+                                 @enderror
+                              </div>
+                           </div>
+
                         </div>
                      </div>
                   </div>

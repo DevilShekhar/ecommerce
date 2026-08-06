@@ -62,12 +62,14 @@ class RoleController extends Controller
 
         $request->validate([
             'name' => 'required|unique:roles,name,'.$id,
+            'status' => 'required|in:0,1',
         ]);
 
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         $role->update([
             'name' => $request->name,
+            'status' => $request->status,
         ]);
 
         return redirect()->route('roles.index')
