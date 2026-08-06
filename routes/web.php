@@ -8,6 +8,7 @@ use App\Http\Controllers\admin\WarehouseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\SubCategoryController;
 
 Route::get('/', function () {
     return view('welcome');
