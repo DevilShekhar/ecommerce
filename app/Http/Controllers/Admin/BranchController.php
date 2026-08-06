@@ -11,6 +11,7 @@ class BranchController extends Controller
     public function index()
     {
         $branches = Branch::all();
+
         return view('admin.branches.index', compact('branches'));
     }
 
@@ -21,19 +22,54 @@ class BranchController extends Controller
 
     public function store(Request $request)
     {
-        // Validate the request data
         $request->validate([
-            'name' => 'required|string|max:255',
-            'address' => 'required|string|max:255',
-            'branch_code' => 'required|string|max:10|unique:branches,branch_code',
+            'name' => 'required|max:255',
+            'address' => 'required|max:255',
+            'branch_code' => 'required|max:10|unique:branches,branch_code',
         ]);
-        $branch = new Branch();
-        $branch->name = $request->name;
-        $branch->address = $request->address;
-        $branch->branch_code = $request->branch_code;
-        $branch->save();
+
+        Branch::create([
+            'name' => $request->name,
+            'address' => $request->address,
+            'branch_code' => $request->branch_code,
+            'status' => 1,
+        ]);
 
         return redirect()->route('branches.index')
-            ->with('success', 'Branch created successfully');
+            ->with('success', 'Branch created successfully.');
+    }
+
+    public function edit(Branch $branch)
+    {
+        return view('admin.branches.edit', compact('branch'));
+    }
+
+    public function update(Request $request, Branch $branch)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'address' => 'required|max:255',
+            'branch_code' => 'required|max:10|unique:branches,branch_code,'.$branch->id,
+        ]);
+
+        $branch->update([
+            'name' => $request->name,
+            'address' => $request->address,
+            'branch_code' => $request->branch_code,
+            'status' => $request->status ?? 0,
+        ]);
+
+        return redirect()->route('branches.index')
+            ->with('success', 'Branch updated successfully.');
+    }
+
+    public function destroy(Branch $branch)
+    {
+        $branch->update([
+            'status' => 0,
+        ]);
+
+        return redirect()->route('branches.index')
+            ->with('success', 'Branch deleted successfully.');
     }
 }

@@ -94,13 +94,13 @@
 
                                  <input
                                     type="text"
-                                    name="code"
-                                    class="form-control @error('code') is-invalid @enderror"
+                                    name="branch_code"
+                                    class="form-control @error('branch_code') is-invalid @enderror"
                                     placeholder="Enter Branch Code"
-                                    value="{{ old('code', $branch->code) }}"
+                                    value="{{ old('branch_code', $branch->branch_code) }}"
                                  >
 
-                                 @error('code')
+                                 @error('branch_code')
                                     <span class="invalid-feedback" role="alert">
                                        <strong>{{ $message }}</strong>
                                     </span>
