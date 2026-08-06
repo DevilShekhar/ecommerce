@@ -79,18 +79,18 @@
                                                     <td>
                                                         {{-- Edit --}}
                                                         <a href="{{ route('branches.edit', $branch->id) }}"
-                                                            class="btn btn-warning btn-sm" title="Edit">
+                                                            class="btn btn-sm btn-primary" title="Edit">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </a>
 
                                                         {{-- Delete / Inactivate --}}
                                                         <form action="{{ route('branches.destroy', $branch->id) }}"
-                                                            method="POST" class="delete-form" style="display:inline-block">
+                                                            method="POST" class="d-inline delete-form" data-branch-name="{{ $branch->name }}">
 
                                                             @csrf
                                                             @method('DELETE')
 
-                                                            <button class="btn btn-danger btn-sm" title="Delete">
+                                                            <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
                                                                 <i class="zmdi zmdi-delete"></i>
                                                             </button>
                                                         </form>

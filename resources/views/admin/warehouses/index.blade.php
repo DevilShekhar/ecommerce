@@ -91,21 +91,21 @@
                                                 <td>
                                                     {{-- Edit --}}
                                                     <a href="{{ route('warehouses.edit', $warehouse->id) }}"
-                                                       class="btn btn-warning btn-sm"
-                                                       title="Edit">
+                                                    class="btn btn-sm btn-primary"
+                                                    title="Edit">
                                                         <i class="zmdi zmdi-edit"></i>
                                                     </a>
 
                                                     {{-- Delete / Inactivate --}}
                                                     <form action="{{ route('warehouses.destroy', $warehouse->id) }}"
-                                                          method="POST"
-                                                          style="display:inline-block"
-                                                          onsubmit="return confirm('Are you sure you want to delete this warehouse?')">
+                                                        method="POST"
+                                                        class="d-inline delete-form"
+                                                        data-warehouse-name="{{ $warehouse->warehouse_name }}">
 
                                                         @csrf
                                                         @method('DELETE')
 
-                                                        <button class="btn btn-danger btn-sm" title="Delete">
+                                                        <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
                                                             <i class="zmdi zmdi-delete"></i>
                                                         </button>
                                                     </form>
