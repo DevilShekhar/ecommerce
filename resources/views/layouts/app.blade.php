@@ -10,6 +10,7 @@
         <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
         <!-- Bootstrap -->
         <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/jquery-datatable/dataTables.bootstrap4.min.css') }}">
         <!-- jVectorMap -->
         <link rel="stylesheet" href="{{ asset('assets/admin/plugins/jvectormap/jquery-jvectormap-2.0.3.min.css') }}">
         <!-- C3 Charts -->
@@ -572,24 +573,31 @@
         <!-- Page Content -->
         <main>
             @yield('content')
-        </main>        
-    </body>
-    <!-- Lib Scripts -->
-    <script src="{{ asset('assets/admin/bundles/libscripts.bundle.js') }}"></script>
-    <!-- Vendor Scripts -->
-    <script src="{{ asset('assets/admin/bundles/vendorscripts.bundle.js') }}"></script>
-    <!-- Morris Plugin -->
-    <script src="{{ asset('assets/admin/bundles/morrisscripts.bundle.js') }}"></script>
-    <!-- JVectorMap Plugin -->
-    <script src="{{ asset('assets/admin/bundles/jvectormap.bundle.js') }}"></script>
-    <!-- Sparkline Plugin -->
-    <script src="{{ asset('assets/admin/bundles/sparkline.bundle.js') }}"></script>
-    <!-- JQuery Knob Plugin -->
-    <script src="{{ asset('assets/admin/bundles/knob.bundle.js') }}"></script>
-    <!-- Main Scripts -->
-    <script src="{{ asset('assets/admin/bundles/mainscripts.bundle.js') }}"></script>
-    <!-- Ecommerce Page -->
-    <script src="{{ asset('assets/admin/js/pages/ecommerce.js') }}"></script>
-    <!-- JQuery Knob -->
-    <script src="{{ asset('assets/admin/js/pages/charts/jquery-knob.min.js') }}"></script>
+        </main> 
+        <!-- =======================
+            DataTables (Only if Required)
+        ======================= -->
+        @if(request()->routeIs('blogs.index'))
+            <script src="{{ asset('assets/admin/bundles/datatablescripts.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/dataTables.buttons.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.colVis.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.flash.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.html5.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.print.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/js/pages/tables/jquery-datatable.js') }}"></script>
+        @endif
+        <!-- =======================
+            Dashboard Only
+        ======================= -->
+        @if(request()->routeIs('dashboard'))
+            <script src="{{ asset('assets/admin/bundles/morrisscripts.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/bundles/jvectormap.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/bundles/sparkline.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/bundles/knob.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/js/pages/charts/jquery-knob.min.js') }}"></script>
+            <script src="{{ asset('assets/admin/js/pages/ecommerce.js') }}"></script>
+        @endif
+        @yield('scripts')
+</body>    
 </html>
