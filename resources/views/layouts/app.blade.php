@@ -19,6 +19,9 @@
         <link rel="stylesheet" href="{{ asset('assets/admin/plugins/morrisjs/morris.min.css') }}">
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('assets/admin/plugins/summernote/dist/summernote.css') }}"/>
+
+        
     </head>
     <body class="theme-blush">        
         <!-- Right Icon menu Sidebar -->
@@ -577,8 +580,7 @@
         <!-- =======================
             DataTables (Only if Required)
         ======================= -->
-        @if(request()->routeIs('blogs.index'))
-            <script src="{{ asset('assets/admin/bundles/datatablescripts.bundle.js') }}"></script>
+             <script src="{{ asset('assets/admin/bundles/datatablescripts.bundle.js') }}"></script>
             <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/dataTables.buttons.min.js') }}"></script>
             <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js') }}"></script>
             <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.colVis.min.js') }}"></script>
@@ -586,18 +588,15 @@
             <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.html5.min.js') }}"></script>
             <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.print.min.js') }}"></script>
             <script src="{{ asset('assets/admin/js/pages/tables/jquery-datatable.js') }}"></script>
-        @endif
-        <!-- =======================
-            Dashboard Only
-        ======================= -->
-        @if(request()->routeIs('dashboard'))
+        
             <script src="{{ asset('assets/admin/bundles/morrisscripts.bundle.js') }}"></script>
             <script src="{{ asset('assets/admin/bundles/jvectormap.bundle.js') }}"></script>
             <script src="{{ asset('assets/admin/bundles/sparkline.bundle.js') }}"></script>
             <script src="{{ asset('assets/admin/bundles/knob.bundle.js') }}"></script>
             <script src="{{ asset('assets/admin/js/pages/charts/jquery-knob.min.js') }}"></script>
-            <script src="{{ asset('assets/admin/js/pages/ecommerce.js') }}"></script>
-        @endif
-        @yield('scripts')
+            <script src="{{ asset('assets/admin/js/pages/ecommerce.js') }}"></script>       
+            <script src="{{ asset('assets/admin/bundles/libscripts.bundle.js') }}"></script>
+            <script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
+@yield('scripts')
 </body>    
 </html>

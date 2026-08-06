@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -35,7 +36,6 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        
         $request->validate([
             'name'              => 'required|string|max:255',
             'title'             => 'required|string|max:255',
@@ -47,8 +47,11 @@ class BlogController extends Controller
             'question.*'        => 'nullable|string',
             'answer.*'          => 'nullable|string',
         ]);
+
         DB::beginTransaction();
+
         try {
+
             $blog = new Blog();
             $blog->name = $request->name;
             $blog->title = $request->title;
@@ -58,30 +61,47 @@ class BlogController extends Controller
             $blog->meta_keyword = $request->meta_keyword;
             $blog->meta_description = $request->meta_description;
             $blog->created_by = Auth::id();
+
+            // Upload Image to Storage
             if ($request->hasFile('image')) {
-                $image = $request->file('image');
-                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads/blog'), $imageName);
-                $blog->image = 'uploads/blog/' . $imageName;
+
+                $path = $request->file('image')->store('blogs', 'public');
+
+                $blog->image = $path;
             }
+
             $blog->save();
-            if ($request->question) {
+
+            // Save FAQs
+            if ($request->filled('question')) {
+
                 foreach ($request->question as $key => $question) {
+
                     if (!empty($question)) {
+
                         BlogFaq::create([
-                            'blog_id' => $blog->id,
-                            'question' => $question,
-                            'answer' => $request->answer[$key] ?? '',
+                            'blog_id'    => $blog->id,
+                            'question'   => $question,
+                            'answer'     => $request->answer[$key] ?? '',
                             'created_by' => Auth::id(),
                         ]);
                     }
                 }
             }
+
             DB::commit();
-            return redirect()->route('blogs.index')->with('success', 'Blog created successfully.');
+
+            return redirect()
+                ->route('blogs.index')
+                ->with('success', 'Blog created successfully.');
+
         } catch (\Exception $e) {
+
             DB::rollBack();
-            return back()->withInput()->with('error', $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
     }
 
@@ -90,7 +110,7 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
-        $blog->load('faqs');
+        $blog->load(['faqs', 'creator']);
 
         return view('admin.blog.show', compact('blog'));
     }
@@ -121,8 +141,11 @@ class BlogController extends Controller
             'question.*'        => 'nullable|string',
             'answer.*'          => 'nullable|string',
         ]);
+
         DB::beginTransaction();
+
         try {
+
             $blog->name = $request->name;
             $blog->title = $request->title;
             $blog->slug = Str::slug($request->title);
@@ -131,55 +154,83 @@ class BlogController extends Controller
             $blog->meta_keyword = $request->meta_keyword;
             $blog->meta_description = $request->meta_description;
             $blog->updated_by = Auth::id();
+
+            // Upload New Image
             if ($request->hasFile('image')) {
-                if ($blog->image && File::exists(public_path($blog->image))) {
-                    File::delete(public_path($blog->image));
+
+                // Delete Old Image
+                if ($blog->image && Storage::disk('public')->exists($blog->image)) {
+                    Storage::disk('public')->delete($blog->image);
                 }
-                $image = $request->file('image');
-                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('uploads/blog'), $imageName);
-                $blog->image = 'uploads/blog/' . $imageName;
+
+                // Store New Image
+                $path = $request->file('image')->store('blogs', 'public');
+
+                $blog->image = $path;
             }
+
             $blog->save();
+
+            // Delete Old FAQs
             BlogFaq::where('blog_id', $blog->id)->delete();
-            if ($request->question) {
+
+            // Save New FAQs
+            if ($request->filled('question')) {
+
                 foreach ($request->question as $key => $question) {
+
                     if (!empty($question)) {
+
                         BlogFaq::create([
-                            'blog_id' => $blog->id,
-                            'question' => $question,
-                            'answer' => $request->answer[$key] ?? '',
+                            'blog_id'    => $blog->id,
+                            'question'   => $question,
+                            'answer'     => $request->answer[$key] ?? '',
                             'created_by' => Auth::id(),
                             'updated_by' => Auth::id(),
                         ]);
                     }
                 }
             }
+
             DB::commit();
-            return redirect()->route('blogs.index')->with('success', 'Blog updated successfully.');
+
+            return redirect()
+                ->route('blogs.index')
+                ->with('success', 'Blog updated successfully.');
+
         } catch (\Exception $e) {
+
             DB::rollBack();
-            return back()->withInput()->with('error', $e->getMessage());
+
+            return back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Blog $blog)
-    {
-        DB::beginTransaction();
-        try {
-            if ($blog->image && File::exists(public_path($blog->image))) {
-                File::delete(public_path($blog->image));
-            }
-            BlogFaq::where('blog_id', $blog->id)->delete();
-            $blog->delete();
-            DB::commit();
-            return redirect()->route('blogs.index')->with('success', 'Blog deleted successfully.');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+{
+    DB::beginTransaction();
+
+    try {
+
+        $blog->status = 1; // Deactive
+        $blog->updated_by = Auth::id();
+        $blog->save();
+
+        DB::commit();
+
+        return redirect()
+            ->route('blogs.index')
+            ->with('success', 'Blog deactivated successfully.');
+
+    } catch (\Exception $e) {
+
+        DB::rollBack();
+
+        return back()->with('error', $e->getMessage());
     }
+}
 }
