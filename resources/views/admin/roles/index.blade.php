@@ -85,31 +85,31 @@
                                                  <td>
                                                     {{ $role->created_at ? $role->created_at->format('d M Y') : '-' }}
                                                 </td>
-                                                <td>
+                                               <td>
                                                     {{-- Manage Permissions --}}
                                                     <a href="{{ route('roles.permissions', $role->id) }}"
-                                                       class="btn btn-info btn-sm"
-                                                       title="Manage Permissions">
-                                                        <i class="zmdi zmdi-key"></i>
+                                                        class="btn btn-info btn-sm"
+                                                        title="Manage Permissions">
+                                                         <i class="zmdi zmdi-key"></i>
                                                     </a>
 
                                                     {{-- Edit --}}
                                                     <a href="{{ route('roles.edit', $role->id) }}"
-                                                       class="btn btn-warning btn-sm"
-                                                       title="Edit">
+                                                    class="btn btn-warning btn-sm"
+                                                    title="Edit">
                                                         <i class="zmdi zmdi-edit"></i>
                                                     </a>
 
                                                     {{-- Delete / Inactivate --}}
                                                     <form action="{{ route('roles.destroy', $role->id) }}"
-                                                          method="POST"
-                                                           class="delete-form"
-                                                          style="display:inline-block">
-
+                                                        method="POST"
+                                                        class="d-inline delete-form"
+                                                        data-role-name="{{ $role->name }}">
+                                                        
                                                         @csrf
                                                         @method('DELETE')
 
-                                                        <button class="btn btn-danger btn-sm" title="Inactivate">
+                                                        <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
                                                             <i class="zmdi zmdi-delete"></i>
                                                         </button>
                                                     </form>
