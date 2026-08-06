@@ -37,16 +37,6 @@
 
       <div class="container-fluid">
 
-         @if ($errors->any())
-            <div class="alert alert-danger">
-               <ul class="mb-0">
-                  @foreach ($errors->all() as $error)
-                     <li>{{ $error }}</li>
-                  @endforeach
-               </ul>
-            </div>
-         @endif
-
          <form method="POST" action="{{ route('branches.update', $branch->id) }}">
             @csrf
             @method('PUT')
@@ -133,7 +123,7 @@
                            <div class="col-md-12">
                               <div class="form-group">
                                  <label>
-                                    Address
+                                    Address<span class="text-danger">*</span>
                                  </label>
 
                                  <textarea
