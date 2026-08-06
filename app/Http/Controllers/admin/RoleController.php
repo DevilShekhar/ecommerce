@@ -95,6 +95,7 @@ class RoleController extends Controller
 
     public function updatePermissions(Request $request, Role $role)
     {
+
         $role->syncPermissions($request->permissions ?? []);
 
         return redirect()

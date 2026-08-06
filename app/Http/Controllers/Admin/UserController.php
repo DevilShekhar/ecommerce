@@ -12,6 +12,7 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::all();
+
         return view('admin.users.create', compact('roles'));
     }
 
@@ -33,7 +34,9 @@ class UserController extends Controller
         ]);
         $validated['status'] = 1;
 
-        User::create($validated);
+        $newUser = User::create($validated);
+
+        $newUser->assignRole(Role::findOrFail($validated['role_id']));
 
         return redirect()->route('users.index')
             ->with('success', 'User created successfully.');
@@ -42,6 +45,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $roles = Role::all();
+
         return view('admin.users.edit', compact('user', 'roles'));
     }
 

@@ -29,10 +29,17 @@ Route::middleware('auth')->group(function () {
 });
 Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
+    Route::get('roles/{role}/permissions-data', [RoleController::class, 'getPermissionsData'])
+        ->name('roles.permissions.data');
+
     Route::get('roles/{role}/permissions', [RoleController::class, 'managePermissions'])
         ->name('roles.permissions');
+
+    Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
+        ->name('roles.permissions.update');
     Route::resource('users', UserController::class);
     Route::resource('branches', BranchController::class);
     Route::resource('warehouses', WarehouseController::class);
+
 });
 require __DIR__.'/auth.php';
