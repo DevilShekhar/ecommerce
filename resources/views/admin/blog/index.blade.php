@@ -73,96 +73,111 @@
                                     <tbody>
 
                                     @forelse($blogs as $key => $blog)
-
                                         <tr>
-
                                             <td>{{ $key + 1 }}</td>
-
                                             <td width="90">
-
                                                 @if($blog->image)
-
-                                                    <img src="{{ asset($blog->image) }}"
-                                                         width="70"
-                                                         height="50"
-                                                         class="rounded"
-                                                         style="object-fit:cover;">
-
+                                                    <img src="{{ asset('storage/' . $blog->image) }}"
+                                                        width="70"
+                                                        height="50"
+                                                        class="rounded"
+                                                        style="object-fit: cover;"
+                                                        alt="Blog Image">
                                                 @else
-
                                                     <img src="{{ asset('assets/images/no-image.png') }}"
-                                                         width="70">
-
+                                                        width="70"
+                                                        height="50"
+                                                        class="rounded"
+                                                        alt="No Image">
                                                 @endif
-
                                             </td>
-
                                             <td>{{ $blog->name }}</td>
-
                                             <td>{{ $blog->title }}</td>
-
-                                            <td>{{ $blog->slug }}</td>
-                                           
-
+                                            <td>{{ $blog->slug }}</td>                                         
                                             <td>{{ optional($blog->creator)->name ?? '-' }}</td>
-
                                             <td>{{ $blog->created_at->format('d M Y') }}</td>
-
                                             <td>
-
                                                 <a href="{{ route('blogs.show',$blog->id) }}"
                                                    class="btn btn-info btn-sm">
                                                     <i class="zmdi zmdi-eye"></i>
                                                 </a>
-
                                                 <a href="{{ route('blogs.edit',$blog->id) }}"
                                                    class="btn btn-warning btn-sm">
                                                     <i class="zmdi zmdi-edit"></i>
                                                 </a>
-
                                                 <form action="{{ route('blogs.destroy',$blog->id) }}"
-                                                      method="POST"
-                                                      style="display:inline-block"
-                                                      onsubmit="return confirm('Are you sure you want to delete this blog?')">
+                                                method="POST"
+                                                class="delete-form"
+                                                style="display:inline-block">
 
-                                                    @csrf
-                                                    @method('DELETE')
+                                                @csrf
+                                                @method('DELETE')
 
-                                                    <button class="btn btn-danger btn-sm">
-                                                        <i class="zmdi zmdi-delete"></i>
-                                                    </button>
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="zmdi zmdi-delete"></i>
+                                                </button>
 
-                                                </form>
-
+                                            </form>
                                             </td>
-
                                         </tr>
-
                                     @empty
-
                                         <tr>
                                             <td colspan="9" class="text-center">
                                                 No blogs found.
                                             </td>
                                         </tr>
-
                                     @endforelse
-
                                     </tbody>
-
                                 </table>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
-
         </div>
-
     </div>
 </section>
+<script>
+
+$(document).ready(function () {
+
+    $('.delete-form').on('submit', function(e){
+
+        e.preventDefault();
+
+        let form = this;
+
+        Swal.fire({
+
+            title: 'Are you sure?',
+
+            text: "You want to deactivate this blog.",
+
+            icon: 'warning',
+
+            showCancelButton: true,
+
+            confirmButtonColor: '#d33',
+
+            cancelButtonColor: '#3085d6',
+
+            confirmButtonText: 'Yes, Deactivate',
+
+            cancelButtonText: 'Cancel'
+
+        }).then((result) => {
+
+            if(result.isConfirmed){
+
+                form.submit();
+
+            }
+
+        });
+
+    });
+
+});
+
+</script>
 @endsection
