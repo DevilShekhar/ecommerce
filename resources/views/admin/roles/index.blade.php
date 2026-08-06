@@ -95,8 +95,8 @@
                                                     {{-- Delete / Inactivate --}}
                                                     <form action="{{ route('roles.destroy', $role->id) }}"
                                                           method="POST"
-                                                          style="display:inline-block"
-                                                          onsubmit="return confirm('Are you sure you want to inactivate this role?')">
+                                                           class="delete-form"
+                                                          style="display:inline-block">
 
                                                         @csrf
                                                         @method('DELETE')
