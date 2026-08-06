@@ -47,6 +47,7 @@
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Address</th>
+                                        <th>Assigned Role</th>
                                         <th>Status</th>
                                         <th width="180">Action</th>
                                     </tr>
@@ -59,6 +60,7 @@
                                             <td>{{ $user->name }}</td>
                                             <td>{{ $user->email }}</td>
                                             <td>{{ $user->address ?? '-' }}</td>
+                                            <td>{{ $user->role->name ?? '-' }}</td>
 
                                             <td>
                                                 @if($user->status)
