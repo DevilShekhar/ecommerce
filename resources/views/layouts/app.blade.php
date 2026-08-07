@@ -7,13 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
     <title>{{ config('app.name', 'Ecommerce') }}</title>
-    <!-- Bootstrap & DataTables CSS CDN -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap4.min.css">
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap-select/css/bootstrap-select.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/jquery-datatable/dataTables.bootstrap4.min.css') }}">
     <!-- jVectorMap -->
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/jvectormap/jquery-jvectormap-2.0.3.min.css') }}">
@@ -25,6 +23,13 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
     {{-- Swal css Link --}}
     <link rel="stylesheet" href="{{ asset('assets/admin/css/swal.css') }}">
+    <style>
+        /* SweetAlert2 always creates an internal select element. It is not used by our alerts. */
+        .swal2-popup > .swal2-select,
+        .swal2-popup > .bootstrap-select {
+            display: none !important;
+        }
+    </style>
 </head>
 
 <body class="theme-blush">
@@ -626,18 +631,30 @@
     <main>
         @yield('content')
     </main>
+    {{-- Core admin scripts: these must use the same jQuery instance as the sidebar. --}}
+    <script src="{{ asset('assets/admin/bundles/libscripts.bundle.js') }}"></script>
+    <script src="{{ asset('assets/admin/bundles/vendorscripts.bundle.js') }}"></script>
+    <script src="{{ asset('assets/admin/bundles/mainscripts.bundle.js') }}"></script>
+    <script>
+        $(function () {
+            // The theme binds preventDefault() to every form; application forms must submit normally.
+            $('form').off('submit');
+        });
+    </script>
     <!-- =======================
             DataTables (Only if Required)
         ======================= -->
-    @if(request()->routeIs('blogs.index'))
+    @if(request()->routeIs('*.index'))
         <script src="{{ asset('assets/admin/bundles/datatablescripts.bundle.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/dataTables.buttons.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.bootstrap4.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.colVis.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.flash.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.html5.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/plugins/jquery-datatable/buttons/buttons.print.min.js') }}"></script>
-        <script src="{{ asset('assets/admin/js/pages/tables/jquery-datatable.js') }}"></script>
+        <script>
+            $(function () {
+                $('.js-basic-example, #datatable').each(function () {
+                    if (!$.fn.dataTable.isDataTable(this)) {
+                        $(this).DataTable();
+                    }
+                });
+            });
+        </script>
     @endif
     <!-- =======================
             Dashboard Only
@@ -671,17 +688,6 @@
             });
         @endif
     </script>
-
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap4.min.js"></script>
-
-        <script>
-            $(document).ready(function() {
-                $('.js-basic-example').DataTable();
-            });
-        </script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
