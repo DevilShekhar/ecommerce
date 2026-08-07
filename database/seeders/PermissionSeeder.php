@@ -19,13 +19,44 @@ class PermissionSeeder extends Seeder
             'user-create',
             'user-index',
             'user-edit',
-            'user-destory',
+            'user-destroy',
 
             //Roles
             'roles-create',
             'roles-index',
             'roles-edit',
-            'roles-destory',
+            'roles-destroy',
+
+            //brands
+            'brands-create',
+            'brands-index',
+            'brands-edit',
+            'brands-destroy',
+
+            //warehouses
+            'warehouses-create',
+            'warehouses-index',
+            'warehouses-edit',
+            'warehouses-destroy',
+
+            //product_categories
+            'product_categories-create',
+            'product_categories-index',
+            'product_categories-edit',
+            'product_categories-destroy',
+
+            //sub_categories
+            'sub_categories-create',
+            'sub_categories-index',
+            'sub_categories-edit',
+            'sub_categories-destroy',
+
+            //blogs
+            'blogs-create',
+            'blogs-index',
+            'blogs-edit',
+            'blogs-destroy',
+
         ];
 
         foreach($permissions as $permission){
