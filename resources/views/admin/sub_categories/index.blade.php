@@ -49,6 +49,7 @@
                                     <th width="60">#</th>
                                     <th>Category</th>
                                     <th>Sub Category</th>
+                                    <th>Status</th>
                                     <th width="160">Action</th>
                                 </tr>
                             </thead>
@@ -67,6 +68,9 @@
 
                                         <td>
                                             {{ $subcategory->name }}
+                                        </td>
+                                        <td>
+                                            {{ $subcategory->status ? 'Active' : 'Inactive' }}
                                         </td>
 
                                         <td>
