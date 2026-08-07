@@ -1,4 +1,4 @@
-@can('brands.create')
+@can('brands-create')
 @extends('layouts.app')
 
 @section('title', 'Create Brand')

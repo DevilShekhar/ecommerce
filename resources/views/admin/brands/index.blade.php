@@ -1,4 +1,4 @@
-@can('brands.index')
+@can('brands-index')
 @extends('layouts.app')
 
 @section('title', 'Brand Management')

@@ -1,4 +1,4 @@
-@can('blogs.create')
+@can('blogs-create')
 @extends('layouts.app')
 
 @section('title', 'Create Blog')
@@ -37,7 +37,7 @@
       </div>
 
       <div class="container-fluid">
-        
+
 
          <form
             action="{{ route('blogs.store') }}" method="POST"
@@ -441,7 +441,7 @@ $(document).ready(function () {
 });
 
 </script>
- 
+
 <script>
 
 $(document).ready(function () {

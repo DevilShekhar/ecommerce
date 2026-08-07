@@ -1,4 +1,4 @@
-@can('blogs.show')
+@can('blogs-show')
 @extends('layouts.app')
 
 @section('title','View Blog')

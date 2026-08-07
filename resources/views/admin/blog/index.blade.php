@@ -1,4 +1,4 @@
-@can('blogs.index')
+@can('blogs-index')
 @extends('layouts.app')
 
 @section('title', 'Blog Management')
