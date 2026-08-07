@@ -305,37 +305,48 @@
 
                     <ul class="ml-menu">
 
+                        @can('roles-index')
                         <li>
                             <a href="{{ route('roles.index') }}">Roles</a>
                         </li>
+                        @endcan
 
+                        @can('user-index')
                         <li>
                             <a href="{{ route('users.index') }}">Users</a>
                         </li>
-
+                        @endcan
 
 
                         <!-- Categories -->
+                         
                         <li>
                             <a href="javascript:void(0);" class="menu-toggle">
                                 Categories
                             </a>
 
                             <ul class="ml-menu">
+                                @can('product_categories-index')
                                 <li>
                                     <a href="{{ route('product_categories.index') }}">
                                         Product Categories
                                     </a>
                                 </li>
+                                @endcan
 
+                                @can('sub_categories-index')
                                 <li>
                                     <a href="{{ route('sub_categories.index') }}">
                                         Sub Categories
                                     </a>
                                 </li>
+                                @endcan
+
+                                @can('brands-index')
                                 <li>
                                     <a href="{{ route('brands.index') }}">Brands</a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
 
