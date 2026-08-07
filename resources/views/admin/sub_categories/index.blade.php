@@ -41,81 +41,90 @@
                         <h2><strong>Sub Category</strong> List</h2>
                     </div>
 
-                    <div class="body table-responsive">
+                <div class="body table-responsive">
+                    <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                        <thead>
+                            <tr>
+                                <th width="60">SrNo.</th>
+                                <th>Category</th>
+                                <th>Sub Category</th>
+                                <th>Meta Title</th>
+                                <th>Meta Keywords</th>
+                                <th>Meta Description</th>
+                                <th>Created By</th>
+                                <th>Status</th>
+                                <th width="120">Action</th>
+                            </tr>
+                        </thead>
 
-                        <table id="datatable" class="table table-bordered table-striped table-hover">
-                            <thead>
+                        <tbody>
+                            @forelse($subcategories as $key => $subcategory)
                                 <tr>
-                                    <th width="60">SrNo.</th>
-                                    <th>Category</th>
-                                    <th>Sub Category</th>
-                                    <th>Status</th>
-                                    <th width="160">Action</th>
-                                </tr>
-                            </thead>
+                                    <td>{{ $key + 1 }}</td>
+                                    <td>{{ $subcategory->category->name ?? '-' }}</td>
+                                    <td>{{ $subcategory->name }}</td>
+                                    
+                                    {{-- Meta Title with hover --}}
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 150px;" title="{{ $subcategory->meta_title ?? '-' }}">
+                                            {{ $subcategory->meta_title ?? '-' }}
+                                        </div>
+                                    </td>
 
-                            <tbody>
+                                    {{-- Meta Keywords with hover --}}
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 150px;" title="{{ $subcategory->meta_keywords ?? '-' }}">
+                                            {{ $subcategory->meta_keywords ?? '-' }}
+                                        </div>
+                                    </td>
 
-                                @forelse($subcategories as $key => $subcategory)
+                                    {{-- Meta Description with hover --}}
+                                    <td>
+                                        <div class="text-truncate" style="max-width: 180px;" title="{{ $subcategory->meta_description ?? '-' }}">
+                                            {{ $subcategory->meta_description ?? '-' }}
+                                        </div>
+                                    </td>
 
-                                    <tr>
-
-                                        <td>{{ $key + 1 }}</td>
-
-                                        <td>
-                                            {{ $subcategory->category->name ?? '-' }}
-                                        </td>
-
-                                        <td>
-                                            {{ $subcategory->name }}
-                                        </td>
-                                        <td>
+                                    <td>{{ $subcategory->creator->name ?? '-' }}</td>
+                                    
+                                    <td>
+                                        <span class="badge {{ $subcategory->status ? 'badge-success' : 'badge-danger' }}">
                                             {{ $subcategory->status ? 'Active' : 'Inactive' }}
-                                        </td>
+                                        </span>
+                                    </td>
+                                    
+                                    <td>
+                                        <a href="{{ route('sub_categories.edit', $subcategory->id) }}" class="btn btn-warning btn-sm">
+                                            <i class="zmdi zmdi-edit"></i>
+                                        </a>
 
-                                        <td>
 
-                                            <a href="{{ route('sub_categories.edit', $subcategory->id) }}"
-                                                class="btn btn-warning btn-sm">
-                                                <i class="zmdi zmdi-edit"></i>
-                                            </a>
+                                        <form action="{{ route('sub_categories.destroy', $subcategory->id) }}" method="POST" class="d-inline delete-form" style="display:inline-block">
+                                            @csrf
+                                            @method('DELETE')
 
-                                            <form action="{{ route('sub_categories.destroy', $subcategory->id) }}" method="POST"
-                                                class="d-inline delete-form" style="display:inline-block">
-
-                                                @csrf
-                                                @method('DELETE')
-
-                                                <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
-                                                    <i class="zmdi zmdi-delete"></i>
-                                                </button>
-
-                                            </form>
-
-                                        </td>
-
-                                    </tr>
-
-                                @empty
-
-                                    <tr>
-                                        <td colspan="4" class="text-center">
-                                            No Record Found
-                                        </td>
-                                    </tr>
-
-                                @endforelse
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
+                                            @if ($subcategory->status==1)  
+                                            <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
+                                                <i class="zmdi zmdi-delete"></i>
+                                            </button>
+                                              @endif
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="text-center">
+                                        No Record Found
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
-
             </div>
-
         </div>
-    </section>
+
+    </div>
+</section>
 
 @endsection

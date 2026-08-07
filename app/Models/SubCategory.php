@@ -14,7 +14,12 @@ class SubCategory extends Model
     protected $fillable = [
         'category_id',
         'name',
-        'status'
+        'status',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
+        'created_by',
+        'updated_by',
     ];
 
     /**
@@ -23,5 +28,14 @@ class SubCategory extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

@@ -138,27 +138,53 @@
                                     <div class="col-md-6">
 
                                         <div class="form-group">
-
-                                            <label>
-                                                Status
-                                                <span class="text-danger">*</span>
-                                            </label>
-
-                                            <select
-                                                name="status"
-                                                class="form-control">
-
-                                                <option value="1" {{ old('status',$sub_category->status)==1 ? 'selected' : '' }}>
-                                                    Active
-                                                </option>
-
-                                                <option value="0" {{ old('status',$sub_category->status)==0 ? 'selected' : '' }}>
-                                                    Inactive
-                                                </option>
-
+                                            <label>Status <span class="text-danger">*</span></label>
+                                            <select name="status" class="form-control">
+                                                <option value="1" {{ old('status', $sub_category->status) == 1 ? 'selected' : '' }}>Active</option>
+                                                <option value="0" {{ old('status', $sub_category->status) == 0 ? 'selected' : '' }}>Inactive</option>
                                             </select>
-
                                         </div>
+                                    </div>
+
+                                    <!-- Meta Title -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Title</label>
+                                            <input
+                                                type="text"
+                                                name="meta_title"
+                                                class="form-control"
+                                                value="{{ old('meta_title', $sub_category->meta_title) }}"
+                                                placeholder="Enter Meta Title"
+                                            >
+                                        </div>
+                                    </div>
+
+                                    <!-- Meta Keywords -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Keywords</label>
+                                            <textarea
+                                                name="meta_keywords"
+                                                class="form-control"
+                                                rows="2"
+                                                placeholder="Enter Meta Keywords"
+                                            >{{ old('meta_keywords', $sub_category->meta_keywords) }}</textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Meta Description -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Description</label>
+                                            <textarea
+                                                name="meta_description"
+                                                class="form-control"
+                                                rows="3"
+                                                placeholder="Enter Meta Description"
+                                            >{{ old('meta_description', $sub_category->meta_description) }}</textarea>
+                                        </div>
+                                    </div>
 
                                 </div>
 
