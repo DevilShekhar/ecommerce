@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\admin\BlogController;
-use App\Http\Controllers\admin\BranchController;
+use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ProductCategoryController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\UserController;
@@ -40,7 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::put('roles/{role}/permissions', [RoleController::class, 'updatePermissions'])
         ->name('roles.permissions.update');
     Route::resource('users', UserController::class);
-    Route::resource('branches', BranchController::class);
+    Route::resource('brands', BrandController::class);
     Route::resource('warehouses', WarehouseController::class);
     Route::resource('product_categories', ProductCategoryController::class);
     Route::resource('sub_categories', SubCategoryController::class);
