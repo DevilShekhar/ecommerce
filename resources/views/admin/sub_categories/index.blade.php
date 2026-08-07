@@ -46,7 +46,7 @@
                         <table id="datatable" class="table table-bordered table-striped table-hover">
                             <thead>
                                 <tr>
-                                    <th width="60">#</th>
+                                    <th width="60">SrNo.</th>
                                     <th>Category</th>
                                     <th>Sub Category</th>
                                     <th>Status</th>

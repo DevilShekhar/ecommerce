@@ -24,7 +24,7 @@ class SubCategoryController extends Controller
         $subcategory = $request->validate([
             'category_id' => 'required|exists:product_categories,id',
             'name' => 'required|string|max:255',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
         ]);
 
         SubCategory::create($subcategory);
@@ -35,7 +35,7 @@ class SubCategoryController extends Controller
 
     public function index()
     {
-        $subcategories = SubCategory::with('category')->get();
+        $subcategories = SubCategory::with('category')->latest()->get();
 
         return view('admin.sub_categories.index', compact('subcategories'));
     }
