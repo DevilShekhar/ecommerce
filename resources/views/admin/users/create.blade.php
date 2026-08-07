@@ -1,3 +1,5 @@
+
+@can('users.create')
 @extends('layouts.app')
 
 @section('title', 'Create User')
@@ -201,3 +203,8 @@
 </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

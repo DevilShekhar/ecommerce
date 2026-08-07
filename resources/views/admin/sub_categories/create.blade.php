@@ -1,3 +1,4 @@
+@can('sub_categories.create')
 @extends('layouts.app')
 
 @section('title', 'Create Sub Category')
@@ -40,17 +41,6 @@
         </div>
 
         <div class="container-fluid">
-
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('sub_categories.store') }}">
                 @csrf
 
@@ -207,3 +197,8 @@
 </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

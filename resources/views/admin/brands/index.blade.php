@@ -1,3 +1,4 @@
+@can('brands.index')
 @extends('layouts.app')
 
 @section('title', 'Brand Management')
@@ -128,3 +129,8 @@
         </div>
     </section>
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

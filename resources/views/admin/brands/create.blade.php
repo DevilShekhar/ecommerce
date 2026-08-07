@@ -1,3 +1,4 @@
+@can('brands.create')
 @extends('layouts.app')
 
 @section('title', 'Create Brand')
@@ -297,3 +298,8 @@
     </script>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

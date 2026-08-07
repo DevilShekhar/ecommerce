@@ -1,3 +1,4 @@
+@can('blogs.index')
 @extends('layouts.app')
 
 @section('title', 'Blog Management')
@@ -181,3 +182,9 @@ $(document).ready(function () {
 
 </script>
 @endsection
+
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

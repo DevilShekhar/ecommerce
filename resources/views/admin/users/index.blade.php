@@ -1,3 +1,4 @@
+@can('users.index')
 @extends('layouts.app')
 
 @section('title', 'Users')
@@ -107,3 +108,8 @@
     </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

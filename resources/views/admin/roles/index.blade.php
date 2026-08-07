@@ -1,4 +1,4 @@
-@can('roles-index',)
+ @can('roles-index') 
 @extends('layouts.app')
 
 @section('title', 'Role Management')

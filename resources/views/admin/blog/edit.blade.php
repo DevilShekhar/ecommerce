@@ -1,3 +1,4 @@
+@can('blogs.edit')
 @extends('layouts.app')
 
 @section('title', 'Edit Blog')
@@ -41,15 +42,6 @@
 
         <div class="container-fluid">
 
-            @if ($errors->any())
-                <div class="alert alert-danger">
-                    <ul class="mb-0">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
 
             <form action="{{ route('blogs.update',$blog->id) }}"
                   method="POST"
@@ -641,3 +633,9 @@ $(document).ready(function () {
 </script>
 
 @endsection
+
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan
