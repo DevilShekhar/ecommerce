@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('warehouses', WarehouseController::class);
     Route::resource('product_categories', ProductCategoryController::class);
     Route::resource('sub_categories', SubCategoryController::class);
+    Route::get('get-subcategories/{id}', [BrandController::class, 'getSubCategories']);
 
 });
 require __DIR__.'/auth.php';

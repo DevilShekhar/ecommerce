@@ -336,10 +336,6 @@
                                 <li>
                                     <a href="{{ route('brands.index') }}">Brands</a>
                                 </li>
-
-                                <li>
-                                    <a href="{{ route('warehouses.index') }}">Warehouses</a>
-                                </li>
                             </ul>
                         </li>
 
@@ -759,6 +755,14 @@
                         }
                     });
                 });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
             });
         });
     </script>

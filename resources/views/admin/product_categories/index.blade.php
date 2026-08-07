@@ -75,8 +75,13 @@
                                             <td>{{ $category->name }}</td>
 
                                             <td>{{ $category->meta_title ?? '-' }}</td>
-                                            <td>{{ $category->meta_ads ?? '-' }}</td>
-                                            <td>{{ $category->meta_keyword ?? '-' }}</td>
+                                            <td data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="{{ $category->meta_ads }}">
+                                                {{ \Illuminate\Support\Str::words($category->meta_ads ?? '-', 3, '...') }}
+                                            </td>
+                                            <td data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $category->meta_keyword }}">
+                                                {{ \Illuminate\Support\Str::words($category->meta_keyword ?? '-', 3, '...') }}
+                                            </td>
                                             <td>{{ $category->createdBy->name ?? $category->created_by ?? '-' }}</td>
                                             <td>{{ $category->updatedBy->name ?? $category->updated_by ?? '-' }}</td>
 
