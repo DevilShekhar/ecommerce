@@ -9,7 +9,6 @@ class Brand extends Model
     //
     protected $fillable = [
         'name',
-        'address',
-        'brand_code','status'
+        'brand_code', 'status',
     ];
 }

@@ -130,6 +130,51 @@
 
                                     </div>
 
+                                    <div class="col-md-6">
+
+                                        <div class="form-group">
+                                            <label>
+                                                Meta Title
+                                            </label>
+
+                                            <input type="text"
+                                                name="meta_title"
+                                                class="form-control"
+                                                value="{{ old('meta_title',$productCategory->meta_title) }}">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <div class="form-group">
+                                            <label>
+                                                Meta Ads
+                                            </label>
+
+                                            <input type="text"
+                                                name="meta_ads"
+                                                class="form-control"
+                                                value="{{ old('meta_ads',$productCategory->meta_ads) }}">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="col-md-6">
+
+                                        <div class="form-group">
+                                            <label>
+                                                Meta Keyword
+                                            </label>
+
+                                            <input type="text"
+                                                name="meta_keyword"
+                                                class="form-control"
+                                                value="{{ old('meta_keyword',$productCategory->meta_keyword) }}">
+                                        </div>
+
+                                    </div>
+
                                 </div>
 
                             </div>

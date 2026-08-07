@@ -51,7 +51,6 @@
                                                 <th width="50">SrNo.</th>
                                                 <th>Branch Name</th>
                                                 <th>Branch Code</th>
-                                                <th>Address</th>
                                                 <th>Status</th>
                                                 <th>Created At</th>
                                                 <th width="150">Action</th>
@@ -65,7 +64,6 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $brand->name }}</td>
                                                     <td>{{ $brand->brand_code ?? '-' }}</td>
-                                                    <td>{{ $brand->address ?? '-' }}</td>
                                                     <td>
                                                         @if($brand->status == 1)
                                                             <span class="badge badge-success">Active</span>
