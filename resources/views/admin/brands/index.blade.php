@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Branch Management')
+@section('title', 'Brand Management')
 
 @section('content')
     <section class="content">
@@ -9,20 +9,20 @@
             <div class="block-header">
                 <div class="row">
                     <div class="col-lg-6 col-md-6 col-sm-12">
-                        <h2>Branch Management</h2>
+                        <h2>Brand Management</h2>
                         <ul class="breadcrumb">
                             <li class="breadcrumb-item">
                                 <a href="{{ route('dashboard') }}">
                                     <i class="zmdi zmdi-home"></i> Dashboard
                                 </a>
                             </li>
-                            <li class="breadcrumb-item active">Branches</li>
+                            <li class="breadcrumb-item active">Brand</li>
                         </ul>
                     </div>
 
                     <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('branches.create') }}" class="btn btn-primary">
-                            <i class="zmdi zmdi-plus"></i> Add Branch
+                        <a href="{{ route('brands.create') }}" class="btn btn-primary">
+                            <i class="zmdi zmdi-plus"></i> Add Brand
                         </a>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                         <div class="card">
 
                             <div class="header">
-                                <h2><strong>Branch</strong> List</h2>
+                                <h2><strong>Brand</strong> List</h2>
                             </div>
 
                             <div class="body">
@@ -60,32 +60,32 @@
 
                                         <tbody>
 
-                                            @forelse($branches as $key => $branch)
+                                            @forelse($brands as $key => $brand)
                                                 <tr>
                                                     <td>{{ $key + 1 }}</td>
-                                                    <td>{{ $branch->name }}</td>
-                                                    <td>{{ $branch->branch_code ?? '-' }}</td>
-                                                    <td>{{ $branch->address ?? '-' }}</td>
+                                                    <td>{{ $brand->name }}</td>
+                                                    <td>{{ $brand->brand_code ?? '-' }}</td>
+                                                    <td>{{ $brand->address ?? '-' }}</td>
                                                     <td>
-                                                        @if($branch->status == 1)
+                                                        @if($brand->status == 1)
                                                             <span class="badge badge-success">Active</span>
                                                         @else
                                                             <span class="badge badge-danger">Inactive</span>
                                                         @endif
                                                     </td>
                                                     <td>
-                                                        {{ $branch->created_at ? $branch->created_at->format('d M Y') : '-' }}
+                                                        {{ $brand->created_at ? $brand->created_at->format('d M Y') : '-' }}
                                                     </td>
                                                     <td>
                                                         {{-- Edit --}}
-                                                        <a href="{{ route('branches.edit', $branch->id) }}"
+                                                        <a href="{{ route('brands.edit', $brand->id) }}"
                                                             class="btn btn-sm btn-primary" title="Edit">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </a>
 
                                                         {{-- Delete / Inactivate --}}
-                                                        <form action="{{ route('branches.destroy', $branch->id) }}"
-                                                            method="POST" class="d-inline delete-form" data-branch-name="{{ $branch->name }}">
+                                                        <form action="{{ route('brands.destroy', $brand->id) }}"
+                                                            method="POST" class="d-inline delete-form" data-brand-name="{{ $brand->name }}">
 
                                                             @csrf
                                                             @method('DELETE')
