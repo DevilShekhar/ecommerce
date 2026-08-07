@@ -1,4 +1,4 @@
-@can('blogs.edit')
+@can('blogs-edit')
 @extends('layouts.app')
 
 @section('title', 'Edit Blog')

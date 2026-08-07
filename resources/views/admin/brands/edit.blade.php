@@ -1,4 +1,4 @@
-@can('brands.edit')
+@can('brands-edit')
 @extends('layouts.app')
 
 @section('title', 'Edit Brand')

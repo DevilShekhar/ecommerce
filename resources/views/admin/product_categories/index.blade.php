@@ -1,4 +1,4 @@
-@can('product_categories.index')
+@can('product_categories-index')
 @extends('layouts.app')
 
 @section('title', 'Categories')
@@ -107,7 +107,7 @@
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    @if ($category->status==1)                                          
+                                                    @if ($category->status==1)
                                                     <button type="button" class="btn btn-sm btn-danger delete-btn"
                                                         title="Delete">
                                                         <i class="zmdi zmdi-delete"></i>
