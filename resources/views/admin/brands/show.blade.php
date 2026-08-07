@@ -1,3 +1,4 @@
+@can('brands.show')
 @extends('layouts.app')
 
 @section('title', 'View Brand')
@@ -156,3 +157,8 @@
         </div>
     </section>
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

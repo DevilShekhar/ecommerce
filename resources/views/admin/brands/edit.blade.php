@@ -1,3 +1,4 @@
+@can('brands.edit')
 @extends('layouts.app')
 
 @section('title', 'Edit Brand')
@@ -297,3 +298,9 @@
     });
 </script>
 @endsection
+
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

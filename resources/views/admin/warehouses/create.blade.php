@@ -1,3 +1,4 @@
+@can('warehouses.create')
 @extends('layouts.app')
 
 @section('title', 'Create Warehouse')
@@ -286,3 +287,8 @@
 </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

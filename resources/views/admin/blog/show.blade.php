@@ -1,3 +1,4 @@
+@can('blogs.show')
 @extends('layouts.app')
 
 @section('title','View Blog')
@@ -437,3 +438,9 @@
 </section>
 
 @endsection
+
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

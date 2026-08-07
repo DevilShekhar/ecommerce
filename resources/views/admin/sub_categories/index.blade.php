@@ -1,3 +1,4 @@
+@can('sub_categories.index')
 @extends('layouts.app')
 
 @section('title', 'Sub Categories')

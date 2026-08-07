@@ -1,3 +1,4 @@
+@can('product_categories.index')
 @extends('layouts.app')
 
 @section('title', 'Categories')
@@ -143,3 +144,8 @@
     </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

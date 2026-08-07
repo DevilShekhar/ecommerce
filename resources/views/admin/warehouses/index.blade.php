@@ -1,3 +1,4 @@
+@can('warehouses.index')
 @extends('layouts.app')
 
 @section('title', 'Warehouse Management')
@@ -134,3 +135,8 @@
         </div>
     </section>
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan
