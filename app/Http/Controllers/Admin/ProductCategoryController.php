@@ -11,7 +11,9 @@ class ProductCategoryController extends Controller
 {
     public function index()
     {
-        $categories = ProductCategory::all();
+        $categories = ProductCategory::with(['createdBy', 'updatedBy'])
+            ->latest()
+            ->paginate(10);
 
         return view('admin.product_categories.index', compact('categories'));
     }
@@ -41,7 +43,7 @@ class ProductCategoryController extends Controller
 
     public function edit(ProductCategory $productCategory)
     {
-        $categories = ProductCategory::all();
+        $categories = ProductCategory::query()->latest()->get();
 
         return view('admin.product_categories.edit', compact('productCategory', 'categories'));
     }

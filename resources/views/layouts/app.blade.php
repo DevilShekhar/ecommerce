@@ -25,8 +25,8 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/css/swal.css') }}">
     <style>
         /* SweetAlert2 always creates an internal select element. It is not used by our alerts. */
-        .swal2-popup > .swal2-select,
-        .swal2-popup > .bootstrap-select {
+        .swal2-popup>.swal2-select,
+        .swal2-popup>.bootstrap-select {
             display: none !important;
         }
     </style>
@@ -278,8 +278,10 @@
     <aside id="leftsidebar" class="sidebar">
         <div class="navbar-brand">
             <button class="btn-menu ls-toggle-btn" type="button"><i class="zmdi zmdi-menu"></i></button>
+
             <a href="{{ route('dashboard') }}"><img src="{{ asset('assets/admin/images/logo.svg') }}" width="25"
                     alt="Aero"><span class="m-l-10">Aero</span></a>
+
         </div>
         <div class="menu">
             <ul class="list">
@@ -288,19 +290,59 @@
                         <a class="image" href="profile.html"><img
                                 src="{{ asset('assets/admin/images/profile_av.jpg') }}" alt="User"></a>
                         <div class="detail">
-                            <h4>Michael</h4>
-                            <small>Super Admin</small>
+                            <h4>{{ Auth::user()->name }}</h4>
+                            <small>{{ Auth::user()->role->name ?? 'User' }}</small>
                         </div>
                     </div>
                 </li>
                 <li class="active open"><a href="index.html"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a>
                 </li>
-                <li><a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-apps"></i><span>App</span></a>
+                <li>
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-settings"></i>
+                        <span>Master</span>
+                    </a>
+
                     <ul class="ml-menu">
-                        <li><a href="mail-inbox.html">Email</a></li>
-                        <li><a href="chat.html">Chat Apps</a></li>
-                        <li><a href="events.html">Calendar</a></li>
-                        <li><a href="contact.html">Contact</a></li>
+
+                        <li>
+                            <a href="{{ route('roles.index') }}">Roles</a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('users.index') }}">Users</a>
+                        </li>
+
+
+
+                        <!-- Categories -->
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                Categories
+                            </a>
+
+                            <ul class="ml-menu">
+                                <li>
+                                    <a href="{{ route('product_categories.index') }}">
+                                        Product Categories
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('sub_categories.index') }}">
+                                        Sub Categories
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('brands.index') }}">Brands</a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('warehouses.index') }}">Warehouses</a>
+                                </li>
+                            </ul>
+                        </li>
+
                     </ul>
                 </li>
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i

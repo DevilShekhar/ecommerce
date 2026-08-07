@@ -10,12 +10,12 @@ class ProductCategory extends Model
         'name', 'status', 'meta_title', 'meta_ads', 'meta_keyword', 'created_by', 'updated_by',
     ];
 
-    public function createBy()
+    public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function updateBy()
+    public function updatedBy()
     {
         return $this->belongsTo(User::class, 'updated_by');
     }

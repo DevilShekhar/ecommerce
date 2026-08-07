@@ -58,6 +58,8 @@
                                         <th>Meta Title</th>
                                         <th>Meta Ads</th>
                                         <th>Meta Keyword</th>
+                                        <th>Created By</th>
+                                        <th>Updated By</th>
                                         <th>Status</th>
                                         <th width="150">Action</th>
                                     </tr>
@@ -75,6 +77,8 @@
                                             <td>{{ $category->meta_title ?? '-' }}</td>
                                             <td>{{ $category->meta_ads ?? '-' }}</td>
                                             <td>{{ $category->meta_keyword ?? '-' }}</td>
+                                            <td>{{ $category->createdBy->name ?? $category->created_by ?? '-' }}</td>
+                                            <td>{{ $category->updatedBy->name ?? $category->updated_by ?? '-' }}</td>
 
                                             <td>
                                                 @if($category->status)
