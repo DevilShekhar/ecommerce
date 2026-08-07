@@ -53,9 +53,11 @@
                             <table class="table table-bordered table-striped" id="datatable">
                                 <thead>
                                     <tr>
-                                        <th width="60">#</th>
+                                        <th width="60">SrNo.</th>
                                         <th>Name</th>
-                                        <th>Description</th>
+                                        <th>Meta Title</th>
+                                        <th>Meta Ads</th>
+                                        <th>Meta Keyword</th>
                                         <th>Status</th>
                                         <th width="150">Action</th>
                                     </tr>
@@ -70,7 +72,9 @@
 
                                             <td>{{ $category->name }}</td>
 
-                                            <td>{{ $category->description ?? '-' }}</td>
+                                            <td>{{ $category->meta_title ?? '-' }}</td>
+                                            <td>{{ $category->meta_ads ?? '-' }}</td>
+                                            <td>{{ $category->meta_keyword ?? '-' }}</td>
 
                                             <td>
                                                 @if($category->status)

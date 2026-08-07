@@ -24,13 +24,11 @@ class BrandController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'address' => 'required|max:255',
-            'brand_code' => 'required|max:10|unique:brands,brand_code',
+            'brand_code' => 'required|unique:brands,brand_code',
         ]);
 
         Brand::create([
             'name' => $request->name,
-            'address' => $request->address,
             'brand_code' => $request->brand_code,
             'status' => 1,
         ]);
@@ -48,13 +46,11 @@ class BrandController extends Controller
     {
         $request->validate([
             'name' => 'required|max:255',
-            'address' => 'required|max:255',
             'brand_code' => 'required|max:10|unique:brands,brand_code,'.$brand->id,
         ]);
 
         $brand->update([
             'name' => $request->name,
-            'address' => $request->address,
             'brand_code' => $request->brand_code,
             'status' => $request->status ?? 0,
         ]);

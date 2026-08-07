@@ -5,12 +5,14 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductCategoryController extends Controller
 {
     public function index()
     {
         $categories = ProductCategory::all();
+
         return view('admin.product_categories.index', compact('categories'));
     }
 
@@ -23,7 +25,13 @@ class ProductCategoryController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:product_categories,name',
+            'status' => 'nullable|boolean',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_ads' => 'nullable|string',
+            'meta_keyword' => 'nullable|string',
         ]);
+
+        $validatedData['created_by'] = Auth::id();
 
         ProductCategory::create($validatedData);
 
@@ -34,16 +42,21 @@ class ProductCategoryController extends Controller
     public function edit(ProductCategory $productCategory)
     {
         $categories = ProductCategory::all();
+
         return view('admin.product_categories.edit', compact('productCategory', 'categories'));
     }
 
     public function update(Request $request, ProductCategory $productCategory)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:product_categories,name,'.$productCategory->id,
+        $productCategory->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+            'meta_title' => $request->meta_title,
+            'meta_ads' => $request->meta_ads,
+            'meta_keyword' => $request->meta_keyword,
+            'updated_by' => Auth::id(),
         ]);
-
-        $productCategory->update($validatedData);
 
         return redirect()->route('product_categories.index')
             ->with('success', 'Product category updated successfully.');
