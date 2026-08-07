@@ -121,6 +121,61 @@
                                         </div>
                                     </div>
 
+                                    <!-- Meta Title -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Title</label>
+                                            <input
+                                                type="text"
+                                                name="meta_title"
+                                                class="form-control @error('meta_title') is-invalid @enderror"
+                                                placeholder="Enter Meta Title"
+                                                value="{{ old('meta_title') }}"
+                                            >
+                                            @error('meta_title')
+                                                <span class="invalid-feedback d-block">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <!-- Meta Keywords -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Keywords</label>
+                                            <textarea
+                                                name="meta_keywords"
+                                                class="form-control @error('meta_keywords') is-invalid @enderror"
+                                                rows="2"
+                                                placeholder="Enter Meta Keywords (separated by commas)"
+                                            >{{ old('meta_keywords') }}</textarea>
+                                            @error('meta_keywords')
+                                                <span class="invalid-feedback d-block">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <!-- Meta Description -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Meta Description</label>
+                                            <textarea
+                                                name="meta_description"
+                                                class="form-control @error('meta_description') is-invalid @enderror"
+                                                rows="3"
+                                                placeholder="Enter Meta Description"
+                                            >{{ old('meta_description') }}</textarea>
+                                            @error('meta_description')
+                                                <span class="invalid-feedback d-block">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

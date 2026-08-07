@@ -106,10 +106,12 @@
                                                     @csrf
                                                     @method('DELETE')
 
+                                                    @if ($category->status==1)                                          
                                                     <button type="button" class="btn btn-sm btn-danger delete-btn"
                                                         title="Delete">
                                                         <i class="zmdi zmdi-delete"></i>
                                                     </button>
+                                                    @endif
 
                                                 </form>
 

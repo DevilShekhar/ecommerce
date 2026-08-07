@@ -79,9 +79,11 @@
                                                     @csrf
                                                     @method('DELETE')
 
+                                                    @if ($user->status==1)
                                                     <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                         <i class="zmdi zmdi-delete"></i>
                                                     </button>
+                                                     @endif
                                                 </form>
                                             </td>
                                         </tr>

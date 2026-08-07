@@ -87,11 +87,13 @@
                                                 </td>
                                                <td>
                                                     {{-- Manage Permissions --}}
+                                                    @if ($role->status==1)
                                                     <a href="{{ route('roles.permissions', $role->id) }}"
                                                         class="btn btn-info btn-sm"
                                                         title="Manage Permissions">
                                                          <i class="zmdi zmdi-key"></i>
                                                     </a>
+                                                     @endif
 
                                                     {{-- Edit --}}
                                                     <a href="{{ route('roles.edit', $role->id) }}"
@@ -109,9 +111,11 @@
                                                         @csrf
                                                         @method('DELETE')
 
+                                                        @if ($role->status==1)
                                                         <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
                                                             <i class="zmdi zmdi-delete"></i>
                                                         </button>
+                                                         @endif
                                                     </form>
                                                 </td>
                                             </tr>
