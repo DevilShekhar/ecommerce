@@ -1,3 +1,4 @@
+@can('roles-index',)
 @extends('layouts.app')
 
 @section('title', 'Role Management')
@@ -107,7 +108,7 @@
                                                         method="POST"
                                                         class="d-inline delete-form"
                                                         data-role-name="{{ $role->name }}">
-                                                        
+
                                                         @csrf
                                                         @method('DELETE')
 
@@ -137,3 +138,8 @@
     </div>
 </section>
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan

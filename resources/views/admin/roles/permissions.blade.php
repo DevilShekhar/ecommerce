@@ -1,238 +1,385 @@
 @extends('layouts.app')
 
-@section('title', 'Manage Permissions')
+@section('title', 'Manage Permissions - ' . $role->name)
 
 @section('content')
 <section class="content">
     <div class="body_scroll">
 
-        <!-- Block Header -->
-        <div class="block-header">
-            <div class="row">
+        <!-- Header & Breadcrumbs -->
+        <div class="block-header mb-4">
+            <div class="row align-items-center">
                 <div class="col-lg-6 col-md-6 col-sm-12">
-                    <h2>Manage Permissions</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">
-                                <i class="zmdi zmdi-home"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('roles.index') }}">Roles</a>
-                        </li>
-                        <li class="breadcrumb-item active">Permissions</li>
-                    </ul>
+                    <h2 class="font-weight-bold text-dark mb-1">Role Permissions</h2>
+                    <p class="text-muted mb-0">Configure operational access for <span class="badge badge-primary px-2 py-1">{{ $role->name }}</span></p>
                 </div>
-
                 <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                    <a href="{{ route('roles.index') }}" class="btn btn-primary">
-                        <i class="zmdi zmdi-arrow-left"></i> Back
+                    <a href="{{ route('roles.index') }}" class="btn btn-outline-secondary btn-round">
+                        <i class="zmdi zmdi-arrow-left mr-1"></i> Back to Roles
                     </a>
                 </div>
             </div>
         </div>
 
-        <div class="container-fluid">
+        <div class="container-fluid px-0">
 
+            <!-- Flash Alerts -->
             @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+                <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="zmdi zmdi-check-circle mr-2"></i> {{ session('success') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             @endif
 
             @if(session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
+                <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="zmdi zmdi-alert-triangle mr-2"></i> {{ session('error') }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
             @endif
 
-            <div class="row clearfix">
-                <div class="col-lg-12">
+            <form action="{{ route('roles.permissions.update', $role->id) }}" method="POST" id="permissions-form">
+                @csrf
+                @method('PUT')
 
-                    <div class="card">
-
-                        <div class="header">
-                            <h2>
-                                <strong>Manage</strong> Permissions
-                                <small>Role : <strong>{{ $role->name }}</strong></small>
-                            </h2>
-                        </div>
-
-                        <div class="body">
-
-                            <div class="table-responsive">
-
-                                <table class="table table-bordered table-striped table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th width="50">#</th>
-                                            <th>Permission Name</th>
-                                            <th width="100">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($permissions as $key => $permission)
-                                            <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td>
-                                                    <div class="permission-item">
-                                                        <label class="permission-label" style="cursor:pointer; margin:0; display:flex; align-items:center;">
-                                                            <input type="checkbox"
-                                                                   class="permission-checkbox"
-                                                                   name="permissions[]"
-                                                                   value="{{ $permission->name }}"
-                                                                   {{ in_array($permission->name, $rolePermissions) ? 'checked' : '' }}
-                                                                   style="margin-right: 10px;">
-                                                            <span class="permission-name">
-                                                                {{ ucwords(str_replace(['.', '_', '-'], ' ', $permission->name)) }}
-                                                            </span>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    @if(in_array($permission->name, $rolePermissions))
-                                                        <span class="badge badge-success">Assigned</span>
-                                                    @else
-                                                        <span class="badge badge-secondary">Not Assigned</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="3" class="text-center">
-                                                    No permissions found.
-                                                </td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-
-                            </div>
-
-                            <!-- Action Buttons -->
-                            <div class="row mt-4">
-                                <div class="col-lg-12 text-right">
-                                    <form action="{{ route('roles.permissions.update', $role->id) }}" method="POST">
-                                        @csrf
-                                        @method('PUT')
-
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="zmdi zmdi-check"></i> Update Permissions
-                                        </button>
-
-                                        <a href="{{ route('roles.index') }}" class="btn btn-secondary">
-                                            <i class="zmdi zmdi-close"></i> Cancel
-                                        </a>
-                                    </form>
+                <!-- Control Bar: Search & Global Select -->
+                <div class="card border-0 shadow-sm mb-4 search-control-card">
+                    <div class="body p-3">
+                        <div class="row align-items-center">
+                            <div class="col-md-7">
+                                <div class="input-group mb-0">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-transparent border-right-0"><i class="zmdi zmdi-search text-muted"></i></span>
+                                    </div>
+                                    <input type="text" id="permission-search" class="form-control border-left-0 pl-0"
+                                           placeholder="Search modules or permissions (e.g., user, create, edit)...">
                                 </div>
                             </div>
-
+                            <div class="col-md-5 text-md-right mt-3 mt-md-0">
+                                <div class="custom-control custom-checkbox d-inline-block">
+                                    <input type="checkbox" class="custom-control-input" id="global-select-all">
+                                    <label class="custom-control-label font-weight-bold text-dark cursor-pointer" for="global-select-all">
+                                        Select All Permissions
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
+                </div>
+
+                @php
+                    $grouped = [];
+                    foreach ($permissions as $permission) {
+                        $cleanName = str_replace(['.', '_', '-'], ' ', $permission->name);
+                        $parts = explode(' ', $cleanName);
+                        $module = ucfirst($parts[0] ?? 'General');
+                        $grouped[$module][] = $permission;
+                    }
+                    ksort($grouped);
+                @endphp
+
+                <!-- Grouped Permissions Matrix -->
+                <div class="row clearfix" id="permission-groups">
+
+                    @forelse($grouped as $module => $modulePermissions)
+                        <div class="col-lg-6 col-md-12 permission-group mb-4" data-module="{{ strtolower($module) }}">
+                            <div class="card border-0 shadow-sm h-100 module-card">
+
+                                <!-- Category Header -->
+                                <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+                                    <div class="d-flex align-items-center">
+                                        <span class="module-icon-badge mr-2">
+                                            <i class="zmdi zmdi-folder-star-alt text-primary"></i>
+                                        </span>
+                                        <h6 class="mb-0 font-weight-bold text-capitalize text-dark">{{ $module }}</h6>
+                                        <span class="badge badge-light badge-pill ml-2 text-muted border">
+                                            {{ count($modulePermissions) }}
+                                        </span>
+                                    </div>
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input group-select-all"
+                                               id="group-{{ strtolower($module) }}" data-group="{{ strtolower($module) }}">
+                                        <label class="custom-control-label text-muted small cursor-pointer" for="group-{{ strtolower($module) }}">
+                                            Select Category
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Permissions Grid -->
+                                <div class="body p-3">
+                                    <div class="row">
+                                        @foreach($modulePermissions as $permission)
+                                            @php
+                                                $displayName = ucwords(str_replace(['.', '_', '-'], ' ', $permission->name));
+                                                $isChecked = in_array($permission->name, $rolePermissions ?? []);
+                                            @endphp
+                                            <div class="col-12 permission-item mb-2"
+                                                 data-name="{{ strtolower($permission->name) }}"
+                                                 data-display="{{ strtolower($displayName) }}">
+
+                                                <label class="permission-card-option d-flex align-items-center p-2 rounded {{ $isChecked ? 'active' : '' }}">
+                                                    <div class="custom-control custom-checkbox mr-3">
+                                                        <input type="checkbox"
+                                                               class="custom-control-input permission-checkbox"
+                                                               id="perm-{{ $permission->id }}"
+                                                               name="permissions[]"
+                                                               value="{{ $permission->name }}"
+                                                               data-group="{{ strtolower($module) }}"
+                                                               {{ $isChecked ? 'checked' : '' }}>
+                                                        <label class="custom-control-label" for="perm-{{ $permission->id }}"></label>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="permission-title font-weight-bold text-dark small">
+                                                            {{ $displayName }}
+                                                        </div>
+                                                        <code class="text-muted extra-small">{{ $permission->name }}</code>
+                                                    </div>
+                                                </label>
+
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12">
+                            <div class="card border-0 shadow-sm py-5 text-center">
+                                <div class="body">
+                                    <i class="zmdi zmdi-shield-security zmdi-hc-3x text-muted mb-3"></i>
+                                    <p class="text-muted mb-0">No permission records found in system.</p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforelse
 
                 </div>
-            </div>
+
+                <!-- Search No Results Container -->
+                <div id="no-results" class="card border-0 shadow-sm d-none">
+                    <div class="body text-center py-5">
+                        <i class="zmdi zmdi-search-for text-muted zmdi-hc-3x mb-2"></i>
+                        <h6 class="text-muted">No matching permissions found</h6>
+                    </div>
+                </div>
+
+                <!-- Sticky Footer Actions Bar -->
+                <div class="sticky-footer-bar">
+                    <div class="container-fluid">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="status-indicator mr-2"></div>
+                                <span class="font-weight-bold text-dark mr-1" id="selected-count">0</span>
+                                <span class="text-muted">permissions active</span>
+                            </div>
+                            <div>
+                                <a href="{{ route('roles.index') }}" class="btn btn-link text-muted mr-2">Cancel</a>
+                                <button type="submit" class="btn btn-success px-4 btn-round shadow-sm">
+                                    <i class="zmdi zmdi-check mr-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
 
         </div>
-
     </div>
 </section>
 @endsection
 
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Select All / Deselect All functionality (optional)
-        // Add this if you want a select all checkbox in the header
-
-        // Toggle individual permission status display
-        const checkboxes = document.querySelectorAll('.permission-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const row = this.closest('tr');
-                const statusBadge = row.querySelector('.badge');
-
-                if (this.checked) {
-                    statusBadge.className = 'badge badge-success';
-                    statusBadge.textContent = 'Assigned';
-                } else {
-                    statusBadge.className = 'badge badge-secondary';
-                    statusBadge.textContent = 'Not Assigned';
-                }
-            });
-        });
-    });
-</script>
-
+@section('styles')
 <style>
-    /* Additional styles to match the warehouse design */
-    .permission-item {
-        padding: 2px 0;
+    .cursor-pointer { cursor: pointer; }
+    .extra-small { font-size: 11px; }
+
+    .module-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border-radius: 8px;
     }
 
-    .permission-label {
-        display: flex;
-        align-items: center;
+    .module-card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .module-icon-badge {
+        background: #f0f4f8;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .permission-card-option {
+        border: 1px solid #eef2f5;
+        background-color: #fafbfc;
+        transition: all 0.2s ease-in-out;
         cursor: pointer;
-        margin: 0;
-        width: 100%;
     }
 
-    .permission-checkbox {
-        width: 18px;
-        height: 18px;
-        cursor: pointer;
-        margin-right: 12px !important;
-        flex-shrink: 0;
+    .permission-card-option:hover {
+        background-color: #ffffff;
+        border-color: #28a745;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
 
-    .permission-name {
-        font-size: 14px;
-        font-weight: 400;
-        color: #333;
-        user-select: none;
+    .permission-card-option.active {
+        background-color: #f2f9f4;
+        border-color: #28a745;
     }
 
-    .permission-checkbox:checked + .permission-name {
-        color: #28a745;
-        font-weight: 500;
+    .permission-card-option.active .permission-title {
+        color: #1e7e34 !important;
     }
 
-    .table td {
-        vertical-align: middle;
+    .sticky-footer-bar {
+        position: sticky;
+        bottom: 1rem;
+        background: #ffffff;
+        border: 1px solid #e0e6ed;
+        padding: 12px 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        z-index: 99;
+        margin-top: 30px;
     }
 
-    .badge {
-        font-size: 12px;
-        padding: 5px 12px;
-        border-radius: 4px;
-    }
-
-    .badge-success {
+    .status-indicator {
+        width: 8px;
+        height: 8px;
         background-color: #28a745;
-        color: #fff;
+        border-radius: 50%;
+        display: inline-block;
     }
 
-    .badge-secondary {
-        background-color: #6c757d;
-        color: #fff;
-    }
-
-    .btn-secondary {
-        background-color: #6c757d;
-        border-color: #6c757d;
-        color: #fff;
-    }
-
-    .btn-secondary:hover {
-        background-color: #5a6268;
-        border-color: #545b62;
-        color: #fff;
-    }
-
-    .mt-4 {
-        margin-top: 1.5rem !important;
+    .permission-card-option .custom-checkbox {
+        padding-left: 1.25rem;
     }
 </style>
-@endpush
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const globalSelectAll   = document.getElementById('global-select-all');
+        const groupSelectAlls   = document.querySelectorAll('.group-select-all');
+        const checkboxes        = document.querySelectorAll('.permission-checkbox');
+        const searchInput       = document.getElementById('permission-search');
+        const selectedCountEl   = document.getElementById('selected-count');
+        const noResultsEl       = document.getElementById('no-results');
+
+        function toggleOptionCardState(checkbox) {
+            const card = checkbox.closest('.permission-card-option');
+            if (card) {
+                if (checkbox.checked) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            }
+        }
+
+        function updateSelectedCount() {
+            const count = document.querySelectorAll('.permission-checkbox:checked').length;
+            selectedCountEl.textContent = count;
+        }
+
+        globalSelectAll.addEventListener('change', function () {
+            checkboxes.forEach(cb => {
+                if (!cb.closest('.permission-item').classList.contains('d-none')) {
+                    cb.checked = this.checked;
+                    toggleOptionCardState(cb);
+                }
+            });
+
+            groupSelectAlls.forEach(g => {
+                if (!g.closest('.permission-group').classList.contains('d-none')) {
+                    g.checked = this.checked;
+                    g.indeterminate = false;
+                }
+            });
+
+            updateSelectedCount();
+        });
+
+        groupSelectAlls.forEach(groupCb => {
+            groupCb.addEventListener('change', function () {
+                const group = this.dataset.group;
+                document.querySelectorAll(`.permission-checkbox[data-group="${group}"]`).forEach(cb => {
+                    if (!cb.closest('.permission-item').classList.contains('d-none')) {
+                        cb.checked = this.checked;
+                        toggleOptionCardState(cb);
+                    }
+                });
+                updateGlobalSelectAllState();
+                updateSelectedCount();
+            });
+        });
+
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', function () {
+                toggleOptionCardState(this);
+                updateGroupSelectAllState(this.dataset.group);
+                updateGlobalSelectAllState();
+                updateSelectedCount();
+            });
+        });
+
+        function updateGroupSelectAllState(group) {
+            const groupCbs = document.querySelectorAll(`.permission-checkbox[data-group="${group}"]`);
+            const groupSelect = document.querySelector(`.group-select-all[data-group="${group}"]`);
+            if (!groupSelect) return;
+
+            const visibleCbs = Array.from(groupCbs).filter(cb => !cb.closest('.permission-item').classList.contains('d-none'));
+            const checkedCount = visibleCbs.filter(cb => cb.checked).length;
+
+            groupSelect.checked = checkedCount === visibleCbs.length && visibleCbs.length > 0;
+            groupSelect.indeterminate = checkedCount > 0 && checkedCount < visibleCbs.length;
+        }
+
+        function updateGlobalSelectAllState() {
+            const visibleCbs = Array.from(checkboxes).filter(cb => !cb.closest('.permission-item').classList.contains('d-none'));
+            const checkedCount = visibleCbs.filter(cb => cb.checked).length;
+
+            globalSelectAll.checked = checkedCount === visibleCbs.length && visibleCbs.length > 0;
+            globalSelectAll.indeterminate = checkedCount > 0 && checkedCount < visibleCbs.length;
+        }
+
+        searchInput.addEventListener('input', function () {
+            const term = this.value.toLowerCase().trim();
+            let totalVisibleGroups = 0;
+
+            document.querySelectorAll('.permission-item').forEach(item => {
+                const name = item.dataset.name;
+                const display = item.dataset.display;
+                const match = name.includes(term) || display.includes(term);
+                item.classList.toggle('d-none', !match);
+            });
+
+            document.querySelectorAll('.permission-group').forEach(group => {
+                const visibleItems = group.querySelectorAll('.permission-item:not(.d-none)');
+                const isGroupVisible = visibleItems.length > 0;
+                group.classList.toggle('d-none', !isGroupVisible);
+                if (isGroupVisible) totalVisibleGroups++;
+            });
+
+            if (noResultsEl) {
+                noResultsEl.classList.toggle('d-none', totalVisibleGroups > 0);
+            }
+
+            groupSelectAlls.forEach(g => updateGroupSelectAllState(g.dataset.group));
+            updateGlobalSelectAllState();
+        });
+
+        checkboxes.forEach(cb => toggleOptionCardState(cb));
+        groupSelectAlls.forEach(g => updateGroupSelectAllState(g.dataset.group));
+        updateGlobalSelectAllState();
+        updateSelectedCount();
+    });
+</script>
+@endsection
