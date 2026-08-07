@@ -53,6 +53,8 @@
                                                 <th>Branch Code</th>
                                                 <th>Status</th>
                                                 <th>Created At</th>
+                                                <th>Created By</th>
+                                                <th>Updated By</th>
                                                 <th width="150">Action</th>
                                             </tr>
                                         </thead>
@@ -75,29 +77,43 @@
                                                         {{ $brand->created_at ? $brand->created_at->format('d M Y') : '-' }}
                                                     </td>
                                                     <td>
+                                                        {{ optional($brand->createdBy)->name ?? '-' }}
+                                                    </td>
+                                                    <td>
+                                                        {{ optional($brand->updatedBy)->name ?? '-' }}
+                                                    <td>
                                                         {{-- Edit --}}
                                                         <a href="{{ route('brands.edit', $brand->id) }}"
-                                                            class="btn btn-sm btn-primary" title="Edit">
+                                                            class="btn btn-sm btn-warning" title="Edit">
                                                             <i class="zmdi zmdi-edit"></i>
                                                         </a>
 
-                                                        {{-- Delete / Inactivate --}}
-                                                        <form action="{{ route('brands.destroy', $brand->id) }}"
-                                                            method="POST" class="d-inline delete-form" data-brand-name="{{ $brand->name }}">
+                                                        {{-- View --}}
+                                                        <a href="{{ route('brands.show', $brand->id) }}"
+                                                            class="btn btn-sm btn-info" title="View">
+                                                            <i class="zmdi zmdi-eye"></i>
+                                                        </a>
 
-                                                            @csrf
-                                                            @method('DELETE')
+                                                        {{-- Delete --}}
+                                                        @if($brand->status == 1)
+                                                            <form action="{{ route('brands.destroy', $brand->id) }}" method="POST"
+                                                                class="d-inline delete-form" data-brand-name="{{ $brand->name }}">
 
-                                                            <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
-                                                                <i class="zmdi zmdi-delete"></i>
-                                                            </button>
-                                                        </form>
+                                                                @csrf
+                                                                @method('DELETE')
+
+                                                                <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                                                    title="Delete">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @empty
                                                 <tr>
                                                     <td colspan="7" class="text-center">
-                                                        No branches found.
+                                                        No brands found.
                                                     </td>
                                                 </tr>
                                             @endforelse

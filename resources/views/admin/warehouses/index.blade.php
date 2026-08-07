@@ -3,133 +3,134 @@
 @section('title', 'Warehouse Management')
 
 @section('content')
-<section class="content">
-    <div class="body_scroll">
+    <section class="content">
+        <div class="body_scroll">
 
-        <!-- Block Header -->
-        <div class="block-header">
-            <div class="row">
-                <div class="col-lg-6 col-md-6 col-sm-12">
-                    <h2>Warehouse Management</h2>
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">
-                                <i class="zmdi zmdi-home"></i> Dashboard
-                            </a>
-                        </li>
-                        <li class="breadcrumb-item active">Warehouses</li>
-                    </ul>
-                </div>
+            <!-- Block Header -->
+            <div class="block-header">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
+                        <h2>Warehouse Management</h2>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="zmdi zmdi-home"></i> Dashboard
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active">Warehouses</li>
+                        </ul>
+                    </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                    <a href="{{ route('warehouses.create') }}" class="btn btn-primary">
-                        <i class="zmdi zmdi-plus"></i> Add Warehouse
-                    </a>
+                    <div class="col-lg-6 col-md-6 col-sm-12 text-right">
+                        <a href="{{ route('warehouses.create') }}" class="btn btn-primary">
+                            <i class="zmdi zmdi-plus"></i> Add Warehouse
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="container-fluid">
+            <div class="container-fluid">
 
-           
 
-            @if(session('error'))
-                <div class="alert alert-danger">
-                    {{ session('error') }}
-                </div>
-            @endif
 
-            <div class="row clearfix">
-                <div class="col-lg-12">
+                @if(session('error'))
+                    <div class="alert alert-danger">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
-                    <div class="card">
+                <div class="row clearfix">
+                    <div class="col-lg-12">
 
-                        <div class="header">
-                            <h2><strong>Warehouse</strong> List</h2>
-                        </div>
+                        <div class="card">
 
-                        <div class="body">
+                            <div class="header">
+                                <h2><strong>Warehouse</strong> List</h2>
+                            </div>
 
-                            <div class="table-responsive">
+                            <div class="body">
 
-                                <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                                <div class="table-responsive">
 
-                                    <thead>
-                                        <tr>
-                                            <th width="50">SrNo.</th>
-                                            <th>Code</th>
-                                            <th>Warehouse Name</th>
-                                            <th>Branch</th>
-                                            <th>Phone</th>
-                                            <th>City</th>
-                                            <th>Status</th>
-                                            <th width="150">Action</th>
-                                        </tr>
-                                    </thead>
+                                    <table
+                                        class="table table-bordered table-striped table-hover js-basic-example dataTable">
 
-                                    <tbody>
-
-                                        @forelse($warehouses as $key => $warehouse)
+                                        <thead>
                                             <tr>
-                                                <td>{{ $key + 1 }}</td>
-                                                <td><strong>{{ $warehouse->warehouse_code }}</strong></td>
-                                                <td>{{ $warehouse->warehouse_name }}</td>
-                                                <td>{{ $warehouse->branch->name ?? '-' }}</td>
-                                                <td>{{ $warehouse->phone ?? '-' }}</td>
-                                                <td>{{ $warehouse->city ?? '-' }}</td>
-                                                <td>
-                                                    @if($warehouse->status == 1)
-                                                        <span class="badge badge-success">Active</span>
-                                                    @else
-                                                        <span class="badge badge-danger">Inactive</span>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    {{-- Edit --}}
-                                                    <a href="{{ route('warehouses.edit', $warehouse->id) }}"
-                                                    class="btn btn-sm btn-primary"
-                                                    title="Edit">
-                                                        <i class="zmdi zmdi-edit"></i>
-                                                    </a>
-
-                                                    {{-- Delete / Inactivate --}}
-                                                    <form action="{{ route('warehouses.destroy', $warehouse->id) }}"
-                                                        method="POST"
-                                                        class="d-inline delete-form"
-                                                        data-warehouse-name="{{ $warehouse->warehouse_name }}">
-
-                                                        @csrf
-                                                        @method('DELETE')
-
-                                                        <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
-                                                            <i class="zmdi zmdi-delete"></i>
-                                                        </button>
-                                                    </form>
-                                                </td>
+                                                <th width="50">SrNo.</th>
+                                                <th>Code</th>
+                                                <th>Warehouse Name</th>
+                                                <th>Branch</th>
+                                                <th>Phone</th>
+                                                <th>City</th>
+                                                <th>Status</th>
+                                                <th width="150">Action</th>
                                             </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="8" class="text-center">
-                                                    No warehouses found.
-                                                </td>
-                                            </tr>
-                                        @endforelse
+                                        </thead>
 
-                                    </tbody>
+                                        <tbody>
 
-                                </table>
+                                            @forelse($warehouses as $key => $warehouse)
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td><strong>{{ $warehouse->warehouse_code }}</strong></td>
+                                                    <td>{{ $warehouse->warehouse_name }}</td>
+                                                    <td>{{ $warehouse->branch->name ?? '-' }}</td>
+                                                    <td>{{ $warehouse->phone ?? '-' }}</td>
+                                                    <td>{{ $warehouse->city ?? '-' }}</td>
+                                                    <td>
+                                                        @if($warehouse->status == 1)
+                                                            <span class="badge badge-success">Active</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Inactive</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        {{-- Edit --}}
+                                                        <a href="{{ route('warehouses.edit', $warehouse->id) }}"
+                                                            class="btn btn-sm btn-primary" title="Edit">
+                                                            <i class="zmdi zmdi-edit"></i>
+                                                        </a>
+
+                                                        {{-- Delete / Inactivate --}}
+                                                        <form action="{{ route('warehouses.destroy', $warehouse->id) }}"
+                                                            method="POST" class="d-inline delete-form"
+                                                            data-warehouse-name="{{ $warehouse->warehouse_name }}">
+
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            @if($warehouse->status == 1)
+                                                                <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                                                    title="Delete">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            @endif
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="8" class="text-center">
+                                                        No warehouses found.
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+
+                                        </tbody>
+
+                                    </table>
+
+                                </div>
 
                             </div>
 
                         </div>
 
                     </div>
-
                 </div>
+
             </div>
 
         </div>
-
-    </div>
-</section>
+    </section>
 @endsection
