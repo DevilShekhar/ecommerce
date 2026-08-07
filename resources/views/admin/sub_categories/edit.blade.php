@@ -135,6 +135,31 @@
 
                                     </div>
 
+                                    <div class="col-md-6">
+
+                                        <div class="form-group">
+
+                                            <label>
+                                                Status
+                                                <span class="text-danger">*</span>
+                                            </label>
+
+                                            <select
+                                                name="status"
+                                                class="form-control">
+
+                                                <option value="1" {{ old('status',$sub_category->status)==1 ? 'selected' : '' }}>
+                                                    Active
+                                                </option>
+
+                                                <option value="0" {{ old('status',$sub_category->status)==0 ? 'selected' : '' }}>
+                                                    Inactive
+                                                </option>
+
+                                            </select>
+
+                                        </div>
+
                                 </div>
 
                             </div>

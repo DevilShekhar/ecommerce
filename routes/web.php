@@ -9,7 +9,7 @@ use App\Http\Controllers\admin\WarehouseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\SubCategoryController;
+use App\Http\Controllers\admin\SubCategoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('branches', BranchController::class);
     Route::resource('warehouses', WarehouseController::class);
     Route::resource('product_categories', ProductCategoryController::class);
+    Route::resource('sub_categories', SubCategoryController::class);
 
 });
 require __DIR__.'/auth.php';
