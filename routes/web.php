@@ -11,6 +11,7 @@ use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\CouponController;
+use App\Http\Controllers\admin\ProductController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,7 +29,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('blogs', BlogController::class);
+   
 });
 Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
@@ -47,6 +48,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('sub_categories', SubCategoryController::class);
     Route::get('get-subcategories/{id}', [BrandController::class, 'getSubCategories']);
     Route::resource('coupons', CouponController::class);
+    Route::resource('blogs', BlogController::class);
+    Route::resource('products', ProductController::class);
+
+    // AJAX Route for Dependent SubCategories Dropdown
+    Route::get('get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])->name('get.subcategories');
+
 
 });
 require __DIR__.'/auth.php';

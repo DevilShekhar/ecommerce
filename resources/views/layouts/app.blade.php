@@ -9,6 +9,8 @@
     <title>{{ config('app.name', 'Ecommerce') }}</title>
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
+    <link rel="stylesheet" href="{{ asset('assets/plugins/summernote/dist/summernote.css') }}">
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap-select/css/bootstrap-select.css') }}">
@@ -357,11 +359,18 @@
                 </li>
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i
                             class="zmdi zmdi-assignment"></i><span>Projects</span></a>
+               <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-shopping-cart"></i>
+                        <span>Products</span>
+                    </a>
                     <ul class="ml-menu">
-                        <li><a href="project-list.html">Projects List</a></li>
-                        <li><a href="taskboard.html">Taskboard</a></li>
-                        <li><a href="ticket-list.html">Ticket List</a></li>
-                        <li><a href="ticket-detail.html">Ticket Detail</a></li>
+                        <li class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
+                            <a href="{{ route('products.index') }}">Products List</a>
+                        </li>
+                        <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
+                            <a href="{{ route('products.create') }}">Add Product</a>
+                        </li>
                     </ul>
                 </li>
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-folder"></i><span>File
@@ -780,7 +789,61 @@
             });
         });
     </script>
+
+
+<script>
+$(document).ready(function() {
+
+    // Global Event Delegation for Category Change
+    $(document).on('change', '#category_id', function() {
+        var categoryId = $(this).val();
+        var subCategoryDropdown = $('#sub_category_id');
+
+        // Reset Options
+        subCategoryDropdown.empty().append('<option value="">-- Select Sub Category --</option>');
+
+        // Refresh Selectpicker UI if active
+        if ($.fn.selectpicker) {
+            subCategoryDropdown.selectpicker('refresh');
+        }
+
+        if (categoryId) {
+            $.ajax({
+                url: "{{ url('get-subcategories') }}/" + categoryId,
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                    console.log("Subcategory Data Received:", data);
+
+                    if (data && data.length > 0) {
+                        $.each(data, function(key, value) {
+                            // Checks for 'name' or 'title' or 'sub_category_name'
+                            var displayName = value.name || value.title || value.sub_category_name || ('Sub Category #' + value.id);
+                            
+                            subCategoryDropdown.append('<option value="' + value.id + '">' + displayName + '</option>');
+                        });
+                    } else {
+                        subCategoryDropdown.append('<option value="">No Sub Category Found</option>');
+                    }
+
+                    // CRITICAL: Re-initialize Bootstrap Selectpicker to update dropdown UI
+                    if ($.fn.selectpicker) {
+                        subCategoryDropdown.selectpicker('refresh');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("AJAX Error: " + error);
+                }
+            });
+        }
+    });
+
+});
+</script>
+   
     @yield('scripts')
+
+    
 </body>
 
 </html>
