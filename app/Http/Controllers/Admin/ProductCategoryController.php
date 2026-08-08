@@ -25,6 +25,7 @@ class ProductCategoryController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all());
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:product_categories,name',
             'status' => 'nullable|boolean',
