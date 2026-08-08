@@ -1,4 +1,4 @@
-@can('sub_categories.index')
+@can('sub_categories-index')
 @extends('layouts.app')
 
 @section('title', 'Sub Categories')
@@ -64,7 +64,7 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td>{{ $subcategory->category->name ?? '-' }}</td>
                                     <td>{{ $subcategory->name }}</td>
-                                    
+
                                     {{-- Meta Title with hover --}}
                                     <td>
                                         <div class="text-truncate" style="max-width: 150px;" title="{{ $subcategory->meta_title ?? '-' }}">
@@ -87,13 +87,13 @@
                                     </td>
 
                                     <td>{{ $subcategory->creator->name ?? '-' }}</td>
-                                    
+
                                     <td>
                                         <span class="badge {{ $subcategory->status ? 'badge-success' : 'badge-danger' }}">
                                             {{ $subcategory->status ? 'Active' : 'Inactive' }}
                                         </span>
                                     </td>
-                                    
+
                                     <td>
                                         <a href="{{ route('sub_categories.edit', $subcategory->id) }}" class="btn btn-warning btn-sm">
                                             <i class="zmdi zmdi-edit"></i>
@@ -104,7 +104,7 @@
                                             @csrf
                                             @method('DELETE')
 
-                                            @if ($subcategory->status==1)  
+                                            @if ($subcategory->status==1)
                                             <button type="button" class="btn btn-sm btn-danger delete-btn" title="Delete">
                                                 <i class="zmdi zmdi-delete"></i>
                                             </button>
@@ -129,3 +129,8 @@
 </section>
 
 @endsection
+@else
+    @php
+        abort(403);
+    @endphp
+@endcan
