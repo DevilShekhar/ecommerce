@@ -1,5 +1,5 @@
 
-@can('users.create')
+@can('user-create')
 @extends('layouts.app')
 
 @section('title', 'Create User')
