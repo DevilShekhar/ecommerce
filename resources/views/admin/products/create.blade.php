@@ -65,13 +65,19 @@
 
                                     <!-- Sub Category -->
                                     <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label>Sub Category <span class="text-danger">*</span></label>
-                                            <select name="sub_category_id" id="sub_category_id" class="form-control" required>
-                                                <option value="">-- Select Sub Category --</option>
-                                            </select>
-                                        </div>
-                                    </div>
+    <div class="form-group">
+        <label>
+            Sub Category <span class="text-danger">*</span>
+        </label>
+
+        <select name="sub_category_id"
+                id="sub_category_id"
+                class="form-control"
+                required>
+            <option value="">-- Select Sub Category --</option>
+        </select>
+    </div>
+</div>
 
                                     <!-- Brand -->
                                     <div class="col-md-4">
@@ -136,14 +142,14 @@
                                     </div>
 
                                     <!-- Multiple Product Images -->
-                                    
+
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="font-weight-bold">Product Images (Multiple Allowed)</label>
-                                            
+
                                             <!-- File Input -->
                                             <input type="file" name="images[]" id="product_images" class="form-control" multiple accept="image/*" onchange="previewSelectedImages(this)">
-                                            
+
                                             <!-- Image Count Badge -->
                                             <div class="mt-2">
                                                 <span id="image_count" class="badge badge-info p-2" style="display: none; font-size: 13px;"></span>
@@ -228,7 +234,7 @@
 
     function previewSelectedImages(input) {
         var container = document.getElementById('image_preview_container');
-        
+
         // Add newly selected files to DataTransfer
         if (input.files && input.files.length > 0) {
             Array.from(input.files).forEach(function(file) {
@@ -264,10 +270,10 @@
 
                         thumbWrapper.innerHTML = `
                             <!-- Red Cross Button -->
-                            <button type="button" 
-                                    onclick="removeImage(${index})" 
-                                    class="btn btn-danger btn-sm p-0 position-absolute" 
-                                    style="top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; line-height: 18px; font-weight: bold;" 
+                            <button type="button"
+                                    onclick="removeImage(${index})"
+                                    class="btn btn-danger btn-sm p-0 position-absolute"
+                                    style="top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; line-height: 18px; font-weight: bold;"
                                     title="Remove image">
                                 &times;
                             </button>
@@ -304,4 +310,5 @@
         renderPreviews(); // Re-render preview grid & badge count
     }
 </script>
+
 

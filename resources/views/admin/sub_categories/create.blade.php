@@ -1,4 +1,4 @@
-@can('sub_categories.create')
+@can('sub_categories-create')
 @extends('layouts.app')
 
 @section('title', 'Create Sub Category')

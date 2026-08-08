@@ -1,4 +1,4 @@
-@can('sub_categories.edit')
+@can('sub_categories-edit')
 @extends('layouts.app')
 
 @section('title', 'Edit Sub Category')

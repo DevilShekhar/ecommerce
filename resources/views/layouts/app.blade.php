@@ -357,9 +357,8 @@
                     </ul>
                 </li>
                 </li>
-                <li> <a href="javascript:void(0);" class="menu-toggle"><i
-                            class="zmdi zmdi-assignment"></i><span>Projects</span></a>
-               <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
+                
+                <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="zmdi zmdi-shopping-cart"></i>
                         <span>Products</span>
@@ -791,59 +790,140 @@
     </script>
 
 
-<script>
-$(document).ready(function() {
+    {{--
+    <script>
+        $(document).ready(function () {
 
-    // Global Event Delegation for Category Change
-    $(document).on('change', '#category_id', function() {
-        var categoryId = $(this).val();
-        var subCategoryDropdown = $('#sub_category_id');
+            $('#category_id').on('change', function () {
 
-        // Reset Options
-        subCategoryDropdown.empty().append('<option value="">-- Select Sub Category --</option>');
+                let categoryId = $(this).val();
+                let subCategoryDropdown = $('#sub_category_id');
 
-        // Refresh Selectpicker UI if active
-        if ($.fn.selectpicker) {
-            subCategoryDropdown.selectpicker('refresh');
-        }
+                // Reset dropdown
+                subCategoryDropdown.empty();
 
-        if (categoryId) {
-            $.ajax({
-                url: "{{ url('get-subcategories') }}/" + categoryId,
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                    console.log("Subcategory Data Received:", data);
+                // Default option
+                subCategoryDropdown.append(
+                    $('<option>', {
+                        value: '',
+                        text: '-- Select Sub Category --'
+                    })
+                );
 
-                    if (data && data.length > 0) {
-                        $.each(data, function(key, value) {
-                            // Checks for 'name' or 'title' or 'sub_category_name'
-                            var displayName = value.name || value.title || value.sub_category_name || ('Sub Category #' + value.id);
-                            
-                            subCategoryDropdown.append('<option value="' + value.id + '">' + displayName + '</option>');
-                        });
-                    } else {
-                        subCategoryDropdown.append('<option value="">No Sub Category Found</option>');
-                    }
-
-                    // CRITICAL: Re-initialize Bootstrap Selectpicker to update dropdown UI
-                    if ($.fn.selectpicker) {
-                        subCategoryDropdown.selectpicker('refresh');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.log("AJAX Error: " + error);
+                if (!categoryId) {
+                    return;
                 }
-            });
-        }
-    });
 
-});
-</script>
-   
+                $.ajax({
+                    url: "{{ url('products/get-subcategories') }}/" + categoryId,
+                    type: "GET",
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        console.log('Received:', data);
+
+                        $.each(data, function (index, subcategory) {
+
+                            subCategoryDropdown.append(
+                                $('<option>', {
+                                    value: subcategory.id,
+                                    text: subcategory.name
+                                })
+                            );
+
+                        });
+
+                    },
+
+                    error: function (xhr) {
+                        console.log('Error:', xhr.status);
+                        console.log(xhr.responseText);
+                    }
+                });
+
+            });
+
+        });
+    </script> --}}
+    <script>
+        $(document).ready(function () {
+
+            $('#category_id').on('change', function () {
+
+                let categoryId = $(this).val();
+                let $subCategory = $('#sub_category_id');
+
+                // Reset
+                $subCategory.html(
+                    '<option value="">-- Select Sub Category --</option>'
+                );
+
+                if (!categoryId) {
+                    refreshSubCategory();
+                    return;
+                }
+
+                $.ajax({
+                    url: "{{ url('products/get-subcategories') }}/" + categoryId,
+                    type: "GET",
+                    dataType: "json",
+
+                    success: function (data) {
+
+                        console.log('SUBCATEGORY DATA:', data);
+
+                        $.each(data, function (index, item) {
+
+                            $subCategory.append(
+                                $('<option>', {
+                                    value: item.id,
+                                    text: item.name
+                                })
+                            );
+
+                        });
+
+                        // IMPORTANT: refresh dropdown plugin
+                        refreshSubCategory();
+
+                        console.log(
+                            'Dropdown options:',
+                            $subCategory.find('option').length
+                        );
+                    },
+
+                    error: function (xhr) {
+                        console.log('Subcategory Error:', xhr.responseText);
+                    }
+                });
+
+            });
+
+
+            function refreshSubCategory() {
+
+                let $subCategory = $('#sub_category_id');
+
+                // Bootstrap Select
+                if ($.fn.selectpicker) {
+                    $subCategory.selectpicker('refresh');
+                }
+
+                // Select2
+                if ($subCategory.hasClass('select2-hidden-accessible')) {
+                    $subCategory.trigger('change.select2');
+                }
+
+                // Bootstrap custom dropdown
+                $subCategory.trigger('change');
+            }
+
+        });
+    </script>
     @yield('scripts')
 
-    
+
 </body>
 
 </html>
