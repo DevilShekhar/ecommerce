@@ -1,5 +1,5 @@
 
-@can('users.edit')
+@can('user-edit')
 @extends('layouts.app')
 
 @section('title', 'Edit User')

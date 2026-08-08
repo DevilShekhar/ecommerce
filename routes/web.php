@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\admin\SubCategoryController;
+use App\Http\Controllers\admin\CouponController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -45,6 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('product_categories', ProductCategoryController::class);
     Route::resource('sub_categories', SubCategoryController::class);
     Route::get('get-subcategories/{id}', [BrandController::class, 'getSubCategories']);
+    Route::resource('coupons', CouponController::class);
 
 });
 require __DIR__.'/auth.php';

@@ -1,4 +1,4 @@
-@can('users.index')
+@can('user-index')
 @extends('layouts.app')
 
 @section('title', 'Users')
@@ -24,7 +24,7 @@
                     </div>
 
                     <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('users.create') }}" class="btn btn-success">
+                        <a href="{{ route('users.create') }}" class="btn btn-primary">
                             <i class="zmdi zmdi-plus"></i>
                             Create User
                         </a>

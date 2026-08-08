@@ -296,61 +296,64 @@
                     </div>
                 </li>
                 <li class="active open"><a href="index.html"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a>
-                </li>
+                    {{-- MASTER --}}
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="zmdi zmdi-settings"></i>
                         <span>Master</span>
                     </a>
-
                     <ul class="ml-menu">
-
                         @can('roles-index')
-                        <li>
-                            <a href="{{ route('roles.index') }}">Roles</a>
-                        </li>
+                            <li>
+                                <a href="{{ route('roles.index') }}">
+                                    <i class="zmdi zmdi-shield-security"></i>
+                                    Roles
+                                </a>
+                            </li>
                         @endcan
-
                         @can('user-index')
-                        <li>
-                            <a href="{{ route('users.index') }}">Users</a>
-                        </li>
+                            <li>
+                                <a href="{{ route('users.index') }}">
+                                    <i class="zmdi zmdi-account"></i>
+                                    Users
+                                </a>
+                            </li>
                         @endcan
-
-
-                        <!-- Categories -->
-                         
-                        <li>
-                            <a href="javascript:void(0);" class="menu-toggle">
-                                Categories
-                            </a>
-
-                            <ul class="ml-menu">
-                                @can('product_categories-index')
-                                <li>
-                                    <a href="{{ route('product_categories.index') }}">
-                                        Product Categories
-                                    </a>
-                                </li>
-                                @endcan
-
-                                @can('sub_categories-index')
-                                <li>
-                                    <a href="{{ route('sub_categories.index') }}">
-                                        Sub Categories
-                                    </a>
-                                </li>
-                                @endcan
-
-                                @can('brands-index')
-                                <li>
-                                    <a href="{{ route('brands.index') }}">Brands</a>
-                                </li>
-                                @endcan
-                            </ul>
-                        </li>
-
                     </ul>
+                </li>
+                {{-- CATEGORIES --}}
+                <li>
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-collection-item"></i>
+                        <span>Categories</span>
+                    </a>
+                    <ul class="ml-menu">
+                        @can('product_categories-index')
+                            <li>
+                                <a href="{{ route('product_categories.index') }}">
+                                    <i class="zmdi zmdi-view-list"></i>
+                                    Product Categories
+                                </a>
+                            </li>
+                        @endcan
+                        @can('sub_categories-index')
+                            <li>
+                                <a href="{{ route('sub_categories.index') }}">
+                                    <i class="zmdi zmdi-layers"></i>
+                                    Sub Categories
+                                </a>
+                            </li>
+                        @endcan
+                        @can('brands-index')
+                            <li>
+                                <a href="{{ route('brands.index') }}">
+                                    <i class="zmdi zmdi-label"></i>
+                                    Brands
+                                </a>
+                            </li>
+                        @endcan
+                    </ul>
+                </li>
                 </li>
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i
                             class="zmdi zmdi-assignment"></i><span>Projects</span></a>
