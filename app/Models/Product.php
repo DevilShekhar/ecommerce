@@ -73,4 +73,14 @@ class Product extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function pageSections()
+    {
+        return $this->belongsToMany(
+            PageSection::class,
+            'page_section_products',
+            'product_id',
+            'page_section_id'
+        )->withPivot('sort_order');
+    }
 }

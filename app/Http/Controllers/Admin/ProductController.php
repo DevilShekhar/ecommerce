@@ -188,13 +188,13 @@ class ProductController extends Controller
     /**
      * AJAX Endpoint: Fetch SubCategories based on selected Category ID.
      */
-public function getSubCategories($category_id)
-{
-    $subcategories = SubCategory::where('category_id', $category_id)
-        ->where('status', 1)
-        ->select('id', 'name')
-        ->get();
+    public function getSubCategories($category_id)
+    {
+        $subcategories = SubCategory::where('category_id', $category_id)
+            ->where('status', 1)
+            ->select('id', 'name')
+            ->get();
 
-    return response()->json($subcategories);
-}
+        return response()->json($subcategories);
+    }
 }

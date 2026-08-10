@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/morrisjs/morris.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
     {{-- Swal css Link --}}
     <link rel="stylesheet" href="{{ asset('assets/admin/css/swal.css') }}">
     <style>
@@ -357,7 +358,7 @@
                     </ul>
                 </li>
                 </li>
-                
+
                 <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="zmdi zmdi-shopping-cart"></i>
@@ -369,6 +370,23 @@
                         </li>
                         <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
                             <a href="{{ route('products.create') }}">Add Product</a>
+                        </li>
+                    </ul>
+                </li>
+
+                {{-- PAGES --}}
+                <li>
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-file-text"></i>
+                        <span>Website Pages</span>
+                    </a>
+
+                    <ul class="ml-menu">
+                        <li>
+                            <a href="{{ route('admin.pages.index') }}">
+                                <i class="zmdi zmdi-view-list"></i>
+                                Manage Pages
+                            </a>
                         </li>
                     </ul>
                 </li>
