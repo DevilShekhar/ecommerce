@@ -3,12 +3,15 @@
 use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CouponController;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\WarehouseController;
+use App\Http\Controllers\Frontend\PageController as FrontendPageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
@@ -52,8 +55,49 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
 
     // AJAX Route for Dependent SubCategories Dropdown
-   Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])
-    ->name('products.get.subcategories');
+    Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])
+        ->name('products.get.subcategories');
 
+    Route::prefix('admin')
+        ->middleware(['auth'])
+        ->name('admin.')
+        ->group(function () {
+
+            Route::resource('pages', PageController::class);
+
+            Route::get(
+                'pages/{page}/sections',
+                [PageSectionController::class, 'index']
+            )->name('pages.sections.index');
+
+            Route::get(
+                'pages/{page}/sections/create',
+                [PageSectionController::class, 'create']
+            )->name('pages.sections.create');
+
+            Route::post(
+                'pages/{page}/sections',
+                [PageSectionController::class, 'store']
+            )->name('pages.sections.store');
+
+            Route::get(
+                'pages/{page}/sections/{section}/edit',
+                [PageSectionController::class, 'edit']
+            )->name('pages.sections.edit');
+
+            Route::put(
+                'pages/{page}/sections/{section}',
+                [PageSectionController::class, 'update']
+            )->name('pages.sections.update');
+
+            Route::delete(
+                'pages/{page}/sections/{section}',
+                [PageSectionController::class, 'destroy']
+            )->name('pages.sections.destroy');
+        });
 });
 require __DIR__.'/auth.php';
+
+Route::get('/{slug}', [FrontendPageController::class, 'show'])
+    ->where('slug', '.*')
+    ->name('frontend.page');

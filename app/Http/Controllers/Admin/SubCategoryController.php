@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductCategory;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SubCategoryController extends Controller
 {
@@ -31,8 +32,8 @@ class SubCategoryController extends Controller
         ]);
 
         // Attach logged-in User ID
-        $subcategory['created_by'] = auth()->id();
-        $subcategory['updated_by'] = auth()->id();
+        $subcategory['created_by'] = Auth::id();
+        $subcategory['updated_by'] = Auth::id();
 
         SubCategory::create($subcategory);
 
@@ -75,7 +76,7 @@ class SubCategoryController extends Controller
     {
         $sub_category->update([
             'status' => 0,
-            'updated_by' => auth()->id(),
+            'updated_by' => Auth::id(),
         ]);
 
         return redirect()->route('sub_categories.index')
