@@ -15,8 +15,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
 
 
     @stack('styles')
@@ -25,24 +26,38 @@
 <body>
 
     <!-- ================= NAVBAR ================= -->
-    <header class="site-navbar" id="siteNavbar">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <!-- ================= NAVBAR ================= -->
+<header class="site-navbar">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
 
-                <a href="{{ url('/home') }}" class="site-logo">
-                    My Website
-                </a>
+            <a href="{{ url('/home') }}" class="site-logo">
+                @php
+                    $footerSection = \App\Models\PageSection::where('section_type', 'footer')
+                        ->where('status', 1)
+                        ->first();
+                @endphp
+                
+                <div class="logo-wrapper">
+                    @if($footerSection && $footerSection->logo)
+                        <img src="{{ asset('storage/' . $footerSection->logo) }}" 
+                             alt="{{ $footerSection->title ?? 'Logo' }}" 
+                             style="max-height: 50px; width: auto;">
+                    @endif
+                    <span class="logo-text">E-Commerce</span>
+                </div>
+            </a>
 
-                <nav class="site-nav">
-                    <a href="{{ url('/home') }}">Home</a>
-                    <a href="{{ url('/about-us') }}">About Us</a>
-                    <a href="{{ url('/services') }}">Services</a>
-                    <a href="{{ url('/contact-us') }}">Contact</a>
-                </nav>
+            <nav class="site-nav">
+                <a href="{{ url('/home') }}">Home</a>
+                <a href="{{ url('/about-us') }}">About Us</a>
+                <a href="{{ url('/all-product') }}">Your Products</a>
+                <a href="{{ url('/contact-us') }}">Contact</a>
+            </nav>
 
-            </div>
         </div>
-    </header>
+    </div>
+</header>
 
 
     <!-- ================= CONTENT ================= -->

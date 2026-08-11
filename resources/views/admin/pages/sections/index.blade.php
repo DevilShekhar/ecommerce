@@ -208,7 +208,7 @@
 
                                                 <span
                                                     class="badge badge-secondary"
-                                                    style="font-size:13px;"
+                                                    style="font-size:13px; color: black;"
                                                 >
 
                                                     #{{ $section->sort_order }}

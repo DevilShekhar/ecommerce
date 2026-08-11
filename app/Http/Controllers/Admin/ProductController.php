@@ -53,7 +53,7 @@ class ProductController extends Controller
             'variants' => 'nullable|string',
             'specification' => 'nullable|string',
             'is_futured' => 'required|in:0,1,2',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'nullable|image|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -179,7 +179,9 @@ class ProductController extends Controller
             }
         }
 
-        $product->delete();
+        $product->update([
+            'status' => 0,
+        ]);
 
         return redirect()->route('products.index')
             ->with('success', 'Product deleted successfully.');
@@ -190,7 +192,7 @@ class ProductController extends Controller
      */
     public function getSubCategories($category_id)
     {
-        $subcategories = SubCategory::where('category_id', $category_id)
+        $subcategories = SubCategory::query()->where('category_id', $category_id)
             ->where('status', 1)
             ->select('id', 'name')
             ->get();

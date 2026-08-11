@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
+use App\Http\Controllers\admin\ContactSubmissionController;
 use App\Http\Controllers\admin\CouponController;
-use App\Http\Controllers\Admin\PageController;
-use App\Http\Controllers\Admin\PageSectionController;
+use App\Http\Controllers\admin\PageController;
+use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\admin\RoleController;
@@ -62,42 +63,20 @@ Route::middleware('auth')->group(function () {
         ->middleware(['auth'])
         ->name('admin.')
         ->group(function () {
-
             Route::resource('pages', PageController::class);
-
-            Route::get(
-                'pages/{page}/sections',
-                [PageSectionController::class, 'index']
-            )->name('pages.sections.index');
-
-            Route::get(
-                'pages/{page}/sections/create',
-                [PageSectionController::class, 'create']
-            )->name('pages.sections.create');
-
-            Route::post(
-                'pages/{page}/sections',
-                [PageSectionController::class, 'store']
-            )->name('pages.sections.store');
-
-            Route::get(
-                'pages/{page}/sections/{section}/edit',
-                [PageSectionController::class, 'edit']
-            )->name('pages.sections.edit');
-
-            Route::put(
-                'pages/{page}/sections/{section}',
-                [PageSectionController::class, 'update']
-            )->name('pages.sections.update');
-
-            Route::delete(
-                'pages/{page}/sections/{section}',
-                [PageSectionController::class, 'destroy']
-            )->name('pages.sections.destroy');
+            Route::get('pages/{page}/sections', [PageSectionController::class, 'index'])->name('pages.sections.index');
+            Route::get('pages/{page}/sections/create', [PageSectionController::class, 'create'])->name('pages.sections.create');
+            Route::post('pages/{page}/sections', [PageSectionController::class, 'store'])->name('pages.sections.store');
+            Route::get('pages/{page}/sections/{section}/edit', [PageSectionController::class, 'edit'])->name('pages.sections.edit');
+            Route::put('pages/{page}/sections/{section}', [PageSectionController::class, 'update'])->name('pages.sections.update');
+            Route::delete('pages/{page}/sections/{section}', [PageSectionController::class, 'destroy'])->name('pages.sections.destroy');
         });
+    Route::get('contact-submissions',[ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
+    Route::get('contact-submissions/{submission}',[ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
 });
 require __DIR__.'/auth.php';
 
 Route::get('/{slug}', [FrontendPageController::class, 'show'])
     ->where('slug', '.*')
     ->name('frontend.page');
+Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionController::class, 'store'])->name('frontend.contact.submit');
