@@ -385,11 +385,21 @@
                         <li>
                             <a href="{{ route('admin.pages.index') }}">
                                 <i class="zmdi zmdi-view-list"></i>
-                                Manage Pages
+                                Manage Your Site
                             </a>
                         </li>
                     </ul>
                 </li>
+                @if(auth()->user()->role?->name === 'SuperAdmin')
+
+                    <li>
+                        <a href="{{ route('admin.contact-submissions.index') }}">
+                            <i class="zmdi zmdi-email"></i>
+                            <span>Contact Submissions</span>
+                        </a>
+                    </li>
+
+                @endif
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-folder"></i><span>File
                             Manager</span></a>
                     <ul class="ml-menu">

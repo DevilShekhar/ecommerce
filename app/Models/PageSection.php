@@ -21,6 +21,12 @@ class PageSection extends Model
         'settings',
         'sort_order',
         'status',
+        'faqs',
+        'form_fields',
+        'form_action',
+        'form_method',
+        'addresses', 
+        'logo', 
     ];
 
     protected $casts = [
