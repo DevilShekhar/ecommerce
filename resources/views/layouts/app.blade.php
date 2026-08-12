@@ -11,7 +11,7 @@
     <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/summernote/dist/summernote.css') }}">
 
-<script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
+    <script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
@@ -292,7 +292,7 @@
             <ul class="list">
                 <li>
                     <div class="user-info">
-                        <a class="image" href="profile.html"><img
+                        <a class="image" href="{{ 'profile' }}"><img
                                 src="{{ asset('assets/admin/images/profile_av.jpg') }}" alt="User"></a>
                         <div class="detail">
                             <h4>{{ Auth::user()->name }}</h4>
@@ -300,7 +300,8 @@
                         </div>
                     </div>
                 </li>
-                <li class="active open"><a href="index.html"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a>
+                <li class="active open"><a href="{{ route('dashboard') }}"><i
+                            class="zmdi zmdi-home"></i><span>Dashboard</span></a>
                     {{-- MASTER --}}
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
@@ -372,6 +373,27 @@
                                 </a>
                             </li>
                         @endcan
+                    </ul>
+                </li>
+                <li>
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-local-offer"></i>
+                        <span>Offers</span>
+                    </a>
+
+                    <ul class="ml-menu">
+                            <li>
+                                <a href="{{ route('admin.offer-category.index') }}">
+                                    <i class="zmdi zmdi-collection-item"></i>
+                                    Offer Categories
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.offer.index') }}">
+                                    <i class="zmdi zmdi-local-offer"></i>
+                                    Offers
+                                </a>
+                            </li>
                     </ul>
                 </li>
                 </li>
@@ -914,6 +936,7 @@
 
         });
     </script>
+
     @yield('scripts')
     @stack('scripts')
 

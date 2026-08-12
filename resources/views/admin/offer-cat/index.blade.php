@@ -98,10 +98,10 @@
                         </div>
                         <div class="body">
                             <div class="table-responsive">
-                                <table class="table table-hover table-bordered">
+                                <table class="table table-hover table-bordered" id="datatable">
                                     <thead>
                                         <tr>
-                                            <th width="60">#</th>
+                                            <th width="60">SrNo.</th>
                                             <th>Name</th>
                                             <th width="120">Status</th>
                                             <th width="160" class="text-center">Action</th>

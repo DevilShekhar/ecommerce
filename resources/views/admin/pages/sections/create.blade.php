@@ -66,13 +66,12 @@
                                                 <option value="hero" {{ old('section_type') == 'hero' ? 'selected' : '' }}>Hero</option>
                                                 <option value="about" {{ old('section_type') == 'about' ? 'selected' : '' }}>About</option>
                                                 <option value="services" {{ old('section_type') == 'services' ? 'selected' : '' }}>Services</option>
-                                                <option value="features" {{ old('section_type') == 'features' ? 'selected' : '' }}>Features</option>
-                                                <option value="testimonials" {{ old('section_type') == 'testimonials' ? 'selected' : '' }}>Testimonials</option>
-                                                <option value="cta" {{ old('section_type') == 'cta' ? 'selected' : '' }}>CTA</option>
                                                 <option value="faq" {{ old('section_type') == 'faq' ? 'selected' : '' }}>FAQ</option>
                                                 <option value="products" {{ old('section_type') == 'products' ? 'selected' : '' }}>Products</option>
                                                 <option value="contact" {{ old('section_type') == 'contact' ? 'selected' : '' }}>Contact Form</option>
                                                 <option value="footer" {{ old('section_type') == 'footer' ? 'selected' : '' }}>Footer</option>
+                                                <option value="privacy_policy" {{ old('section_type') == 'privacy_policy' ? 'selected' : '' }}>Privacy & Policy</option>
+                                                <option value="disclaimer" {{ old('section_type') == 'disclaimer' ? 'selected' : '' }}>Disclaimer</option>
                                             </select>
                                             @error('section_type')
                                                 <span class="invalid-feedback" role="alert">
@@ -452,14 +451,14 @@
                                 <h2><strong>Footer</strong> Configuration</h2>
                             </div>
                             <div class="body">
-                                
+
                                 <!-- Logo -->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Footer Logo</label>
-                                            <input type="file" name="logo" 
-                                                class="form-control" 
+                                            <input type="file" name="logo"
+                                                class="form-control"
                                                 accept="image/jpeg,image/png,image/jpg,image/webp,image/svg+xml">
                                             <small class="text-muted">Upload logo for footer (Recommended: PNG or SVG)</small>
                                         </div>
@@ -472,23 +471,23 @@
                                     <div id="addresses_container">
                                         <div class="address-item row mb-3" data-index="0">
                                             <div class="col-md-12">
-                                                <input type="text" name="addresses[0][address]" 
-                                                    class="form-control mb-2" 
+                                                <input type="text" name="addresses[0][address]"
+                                                    class="form-control mb-2"
                                                     placeholder="Street Address">
                                             </div>
                                             <div class="col-md-4">
-                                                <input type="text" name="addresses[0][city]" 
-                                                    class="form-control" 
+                                                <input type="text" name="addresses[0][city]"
+                                                    class="form-control"
                                                     placeholder="City">
                                             </div>
                                             <div class="col-md-4">
-                                                <input type="text" name="addresses[0][state]" 
-                                                    class="form-control" 
+                                                <input type="text" name="addresses[0][state]"
+                                                    class="form-control"
                                                     placeholder="State/Province">
                                             </div>
                                             <div class="col-md-2">
-                                                <input type="text" name="addresses[0][zip]" 
-                                                    class="form-control" 
+                                                <input type="text" name="addresses[0][zip]"
+                                                    class="form-control"
                                                     placeholder="Zip/Postal">
                                             </div>
                                             <div class="col-md-1">
@@ -497,8 +496,8 @@
                                                 </button>
                                             </div>
                                             <div class="col-md-12 mt-2">
-                                                <input type="text" name="addresses[0][country]" 
-                                                    class="form-control" 
+                                                <input type="text" name="addresses[0][country]"
+                                                    class="form-control"
                                                     placeholder="Country">
                                             </div>
                                         </div>
@@ -508,6 +507,142 @@
                                     </button>
                                 </div>
 
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =====================================
+                        PRIVACY & POLICY SECTION (Hidden by default)
+                    ====================================== -->
+                    <div class="col-lg-12" id="privacy_policy_section" style="display: none;">
+                        <div class="card">
+                            <div class="header">
+                                <h2><strong>Privacy & Policy</strong> Configuration</h2>
+                            </div>
+                            <div class="body">
+
+                                <!-- Privacy Content -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Privacy Content</label>
+                                            <textarea name="privacy_content" rows="6"
+                                                    class="form-control @error('privacy_content') is-invalid @enderror"
+                                                    placeholder="Enter privacy policy content...">{{ old('privacy_content') }}</textarea>
+                                            @error('privacy_content')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Terms Content -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Terms & Conditions Content</label>
+                                            <textarea name="terms_content" rows="6"
+                                                    class="form-control @error('terms_content') is-invalid @enderror"
+                                                    placeholder="Enter terms & conditions content...">{{ old('terms_content') }}</textarea>
+                                            @error('terms_content')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Policy Content -->
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Policy Content</label>
+                                            <textarea name="policy_content" rows="6"
+                                                    class="form-control @error('policy_content') is-invalid @enderror"
+                                                    placeholder="Enter policy content...">{{ old('policy_content') }}</textarea>
+                                            @error('policy_content')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Policy Sections Repeater -->
+                                <div class="form-group">
+                                    <label>Policy Sections</label>
+                                    <div id="policy_sections_container">
+                                        <div class="policy-section-item row mb-3" data-index="0">
+                                            <div class="col-md-5">
+                                                <input type="text" name="policy_sections[0][title]"
+                                                    class="form-control"
+                                                    placeholder="Section Title">
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" name="policy_sections[0][content]"
+                                                    class="form-control"
+                                                    placeholder="Section Content">
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="btn btn-danger remove-policy-section" style="width:100%;">
+                                                    <i class="zmdi zmdi-close"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="add_policy_section">
+                                        <i class="zmdi zmdi-plus"></i> Add Policy Section
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =====================================
+                        DISCLAIMER SECTION (Hidden by default)
+                    ====================================== -->
+                    <div class="col-lg-12" id="disclaimer_section" style="display: none;">
+                        <div class="card">
+                            <div class="header">
+                                <h2><strong>Disclaimer</strong> Configuration</h2>
+                            </div>
+                            <div class="body">
+                                <div class="row">
+                                    <!-- Title -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Disclaimer Title</label>
+                                            <input type="text" name="disclaimer_title"
+                                                class="form-control @error('disclaimer_title') is-invalid @enderror"
+                                                placeholder="Enter Disclaimer Title"
+                                                value="{{ old('disclaimer_title') }}">
+                                            @error('disclaimer_title')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <!-- Description (Summernote) -->
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Disclaimer Description</label>
+                                            <textarea name="disclaimer_description" rows="8"
+                                                    class="form-control summernote @error('disclaimer_description') is-invalid @enderror"
+                                                    placeholder="Enter disclaimer description...">{{ old('disclaimer_description') }}</textarea>
+                                            @error('disclaimer_description')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -612,12 +747,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const faqSection = document.getElementById('faq_section');
     const contactSection = document.getElementById('contact_section');
     const footerSection = document.getElementById('footer_section');
+    const heroImagesSection = document.getElementById('hero_images_section');
+    const privacyPolicySection = document.getElementById('privacy_policy_section');
+    const disclaimerSection = document.getElementById('disclaimer_section');
+
 
     // =============================================
     // Toggle Sections
     // =============================================
-   const heroImagesSection = document.getElementById('hero_images_section');
-
     function toggleSections() {
         const selectedType = sectionType.value;
 
@@ -628,6 +765,8 @@ document.addEventListener('DOMContentLoaded', function() {
         contactSection.style.display = 'none';
         footerSection.style.display = 'none';
         heroImagesSection.style.display = 'none';
+        privacyPolicySection.style.display = 'none';
+        disclaimerSection.style.display = 'none';
 
         // Show relevant section based on type
         if (selectedType === 'testimonials') {
@@ -642,7 +781,91 @@ document.addEventListener('DOMContentLoaded', function() {
             footerSection.style.display = 'block';
         } else if (selectedType === 'hero') {
             heroImagesSection.style.display = 'block';
+        } else if (selectedType === 'privacy_policy') {
+            privacyPolicySection.style.display = 'block';
+        } else if (selectedType === 'disclaimer') {
+            disclaimerSection.style.display = 'block';
         }
+    }
+
+    // =============================================
+    // Hero Images Repeater
+    // =============================================
+    function initHeroImagesRepeater() {
+        const container = document.getElementById('hero_images_container');
+        if (!container) return;
+        let imageCount = container.children.length;
+
+        document.getElementById('add_hero_image')?.addEventListener('click', function() {
+            const newItem = container.querySelector('.hero-image-item').cloneNode(true);
+            const index = imageCount++;
+
+            newItem.querySelectorAll('input').forEach(el => {
+                const name = el.getAttribute('name');
+                if (name) {
+                    el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                    el.value = '';
+                }
+            });
+
+            const removeBtn = newItem.querySelector('.remove-hero-image');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    if (container.children.length > 1) {
+                        this.closest('.hero-image-item').remove();
+                    }
+                });
+            }
+            container.appendChild(newItem);
+        });
+
+        document.querySelectorAll('.remove-hero-image').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (container.children.length > 1) {
+                    this.closest('.hero-image-item').remove();
+                }
+            });
+        });
+    }
+
+    // =============================================
+    // Policy Sections Repeater
+    // =============================================
+    function initPolicySectionsRepeater() {
+        const container = document.getElementById('policy_sections_container');
+        if (!container) return;
+        let sectionCount = container.children.length;
+
+        document.getElementById('add_policy_section')?.addEventListener('click', function() {
+            const newItem = container.querySelector('.policy-section-item').cloneNode(true);
+            const index = sectionCount++;
+
+            newItem.querySelectorAll('input').forEach(el => {
+                const name = el.getAttribute('name');
+                if (name) {
+                    el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                    el.value = '';
+                }
+            });
+
+            const removeBtn = newItem.querySelector('.remove-policy-section');
+            if (removeBtn) {
+                removeBtn.addEventListener('click', function() {
+                    if (container.children.length > 1) {
+                        this.closest('.policy-section-item').remove();
+                    }
+                });
+            }
+            container.appendChild(newItem);
+        });
+
+        document.querySelectorAll('.remove-policy-section').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (container.children.length > 1) {
+                    this.closest('.policy-section-item').remove();
+                }
+            });
+        });
     }
 
     // =============================================
@@ -650,6 +873,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
     function initTestimonialsRepeater() {
         const container = document.getElementById('testimonials_container');
+        if (!container) return;
         let testimonialCount = container.children.length;
 
         document.getElementById('add_testimonial')?.addEventListener('click', function() {
@@ -672,7 +896,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-
             container.appendChild(newItem);
         });
 
@@ -690,6 +913,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
     function initFaqRepeater() {
         const container = document.getElementById('faq_container');
+        if (!container) return;
         let faqCount = container.children.length;
 
         document.getElementById('add_faq')?.addEventListener('click', function() {
@@ -712,7 +936,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-
             container.appendChild(newItem);
         });
 
@@ -730,13 +953,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
     function initFormFieldsRepeater() {
         const container = document.getElementById('form_fields_container');
+        if (!container) return;
         let fieldCount = container.children.length;
 
-        // Show/hide options based on field type
         function toggleOptionsVisibility(fieldItem) {
             const typeSelect = fieldItem.querySelector('select[name$="[type]"]');
             const optionsDiv = fieldItem.querySelector('.form-field-options');
-
             if (typeSelect) {
                 const type = typeSelect.value;
                 if (type === 'select' || type === 'checkbox' || type === 'radio') {
@@ -747,12 +969,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        // Add Form Field
         document.getElementById('add_form_field')?.addEventListener('click', function() {
             const newItem = container.querySelector('.form-field-item').cloneNode(true);
             const index = fieldCount++;
 
-            // Clear values and update indexes
             newItem.querySelectorAll('input, select, textarea').forEach(el => {
                 const name = el.getAttribute('name');
                 if (name) {
@@ -763,11 +983,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
 
-            // Reset checkbox
             const checkbox = newItem.querySelector('input[type="checkbox"]');
             if (checkbox) checkbox.checked = false;
 
-            // Update remove button
             const removeBtn = newItem.querySelector('.remove-form-field');
             if (removeBtn) {
                 removeBtn.addEventListener('click', function() {
@@ -777,19 +995,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
-            // Add event listener for type change
             const typeSelect = newItem.querySelector('select[name$="[type]"]');
             if (typeSelect) {
                 typeSelect.addEventListener('change', function() {
                     toggleOptionsVisibility(this.closest('.form-field-item'));
                 });
             }
-
             container.appendChild(newItem);
             toggleOptionsVisibility(newItem);
         });
 
-        // Remove Form Field
         document.querySelectorAll('.remove-form-field').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (container.children.length > 1) {
@@ -798,7 +1013,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
 
-        // Initialize type change listeners
         document.querySelectorAll('select[name$="[type]"]').forEach(select => {
             select.addEventListener('change', function() {
                 toggleOptionsVisibility(this.closest('.form-field-item'));
@@ -812,9 +1026,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
     function initAddressesRepeater() {
         const container = document.getElementById('addresses_container');
+        if (!container) return;
         let addressCount = container.children.length;
 
-        // Add Address
         document.getElementById('add_address')?.addEventListener('click', function() {
             const newItem = container.querySelector('.address-item').cloneNode(true);
             const index = addressCount++;
@@ -835,11 +1049,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-
             container.appendChild(newItem);
         });
 
-        // Remove Address
         document.querySelectorAll('.remove-address').forEach(btn => {
             btn.addEventListener('click', function() {
                 if (container.children.length > 1) {
@@ -856,11 +1068,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize all on page load
     toggleSections();
+    initHeroImagesRepeater();
+    initPolicySectionsRepeater();
     initTestimonialsRepeater();
     initFaqRepeater();
     initFormFieldsRepeater();
     initAddressesRepeater();
-    initHeroImagesRepeater();
 
     // =============================================
     // Form Validation
@@ -1002,47 +1215,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
-// =============================================
-// Hero Images Repeater
-// =============================================
-function initHeroImagesRepeater() {
-    const container = document.getElementById('hero_images_container');
-    let imageCount = container.children.length;
-
-    // Add Hero Image
-    document.getElementById('add_hero_image')?.addEventListener('click', function() {
-        const newItem = container.querySelector('.hero-image-item').cloneNode(true);
-        const index = imageCount++;
-
-        newItem.querySelectorAll('input').forEach(el => {
-            const name = el.getAttribute('name');
-            if (name) {
-                el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
-                el.value = '';
-            }
-        });
-
-        const removeBtn = newItem.querySelector('.remove-hero-image');
-        if (removeBtn) {
-            removeBtn.addEventListener('click', function() {
-                if (container.children.length > 1) {
-                    this.closest('.hero-image-item').remove();
-                }
-            });
-        }
-
-        container.appendChild(newItem);
-    });
-
-    // Remove Hero Image
-    document.querySelectorAll('.remove-hero-image').forEach(btn => {
-        btn.addEventListener('click', function() {
-            if (container.children.length > 1) {
-                this.closest('.hero-image-item').remove();
-            }
-        });
-    });
-}
 </script>
 
 @endsection
