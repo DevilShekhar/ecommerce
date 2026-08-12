@@ -9,7 +9,9 @@
     <title>{{ config('app.name', 'Ecommerce') }}</title>
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="{{ asset('assets/plugins/summernote/dist/summernote.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/plugins/summernote/dist/summernote.css') }}">
+
+<script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
@@ -324,6 +326,21 @@
                         @endcan
                     </ul>
                 </li>
+                <li class="{{ request()->routeIs('coupons.*') ? 'active open' : '' }}">
+                    <a href="javascript:void(0);" class="menu-toggle">
+                        <i class="zmdi zmdi-ticket-star"></i>
+                        <span>Coupons</span>
+                    </a>
+                    <ul class="ml-menu">
+                        <li class="{{ request()->routeIs('coupons.index') ? 'active' : '' }}">
+                            <a href="{{ route('coupons.index') }}">Coupons List</a>
+                        </li>
+                        <li class="{{ request()->routeIs('coupons.create') ? 'active' : '' }}">
+                            <a href="{{ route('coupons.create') }}">Add Coupon</a>
+                        </li>
+                    </ul>
+                </li>
+
                 {{-- CATEGORIES --}}
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
@@ -386,6 +403,13 @@
                             <a href="{{ route('admin.pages.index') }}">
                                 <i class="zmdi zmdi-view-list"></i>
                                 Manage Your Site
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{{ route('logos.index') }}">
+                                <i class="zmdi zmdi-image"></i>
+                                Logo & Favicon
                             </a>
                         </li>
                     </ul>
@@ -788,11 +812,10 @@
                     e.preventDefault();
 
                     const form = this.closest('.delete-form');
-                    const userName = form.dataset.userName || 'this user';
 
                     Swal.fire({
                         title: 'Are you sure?',
-                        text: `You are about to delete "${userName}". This action cannot be undone!`,
+                        text: `You are about to delete? This action cannot be undone!`,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#d33',
@@ -816,64 +839,6 @@
             });
         });
     </script>
-
-
-    {{--
-    <script>
-        $(document).ready(function () {
-
-            $('#category_id').on('change', function () {
-
-                let categoryId = $(this).val();
-                let subCategoryDropdown = $('#sub_category_id');
-
-                // Reset dropdown
-                subCategoryDropdown.empty();
-
-                // Default option
-                subCategoryDropdown.append(
-                    $('<option>', {
-                        value: '',
-                        text: '-- Select Sub Category --'
-                    })
-                );
-
-                if (!categoryId) {
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ url('products/get-subcategories') }}/" + categoryId,
-                    type: "GET",
-                    dataType: "json",
-
-                    success: function (data) {
-
-                        console.log('Received:', data);
-
-                        $.each(data, function (index, subcategory) {
-
-                            subCategoryDropdown.append(
-                                $('<option>', {
-                                    value: subcategory.id,
-                                    text: subcategory.name
-                                })
-                            );
-
-                        });
-
-                    },
-
-                    error: function (xhr) {
-                        console.log('Error:', xhr.status);
-                        console.log(xhr.responseText);
-                    }
-                });
-
-            });
-
-        });
-    </script> --}}
     <script>
         $(document).ready(function () {
 
@@ -950,6 +915,7 @@
         });
     </script>
     @yield('scripts')
+    @stack('scripts')
 
 
 </body>

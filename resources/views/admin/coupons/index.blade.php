@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="body table-responsive">
-                                <table class="table table-bordered table-striped table-hover">
+                                <table class="table table-bordered table-striped table-hover" id="datatable">
                                     <thead>
                                         <tr>
                                             <th>SrNo.</th>

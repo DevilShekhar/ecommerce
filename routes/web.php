@@ -4,6 +4,9 @@ use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ContactSubmissionController;
 use App\Http\Controllers\admin\CouponController;
+use App\Http\Controllers\admin\LogoController;
+use App\Http\Controllers\admin\OfferCategoryController;
+use App\Http\Controllers\admin\OfferController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
@@ -70,9 +73,17 @@ Route::middleware('auth')->group(function () {
             Route::get('pages/{page}/sections/{section}/edit', [PageSectionController::class, 'edit'])->name('pages.sections.edit');
             Route::put('pages/{page}/sections/{section}', [PageSectionController::class, 'update'])->name('pages.sections.update');
             Route::delete('pages/{page}/sections/{section}', [PageSectionController::class, 'destroy'])->name('pages.sections.destroy');
+            Route::resource('offer-category', OfferCategoryController::class);
+            Route::resource('offer', OfferController::class);
         });
-    Route::get('contact-submissions',[ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
-    Route::get('contact-submissions/{submission}',[ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
+    Route::get('/logos', [LogoController::class, 'index'])
+        ->name('logos.index');
+
+    Route::post('/logos/update', [LogoController::class, 'update'])
+        ->name('logos.update');
+    Route::get('contact-submissions', [ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
+    Route::get('contact-submissions/{submission}', [ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
+
 });
 require __DIR__.'/auth.php';
 

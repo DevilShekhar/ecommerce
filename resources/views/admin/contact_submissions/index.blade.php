@@ -48,11 +48,11 @@
 
                         <div class="table-responsive">
 
-                            <table class="table table-bordered table-striped">
+                            <table class="table table-bordered table-striped" id="datatable">
 
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>SrNo.</th>
                                         <th>Page</th>
                                         <th>Form</th>
                                         <th>Submitted Data</th>

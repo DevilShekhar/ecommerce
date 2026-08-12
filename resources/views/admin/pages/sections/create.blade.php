@@ -195,6 +195,40 @@
                     </div>
 
                     <!-- =====================================
+                        HERO IMAGES (Hidden by default)
+                    ====================================== -->
+                    <div class="col-lg-12" id="hero_images_section" style="display: none;">
+                        <div class="card">
+                            <div class="header">
+                                <h2><strong>Hero</strong> Images</h2>
+                            </div>
+                            <div class="body">
+                                <div class="form-group">
+                                    <label>Multiple Hero Images</label>
+                                    <div id="hero_images_container">
+                                        <div class="hero-image-item row mb-3" data-index="0">
+                                            <div class="col-md-10">
+                                                <input type="file" name="hero_images[0]"
+                                                    class="form-control"
+                                                    accept="image/jpeg,image/png,image/jpg,image/webp">
+                                                <small class="text-muted">Upload hero image (Recommended: 1920x800)</small>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-danger remove-hero-image" style="width:100%;">
+                                                    <i class="zmdi zmdi-close"></i> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="add_hero_image">
+                                        <i class="zmdi zmdi-plus"></i> Add Image
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- =====================================
                          TESTIMONIALS REPEATER (Hidden by default)
                     ====================================== -->
                     <div class="col-lg-12" id="testimonials_section" style="display: none;">
@@ -410,73 +444,73 @@
                     </div>
 
                     <!-- =====================================
-     FOOTER SECTION (Hidden by default)
-====================================== -->
-<div class="col-lg-12" id="footer_section" style="display: none;">
-    <div class="card">
-        <div class="header">
-            <h2><strong>Footer</strong> Configuration</h2>
-        </div>
-        <div class="body">
-            
-            <!-- Logo -->
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label>Footer Logo</label>
-                        <input type="file" name="logo" 
-                               class="form-control" 
-                               accept="image/jpeg,image/png,image/jpg,image/webp,image/svg+xml">
-                        <small class="text-muted">Upload logo for footer (Recommended: PNG or SVG)</small>
-                    </div>
-                </div>
-            </div>
+                        FOOTER SECTION (Hidden by default)
+                    ====================================== -->
+                    <div class="col-lg-12" id="footer_section" style="display: none;">
+                        <div class="card">
+                            <div class="header">
+                                <h2><strong>Footer</strong> Configuration</h2>
+                            </div>
+                            <div class="body">
+                                
+                                <!-- Logo -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Footer Logo</label>
+                                            <input type="file" name="logo" 
+                                                class="form-control" 
+                                                accept="image/jpeg,image/png,image/jpg,image/webp,image/svg+xml">
+                                            <small class="text-muted">Upload logo for footer (Recommended: PNG or SVG)</small>
+                                        </div>
+                                    </div>
+                                </div>
 
-            <!-- Addresses Repeater -->
-            <div class="form-group">
-                <label>Addresses</label>
-                <div id="addresses_container">
-                    <div class="address-item row mb-3" data-index="0">
-                        <div class="col-md-12">
-                            <input type="text" name="addresses[0][address]" 
-                                   class="form-control mb-2" 
-                                   placeholder="Street Address">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="addresses[0][city]" 
-                                   class="form-control" 
-                                   placeholder="City">
-                        </div>
-                        <div class="col-md-4">
-                            <input type="text" name="addresses[0][state]" 
-                                   class="form-control" 
-                                   placeholder="State/Province">
-                        </div>
-                        <div class="col-md-2">
-                            <input type="text" name="addresses[0][zip]" 
-                                   class="form-control" 
-                                   placeholder="Zip/Postal">
-                        </div>
-                        <div class="col-md-1">
-                            <button type="button" class="btn btn-danger remove-address" style="width:100%;">
-                                <i class="zmdi zmdi-close"></i>
-                            </button>
-                        </div>
-                        <div class="col-md-12 mt-2">
-                            <input type="text" name="addresses[0][country]" 
-                                   class="form-control" 
-                                   placeholder="Country">
+                                <!-- Addresses Repeater -->
+                                <div class="form-group">
+                                    <label>Addresses</label>
+                                    <div id="addresses_container">
+                                        <div class="address-item row mb-3" data-index="0">
+                                            <div class="col-md-12">
+                                                <input type="text" name="addresses[0][address]" 
+                                                    class="form-control mb-2" 
+                                                    placeholder="Street Address">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="text" name="addresses[0][city]" 
+                                                    class="form-control" 
+                                                    placeholder="City">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <input type="text" name="addresses[0][state]" 
+                                                    class="form-control" 
+                                                    placeholder="State/Province">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <input type="text" name="addresses[0][zip]" 
+                                                    class="form-control" 
+                                                    placeholder="Zip/Postal">
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="btn btn-danger remove-address" style="width:100%;">
+                                                    <i class="zmdi zmdi-close"></i>
+                                                </button>
+                                            </div>
+                                            <div class="col-md-12 mt-2">
+                                                <input type="text" name="addresses[0][country]" 
+                                                    class="form-control" 
+                                                    placeholder="Country">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary" id="add_address">
+                                        <i class="zmdi zmdi-plus"></i> Add Address
+                                    </button>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
-                </div>
-                <button type="button" class="btn btn-primary" id="add_address">
-                    <i class="zmdi zmdi-plus"></i> Add Address
-                </button>
-            </div>
-
-        </div>
-    </div>
-</div>
 
                     <!-- =====================================
                          PRODUCTS SELECTION (Hidden by default)
@@ -582,6 +616,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // =============================================
     // Toggle Sections
     // =============================================
+   const heroImagesSection = document.getElementById('hero_images_section');
+
     function toggleSections() {
         const selectedType = sectionType.value;
 
@@ -591,6 +627,7 @@ document.addEventListener('DOMContentLoaded', function() {
         faqSection.style.display = 'none';
         contactSection.style.display = 'none';
         footerSection.style.display = 'none';
+        heroImagesSection.style.display = 'none';
 
         // Show relevant section based on type
         if (selectedType === 'testimonials') {
@@ -603,6 +640,8 @@ document.addEventListener('DOMContentLoaded', function() {
             contactSection.style.display = 'block';
         } else if (selectedType === 'footer') {
             footerSection.style.display = 'block';
+        } else if (selectedType === 'hero') {
+            heroImagesSection.style.display = 'block';
         }
     }
 
@@ -821,6 +860,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFaqRepeater();
     initFormFieldsRepeater();
     initAddressesRepeater();
+    initHeroImagesRepeater();
 
     // =============================================
     // Form Validation
@@ -962,6 +1002,47 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+// =============================================
+// Hero Images Repeater
+// =============================================
+function initHeroImagesRepeater() {
+    const container = document.getElementById('hero_images_container');
+    let imageCount = container.children.length;
+
+    // Add Hero Image
+    document.getElementById('add_hero_image')?.addEventListener('click', function() {
+        const newItem = container.querySelector('.hero-image-item').cloneNode(true);
+        const index = imageCount++;
+
+        newItem.querySelectorAll('input').forEach(el => {
+            const name = el.getAttribute('name');
+            if (name) {
+                el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                el.value = '';
+            }
+        });
+
+        const removeBtn = newItem.querySelector('.remove-hero-image');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                if (container.children.length > 1) {
+                    this.closest('.hero-image-item').remove();
+                }
+            });
+        }
+
+        container.appendChild(newItem);
+    });
+
+    // Remove Hero Image
+    document.querySelectorAll('.remove-hero-image').forEach(btn => {
+        btn.addEventListener('click', function() {
+            if (container.children.length > 1) {
+                this.closest('.hero-image-item').remove();
+            }
+        });
+    });
+}
 </script>
 
 @endsection

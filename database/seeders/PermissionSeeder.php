@@ -57,6 +57,23 @@ class PermissionSeeder extends Seeder
             'blogs-edit',
             'blogs-destroy',
 
+            //coupons
+            'coupons.create',
+            'coupons.index',
+            'coupons.edit',
+            'coupons.update',
+
+            //products
+            'products.create',
+            'products.index',
+            'products.edit',
+            'products.update',
+
+            //pages
+            'pages.create',
+            'pages.index',
+            'pages.edit',
+            'pages.update',
         ];
 
         foreach($permissions as $permission){
