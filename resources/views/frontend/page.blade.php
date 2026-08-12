@@ -12,12 +12,44 @@
     @foreach($page->sections->where('status', 1)->sortBy('sort_order') as $section)
 
         {{-- =========================================================
-        HERO SECTION
+        HERO SECTION WITH MULTIPLE IMAGES CAROUSEL
         ========================================================== --}}
         @if($section->section_type === 'hero')
 
-            <section class="hero-section" style="--hero-image: url('{{ $section->image ? Storage::url($section->image) : '' }}');">
-                <div class="hero-overlay"></div>
+            @php
+                $heroImages = $section->images ? json_decode($section->images, true) : [];
+                if (empty($heroImages) && $section->image) {
+                    $heroImages = [$section->image];
+                }
+                $hasMultipleImages = count($heroImages) > 1;
+            @endphp
+
+            <section class="hero-section">
+                <div class="hero-slider-container">
+                    @if(!empty($heroImages))
+                        @foreach($heroImages as $index => $image)
+                            <div class="hero-slide {{ $index === 0 ? 'active' : '' }}"
+                                style="background-image: url('{{ asset('storage/' . $image) }}');">
+                                <div class="hero-overlay"></div>
+                            </div>
+                        @endforeach
+
+                        @if($hasMultipleImages)
+                            <div class="hero-slider-dots">
+                                @foreach($heroImages as $index => $image)
+                                    <span class="hero-dot {{ $index === 0 ? 'active' : '' }}" data-slide="{{ $index }}"></span>
+                                @endforeach
+                            </div>
+                            <button class="hero-slider-arrow prev" type="button" aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="hero-slider-arrow next" type="button" aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        @endif
+                    @endif
+                </div>
+
                 <div class="container position-relative">
                     <div class="hero-content">
                         @if($section->sub_title)
@@ -39,9 +71,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            ABOUT SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        ABOUT SECTION
+        ========================================================== --}}
         @elseif($section->section_type === 'about')
 
             <section class="website-section about-section">
@@ -50,8 +82,7 @@
                         @if($section->image)
                             <div class="col-lg-6">
                                 <div class="about-image-wrapper">
-                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'About Us' }}"
-                                        class="about-image">
+                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'About Us' }}" class="about-image">
                                 </div>
                             </div>
                         @endif
@@ -67,7 +98,7 @@
                                     <div class="section-content about-description">{!! $section->content !!}</div>
                                 @endif
                                 @if($section->button_text && $section->button_url)
-                                    <div class="section-action">
+                                    <div class="section-action mt-3">
                                         <a href="{{ url($section->button_url) }}" class="btn-main">
                                             {{ $section->button_text }}
                                             <i class="bi bi-arrow-right"></i>
@@ -80,9 +111,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            SERVICES SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        SERVICES SECTION
+        ========================================================== --}}
         @elseif($section->section_type === 'services')
 
             <section class="website-section">
@@ -117,9 +148,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            FEATURES SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        FEATURES SECTION
+        ========================================================== --}}
         @elseif($section->section_type === 'features')
 
             <section class="website-section bg-light">
@@ -154,9 +185,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            TESTIMONIALS SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        TESTIMONIALS SECTION
+        ========================================================== --}}
         @elseif($section->section_type === 'testimonials')
 
             <section class="website-section testimonials-section">
@@ -186,8 +217,7 @@
                                         </div>
                                         <div class="testimonial-author">
                                             @if(!empty($testimonial['image']))
-                                                <img src="{{ asset('storage/' . $testimonial['image']) }}"
-                                                    alt="{{ $testimonial['name'] ?? 'Customer' }}" class="testimonial-avatar">
+                                                <img src="{{ asset('storage/' . $testimonial['image']) }}" alt="{{ $testimonial['name'] ?? 'Customer' }}" class="testimonial-avatar">
                                             @else
                                                 <div class="testimonial-avatar-placeholder">
                                                     {{ strtoupper(substr($testimonial['name'] ?? 'C', 0, 1)) }}
@@ -225,9 +255,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            CTA SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        CTA SECTION
+        ========================================================== --}}
         @elseif($section->section_type === 'cta')
 
             <section class="cta-section">
@@ -252,9 +282,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            PRODUCTS SECTION
-            ========================================================== --}}
+        {{-- =========================================================
+        PRODUCTS SECTION WITH SIDEBAR FILTER
+        ========================================================== --}}
         @elseif($section->section_type === 'products')
 
             <section class="website-section products-section">
@@ -270,6 +300,7 @@
                             <div class="section-content">{!! $section->content !!}</div>
                         @endif
                     </div>
+
                     @if($section->products && $section->products->count())
                         @php
                             $categories = $section->products->pluck('category')->filter()->unique('id');
@@ -279,7 +310,114 @@
                             $inStockCount = $section->products->where('stock', '>', 0)->count();
                             $outOfStockCount = $section->products->where('stock', '<=', 0)->count();
                         @endphp
-                        <div class="filter-bar">
+
+                        {{-- MOBILE FILTER TOGGLE --}}
+                        <div class="mobile-filter-toggle">
+                            <button class="filter-toggle-btn" id="openFilterSidebar">
+                                <i class="bi bi-funnel"></i> Filters
+                            </button>
+                            <span class="filter-result-count" id="filterResultCount"></span>
+                        </div>
+
+                        {{-- FILTER SIDEBAR OVERLAY --}}
+                        <div class="filter-overlay" id="filterOverlay"></div>
+
+                        {{-- FILTER SIDEBAR --}}
+                        <div class="filter-sidebar" id="filterSidebar">
+                            <div class="filter-sidebar-header">
+                                <h5><i class="bi bi-funnel"></i> Filters</h5>
+                                <button class="close-filter-btn" id="closeFilterSidebar">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+
+                            <div class="filter-sidebar-body">
+                                {{-- Category --}}
+                                <div class="filter-section">
+                                    <h6 class="filter-section-title">Category</h6>
+                                    <div class="filter-options">
+                                        <label class="filter-option">
+                                            <input type="radio" name="category" value="all" checked>
+                                            <span>All Categories</span>
+                                        </label>
+                                        @foreach($categories as $category)
+                                            <label class="filter-option">
+                                                <input type="radio" name="category" value="{{ $category->id }}">
+                                                <span>{{ $category->name }}</span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                {{-- Price Range --}}
+                                <div class="filter-section">
+                                    <h6 class="filter-section-title">Price Range</h6>
+                                    <div class="price-range-wrapper">
+                                        <div class="price-inputs">
+                                            <div class="price-input">
+                                                <label>Min</label>
+                                                <input type="number" id="priceMinSidebar" value="{{ $minPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                            </div>
+                                            <div class="price-input">
+                                                <label>Max</label>
+                                                <input type="number" id="priceMaxSidebar" value="{{ $maxPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                            </div>
+                                        </div>
+                                        <div class="price-slider-wrapper">
+                                            <input type="range" id="priceSliderMinSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $minPrice }}">
+                                            <input type="range" id="priceSliderMaxSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}">
+                                        </div>
+                                        <div class="price-range-values">
+                                            <span>₹<span id="rangeMinDisplaySidebar">{{ $minPrice }}</span></span>
+                                            <span>₹<span id="rangeMaxDisplaySidebar">{{ $maxPrice }}</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Brand --}}
+                                @if($brands->count() > 0)
+                                    <div class="filter-section">
+                                        <h6 class="filter-section-title">Brand</h6>
+                                        <div class="filter-options">
+                                            @foreach($brands as $brand)
+                                                <label class="filter-option">
+                                                    <input type="checkbox" name="brand" value="{{ $brand->id }}">
+                                                    <span>{{ $brand->name }}</span>
+                                                </label>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endif
+
+                                {{-- Stock Status --}}
+                                <div class="filter-section">
+                                    <h6 class="filter-section-title">Stock Status</h6>
+                                    <div class="filter-options">
+                                        <label class="filter-option">
+                                            <input type="checkbox" name="stock" value="in" checked>
+                                            <span>In Stock ({{ $inStockCount }})</span>
+                                        </label>
+                                        <label class="filter-option">
+                                            <input type="checkbox" name="stock" value="out">
+                                            <span>Out of Stock ({{ $outOfStockCount }})</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                {{-- Action Buttons --}}
+                                <div class="filter-sidebar-actions">
+                                    <button class="filter-clear-btn-sidebar" id="clearFiltersSidebar">
+                                        <i class="bi bi-x-circle"></i> Clear All
+                                    </button>
+                                    <button class="filter-apply-btn-sidebar" id="applyFiltersSidebar">
+                                        <i class="bi bi-check-circle"></i> Apply Filters
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- DESKTOP FILTER BAR --}}
+                        <div class="filter-bar desktop-filter">
                             <div class="filter-row">
                                 <div class="filter-group">
                                     <button class="filter-toggle active" data-filter="category">
@@ -298,6 +436,7 @@
                                         @endforeach
                                     </div>
                                 </div>
+
                                 <div class="filter-group">
                                     <button class="filter-toggle" data-filter="price">
                                         <i class="bi bi-currency-rupee"></i> Price
@@ -307,20 +446,16 @@
                                             <div class="price-inputs">
                                                 <div class="price-input">
                                                     <label>Min</label>
-                                                    <input type="number" id="priceMin" value="{{ $minPrice }}" min="{{ $minPrice }}"
-                                                        max="{{ $maxPrice }}">
+                                                    <input type="number" id="priceMin" value="{{ $minPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
                                                 </div>
                                                 <div class="price-input">
                                                     <label>Max</label>
-                                                    <input type="number" id="priceMax" value="{{ $maxPrice }}" min="{{ $minPrice }}"
-                                                        max="{{ $maxPrice }}">
+                                                    <input type="number" id="priceMax" value="{{ $maxPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
                                                 </div>
                                             </div>
                                             <div class="price-slider-wrapper">
-                                                <input type="range" id="priceSliderMin" min="{{ $minPrice }}" max="{{ $maxPrice }}"
-                                                    value="{{ $minPrice }}">
-                                                <input type="range" id="priceSliderMax" min="{{ $minPrice }}" max="{{ $maxPrice }}"
-                                                    value="{{ $maxPrice }}">
+                                                <input type="range" id="priceSliderMin" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $minPrice }}">
+                                                <input type="range" id="priceSliderMax" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}">
                                             </div>
                                             <div class="price-range-values">
                                                 <span>₹<span id="rangeMinDisplay">{{ $minPrice }}</span></span>
@@ -330,6 +465,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 @if($brands->count() > 0)
                                     <div class="filter-group">
                                         <button class="filter-toggle" data-filter="brand">
@@ -345,6 +481,7 @@
                                         </div>
                                     </div>
                                 @endif
+
                                 <div class="filter-group">
                                     <button class="filter-toggle" data-filter="stock">
                                         <i class="bi bi-box"></i> Stock
@@ -360,22 +497,31 @@
                                         </label>
                                     </div>
                                 </div>
+
                                 <button class="filter-clear-btn" id="clearFilters">
                                     <i class="bi bi-x-circle"></i> Clear
                                 </button>
                             </div>
                         </div>
+
+                        {{-- PRODUCTS GRID --}}
                         <div class="row g-2 g-sm-3 products-grid">
                             @foreach($section->products as $product)
+                                @php
+                                    $isFutured = isset($product->is_futured) && $product->is_futured == 1;
+                                @endphp
+
                                 <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-item" data-category="{{ $product->category_id ?? '' }}"
                                     data-brand="{{ $product->brand_id ?? '' }}" data-price="{{ $product->price ?? 0 }}"
                                     data-stock="{{ $product->stock > 0 ? 'in' : 'out' }}">
+
                                     <div class="product-card h-100">
                                         <div class="product-image-wrapper">
                                             @php
                                                 $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
                                                 $hasMultipleImages = count($images) > 1;
                                             @endphp
+
                                             @if(!empty($images) && isset($images[0]) && !empty($images[0]))
                                                 <div class="product-slider-container">
                                                     @foreach($images as $index => $img)
@@ -403,35 +549,66 @@
                                                     <i class="bi bi-image"></i>
                                                 </div>
                                             @endif
+
+                                            @if(isset($product->is_futured))
+                                                @if($product->is_futured == 1)
+                                                    <span class="product-badge futured-badge">
+                                                        <i class="bi bi-star-fill"></i> Futured
+                                                    </span>
+                                                @elseif($product->is_futured == 2)
+                                                    <span class="product-badge new-badge">
+                                                        <i class="bi bi-fire"></i> New
+                                                    </span>
+                                                @endif
+                                            @endif
+
                                             @if($product->stock !== null)
                                                 <span class="stock-badge {{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">
                                                     {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
                                                 </span>
                                             @endif
+
                                             @if($product->category)
                                                 <span class="category-badge">{{ $product->category->name }}</span>
                                             @endif
                                         </div>
+
                                         <div class="product-body">
                                             @if($product->brand)
-                                                <div class="product-brand"><i class="bi bi-building"></i> {{ $product->brand->name }}</div>
+                                                <div class="product-brand">
+                                                    <i class="bi bi-building"></i> {{ $product->brand->name }}
+                                                </div>
                                             @endif
+
                                             @if($product->name)
                                                 <h5 class="product-title">{{ $product->name }}</h5>
                                             @endif
+
                                             @if($product->price !== null)
-                                                <div class="product-price">₹{{ number_format($product->price, 2) }}</div>
-                                            @endif
-                                            @if($product->sku)
-                                                <div class="product-sku"><i class="bi bi-upc"></i> {{ $product->sku }}</div>
-                                            @endif
-                                            @if($product->subCategory)
-                                                <div class="product-subcategory"><i class="bi bi-folder-open"></i>
-                                                    {{ $product->subCategory->name }}
+                                                <div class="product-price">
+                                                    ₹{{ number_format($product->price, 2) }}
                                                 </div>
                                             @endif
+
+                                            @if($product->sku)
+                                                <div class="product-sku">
+                                                    <i class="bi bi-upc"></i> {{ $product->sku }}
+                                                </div>
+                                            @endif
+
+                                            @if($product->subCategory)
+                                                <div class="product-subcategory">
+                                                    <i class="bi bi-folder-open"></i> {{ $product->subCategory->name }}
+                                                </div>
+                                            @endif
+
                                             <div class="product-action">
-                                                @if($product->stock !== null && $product->stock <= 0)
+                                                @if($isFutured)
+                                                    <button type="button" class="btn-add-cart btn-futured" disabled
+                                                        title="Stay with us! This product will be available soon.">
+                                                        <i class="bi bi-star"></i> Coming Soon
+                                                    </button>
+                                                @elseif($product->stock !== null && $product->stock <= 0)
                                                     <button type="button" class="btn-add-cart" disabled>
                                                         <i class="bi bi-x-circle"></i> Out of Stock
                                                     </button>
@@ -446,11 +623,13 @@
                                 </div>
                             @endforeach
                         </div>
+
                         <div class="no-results-message" id="noResults" style="display: none;">
                             <i class="bi bi-search"></i>
                             <h5>No products found</h5>
                             <p>Try adjusting your filters</p>
                         </div>
+
                     @else
                         <div class="text-center py-5">
                             <i class="bi bi-box-seam display-4 text-muted"></i>
@@ -461,12 +640,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            FAQ SECTION
-            ========================================================== --}}
-            {{-- =========================================================
-            FAQ SECTION WITH IMAGE
-            ========================================================== --}}
+        {{-- =========================================================
+        FAQ SECTION WITH IMAGE
+        ========================================================== --}}
         @elseif($section->section_type === 'faq')
 
             <section class="website-section faq-section">
@@ -489,12 +665,10 @@
 
                     @if(!empty($faqs) && count($faqs) > 0)
                         <div class="row align-items-stretch g-4">
-                            {{-- Image Column --}}
                             @if($section->image)
                                 <div class="col-lg-5">
                                     <div class="faq-image-wrapper">
-                                        <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'FAQ' }}"
-                                            class="faq-image">
+                                        <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'FAQ' }}" class="faq-image">
                                         <div class="faq-image-overlay">
                                             <div class="overlay-content">
                                                 <i class="bi bi-question-circle"></i>
@@ -568,9 +742,9 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            CONTACT FORM SECTION WITH IMAGE
-            ========================================================== --}}
+        {{-- =========================================================
+        CONTACT FORM SECTION WITH IMAGE
+        ========================================================== --}}
         @elseif($section->section_type === 'contact')
 
             <section class="website-section contact-section">
@@ -594,12 +768,10 @@
                     @endphp
 
                     <div class="row align-items-stretch g-4">
-                        {{-- Image Column --}}
                         @if($section->image)
                             <div class="col-lg-5">
                                 <div class="contact-image-wrapper">
-                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'Contact Us' }}"
-                                        class="contact-image">
+                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'Contact Us' }}" class="contact-image">
                                     <div class="contact-image-overlay">
                                         <div class="overlay-content">
                                             <i class="bi bi-chat-dots"></i>
@@ -626,131 +798,122 @@
                             <div class="col-lg-7">
                                 <div class="contact-form-wrapper">
                         @else
-                                    <div class="col-lg-12">
-                                        <div class="contact-form-wrapper" style="max-width:800px;margin:0 auto;">
-                                @endif
+                            <div class="col-lg-12">
+                                <div class="contact-form-wrapper" style="max-width:800px;margin:0 auto;">
+                        @endif
 
-                                        {{-- Form Content --}}
-                                        @if(session('success'))
-                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                                <i class="bi bi-check-circle-fill"></i>
-                                                {{ session('success') }}
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                        @endif
+                        @if(session('success'))
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle-fill"></i>
+                                {{ session('success') }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
 
-                                        @if($errors->any())
-                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                                <i class="bi bi-exclamation-triangle-fill"></i>
-                                                <ul class="mb-0 mt-1">
-                                                    @foreach($errors->all() as $error)
-                                                        <li>{{ $error }}</li>
-                                                    @endforeach
-                                                </ul>
-                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                        @endif
+                        @if($errors->any())
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                <ul class="mb-0 mt-1">
+                                    @foreach($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        @endif
 
-                                        @if(!empty($formFields) && count($formFields) > 0)
-                                            <form
-                                                action="{{ route('frontend.contact.submit', ['page' => $page->id, 'section' => $section->id]) }}"
-                                                method="{{ strtolower($formMethod) }}" enctype="multipart/form-data"
-                                                class="contact-form">
-                                                @csrf
-                                                <div class="row g-3">
-                                                    @foreach($formFields as $field)
-                                                        @php
-                                                            $name = $field['name'] ?? '';
-                                                            $label = $field['label'] ?? '';
-                                                            $type = $field['type'] ?? 'text';
-                                                            $placeholder = $field['placeholder'] ?? '';
-                                                            $required = !empty($field['required']);
-                                                            $options = $field['options'] ?? [];
-                                                            if (is_string($options)) {
-                                                                $options = array_map('trim', explode(',', $options));
-                                                            }
-                                                            $colClass = in_array($type, ['textarea', 'file']) ? 'col-md-12' : 'col-md-6';
-                                                        @endphp
-                                                        @if(!$name) @continue @endif
-                                                        <div class="{{ $colClass }}">
-                                                            <div class="form-group">
-                                                                <label for="{{ $name }}" class="form-label">
-                                                                    {{ $label }}
-                                                                    @if($required) <span class="text-danger">*</span> @endif
-                                                                </label>
-                                                                @if($type === 'textarea')
-                                                                    <textarea name="{{ $name }}" id="{{ $name }}" class="form-control"
-                                                                        placeholder="{{ $placeholder }}" rows="4" {{ $required ? 'required' : '' }}>{{ old($name) }}</textarea>
-                                                                @elseif($type === 'select')
-                                                                    <select name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
-                                                                        <option value="">Select {{ $label }}</option>
-                                                                        @foreach($options as $option)
-                                                                            <option value="{{ $option }}" {{ old($name) == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                @elseif($type === 'radio')
-                                                                    <div class="radio-group">
-                                                                        @foreach($options as $option)
-                                                                            <div class="form-check">
-                                                                                <input type="radio" class="form-check-input" name="{{ $name }}"
-                                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
-                                                                                    {{ old($name) == $option ? 'checked' : '' }} {{ $required ? 'required' : '' }}>
-                                                                                <label class="form-check-label"
-                                                                                    for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    </div>
-                                                                @elseif($type === 'checkbox')
-                                                                    <div class="checkbox-group">
-                                                                        @foreach($options as $option)
-                                                                            <div class="form-check">
-                                                                                <input type="checkbox" class="form-check-input" name="{{ $name }}[]"
-                                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
-                                                                                    {{ in_array($option, old($name, [])) ? 'checked' : '' }}>
-                                                                                <label class="form-check-label"
-                                                                                    for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
-                                                                            </div>
-                                                                        @endforeach
-                                                                    </div>
-                                                                @elseif($type === 'file')
-                                                                    <input type="file" name="{{ $name }}" id="{{ $name }}" class="form-control"
-                                                                        {{ $required ? 'required' : '' }}>
-                                                                @else
-                                                                    <input type="{{ $type === 'phone' ? 'tel' : $type }}" name="{{ $name }}"
-                                                                        id="{{ $name }}" class="form-control" placeholder="{{ $placeholder }}"
-                                                                        value="{{ old($name) }}" {{ $required ? 'required' : '' }}>
-                                                                @endif
-                                                                @error($name)
-                                                                    <small class="text-danger">{{ $message }}</small>
-                                                                @enderror
+                        @if(!empty($formFields) && count($formFields) > 0)
+                            <form action="{{ route('frontend.contact.submit', ['page' => $page->id, 'section' => $section->id]) }}"
+                                method="{{ strtolower($formMethod) }}" enctype="multipart/form-data" class="contact-form">
+                                @csrf
+                                <div class="row g-3">
+                                    @foreach($formFields as $field)
+                                        @php
+                                            $name = $field['name'] ?? '';
+                                            $label = $field['label'] ?? '';
+                                            $type = $field['type'] ?? 'text';
+                                            $placeholder = $field['placeholder'] ?? '';
+                                            $required = !empty($field['required']);
+                                            $options = $field['options'] ?? [];
+                                            if (is_string($options)) {
+                                                $options = array_map('trim', explode(',', $options));
+                                            }
+                                            $colClass = in_array($type, ['textarea', 'file']) ? 'col-md-12' : 'col-md-6';
+                                        @endphp
+                                        @if(!$name) @continue @endif
+                                        <div class="{{ $colClass }}">
+                                            <div class="form-group">
+                                                <label for="{{ $name }}" class="form-label">
+                                                    {{ $label }}
+                                                    @if($required) <span class="text-danger">*</span> @endif
+                                                </label>
+                                                @if($type === 'textarea')
+                                                    <textarea name="{{ $name }}" id="{{ $name }}" class="form-control"
+                                                        placeholder="{{ $placeholder }}" rows="4" {{ $required ? 'required' : '' }}>{{ old($name) }}</textarea>
+                                                @elseif($type === 'select')
+                                                    <select name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
+                                                        <option value="">Select {{ $label }}</option>
+                                                        @foreach($options as $option)
+                                                            <option value="{{ $option }}" {{ old($name) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @elseif($type === 'radio')
+                                                    <div class="radio-group">
+                                                        @foreach($options as $option)
+                                                            <div class="form-check">
+                                                                <input type="radio" class="form-check-input" name="{{ $name }}"
+                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
+                                                                    {{ old($name) == $option ? 'checked' : '' }} {{ $required ? 'required' : '' }}>
+                                                                <label class="form-check-label" for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
-                                                    <div class="col-md-12">
-                                                        <button type="submit" class="btn-main">
-                                                            <i class="bi bi-send"></i>
-                                                            {{ $section->button_text ?? 'Send Message' }}
-                                                        </button>
+                                                        @endforeach
                                                     </div>
-                                                </div>
-                                            </form>
-                                        @else
-                                            <div class="text-center py-4">
-                                                <i class="bi bi-info-circle display-6 text-muted"></i>
-                                                <p class="text-muted mt-2">No form fields configured. Please contact the administrator.
-                                                </p>
+                                                @elseif($type === 'checkbox')
+                                                    <div class="checkbox-group">
+                                                        @foreach($options as $option)
+                                                            <div class="form-check">
+                                                                <input type="checkbox" class="form-check-input" name="{{ $name }}[]"
+                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
+                                                                    {{ in_array($option, old($name, [])) ? 'checked' : '' }}>
+                                                                <label class="form-check-label" for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                @elseif($type === 'file')
+                                                    <input type="file" name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
+                                                @else
+                                                    <input type="{{ $type === 'phone' ? 'tel' : $type }}" name="{{ $name }}"
+                                                        id="{{ $name }}" class="form-control" placeholder="{{ $placeholder }}"
+                                                        value="{{ old($name) }}" {{ $required ? 'required' : '' }}>
+                                                @endif
+                                                @error($name)
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
                                             </div>
-                                        @endif
-
-                                        @if($section->image)
-                                                </div>
-                                            </div>
-                                        @else
                                         </div>
+                                    @endforeach
+                                    <div class="col-md-12">
+                                        <button type="submit" class="btn-main">
+                                            <i class="bi bi-send"></i>
+                                            {{ $section->button_text ?? 'Send Message' }}
+                                        </button>
                                     </div>
-                                @endif
+                                </div>
+                            </form>
+                        @else
+                            <div class="text-center py-4">
+                                <i class="bi bi-info-circle display-6 text-muted"></i>
+                                <p class="text-muted mt-2">No form fields configured. Please contact the administrator.</p>
+                            </div>
+                        @endif
+
+                        @if($section->image)
+                                </div>
+                            </div>
+                        @else
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
                     @if($section->button_text && $section->button_url)
@@ -764,26 +927,18 @@
                 </div>
             </section>
 
-            {{-- =========================================================
-            FOOTER SECTION
-            ========================================================== --}}
-            {{-- =========================================================
-            FOOTER SECTION WITH BACKGROUND IMAGE OVERLAY
-            ========================================================== --}}
+        {{-- =========================================================
+        FOOTER SECTION WITH BACKGROUND IMAGE OVERLAY
+        ========================================================== --}}
         @elseif($section->section_type === 'footer')
 
-            <footer class="site-footer"
-                style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
-
-                {{-- Dark Overlay --}}
+            <footer class="site-footer" style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
                 <div class="footer-overlay"></div>
-
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-4 col-md-6">
                             @if($section->logo)
-                                <img src="{{ asset('storage/' . $section->logo) }}" alt="{{ $section->title ?? 'Logo' }}"
-                                    class="footer-logo">
+                                <img src="{{ asset('storage/' . $section->logo) }}" alt="{{ $section->title ?? 'Logo' }}" class="footer-logo">
                             @endif
                             @if($section->content)
                                 <p class="footer-about">{{ $section->content }}</p>
@@ -814,10 +969,9 @@
                         <div class="col-lg-4 col-md-6">
                             <h5 class="footer-title">Quick Links</h5>
                             <ul class="footer-links">
-                                <li><a href="{{ url('/') }}">Home</a></li>
-                                <li><a href="{{ url('/about') }}">About</a></li>
-                                <li><a href="{{ url('/services') }}">Services</a></li>
-                                <li><a href="{{ url('/contact') }}">Contact</a></li>
+                                <li><a href="{{ url('/home') }}">Home</a></li>
+                                <li><a href="{{ url('/about-us') }}">About</a></li>
+                                <li><a href="{{ url('/contact-us') }}">Contact</a></li>
                             </ul>
                         </div>
                     </div>
@@ -832,2134 +986,2349 @@
 
 
 @push('styles')
-    <style>
-        /* ========== CONTACT FORM ========== */
-        /* ========== CONTACT SECTION WITH SIDE IMAGE ========== */
-        .contact-section {
-            background: #f8fafc;
-            padding: 80px 0;
-        }
-
-        .contact-layout-wrapper {
-            margin-top: 20px;
-        }
-
-        .contact-layout-wrapper .row {
-            min-height: 500px;
-        }
-
-        /* ========== CONTACT IMAGE ========== */
-        .contact-image-wrapper {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            height: 100%;
-            min-height: 450px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .contact-image {
-            width: 100%;
-            height: 100%;
-            min-height: 450px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .contact-image-wrapper:hover .contact-image {
-            transform: scale(1.02);
-        }
-
-        /* ========== IMAGE OVERLAY ========== */
-        .contact-image-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 35px 30px;
-            background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
-            color: #fff;
-        }
-
-        .overlay-content i {
-            font-size: 32px;
-            color: #3b82f6;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .overlay-content h4 {
-            font-weight: 700;
-            font-size: 20px;
-            margin-bottom: 8px;
-            color: #fff;
-        }
-
-        .overlay-content p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .overlay-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px 24px;
-        }
-
-        .overlay-stats .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .overlay-stats .stat-item i {
-            font-size: 16px;
-            color: #3b82f6;
-            margin: 0;
-        }
-
-        /* ========== CONTACT FORM WRAPPER ========== */
-        .contact-form-wrapper {
-            background: #fff;
-            padding: 40px 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            height: 100%;
-        }
-
-        /* ========== FORM STYLES ========== */
-        .contact-form .form-group {
-            margin-bottom: 18px;
-        }
-
-        .contact-form .form-label {
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 6px;
-            display: block;
-            font-size: 14px;
-        }
-
-        .contact-form .form-control {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 11px 16px;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            width: 100%;
-            background: #fff;
-            color: #0f172a;
-        }
-
-        .contact-form .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-
-        .contact-form .form-control::placeholder {
-            color: #94a3b8;
-        }
-
-        .contact-form textarea.form-control {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        /* Radio & Checkbox */
-        .contact-form .radio-group,
-        .contact-form .checkbox-group {
-            padding-top: 4px;
-        }
-
-        .contact-form .form-check {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
-            padding: 0;
-        }
-
-        .contact-form .form-check:last-child {
-            margin-bottom: 0;
-        }
-
-        .contact-form .form-check-input {
-            width: 17px;
-            height: 17px;
-            margin: 0;
-            flex-shrink: 0;
-            cursor: pointer;
-            accent-color: #3b82f6;
-        }
-
-        .contact-form .form-check-label {
-            font-weight: 400;
-            color: #475569;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* Alert */
-        .contact-form-wrapper .alert {
-            border-radius: 10px;
-            padding: 14px 18px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .contact-form-wrapper .alert-success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-        }
-
-        .contact-form-wrapper .alert-success i {
-            color: #22c55e;
-            font-size: 18px;
-            margin-top: 2px;
-        }
-
-        .contact-form-wrapper .alert-danger {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-        }
-
-        .contact-form-wrapper .alert-danger i {
-            color: #ef4444;
-            font-size: 18px;
-            margin-top: 2px;
-        }
-
-        .contact-form-wrapper .alert ul {
-            padding-left: 18px;
-            margin: 0;
-        }
-
-        .contact-form-wrapper .alert .btn-close {
-            margin-left: auto;
-            padding: 0;
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Submit Button */
-        .contact-form .btn-main {
-            padding: 14px 35px;
-            font-size: 15px;
-            background: #0f172a;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .contact-form .btn-main:hover {
-            background: #1e293b;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(15, 23, 42, 0.25);
-        }
-
-        .contact-form .btn-main:active {
-            transform: translateY(0);
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width: 991px) {
-            .contact-image-wrapper {
-                min-height: 300px;
-            }
-
-            .contact-image {
-                min-height: 300px;
-            }
-
-            .contact-image-overlay {
-                padding: 25px 20px;
-            }
-
-            .overlay-content h4 {
-                font-size: 18px;
-            }
-
-            .overlay-stats .stat-item {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .contact-section {
-                padding: 60px 0;
-            }
-
-            .contact-form-wrapper {
-                padding: 24px 18px;
-                border-radius: 12px;
-            }
-
-            .contact-image-wrapper {
-                min-height: 220px;
-                border-radius: 12px;
-            }
-
-            .contact-image {
-                min-height: 220px;
-            }
-
-            .contact-image-overlay {
-                padding: 18px 16px;
-            }
-
-            .overlay-content i {
-                font-size: 24px;
-                margin-bottom: 6px;
-            }
-
-            .overlay-content h4 {
-                font-size: 16px;
-                margin-bottom: 4px;
-            }
-
-            .overlay-content p {
-                font-size: 12px;
-                margin-bottom: 10px;
-            }
-
-            .overlay-stats {
-                gap: 10px 16px;
-            }
-
-            .overlay-stats .stat-item {
-                font-size: 11px;
-            }
-
-            .overlay-stats .stat-item i {
-                font-size: 13px;
-            }
-
-            .contact-form .form-group {
-                margin-bottom: 14px;
-            }
-
-            .contact-form .btn-main {
-                width: 100%;
-                justify-content: center;
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .contact-layout-wrapper .row {
-                min-height: unset;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .contact-form-wrapper {
-                padding: 16px 12px;
-            }
-
-            .contact-form .form-label {
-                font-size: 13px;
-            }
-
-            .contact-form .form-control {
-                padding: 9px 12px;
-                font-size: 13px;
-            }
-
-            .contact-image-wrapper {
-                min-height: 180px;
-            }
-
-            .contact-image {
-                min-height: 180px;
-            }
-
-            .contact-image-overlay {
-                padding: 14px 12px;
-            }
-
-            .overlay-content h4 {
-                font-size: 14px;
-            }
-        }
-
-        /* ========== FAQ SECTION ========== */
-        /* ============================================================
-           FAQ SECTION WITH IMAGE
-           ============================================================ */
-        .faq-section {
-            background: #f8fafc;
-            padding: 80px 0;
-        }
-
-        .faq-image-wrapper {
-            position: relative;
-            border-radius: 16px;
-            overflow: hidden;
-            height: 100%;
-            min-height: 450px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        .faq-image {
-            width: 100%;
-            height: 100%;
-            min-height: 450px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.5s ease;
-        }
-
-        .faq-image-wrapper:hover .faq-image {
-            transform: scale(1.02);
-        }
-
-        .faq-image-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 35px 30px;
-            background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
-            color: #fff;
-        }
-
-        .faq-image-overlay .overlay-content i {
-            font-size: 32px;
-            color: #3b82f6;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .faq-image-overlay .overlay-content h4 {
-            font-weight: 700;
-            font-size: 20px;
-            margin-bottom: 8px;
-            color: #fff;
-        }
-
-        .faq-image-overlay .overlay-content p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .faq-image-overlay .overlay-stats {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px 24px;
-        }
-
-        .faq-image-overlay .overlay-stats .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .faq-image-overlay .overlay-stats .stat-item i {
-            font-size: 16px;
-            color: #3b82f6;
-            margin: 0;
-        }
-
-        .faq-wrapper {
-            background: #fff;
-            padding: 30px 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            height: 100%;
-        }
-
-        .faq-wrapper-full {
-            background: #fff;
-            padding: 30px 35px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* ============================================================
-           FAQ ITEMS
-           ============================================================ */
-        .faq-container {
-            width: 100%;
-        }
-
-        .faq-item {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .faq-item:hover {
-            border-color: #3b82f6;
-        }
-
-        .faq-item.active {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
-        }
-
-        .faq-question {
-            padding: 18px 24px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            color: #0f172a;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-
-        .faq-question:hover {
-            color: #3b82f6;
-        }
-
-        .faq-question .faq-icon {
-            font-size: 20px;
-            color: #94a3b8;
-            transition: transform 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .faq-item.active .faq-question .faq-icon {
-            transform: rotate(180deg);
-            color: #3b82f6;
-        }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.3s ease;
-        }
-
-        .faq-answer.open {
-            max-height: 500px;
-        }
-
-        .faq-answer p {
-            padding: 0 24px 20px;
-            margin: 0;
-            color: #475569;
-            line-height: 1.8;
-            font-size: 15px;
-        }
-
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
-        @media (max-width: 991px) {
-            .faq-image-wrapper {
-                min-height: 300px;
-            }
-
-            .faq-image {
-                min-height: 300px;
-            }
-
-            .faq-image-overlay {
-                padding: 25px 20px;
-            }
-
-            .faq-image-overlay .overlay-content h4 {
-                font-size: 18px;
-            }
-
-            .faq-image-overlay .overlay-stats .stat-item {
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .faq-section {
-                padding: 60px 0;
-            }
-
-            .faq-wrapper {
-                padding: 20px 16px;
-                border-radius: 12px;
-            }
-
-            .faq-wrapper-full {
-                padding: 20px 16px;
-                border-radius: 12px;
-            }
-
-            .faq-image-wrapper {
-                min-height: 220px;
-                border-radius: 12px;
-            }
-
-            .faq-image {
-                min-height: 220px;
-            }
-
-            .faq-image-overlay {
-                padding: 18px 16px;
-            }
-
-            .faq-image-overlay .overlay-content i {
-                font-size: 24px;
-                margin-bottom: 6px;
-            }
-
-            .faq-image-overlay .overlay-content h4 {
-                font-size: 16px;
-                margin-bottom: 4px;
-            }
-
-            .faq-image-overlay .overlay-content p {
-                font-size: 12px;
-                margin-bottom: 10px;
-            }
-
-            .faq-image-overlay .overlay-stats {
-                gap: 10px 16px;
-            }
-
-            .faq-image-overlay .overlay-stats .stat-item {
-                font-size: 11px;
-            }
-
-            .faq-image-overlay .overlay-stats .stat-item i {
-                font-size: 13px;
-            }
-
-            .faq-question {
-                padding: 14px 18px;
-                font-size: 14px;
-            }
-
-            .faq-answer p {
-                padding: 0 18px 16px;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .faq-wrapper {
-                padding: 16px 12px;
-            }
-
-            .faq-wrapper-full {
-                padding: 16px 12px;
-            }
-
-            .faq-image-wrapper {
-                min-height: 180px;
-            }
-
-            .faq-image {
-                min-height: 180px;
-            }
-
-            .faq-image-overlay {
-                padding: 14px 12px;
-            }
-
-            .faq-image-overlay .overlay-content h4 {
-                font-size: 14px;
-            }
-
-            .faq-question {
-                padding: 12px 16px;
-                font-size: 13px;
-            }
-
-            .faq-answer p {
-                padding: 0 16px 14px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .contact-form-wrapper {
-                padding: 16px;
-                border-radius: 10px;
-            }
-
-            .contact-form .btn-main {
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        /* ========== NAVBAR ========== */
-        .navbar-custom {
-            background: #fff;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 12px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000
-        }
-
-        .navbar-custom .container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between
-        }
-
-        .navbar-logo {
-            font-size: 22px;
-            font-weight: 800;
-            color: #0f172a;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px
-        }
-
-        .navbar-logo i {
-            color: #3b82f6
-        }
-
-        .navbar-links {
-            display: flex;
-            align-items: center;
-            gap: 28px;
-            list-style: none;
-            margin: 0;
-            padding: 0
-        }
-
-        .navbar-links li a {
-            color: #475569;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: color .2s;
-            position: relative
-        }
-
-        .navbar-links li a:hover,
-        .navbar-links li a.active {
-            color: #3b82f6
-        }
-
-        .navbar-links li a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: #3b82f6;
-            transition: width .3s
-        }
-
-        .navbar-links li a:hover::after,
-        .navbar-links li a.active::after {
-            width: 100%
-        }
-
-        .navbar-toggle {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px
-        }
-
-        .navbar-toggle:hover {
-            background: #f1f5f9
-        }
-
-        .navbar-toggle .dot {
-            display: block;
-            width: 5px;
-            height: 5px;
-            margin: 3px 0;
-            background: #0f172a;
-            border-radius: 50%;
-            transition: all .3s
-        }
-
-        .navbar-toggle.active .dot:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-            width: 20px;
-            height: 2px;
-            border-radius: 2px
-        }
-
-        .navbar-toggle.active .dot:nth-child(2) {
-            opacity: 0
-        }
-
-        .navbar-toggle.active .dot:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-            width: 20px;
-            height: 2px;
-            border-radius: 2px
-        }
-
-        .navbar-mobile-menu {
-            display: none;
-            background: #fff;
-            padding: 16px 20px;
-            border-top: 1px solid #e2e8f0
-        }
-
-        .navbar-mobile-menu.open {
-            display: block;
-            animation: slideDown .3s ease
-        }
-
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .navbar-mobile-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0
-        }
-
-        .navbar-mobile-menu ul li a {
-            display: block;
-            padding: 10px 12px;
-            color: #475569;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all .2s
-        }
-
-        .navbar-mobile-menu ul li a:hover {
-            background: #f1f5f9;
-            color: #3b82f6
-        }
-
-        .navbar-mobile-menu ul li a i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center
-        }
-
-        /* ========== TESTIMONIALS ========== */
-        .testimonials-section {
-            background: #f8fafc
-        }
-
-        .testimonial-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #e2e8f0;
-            transition: all .3s;
-            height: 100%;
-            display: flex;
-            flex-direction: column
-        }
-
-        .testimonial-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border-color: #3b82f6
-        }
-
-        .testimonial-content {
-            flex: 1;
-            position: relative;
-            padding-top: 10px
-        }
-
-        .quote-icon {
-            font-size: 24px;
-            color: #3b82f6;
-            opacity: 0.3;
-            position: absolute;
-            top: -5px;
-            left: 0
-        }
-
-        .testimonial-content p {
-            font-size: 14px;
-            line-height: 1.7;
-            color: #475569;
-            margin: 0;
-            padding-left: 32px
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid #f1f5f9
-        }
-
-        .testimonial-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #e2e8f0
-        }
-
-        .testimonial-avatar-placeholder {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 18px;
-            border: 2px solid #e2e8f0
-        }
-
-        .testimonial-info h5 {
-            font-size: 14px;
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0
-        }
-
-        .testimonial-info span {
-            font-size: 12px;
-            color: #94a3b8;
-            display: block
-        }
-
-        .testimonial-rating {
-            display: flex;
-            gap: 2px;
-            margin-top: 4px
-        }
-
-        .testimonial-rating i {
-            font-size: 12px;
-            color: #f59e0b
-        }
-
-        .testimonial-rating i.bi-star {
-            color: #e2e8f0
-        }
-
-        /* ========== SERVICES & FEATURES ========== */
-        .service-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 30px;
-            border: 1px solid #e2e8f0;
-            transition: all .3s;
-            height: 100%;
-            text-align: center
-        }
-
-        .service-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border-color: #3b82f6
-        }
-
-        .service-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #60a5fa);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 24px;
-            color: #fff;
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25)
-        }
-
-        .service-card h4 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 12px
-        }
-
-        .service-card p {
-            font-size: 14px;
-            color: #64748b;
-            line-height: 1.7;
-            margin: 0
-        }
-
-        .feature-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #e2e8f0;
-            transition: all .3s;
-            height: 100%
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08)
-        }
-
-        .feature-icon {
-            font-size: 32px;
-            color: #3b82f6;
-            margin-bottom: 12px
-        }
-
-        .feature-card h5 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 8px
-        }
-
-        .feature-card p {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.6;
-            margin: 0
-        }
-
-        /* ========== FILTER BAR ========== */
-        .filter-bar {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 8px 12px;
-            margin-bottom: 20px
-        }
-
-        .filter-row {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 6px
-        }
-
-        .filter-group {
-            position: relative;
-            display: inline-block
-        }
-
-        .filter-toggle {
-            padding: 5px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            background: #f8fafc;
-            color: #475569;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            white-space: nowrap;
-            transition: all .2s
-        }
-
-        .filter-toggle:hover {
-            border-color: #3b82f6;
-            color: #3b82f6;
-            background: #eff6ff
-        }
-
-        .filter-toggle.active {
-            border-color: #3b82f6;
-            background: #3b82f6;
-            color: #fff
-        }
-
-        .filter-dropdown {
-            position: absolute;
-            top: calc(100% + 6px);
-            left: 0;
-            min-width: 160px;
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto
-        }
-
-        .filter-dropdown.show {
-            display: block
-        }
-
-        .filter-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            color: #475569;
-            transition: background .2s
-        }
-
-        .filter-option:hover {
-            background: #f1f5f9
-        }
-
-        .filter-option input[type="radio"],
-        .filter-option input[type="checkbox"] {
-            width: 14px;
-            height: 14px;
-            accent-color: #3b82f6;
-            cursor: pointer
-        }
-
-        .price-dropdown {
-            min-width: 240px;
-            padding: 12px
-        }
-
-        .price-range-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 10px
-        }
-
-        .price-inputs {
-            display: flex;
-            gap: 10px
-        }
-
-        .price-input {
-            flex: 1
-        }
-
-        .price-input label {
-            font-size: 10px;
-            color: #94a3b8;
-            display: block;
-            margin-bottom: 2px;
-            font-weight: 600;
-            text-transform: uppercase
-        }
-
-        .price-input input {
-            width: 100%;
-            padding: 4px 8px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            font-size: 12px
-        }
-
-        .price-input input:focus {
-            outline: none;
-            border-color: #3b82f6
-        }
-
-        .price-slider-wrapper {
-            position: relative;
-            height: 20px;
-            display: flex;
-            align-items: center
-        }
-
-        .price-slider-wrapper input[type="range"] {
-            position: absolute;
-            width: 100%;
-            height: 4px;
-            -webkit-appearance: none;
-            background: transparent;
-            pointer-events: none;
-            margin: 0
-        }
-
-        .price-slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
-            height: 4px;
-            background: #e2e8f0;
-            border-radius: 4px
-        }
-
-        .price-slider-wrapper input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #3b82f6;
-            border-radius: 50%;
-            cursor: pointer;
-            pointer-events: auto;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-            margin-top: -5px
-        }
-
-        .price-range-values {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: 600;
-            color: #0f172a
-        }
-
-        .price-apply-btn {
-            padding: 4px 16px;
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            align-self: flex-end
-        }
-
-        .price-apply-btn:hover {
-            background: #2563eb
-        }
-
-        .filter-clear-btn {
-            padding: 5px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            background: transparent;
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-left: auto;
-            transition: all .2s
-        }
-
-        .filter-clear-btn:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-            background: #fef2f2
-        }
-
-        /* ========== PRODUCT CARDS ========== */
-        .product-card {
-            background: #fff;
-            border-radius: 10px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-            transition: all .3s;
-            display: flex;
-            flex-direction: column;
-            height: 100%
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            border-color: #3b82f6
-        }
-
-        .product-image-wrapper {
-            position: relative;
-            background: #f8fafc;
-            overflow: hidden;
-            aspect-ratio: 1/1
-        }
-
-        .product-slider-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden
-        }
-
-        .product-slide {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            transition: opacity .6s;
-            z-index: 0
-        }
-
-        .product-slide.active {
-            opacity: 1;
-            z-index: 1
-        }
-
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform .4s
-        }
-
-        .product-card:hover .product-image {
-            transform: scale(1.05)
-        }
-
-        .product-image-placeholder {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f1f5f9;
-            color: #cbd5e1;
-            font-size: 32px
-        }
-
-        .category-badge {
-            position: absolute;
-            bottom: 6px;
-            left: 6px;
-            font-size: 8px;
-            font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 50px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            backdrop-filter: blur(4px);
-            z-index: 5;
-            max-width: 80%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap
-        }
-
-        .stock-badge {
-            position: absolute;
-            top: 6px;
-            right: 6px;
-            font-size: 8px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 50px;
-            color: #fff;
-            text-transform: uppercase;
-            letter-spacing: .3px;
-            z-index: 5;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1)
-        }
-
-        .stock-badge.in-stock {
-            background: #22c55e
-        }
-
-        .stock-badge.out-of-stock {
-            background: #ef4444
-        }
-
-        .slider-dots {
-            position: absolute;
-            bottom: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 3px;
-            z-index: 10
-        }
-
-        .slider-dots .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            transition: all .3s
-        }
-
-        .slider-dots .dot.active {
-            background: #fff;
-            width: 14px;
-            border-radius: 3px
-        }
-
-        .slider-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.8);
-            border: none;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all .3s;
-            z-index: 10;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-            opacity: 0;
-            font-size: 14px;
-            font-weight: 700;
-            color: #334155
-        }
-
-        .product-card:hover .slider-arrow {
-            opacity: 1
-        }
-
-        .slider-arrow.prev {
-            left: 4px
-        }
-
-        .slider-arrow.next {
-            right: 4px
-        }
-
-        .product-body {
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1
-        }
-
-        .product-brand {
-            font-size: 9px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: .3px;
-            margin-bottom: 2px;
-            display: flex;
-            align-items: center;
-            gap: 3px
-        }
-
-        .product-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #0f172a;
-            margin-bottom: 3px;
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            min-height: 32px
-        }
-
-        .product-price {
-            font-size: 15px;
-            font-weight: 800;
-            color: #3b82f6;
-            margin-bottom: 4px
-        }
-
-        .product-sku {
-            font-size: 9px;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            margin-bottom: 2px
-        }
-
-        .product-subcategory {
-            font-size: 9px;
-            color: #64748b;
-            padding: 1px 6px;
-            background: #f1f5f9;
-            border-radius: 50px;
-            display: inline-flex;
-            align-items: center;
-            gap: 3px;
-            margin-bottom: 6px;
-            width: fit-content
-        }
-
-        .product-action {
-            margin-top: auto
-        }
-
-        .btn-add-cart {
-            width: 100%;
-            padding: 6px;
-            border: none;
-            border-radius: 6px;
-            background: #0f172a;
-            color: #fff;
-            font-weight: 600;
-            font-size: 10px;
-            transition: all .3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px
-        }
-
-        .btn-add-cart:hover:not(:disabled) {
-            background: #1e293b;
-            transform: translateY(-2px)
-        }
-
-        .btn-add-cart:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-            opacity: .7
-        }
-
-        /* ========== RESPONSIVE ========== */
-        @media (max-width:768px) {
-            .navbar-links {
-                display: none
-            }
-
-            .navbar-toggle {
-                display: block
-            }
-
-            .col-6 {
-                padding: 4px
-            }
-
-            .product-card {
-                border-radius: 8px
-            }
-
-            .product-card:hover {
-                transform: none;
-                box-shadow: none
-            }
-
-            .product-title {
-                font-size: 11px;
-                min-height: 28px
-            }
-
-            .product-price {
-                font-size: 13px
-            }
-
-            .btn-add-cart {
-                padding: 5px;
-                font-size: 9px
-            }
-
-            .category-badge {
-                font-size: 7px;
-                padding: 1px 6px
-            }
-
-            .stock-badge {
-                font-size: 7px;
-                padding: 1px 6px
-            }
-
-            .slider-arrow {
-                opacity: 1;
-                width: 16px;
-                height: 16px;
-                font-size: 12px
-            }
-
-            .filter-bar {
-                display: none
-            }
-
-            .testimonial-card {
-                padding: 16px
-            }
-
-            .testimonial-content p {
-                font-size: 13px
-            }
-        }
-
-        .filter-mobile-toggle {
-            display: none;
-            position: sticky;
-            top: 70px;
-            z-index: 50;
-            background: #fff;
-            padding: 10px 0;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 16px
-        }
-
-        .filter-mobile-toggle .filter-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            background: #0f172a;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            width: 100%;
-            justify-content: center
-        }
-
-        @media (max-width:768px) {
-            .filter-mobile-toggle {
-                display: block
-            }
-        }
-
-        .no-results-message {
-            text-align: center;
-            padding: 30px 20px;
-            display: none
-        }
-
-        .no-results-message i {
-            font-size: 32px;
-            color: #cbd5e1;
-            display: block;
-            margin-bottom: 8px
-        }
-
-        .no-results-message h5 {
-            color: #0f172a;
-            font-weight: 600;
-            margin-bottom: 2px;
-            font-size: 16px
-        }
-
-        .no-results-message p {
-            color: #94a3b8;
-            font-size: 13px
-        }
-
-        .product-item {
-            transition: all .3s
-        }
-
-        .product-item.hidden {
-            display: none
-        }
-
-        .product-item.show {
-            animation: fadeInUp .3s ease
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px)
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0)
-            }
-        }
-
-        .bg-light {
-            background: #f8fafc !important
-        }
-
-        /* ========== CONTACT FORM ========== */
-        .contact-section {
-            background: #f8fafc;
-            padding: 80px 0;
-        }
-
-        .contact-form-wrapper {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 40px 45px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .contact-form .form-group {
-            margin-bottom: 20px;
-        }
-
-        .contact-form .form-label {
-            font-weight: 600;
-            color: #0f172a;
-            margin-bottom: 8px;
-            display: block;
-            font-size: 14px;
-        }
-
-        .contact-form .form-control {
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 12px 16px;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            width: 100%;
-            background: #fff;
-            color: #0f172a;
-        }
-
-        .contact-form .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            outline: none;
-        }
-
-        .contact-form .form-control::placeholder {
-            color: #94a3b8;
-        }
-
-        .contact-form textarea.form-control {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        /* Radio & Checkbox Styles */
-        .contact-form .radio-group,
-        .contact-form .checkbox-group {
-            padding-top: 4px;
-        }
-
-        .contact-form .form-check {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 8px;
-            padding: 0;
-        }
-
-        .contact-form .form-check:last-child {
-            margin-bottom: 0;
-        }
-
-        .contact-form .form-check-input {
-            width: 18px;
-            height: 18px;
-            margin: 0;
-            flex-shrink: 0;
-            cursor: pointer;
-            accent-color: #3b82f6;
-        }
-
-        .contact-form .form-check-input:checked {
-            background-color: #3b82f6;
-            border-color: #3b82f6;
-        }
-
-        .contact-form .form-check-label {
-            font-weight: 400;
-            color: #475569;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        /* Alert Styles */
-        .contact-form-wrapper .alert {
-            border-radius: 10px;
-            padding: 16px 20px;
-            margin-bottom: 24px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .contact-form-wrapper .alert-success {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            color: #166534;
-        }
-
-        .contact-form-wrapper .alert-success i {
-            color: #22c55e;
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        .contact-form-wrapper .alert-danger {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #991b1b;
-        }
-
-        .contact-form-wrapper .alert-danger i {
-            color: #ef4444;
-            font-size: 20px;
-            margin-top: 2px;
-        }
-
-        .contact-form-wrapper .alert ul {
-            padding-left: 20px;
-            margin: 0;
-        }
-
-        .contact-form-wrapper .alert .btn-close {
-            margin-left: auto;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Submit Button */
-        .contact-form .btn-main {
-            padding: 14px 40px;
-            font-size: 16px;
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            width: auto;
-            min-width: 200px;
-            justify-content: center;
-        }
-
-        .contact-form .btn-main:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
-        }
-
-        .contact-form .btn-main:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .contact-section {
-                padding: 60px 0;
-            }
-
-            .contact-form-wrapper {
-                padding: 24px 20px;
-                border-radius: 12px;
-            }
-
-            .contact-form .form-group {
-                margin-bottom: 16px;
-            }
-
-            .contact-form .btn-main {
-                width: 100%;
-                padding: 12px 24px;
-                font-size: 15px;
-                min-width: unset;
-            }
-
-            .contact-form .form-label {
-                font-size: 13px;
-            }
-
-            .contact-form .form-control {
-                padding: 10px 14px;
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .contact-form-wrapper {
-                padding: 16px 14px;
-            }
-
-            .contact-form .form-check-input {
-                width: 16px;
-                height: 16px;
-            }
-
-            .contact-form .form-check-label {
-                font-size: 13px;
-            }
-        }
-
-        /* ========== FOOTER ========== */
-        /* ============================================================
-       FOOTER WITH BACKGROUND IMAGE OVERLAY
-       ============================================================ */
-        .site-footer {
-            position: relative;
-            background-color: #0f172a;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            color: #fff;
-            padding: 60px 0 0;
-            z-index: 1;
-        }
-
-        /* Dark Overlay */
-        .footer-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgb(30 38 57 / 68%);
-            z-index: 0;
-        }
-
-        .site-footer .container {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Footer Content */
-        .site-footer .footer-logo {
-            max-height: 60px;
-            margin-bottom: 16px;
-            filter: brightness(0) invert(1);
-        }
-
-        .site-footer .footer-about {
-            font-size: 14px;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .site-footer .footer-title {
-            color: #fff;
-            font-weight: 700;
-            font-size: 18px;
-            margin-bottom: 20px;
-            position: relative;
-            padding-bottom: 12px;
-        }
-
-        .site-footer .footer-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background: #3b82f6;
-            border-radius: 4px;
-        }
-
-        .site-footer .footer-address {
-            margin-bottom: 16px;
-        }
-
-        .site-footer .footer-address p {
-            font-size: 14px;
-            line-height: 1.8;
-            margin: 0;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .site-footer .footer-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .site-footer .footer-links li {
-            margin-bottom: 10px;
-        }
-
-        .site-footer .footer-links li a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .site-footer .footer-links li a:hover {
-            color: #3b82f6;
-            padding-left: 6px;
-        }
-
-        .site-footer .footer-bottom {
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px 0;
-            margin-top: 40px;
-            text-align: center;
-        }
-
-        .site-footer .footer-bottom p {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.5);
-            margin: 0;
-        }
-
-        /* ============================================================
-       RESPONSIVE
-       ============================================================ */
-        @media (max-width: 768px) {
-            .site-footer {
-                padding: 40px 0 0;
-            }
-
-            .site-footer .footer-title {
-                font-size: 16px;
-                margin-top: 20px;
-            }
-
-            .site-footer .footer-logo {
-                max-height: 45px;
-            }
-
-            .site-footer .footer-about {
-                font-size: 13px;
-            }
-
-            .site-footer .footer-address p {
-                font-size: 13px;
-            }
-
-            .site-footer .footer-links li a {
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .site-footer .footer-logo {
-                max-height: 40px;
-            }
-
-            .site-footer .footer-about {
-                font-size: 12px;
-            }
-
-            .site-footer .footer-address p {
-                font-size: 12px;
-            }
-
-            .site-footer .footer-links li a {
-                font-size: 12px;
-            }
-
-            .site-footer .footer-bottom p {
-                font-size: 12px;
-            }
-        }
-    </style>
+<style>
+/* ============================================================
+   MOBILE FILTER SIDEBAR
+   ============================================================ */
+.mobile-filter-toggle {
+    display: none;
+    position: sticky;
+    bottom: 20px;
+    z-index: 50;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.mobile-filter-toggle .filter-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: #0f172a;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.3);
+    transition: all 0.3s ease;
+}
+
+.mobile-filter-toggle .filter-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.filter-result-count {
+    display: none;
+    font-size: 12px;
+    color: #64748b;
+    margin-left: 10px;
+}
+
+/* Filter Overlay */
+.filter-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.filter-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Filter Sidebar */
+.filter-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 340px;
+    height: 100%;
+    background: #fff;
+    z-index: 1000;
+    transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+}
+
+.filter-sidebar.open {
+    left: 0;
+}
+
+.filter-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fff;
+    flex-shrink: 0;
+}
+
+.filter-sidebar-header h5 {
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.filter-sidebar-header h5 i {
+    color: #3b82f6;
+}
+
+.close-filter-btn {
+    background: #f1f5f9;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    color: #475569;
+}
+
+.close-filter-btn:active {
+    transform: scale(0.9);
+}
+
+.filter-sidebar-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 20px 20px;
+    padding-bottom: 80px;
+}
+
+.filter-section {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 16px;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.filter-section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    cursor: pointer;
+    font-size: 13px;
+    color: #475569;
+}
+
+.filter-option input[type="radio"],
+.filter-option input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.filter-sidebar-actions {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    padding: 12px 0;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.filter-clear-btn-sidebar {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    background: #fff;
+    color: #475569;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.filter-apply-btn-sidebar {
+    flex: 2;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: #0f172a;
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.filter-apply-btn-sidebar:active {
+    transform: scale(0.96);
+}
+
+/* Desktop Filter */
+.desktop-filter {
+    display: block;
+}
+
+/* Price Range in Sidebar */
+.price-range-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.price-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.price-input {
+    flex: 1;
+}
+
+.price-input label {
+    font-size: 10px;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.price-input input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.price-input input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.price-slider-wrapper {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.price-slider-wrapper input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+}
+
+.price-slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 4px;
+}
+
+.price-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: -5px;
+}
+
+.price-range-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+    .desktop-filter {
+        display: none !important;
+    }
+    
+    .mobile-filter-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .filter-result-count {
+        display: inline;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-sidebar {
+        width: 92%;
+        max-width: 300px;
+    }
+}
+
+/* ============================================================
+   HERO SECTION WITH CAROUSEL
+   ============================================================ */
+.hero-section {
+    position: relative;
+    min-height: 650px;
+    display: flex;
+    align-items: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+.hero-slider-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    z-index: 0;
+}
+
+.hero-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    z-index: 1;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-content {
+    max-width: 680px;
+}
+
+.hero-subtitle {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    color: #93c5fd;
+    margin-bottom: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 6px 16px;
+    border-radius: 50px;
+}
+
+.hero-title {
+    font-size: 52px;
+    line-height: 1.15;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+}
+
+.hero-description {
+    font-size: 18px;
+    line-height: 1.8;
+    margin-bottom: 32px;
+    color: #e2e8f0;
+    max-width: 520px;
+}
+
+.btn-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    background: #3b82f6;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-main:hover {
+    background: #2563eb;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.35);
+}
+
+.hero-slider-dots {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+.hero-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero-dot.active {
+    background: #fff;
+    width: 30px;
+    border-radius: 6px;
+}
+
+.hero-slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+    opacity: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-section:hover .hero-slider-arrow {
+    opacity: 1;
+}
+
+.hero-slider-arrow.prev {
+    left: 20px;
+}
+
+.hero-slider-arrow.next {
+    right: 20px;
+}
+
+/* ============================================================
+   WEBSITE SECTIONS
+   ============================================================ */
+.website-section {
+    padding: 80px 0;
+}
+
+.section-heading {
+    max-width: 680px;
+    margin: 0 auto 50px;
+    text-align: center;
+}
+
+.section-subtitle {
+    display: inline-block;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #3b82f6;
+    margin-bottom: 12px;
+    padding: 4px 16px;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 50px;
+}
+
+.section-title {
+    font-size: 38px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 16px;
+    letter-spacing: -0.8px;
+}
+
+.section-content {
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.8;
+}
+
+.bg-light {
+    background: #f8fafc !important;
+}
+
+/* ============================================================
+   ABOUT SECTION
+   ============================================================ */
+.about-section {
+    background: #f8fafc;
+}
+
+.about-image {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 16px;
+}
+
+/* ============================================================
+   SERVICES & FEATURES
+   ============================================================ */
+.service-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    border: 1px solid #e2e8f0;
+    transition: all .3s;
+    height: 100%;
+    text-align: center;
+}
+
+.service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+}
+
+.service-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);
+}
+
+.service-card h4 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.service-card p {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.7;
+    margin: 0;
+}
+
+.feature-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    transition: all .3s;
+    height: 100%;
+    text-align: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.feature-icon {
+    font-size: 32px;
+    color: #3b82f6;
+    margin-bottom: 12px;
+}
+
+.feature-card h5 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.feature-card p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+.testimonials-section {
+    background: #f8fafc;
+}
+
+.testimonial-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    transition: all .3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+}
+
+.testimonial-content {
+    flex: 1;
+    position: relative;
+    padding-top: 10px;
+}
+
+.quote-icon {
+    font-size: 24px;
+    color: #3b82f6;
+    opacity: 0.3;
+    position: absolute;
+    top: -5px;
+    left: 0;
+}
+
+.testimonial-content p {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #475569;
+    margin: 0;
+    padding-left: 32px;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.testimonial-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e2e8f0;
+}
+
+.testimonial-avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6, #60a5fa);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    border: 2px solid #e2e8f0;
+}
+
+.testimonial-info h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.testimonial-info span {
+    font-size: 12px;
+    color: #94a3b8;
+    display: block;
+}
+
+.testimonial-rating {
+    display: flex;
+    gap: 2px;
+    margin-top: 4px;
+}
+
+.testimonial-rating i {
+    font-size: 12px;
+    color: #f59e0b;
+}
+
+.testimonial-rating i.bi-star {
+    color: #e2e8f0;
+}
+
+/* ============================================================
+   CTA SECTION
+   ============================================================ */
+.cta-section {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #fff;
+    padding: 80px 0;
+    text-align: center;
+}
+
+.cta-title {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 16px;
+}
+
+.cta-subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #93c5fd;
+    margin-bottom: 12px;
+}
+
+.cta-content {
+    color: #94a3b8;
+    max-width: 560px;
+    margin: 0 auto 28px;
+    font-size: 17px;
+}
+
+.btn-main-light {
+    background: #fff;
+    color: #0f172a;
+}
+
+.btn-main-light:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
+.filter-bar {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin-bottom: 20px;
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-group {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-toggle {
+    padding: 5px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    transition: all .2s;
+}
+
+.filter-toggle:hover {
+    border-color: #3b82f6;
+    color: #3b82f6;
+    background: #eff6ff;
+}
+
+.filter-toggle.active {
+    border-color: #3b82f6;
+    background: #3b82f6;
+    color: #fff;
+}
+
+.filter-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 160px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: none;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.filter-dropdown.show {
+    display: block;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #475569;
+    transition: background .2s;
+}
+
+.filter-option:hover {
+    background: #f1f5f9;
+}
+
+.filter-option input[type="radio"],
+.filter-option input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.price-dropdown {
+    min-width: 240px;
+    padding: 12px;
+}
+
+.price-range-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.price-inputs {
+    display: flex;
+    gap: 10px;
+}
+
+.price-input {
+    flex: 1;
+}
+
+.price-input label {
+    font-size: 10px;
+    color: #94a3b8;
+    display: block;
+    margin-bottom: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.price-input input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.price-slider-wrapper {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.price-slider-wrapper input[type="range"] {
+    position: absolute;
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: transparent;
+    pointer-events: none;
+    margin: 0;
+}
+
+.price-slider-wrapper input[type="range"]::-webkit-slider-runnable-track {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 4px;
+}
+
+.price-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: #3b82f6;
+    border-radius: 50%;
+    cursor: pointer;
+    pointer-events: auto;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    margin-top: -5px;
+}
+
+.price-range-values {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.price-apply-btn {
+    padding: 4px 16px;
+    background: #3b82f6;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: flex-end;
+}
+
+.filter-clear-btn {
+    padding: 5px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    transition: all .2s;
+}
+
+.filter-clear-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: all .3s;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border-color: #3b82f6;
+}
+
+.product-image-wrapper {
+    position: relative;
+    background: #f8fafc;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+}
+
+.product-slider-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+.product-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity .6s;
+    z-index: 0;
+}
+
+.product-slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s;
+}
+
+.product-image-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1f5f9;
+    color: #cbd5e1;
+    font-size: 32px;
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    animation: pulseBadge 2s infinite;
+}
+
+@keyframes pulseBadge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.futured-badge {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.new-badge {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.category-badge {
+    position: absolute;
+    bottom: 6px;
+    left: 6px;
+    font-size: 8px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 50px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    backdrop-filter: blur(4px);
+    z-index: 5;
+    max-width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.stock-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 8px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 50px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    z-index: 5;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stock-badge.in-stock {
+    background: #22c55e;
+}
+
+.stock-badge.out-of-stock {
+    background: #ef4444;
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 3px;
+    z-index: 10;
+}
+
+.slider-dots .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all .3s;
+}
+
+.slider-dots .dot.active {
+    background: #fff;
+    width: 14px;
+    border-radius: 3px;
+}
+
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .3s;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    opacity: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.product-card:hover .slider-arrow {
+    opacity: 1;
+}
+
+.slider-arrow.prev {
+    left: 4px;
+}
+
+.slider-arrow.next {
+    right: 4px;
+}
+
+.product-body {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.product-brand {
+    font-size: 9px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: .3px;
+    margin-bottom: 2px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.product-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 3px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 32px;
+}
+
+.product-price {
+    font-size: 15px;
+    font-weight: 800;
+    color: #3b82f6;
+    margin-bottom: 4px;
+}
+
+.product-sku {
+    font-size: 9px;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 2px;
+}
+
+.product-subcategory {
+    font-size: 9px;
+    color: #64748b;
+    padding: 1px 6px;
+    background: #f1f5f9;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 6px;
+    width: fit-content;
+}
+
+.product-action {
+    margin-top: auto;
+}
+
+.btn-add-cart {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #fff;
+    font-weight: 600;
+    font-size: 10px;
+    transition: all .3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+}
+
+.btn-add-cart:hover:not(:disabled) {
+    background: #1e293b;
+    transform: translateY(-2px);
+}
+
+.btn-add-cart:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.btn-futured {
+    background: linear-gradient(135deg, #92400e, #78350f) !important;
+    color: #fbbf24 !important;
+}
+
+.btn-futured i {
+    color: #fbbf24;
+}
+
+.no-results-message {
+    text-align: center;
+    padding: 30px 20px;
+    display: none;
+}
+
+.no-results-message i {
+    font-size: 32px;
+    color: #cbd5e1;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.no-results-message h5 {
+    color: #0f172a;
+    font-weight: 600;
+    margin-bottom: 2px;
+    font-size: 16px;
+}
+
+.no-results-message p {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.product-item {
+    transition: all .3s;
+}
+
+.product-item.hidden {
+    display: none;
+}
+
+.product-item.show {
+    animation: fadeInUp .3s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   FAQ SECTION WITH IMAGE
+   ============================================================ */
+.faq-section {
+    background: #f8fafc;
+    padding: 80px 0;
+}
+
+.faq-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.faq-image {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.faq-image-wrapper:hover .faq-image {
+    transform: scale(1.02);
+}
+
+.faq-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 35px 30px;
+    background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
+    color: #fff;
+}
+
+.faq-image-overlay .overlay-content i {
+    font-size: 32px;
+    color: #3b82f6;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.faq-image-overlay .overlay-content h4 {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.faq-image-overlay .overlay-content p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.faq-image-overlay .overlay-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+}
+
+.faq-image-overlay .overlay-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.faq-image-overlay .overlay-stats .stat-item i {
+    font-size: 16px;
+    color: #3b82f6;
+    margin: 0;
+}
+
+.faq-wrapper {
+    background: #fff;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.faq-wrapper-full {
+    background: #fff;
+    padding: 30px 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-container {
+    width: 100%;
+}
+
+.faq-item {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-item:hover {
+    border-color: #3b82f6;
+}
+
+.faq-item.active {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+}
+
+.faq-question {
+    padding: 18px 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.faq-question:hover {
+    color: #3b82f6;
+}
+
+.faq-question .faq-icon {
+    font-size: 20px;
+    color: #94a3b8;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.faq-item.active .faq-question .faq-icon {
+    transform: rotate(180deg);
+    color: #3b82f6;
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+}
+
+.faq-answer.open {
+    max-height: 500px;
+}
+
+.faq-answer p {
+    padding: 0 24px 20px;
+    margin: 0;
+    color: #475569;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+/* ============================================================
+   CONTACT SECTION
+   ============================================================ */
+.contact-section {
+    background: #f8fafc;
+    padding: 80px 0;
+}
+
+.contact-image-wrapper {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 450px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.contact-image {
+    width: 100%;
+    height: 100%;
+    min-height: 450px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.contact-image-wrapper:hover .contact-image {
+    transform: scale(1.02);
+}
+
+.contact-image-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 35px 30px;
+    background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
+    color: #fff;
+}
+
+.contact-image-overlay .overlay-content i {
+    font-size: 32px;
+    color: #3b82f6;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.contact-image-overlay .overlay-content h4 {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #fff;
+}
+
+.contact-image-overlay .overlay-content p {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 16px;
+    line-height: 1.6;
+}
+
+.contact-image-overlay .overlay-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 24px;
+}
+
+.contact-image-overlay .overlay-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.contact-image-overlay .overlay-stats .stat-item i {
+    font-size: 16px;
+    color: #3b82f6;
+    margin: 0;
+}
+
+.contact-form-wrapper {
+    background: #fff;
+    padding: 40px 35px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    height: 100%;
+}
+
+.contact-form .form-group {
+    margin-bottom: 18px;
+}
+
+.contact-form .form-label {
+    font-weight: 600;
+    color: #0f172a;
+    margin-bottom: 6px;
+    display: block;
+    font-size: 14px;
+}
+
+.contact-form .form-control {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 11px 16px;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    width: 100%;
+    background: #fff;
+    color: #0f172a;
+}
+
+.contact-form .form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    outline: none;
+}
+
+.contact-form textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.contact-form .radio-group,
+.contact-form .checkbox-group {
+    padding-top: 4px;
+}
+
+.contact-form .form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding: 0;
+}
+
+.contact-form .form-check:last-child {
+    margin-bottom: 0;
+}
+
+.contact-form .form-check-input {
+    width: 17px;
+    height: 17px;
+    margin: 0;
+    flex-shrink: 0;
+    cursor: pointer;
+    accent-color: #3b82f6;
+}
+
+.contact-form .form-check-label {
+    font-weight: 400;
+    color: #475569;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.contact-form-wrapper .alert {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.contact-form-wrapper .alert-success {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+.contact-form-wrapper .alert-success i {
+    color: #22c55e;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.contact-form-wrapper .alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.contact-form-wrapper .alert-danger i {
+    color: #ef4444;
+    font-size: 18px;
+    margin-top: 2px;
+}
+
+.contact-form-wrapper .alert .btn-close {
+    margin-left: auto;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+}
+
+.contact-form .btn-main {
+    padding: 14px 35px;
+    font-size: 15px;
+    background: #0f172a;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.contact-form .btn-main:hover {
+    background: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(15, 23, 42, 0.25);
+}
+
+/* ============================================================
+   FOOTER SECTION
+   ============================================================ */
+.site-footer {
+    position: relative;
+    background-color: #0f172a;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    padding: 60px 0 0;
+    z-index: 1;
+}
+
+.footer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(30, 38, 57, 0.68);
+    z-index: 0;
+}
+
+.site-footer .container {
+    position: relative;
+    z-index: 1;
+}
+
+.site-footer .footer-logo {
+    max-height: 60px;
+    margin-bottom: 16px;
+    filter: brightness(0) invert(1);
+}
+
+.site-footer .footer-about {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.site-footer .footer-title {
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 12px;
+}
+
+.site-footer .footer-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background: #3b82f6;
+    border-radius: 4px;
+}
+
+.site-footer .footer-address p {
+    font-size: 14px;
+    line-height: 1.8;
+    margin: 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.site-footer .footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.site-footer .footer-links li {
+    margin-bottom: 10px;
+}
+
+.site-footer .footer-links li a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.site-footer .footer-links li a:hover {
+    color: #3b82f6;
+    padding-left: 6px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 991px) {
+    .hero-title { font-size: 40px; }
+    .contact-image-wrapper { min-height: 300px; }
+    .contact-image { min-height: 300px; }
+    .faq-image-wrapper { min-height: 300px; }
+    .faq-image { min-height: 300px; }
+}
+
+@media (max-width: 768px) {
+    .hero-section { min-height: 500px; }
+    .hero-title { font-size: 32px; }
+    .hero-description { font-size: 15px; }
+    .hero-slider-arrow { width: 35px; height: 35px; font-size: 14px; opacity: 1; }
+    .hero-slider-arrow.prev { left: 10px; }
+    .hero-slider-arrow.next { right: 10px; }
+    .hero-slider-dots { bottom: 15px; gap: 8px; }
+    .hero-dot { width: 8px; height: 8px; }
+    .hero-dot.active { width: 20px; }
+    .website-section { padding: 60px 0; }
+    .section-title { font-size: 30px; }
+    .contact-section { padding: 60px 0; }
+    .contact-form-wrapper { padding: 24px 18px; border-radius: 12px; }
+    .contact-image-wrapper { min-height: 220px; border-radius: 12px; }
+    .contact-image { min-height: 220px; }
+    .faq-section { padding: 60px 0; }
+    .faq-wrapper { padding: 20px 16px; border-radius: 12px; }
+    .faq-wrapper-full { padding: 20px 16px; border-radius: 12px; }
+    .faq-image-wrapper { min-height: 220px; border-radius: 12px; }
+    .faq-image { min-height: 220px; }
+    .faq-question { padding: 14px 18px; font-size: 14px; }
+    .faq-answer p { padding: 0 18px 16px; font-size: 14px; }
+    .contact-form .btn-main { width: 100%; justify-content: center; padding: 12px 20px; font-size: 14px; }
+    .col-6 { padding: 4px; }
+    .product-card { border-radius: 8px; }
+    .product-title { font-size: 11px; min-height: 28px; }
+    .product-price { font-size: 13px; }
+    .btn-add-cart { padding: 5px; font-size: 9px; }
+    .category-badge { font-size: 7px; padding: 1px 6px; }
+    .stock-badge { font-size: 7px; padding: 1px 6px; }
+    .slider-arrow { opacity: 1; width: 16px; height: 16px; font-size: 12px; }
+    .testimonial-card { padding: 16px; }
+    .testimonial-content p { font-size: 13px; }
+    .site-footer { padding: 40px 0 0; }
+    .site-footer .footer-title { font-size: 16px; margin-top: 20px; }
+    .site-footer .footer-logo { max-height: 45px; }
+}
+
+@media (max-width: 576px) {
+    .hero-section { min-height: 400px; }
+    .hero-title { font-size: 26px; }
+    .hero-description { font-size: 14px; }
+    .hero-slider-arrow { width: 28px; height: 28px; font-size: 12px; }
+    .hero-slider-arrow.prev { left: 6px; }
+    .hero-slider-arrow.next { right: 6px; }
+    .hero-dot { width: 6px; height: 6px; gap: 6px; }
+    .hero-dot.active { width: 16px; }
+    .contact-form-wrapper { padding: 16px 12px; }
+    .contact-image-wrapper { min-height: 180px; }
+    .contact-image { min-height: 180px; }
+    .faq-wrapper { padding: 16px 12px; }
+    .faq-wrapper-full { padding: 16px 12px; }
+    .faq-image-wrapper { min-height: 180px; }
+    .faq-image { min-height: 180px; }
+    .faq-question { padding: 12px 16px; font-size: 13px; }
+    .faq-answer p { padding: 0 16px 14px; font-size: 13px; }
+    .product-badge { font-size: 7px; padding: 2px 6px; top: 4px; left: 4px; }
+    .btn-add-cart { padding: 4px; font-size: 8px; }
+    .site-footer .footer-logo { max-height: 40px; }
+}
+</style>
 @endpush
 
 
 @push('scripts')
-    <script>
-        // =============================================
-        // FAQ Accordion - Only one open at a time
-        // =============================================
-        function toggleFaq(element) {
-            const currentItem = element.closest('.faq-item');
-            const isActive = currentItem.classList.contains('active');
+<script>
+// =============================================
+// FAQ ACCORDION
+// =============================================
+function toggleFaq(element) {
+    const currentItem = element.closest('.faq-item');
+    const isActive = currentItem.classList.contains('active');
 
-            // Close all FAQ items
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.faq-answer').classList.remove('open');
-            });
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-answer').classList.remove('open');
+    });
 
-            // If the clicked item was not active, open it
-            if (!isActive) {
-                currentItem.classList.add('active');
-                currentItem.querySelector('.faq-answer').classList.add('open');
-            }
+    if (!isActive) {
+        currentItem.classList.add('active');
+        currentItem.querySelector('.faq-answer').classList.add('open');
+    }
+}
+
+// =============================================
+// HERO SLIDER
+// =============================================
+function initHeroSlider() {
+    const container = document.querySelector('.hero-slider-container');
+    if (!container) return;
+
+    const slides = container.querySelectorAll('.hero-slide');
+    const dots = container.querySelectorAll('.hero-dot');
+    const prevBtn = container.querySelector('.hero-slider-arrow.prev');
+    const nextBtn = container.querySelector('.hero-slider-arrow.next');
+
+    if (slides.length <= 1) return;
+
+    let currentSlide = 0;
+    let autoplayInterval = null;
+
+    function goToSlide(index) {
+        slides.forEach(s => s.classList.remove('active'));
+        dots.forEach(d => d.classList.remove('active'));
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        goToSlide((currentSlide + 1) % slides.length);
+    }
+
+    function prevSlide() {
+        goToSlide((currentSlide - 1 + slides.length) % slides.length);
+    }
+
+    function startAutoplay() {
+        if (autoplayInterval) clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(nextSlide, 5000);
+    }
+
+    function stopAutoplay() {
+        if (autoplayInterval) {
+            clearInterval(autoplayInterval);
+            autoplayInterval = null;
+        }
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', function() {
+            stopAutoplay();
+            goToSlide(index);
+            startAutoplay();
+        });
+    });
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stopAutoplay();
+            nextSlide();
+            startAutoplay();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stopAutoplay();
+            prevSlide();
+            startAutoplay();
+        });
+    }
+
+    container.addEventListener('mouseenter', stopAutoplay);
+    container.addEventListener('mouseleave', startAutoplay);
+
+    let touchStartX = 0;
+    container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', function(e) {
+        const diff = touchStartX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) {
+            stopAutoplay();
+            if (diff > 0) nextSlide();
+            else prevSlide();
+            startAutoplay();
+        }
+    }, { passive: true });
+
+    startAutoplay();
+}
+
+// =============================================
+// PRODUCT SLIDER
+// =============================================
+document.querySelectorAll('.product-slider-container').forEach(function(c) {
+    const s = c.querySelectorAll('.product-slide'), d = c.querySelectorAll('.dot'), p = c.querySelector('.prev'), n = c.querySelector('.next');
+    if (s.length <= 1) return;
+    let i = 0, t = null;
+
+    function go(index) {
+        s.forEach(slide => slide.classList.remove('active'));
+        d.forEach(dot => dot.classList.remove('active'));
+        s[index].classList.add('active');
+        d[index].classList.add('active');
+        i = index;
+    }
+
+    function next() { go((i + 1) % s.length); }
+    function start() { if (t) clearInterval(t); t = setInterval(next, 4000); }
+    function stop() { if (t) { clearInterval(t); t = null; } }
+
+    d.forEach((dot, index) => {
+        dot.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stop();
+            go(index);
+            start();
+        });
+    });
+
+    if (n) {
+        n.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stop();
+            next();
+            start();
+        });
+    }
+
+    if (p) {
+        p.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stop();
+            go((i - 1 + s.length) % s.length);
+            start();
+        });
+    }
+
+    if (window.matchMedia('(hover:hover)').matches) {
+        c.addEventListener('mouseenter', stop);
+        c.addEventListener('mouseleave', start);
+    }
+    start();
+});
+
+// =============================================
+// FILTER SIDEBAR
+// =============================================
+const sidebar = document.getElementById('filterSidebar');
+const overlay = document.getElementById('filterOverlay');
+const openBtn = document.getElementById('openFilterSidebar');
+const closeBtn = document.getElementById('closeFilterSidebar');
+
+function openSidebar() {
+    if (window.innerWidth > 768) return;
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+if (openBtn) openBtn.addEventListener('click', openSidebar);
+if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+if (overlay) overlay.addEventListener('click', closeSidebar);
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSidebar();
+});
+
+// =============================================
+// FILTER DROPDOWNS (Desktop)
+// =============================================
+document.querySelectorAll('.desktop-filter .filter-toggle').forEach(function(t) {
+    t.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const d = this.parentElement.querySelector('.filter-dropdown');
+        const isActive = d.classList.contains('show');
+
+        document.querySelectorAll('.desktop-filter .filter-dropdown').forEach(dd => dd.classList.remove('show'));
+        document.querySelectorAll('.desktop-filter .filter-toggle').forEach(tt => tt.classList.remove('active'));
+
+        if (!isActive) {
+            d.classList.add('show');
+            this.classList.add('active');
+        }
+    });
+});
+
+document.addEventListener('click', function() {
+    document.querySelectorAll('.desktop-filter .filter-dropdown').forEach(d => d.classList.remove('show'));
+    document.querySelectorAll('.desktop-filter .filter-toggle').forEach(t => t.classList.remove('active'));
+});
+
+document.querySelectorAll('.desktop-filter .filter-dropdown').forEach(function(d) {
+    d.addEventListener('click', function(e) { e.stopPropagation(); });
+});
+
+// =============================================
+// PRICE SLIDER (Desktop)
+// =============================================
+const dpMin = document.getElementById('priceMin'), dpMax = document.getElementById('priceMax');
+const dsMin = document.getElementById('priceSliderMin'), dsMax = document.getElementById('priceSliderMax');
+const drMin = document.getElementById('rangeMinDisplay'), drMax = document.getElementById('rangeMaxDisplay');
+
+if (dpMin && dpMax && dsMin && dsMax) {
+    function updateDesktopPrice() {
+        let min = parseInt(dsMin.value), max = parseInt(dsMax.value);
+        if (min > max) { dsMin.value = max; min = max; }
+        if (max < min) { dsMax.value = min; max = min; }
+        dpMin.value = min; dpMax.value = max;
+        drMin.textContent = min; drMax.textContent = max;
+    }
+
+    dsMin.addEventListener('input', updateDesktopPrice);
+    dsMax.addEventListener('input', updateDesktopPrice);
+
+    dpMin.addEventListener('change', function() {
+        let val = parseInt(this.value) || 0;
+        let max = parseInt(dpMax.value) || 0;
+        if (val > max) val = max;
+        if (val < parseInt(dsMin.min)) val = parseInt(dsMin.min);
+        dsMin.value = val;
+        updateDesktopPrice();
+    });
+
+    dpMax.addEventListener('change', function() {
+        let val = parseInt(this.value) || 0;
+        let min = parseInt(dpMin.value) || 0;
+        if (val < min) val = min;
+        if (val > parseInt(dsMax.max)) val = parseInt(dsMax.max);
+        dsMax.value = val;
+        updateDesktopPrice();
+    });
+}
+
+document.getElementById('applyPriceFilter')?.addEventListener('click', function() {
+    filterProducts();
+    const d = this.closest('.filter-dropdown');
+    if (d) d.classList.remove('show');
+    const t = d?.parentElement?.querySelector('.filter-toggle');
+    if (t) t.classList.remove('active');
+});
+
+// =============================================
+// PRICE SLIDER (Sidebar)
+// =============================================
+const spMin = document.getElementById('priceMinSidebar'), spMax = document.getElementById('priceMaxSidebar');
+const ssMin = document.getElementById('priceSliderMinSidebar'), ssMax = document.getElementById('priceSliderMaxSidebar');
+const srMin = document.getElementById('rangeMinDisplaySidebar'), srMax = document.getElementById('rangeMaxDisplaySidebar');
+
+if (spMin && spMax && ssMin && ssMax) {
+    function updateSidebarPrice() {
+        let min = parseInt(ssMin.value), max = parseInt(ssMax.value);
+        if (min > max) { ssMin.value = max; min = max; }
+        if (max < min) { ssMax.value = min; max = min; }
+        spMin.value = min; spMax.value = max;
+        srMin.textContent = min; srMax.textContent = max;
+    }
+
+    ssMin.addEventListener('input', updateSidebarPrice);
+    ssMax.addEventListener('input', updateSidebarPrice);
+
+    spMin.addEventListener('change', function() {
+        let val = parseInt(this.value) || 0;
+        let max = parseInt(spMax.value) || 0;
+        if (val > max) val = max;
+        if (val < parseInt(ssMin.min)) val = parseInt(ssMin.min);
+        ssMin.value = val;
+        updateSidebarPrice();
+    });
+
+    spMax.addEventListener('change', function() {
+        let val = parseInt(this.value) || 0;
+        let min = parseInt(spMin.value) || 0;
+        if (val < min) val = min;
+        if (val > parseInt(ssMax.max)) val = parseInt(ssMax.max);
+        ssMax.value = val;
+        updateSidebarPrice();
+    });
+}
+
+// =============================================
+// FILTER PRODUCTS
+// =============================================
+function filterProducts() {
+    const products = document.querySelectorAll('.product-item');
+    let count = 0;
+
+    const category = document.querySelector('input[name="category"]:checked');
+    const selectedCategory = category ? category.value : 'all';
+
+    // Get price from either desktop or sidebar
+    const minPrice = parseInt(document.getElementById('priceMin')?.value) || 
+                     parseInt(document.getElementById('priceMinSidebar')?.value) || 0;
+    const maxPrice = parseInt(document.getElementById('priceMax')?.value) || 
+                     parseInt(document.getElementById('priceMaxSidebar')?.value) || 999999;
+
+    const brands = Array.from(document.querySelectorAll('input[name="brand"]:checked')).map(c => c.value);
+    const stocks = Array.from(document.querySelectorAll('input[name="stock"]:checked')).map(c => c.value);
+
+    products.forEach(function(p) {
+        let show = true;
+
+        if (selectedCategory !== 'all') {
+            const pc = p.dataset.category;
+            if (pc !== selectedCategory) show = false;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Navbar Toggle
-            const toggle = document.querySelector('.navbar-toggle'), menu = document.querySelector('.navbar-mobile-menu');
-            if (toggle && menu) {
-                toggle.addEventListener('click', function () { this.classList.toggle('active'); menu.classList.toggle('open') });
-                menu.querySelectorAll('a').forEach(l => l.addEventListener('click', function () { toggle.classList.remove('active'); menu.classList.remove('open') }))
-            }
+        const price = parseInt(p.dataset.price) || 0;
+        if (price < minPrice || price > maxPrice) show = false;
 
-            // Product Slider
-            document.querySelectorAll('.product-slider-container').forEach(function (c) {
-                const s = c.querySelectorAll('.product-slide'), d = c.querySelectorAll('.dot'), p = c.querySelector('.prev'), n = c.querySelector('.next');
-                if (s.length <= 1) return; let i = 0, t = null;
-                function go(index) { s.forEach(slide => slide.classList.remove('active')); d.forEach(dot => dot.classList.remove('active')); s[index].classList.add('active'); d[index].classList.add('active'); i = index }
-                function next() { go((i + 1) % s.length) }
-                function start() { if (t) clearInterval(t); t = setInterval(next, 4000) }
-                function stop() { if (t) { clearInterval(t); t = null } }
-                d.forEach((dot, index) => { dot.addEventListener('click', function (e) { e.stopPropagation(); stop(); go(index); start() }) });
-                if (n) { n.addEventListener('click', function (e) { e.stopPropagation(); stop(); next(); start() }) }
-                if (p) { p.addEventListener('click', function (e) { e.stopPropagation(); stop(); go((i - 1 + s.length) % s.length); start() }) }
-                if (window.matchMedia('(hover:hover)').matches) { c.addEventListener('mouseenter', stop); c.addEventListener('mouseleave', start) }
-                start()
-            });
+        if (brands.length > 0) {
+            const brand = p.dataset.brand;
+            if (!brands.includes(brand)) show = false;
+        }
 
-            // Filter Dropdowns
-            document.querySelectorAll('.filter-toggle').forEach(function (t) {
-                t.addEventListener('click', function (e) {
-                    e.stopPropagation(); const d = this.parentElement.querySelector('.filter-dropdown'), a = d.classList.contains('show');
-                    document.querySelectorAll('.filter-dropdown').forEach(dd => dd.classList.remove('show'));
-                    document.querySelectorAll('.filter-toggle').forEach(tt => tt.classList.remove('active'));
-                    if (!a) { d.classList.add('show'); this.classList.add('active') }
-                })
-            });
-            document.addEventListener('click', function () { document.querySelectorAll('.filter-dropdown').forEach(d => d.classList.remove('show')); document.querySelectorAll('.filter-toggle').forEach(t => t.classList.remove('active')) });
-            document.querySelectorAll('.filter-dropdown').forEach(function (d) { d.addEventListener('click', function (e) { e.stopPropagation() }) });
+        if (stocks.length > 0) {
+            const stock = p.dataset.stock;
+            if (!stocks.includes(stock)) show = false;
+        }
 
-            // Price Slider
-            const pMin = document.getElementById('priceMin'), pMax = document.getElementById('priceMax'), sMin = document.getElementById('priceSliderMin'), sMax = document.getElementById('priceSliderMax'), rMin = document.getElementById('rangeMinDisplay'), rMax = document.getElementById('rangeMaxDisplay');
-            if (pMin && pMax && sMin && sMax) {
-                function update() { let min = parseInt(sMin.value), max = parseInt(sMax.value); if (min > max) { sMin.value = max; min = max } if (max < min) { sMax.value = min; max = min } pMin.value = min; pMax.value = max; rMin.textContent = min; rMax.textContent = max }
-                sMin.addEventListener('input', update); sMax.addEventListener('input', update);
-                pMin.addEventListener('change', function () { let val = parseInt(this.value) || 0, o = parseInt(pMax.value) || 0; if (val > o) val = o; if (val < parseInt(sMin.min)) val = parseInt(sMin.min); sMin.value = val; update() });
-                pMax.addEventListener('change', function () { let val = parseInt(this.value) || 0, o = parseInt(pMin.value) || 0; if (val < o) val = o; if (val > parseInt(sMax.max)) val = parseInt(sMax.max); sMax.value = val; update() })
-            }
-            document.getElementById('applyPriceFilter')?.addEventListener('click', function () { filter(); const d = this.closest('.filter-dropdown'); if (d) d.classList.remove('show'); const t = d?.parentElement?.querySelector('.filter-toggle'); if (t) t.classList.remove('active') });
+        if (show) {
+            p.classList.remove('hidden');
+            p.classList.add('show');
+            count++;
+        } else {
+            p.classList.add('hidden');
+            p.classList.remove('show');
+        }
+    });
 
-            // Filter
-            function filter() {
-                const products = document.querySelectorAll('.product-item'); let count = 0; const cat = document.querySelector('input[name="category"]:checked'), sc = cat ? cat.value : 'all', min = parseInt(document.getElementById('priceMin')?.value) || 0, max = parseInt(document.getElementById('priceMax')?.value) || 999999, brands = Array.from(document.querySelectorAll('input[name="brand"]:checked')).map(c => c.value), stocks = Array.from(document.querySelectorAll('input[name="stock"]:checked')).map(c => c.value);
-                products.forEach(function (p) { let show = true; if (sc !== 'all') { const pc = p.dataset.category; if (pc !== sc) show = false } const pp = parseInt(p.dataset.price) || 0; if (pp < min || pp > max) show = false; if (brands.length > 0) { const pb = p.dataset.brand; if (!brands.includes(pb)) show = false } if (stocks.length > 0) { const ps = p.dataset.stock; if (!stocks.includes(ps)) show = false } if (show) { p.classList.remove('hidden'); p.classList.add('show'); count++ } else { p.classList.add('hidden'); p.classList.remove('show') } }); const nr = document.getElementById('noResults'); if (nr) { nr.style.display = count === 0 ? 'block' : 'none' }
-            }
-            document.querySelectorAll('input[name="category"]').forEach(r => r.addEventListener('change', filter));
-            document.querySelectorAll('input[name="brand"]').forEach(c => c.addEventListener('change', filter));
-            document.querySelectorAll('input[name="stock"]').forEach(c => c.addEventListener('change', filter));
+    // Update result count
+    const resultCount = document.getElementById('filterResultCount');
+    if (resultCount) {
+        resultCount.textContent = count + ' products';
+    }
 
-            // Clear
-            document.getElementById('clearFilters')?.addEventListener('click', function () {
-                const all = document.querySelector('input[name="category"][value="all"]'); if (all) all.checked = true;
-                const min = parseInt(document.getElementById('priceSliderMin')?.min) || 0, max = parseInt(document.getElementById('priceSliderMax')?.max) || 1000;
-                if (sMin) sMin.value = min; if (sMax) sMax.value = max; if (pMin) pMin.value = min; if (pMax) pMax.value = max; if (rMin) rMin.textContent = min; if (rMax) rMax.textContent = max;
-                document.querySelectorAll('input[name="brand"]').forEach(c => c.checked = false);
-                document.querySelectorAll('input[name="stock"]').forEach(c => c.checked = false);
-                filter()
-            });
-            filter();
+    const noResults = document.getElementById('noResults');
+    if (noResults) {
+        noResults.style.display = count === 0 ? 'block' : 'none';
+    }
 
-            // Initialize FAQ - only first open
-            const firstFaq = document.querySelector('.faq-item');
-            if (firstFaq) {
-                document.querySelectorAll('.faq-item').forEach(item => {
-                    item.classList.remove('active');
-                    item.querySelector('.faq-answer').classList.remove('open');
-                });
-                firstFaq.classList.add('active');
-                firstFaq.querySelector('.faq-answer').classList.add('open');
-            }
-        });
-    </script>
+    // Close sidebar after applying
+    if (window.innerWidth <= 768) {
+        closeSidebar();
+    }
+}
+
+// =============================================
+// FILTER CHANGE EVENTS
+// =============================================
+document.querySelectorAll('input[name="category"]').forEach(r => r.addEventListener('change', filterProducts));
+document.querySelectorAll('input[name="brand"]').forEach(c => c.addEventListener('change', filterProducts));
+document.querySelectorAll('input[name="stock"]').forEach(c => c.addEventListener('change', filterProducts));
+
+// =============================================
+// CLEAR FILTERS
+// =============================================
+function clearFilters() {
+    const all = document.querySelector('input[name="category"][value="all"]');
+    if (all) all.checked = true;
+
+    // Desktop
+    const dMin = parseInt(document.getElementById('priceSliderMin')?.min) || 0;
+    const dMax = parseInt(document.getElementById('priceSliderMax')?.max) || 1000;
+    if (dsMin) dsMin.value = dMin;
+    if (dsMax) dsMax.value = dMax;
+    if (dpMin) dpMin.value = dMin;
+    if (dpMax) dpMax.value = dMax;
+    if (drMin) drMin.textContent = dMin;
+    if (drMax) drMax.textContent = dMax;
+
+    // Sidebar
+    const sMin = parseInt(document.getElementById('priceSliderMinSidebar')?.min) || 0;
+    const sMax = parseInt(document.getElementById('priceSliderMaxSidebar')?.max) || 1000;
+    if (ssMin) ssMin.value = sMin;
+    if (ssMax) ssMax.value = sMax;
+    if (spMin) spMin.value = sMin;
+    if (spMax) spMax.value = sMax;
+    if (srMin) srMin.textContent = sMin;
+    if (srMax) srMax.textContent = sMax;
+
+    document.querySelectorAll('input[name="brand"]').forEach(c => c.checked = false);
+    document.querySelectorAll('input[name="stock"]').forEach(c => c.checked = false);
+
+    filterProducts();
+}
+
+document.getElementById('clearFilters')?.addEventListener('click', clearFilters);
+document.getElementById('clearFiltersSidebar')?.addEventListener('click', clearFilters);
+
+// =============================================
+// APPLY FILTERS (Sidebar)
+// =============================================
+document.getElementById('applyFiltersSidebar')?.addEventListener('click', filterProducts);
+
+// =============================================
+// INITIALIZE
+// =============================================
+// FAQ
+const firstFaq = document.querySelector('.faq-item');
+if (firstFaq) {
+    document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
+        item.querySelector('.faq-answer').classList.remove('open');
+    });
+    firstFaq.classList.add('active');
+    firstFaq.querySelector('.faq-answer').classList.add('open');
+}
+
+// Hero Slider
+initHeroSlider();
+
+// Filter Products
+filterProducts();
+
+// Resize handler - close sidebar on desktop
+let resizeTimer;
+window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+        if (window.innerWidth > 768) {
+            closeSidebar();
+        }
+    }, 250);
+});
+</script>
 @endpush

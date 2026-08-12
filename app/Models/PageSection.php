@@ -16,6 +16,7 @@ class PageSection extends Model
         'sub_title',
         'content',
         'image',
+        'images',
         'button_text',
         'button_url',
         'settings',

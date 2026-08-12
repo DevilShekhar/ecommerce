@@ -35,308 +35,321 @@ class PageSectionController extends Controller
         );
     }
 
-public function store(Request $request, Page $page)
-{
-    if ($page->sections()
-        ->where('section_type', $request->section_type)
-        ->exists()) {
+    public function store(Request $request, Page $page)
+    {
+        if ($page->sections()
+            ->where('section_type', $request->section_type)
+            ->exists()) {
 
-        return back()
-            ->withInput()
-            ->withErrors([
-                'section_type' => 'This section already exists on this page. You can add it only once.',
-            ]);
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'section_type' => 'This section already exists on this page. You can add it only once.',
+                ]);
+        }
+
+        $validated = $request->validate([
+            'section_type' => 'required|string',
+            'title' => 'nullable|string|max:255',
+            'sub_title' => 'nullable|string|max:255',
+            'content' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'button_text' => 'nullable|string|max:255',
+            'button_url' => 'nullable|string|max:255',
+            'sort_order' => 'nullable|integer',
+            'status' => 'nullable|boolean',
+
+            'products' => 'nullable|array',
+            'products.*' => 'exists:products,id',
+
+            'testimonials' => 'nullable|array',
+            'testimonials.*.name' => 'nullable|string|max:255',
+            'testimonials.*.designation' => 'nullable|string|max:255',
+            'testimonials.*.content' => 'nullable|string',
+            'testimonials.*.rating' => 'nullable|integer|min:1|max:5',
+            'testimonials.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+
+            'faqs' => 'nullable|array',
+            'faqs.*.question' => 'nullable|string|max:500',
+            'faqs.*.answer' => 'nullable|string',
+
+            'form_fields' => 'nullable|array',
+            'form_fields.*.label' => 'nullable|string|max:255',
+            'form_fields.*.type' => 'nullable|string|in:text,email,textarea,select,checkbox,radio,number,phone,file',
+            'form_fields.*.name' => 'nullable|string|max:255',
+            'form_fields.*.placeholder' => 'nullable|string|max:255',
+            'form_fields.*.required' => 'nullable|boolean',
+            'form_fields.*.options' => 'nullable',
+            'form_fields.*.options.*' => 'nullable|string',
+
+            'form_action' => 'nullable|string|max:255',
+            'form_method' => 'nullable|string|in:POST,GET',
+
+            'addresses' => 'nullable|array',
+            'addresses.*.address' => 'nullable|string|max:500',
+            'addresses.*.city' => 'nullable|string|max:255',
+            'addresses.*.state' => 'nullable|string|max:255',
+            'addresses.*.zip' => 'nullable|string|max:20',
+            'addresses.*.country' => 'nullable|string|max:255',
+
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'hero_images' => 'nullable|array',
+            'hero_images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        $validated['page_id'] = $page->id;
+        $validated['status'] = $request->has('status') ? 1 : 0;
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')
+                ->store('page-sections', 'public');
+        }
+
+        unset($validated['products']);
+
+        if ($request->section_type === 'hero' && $request->hasFile('hero_images')) {
+            $images = [];
+            foreach ($request->file('hero_images') as $image) {
+                if ($image->isValid()) {
+                    $path = $image->store('hero-images', 'public');
+                    $images[] = $path;
+                }
+            }
+            $validated['images'] = json_encode($images);
+        }
+
+        if ($request->section_type === 'testimonials' && $request->has('testimonials')) {
+
+            $testimonials = [];
+
+            foreach ($request->input('testimonials', []) as $index => $testimonial) {
+
+                $testimonialData = [
+                    'name' => $testimonial['name'] ?? '',
+                    'designation' => $testimonial['designation'] ?? '',
+                    'content' => $testimonial['content'] ?? '',
+                    'rating' => $testimonial['rating'] ?? 0,
+                    'image' => null,
+                ];
+
+                if ($request->hasFile("testimonials.{$index}.image")) {
+                    $imagePath = $request
+                        ->file("testimonials.{$index}.image")
+                        ->store('testimonials', 'public');
+
+                    $testimonialData['image'] = $imagePath;
+                }
+
+                $testimonials[] = $testimonialData;
+            }
+
+            $validated['testimonials'] = json_encode($testimonials);
+        } else {
+            $validated['testimonials'] = null;
+        }
+
+        if ($request->section_type === 'contact') {
+
+            $formFields = [];
+
+            foreach ($request->input('form_fields', []) as $field) {
+
+                $options = $field['options'] ?? [];
+
+                if (is_string($options)) {
+                    $options = array_values(
+                        array_filter(
+                            array_map('trim', explode(',', $options))
+                        )
+                    );
+                }
+
+                $formFields[] = [
+                    'label' => $field['label'] ?? '',
+                    'type' => $field['type'] ?? 'text',
+                    'name' => $field['name'] ?? '',
+                    'placeholder' => $field['placeholder'] ?? '',
+                    'required' => isset($field['required']) ? 1 : 0,
+                    'options' => $options,
+                ];
+            }
+
+            $validated['form_fields'] = json_encode($formFields);
+            $validated['form_action'] = $request->input('form_action') ?: '/contact/submit';
+            $validated['form_method'] = $request->input('form_method') ?: 'POST';
+
+        } else {
+
+            $validated['form_fields'] = null;
+            $validated['form_action'] = '';
+            $validated['form_method'] = 'POST';
+        }
+
+        if ($request->section_type === 'services' && $request->has('services')) {
+
+            $services = [];
+
+            foreach ($request->input('services', []) as $service) {
+                $services[] = [
+                    'title' => $service['title'] ?? '',
+                    'description' => $service['description'] ?? '',
+                    'icon' => $service['icon'] ?? 'bi bi-star',
+                ];
+            }
+
+            $validated['services'] = json_encode($services);
+
+        } else {
+            $validated['services'] = null;
+        }
+
+        if ($request->section_type === 'features' && $request->has('features')) {
+
+            $features = [];
+
+            foreach ($request->input('features', []) as $feature) {
+                $features[] = [
+                    'title' => $feature['title'] ?? '',
+                    'description' => $feature['description'] ?? '',
+                    'icon' => $feature['icon'] ?? 'bi bi-check-circle',
+                ];
+            }
+
+            $validated['features'] = json_encode($features);
+
+        } else {
+            $validated['features'] = null;
+        }
+
+        if ($request->section_type === 'faq' && $request->has('faqs')) {
+
+            $faqs = [];
+
+            foreach ($request->input('faqs', []) as $faq) {
+
+                if (empty($faq['question']) && empty($faq['answer'])) {
+                    continue;
+                }
+
+                $faqs[] = [
+                    'question' => $faq['question'] ?? '',
+                    'answer' => $faq['answer'] ?? '',
+                ];
+            }
+
+            $validated['faqs'] = ! empty($faqs)
+                ? json_encode($faqs)
+                : null;
+
+        } else {
+            $validated['faqs'] = null;
+        }
+
+        if ($request->section_type === 'footer') {
+
+            if ($request->hasFile('logo')) {
+                $validated['logo'] = $request->file('logo')
+                    ->store('footer-logos', 'public');
+            }
+
+            $addresses = [];
+
+            foreach ($request->input('addresses', []) as $address) {
+
+                if (
+                    ! empty($address['address']) ||
+                    ! empty($address['city']) ||
+                    ! empty($address['state']) ||
+                    ! empty($address['zip']) ||
+                    ! empty($address['country'])
+                ) {
+                    $addresses[] = [
+                        'address' => $address['address'] ?? '',
+                        'city' => $address['city'] ?? '',
+                        'state' => $address['state'] ?? '',
+                        'zip' => $address['zip'] ?? '',
+                        'country' => $address['country'] ?? '',
+                    ];
+                }
+            }
+
+            $validated['addresses'] = ! empty($addresses)
+                ? json_encode($addresses)
+                : null;
+
+        } else {
+
+            $validated['addresses'] = null;
+            $validated['logo'] = null;
+        }
+
+        $section = PageSection::create($validated);
+
+        if (
+            $request->section_type === 'products' &&
+            $request->filled('products')
+        ) {
+            $section->products()->sync($request->products);
+        }
+
+        return redirect()
+            ->route('admin.pages.sections.index', $page)
+            ->with('success', 'Section created successfully.');
     }
 
-    $validated = $request->validate([
-        'section_type' => 'required|string',
-        'title' => 'nullable|string|max:255',
-        'sub_title' => 'nullable|string|max:255',
-        'content' => 'nullable|string',
-        'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-        'button_text' => 'nullable|string|max:255',
-        'button_url' => 'nullable|string|max:255',
-        'sort_order' => 'nullable|integer',
-        'status' => 'nullable|boolean',
+    public function edit(Page $page, PageSection $section)
+    {
+        $products = Product::query()
+            ->where('status', 1)
+            ->latest()
+            ->get();
 
-        'products' => 'nullable|array',
-        'products.*' => 'exists:products,id',
-
-        'testimonials' => 'nullable|array',
-        'testimonials.*.name' => 'nullable|string|max:255',
-        'testimonials.*.designation' => 'nullable|string|max:255',
-        'testimonials.*.content' => 'nullable|string',
-        'testimonials.*.rating' => 'nullable|integer|min:1|max:5',
-        'testimonials.*.image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-
-        'faqs' => 'nullable|array',
-        'faqs.*.question' => 'nullable|string|max:500',
-        'faqs.*.answer' => 'nullable|string',
-
-        'form_fields' => 'nullable|array',
-        'form_fields.*.label' => 'nullable|string|max:255',
-        'form_fields.*.type' => 'nullable|string|in:text,email,textarea,select,checkbox,radio,number,phone,file',
-        'form_fields.*.name' => 'nullable|string|max:255',
-        'form_fields.*.placeholder' => 'nullable|string|max:255',
-        'form_fields.*.required' => 'nullable|boolean',
-        'form_fields.*.options' => 'nullable',
-        'form_fields.*.options.*' => 'nullable|string',
-
-        'form_action' => 'nullable|string|max:255',
-        'form_method' => 'nullable|string|in:POST,GET',
-
-        'addresses' => 'nullable|array',
-        'addresses.*.address' => 'nullable|string|max:500',
-        'addresses.*.city' => 'nullable|string|max:255',
-        'addresses.*.state' => 'nullable|string|max:255',
-        'addresses.*.zip' => 'nullable|string|max:20',
-        'addresses.*.country' => 'nullable|string|max:255',
-
-        'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
-    ]);
-
-    $validated['page_id'] = $page->id;
-    $validated['status'] = $request->has('status') ? 1 : 0;
-
-    if ($request->hasFile('image')) {
-        $validated['image'] = $request->file('image')
-            ->store('page-sections', 'public');
-    }
-
-    unset($validated['products']);
-
-    if ($request->section_type === 'testimonials' && $request->has('testimonials')) {
+        $selectedProducts = $section->products()
+            ->pluck('products.id')
+            ->toArray();
 
         $testimonials = [];
-
-        foreach ($request->input('testimonials', []) as $index => $testimonial) {
-
-            $testimonialData = [
-                'name' => $testimonial['name'] ?? '',
-                'designation' => $testimonial['designation'] ?? '',
-                'content' => $testimonial['content'] ?? '',
-                'rating' => $testimonial['rating'] ?? 0,
-                'image' => null,
-            ];
-
-            if ($request->hasFile("testimonials.{$index}.image")) {
-                $imagePath = $request
-                    ->file("testimonials.{$index}.image")
-                    ->store('testimonials', 'public');
-
-                $testimonialData['image'] = $imagePath;
-            }
-
-            $testimonials[] = $testimonialData;
+        if ($section->section_type === 'testimonials' && $section->testimonials) {
+            $testimonials = json_decode($section->testimonials, true) ?? [];
         }
-
-        $validated['testimonials'] = json_encode($testimonials);
-    } else {
-        $validated['testimonials'] = null;
-    }
-
-    if ($request->section_type === 'contact') {
-
-        $formFields = [];
-
-        foreach ($request->input('form_fields', []) as $field) {
-
-            $options = $field['options'] ?? [];
-
-            if (is_string($options)) {
-                $options = array_values(
-                    array_filter(
-                        array_map('trim', explode(',', $options))
-                    )
-                );
-            }
-
-            $formFields[] = [
-                'label' => $field['label'] ?? '',
-                'type' => $field['type'] ?? 'text',
-                'name' => $field['name'] ?? '',
-                'placeholder' => $field['placeholder'] ?? '',
-                'required' => isset($field['required']) ? 1 : 0,
-                'options' => $options,
-            ];
-        }
-
-        $validated['form_fields'] = json_encode($formFields);
-        $validated['form_action'] = $request->input('form_action') ?: '/contact/submit';
-        $validated['form_method'] = $request->input('form_method') ?: 'POST';
-
-    } else {
-
-        $validated['form_fields'] = null;
-        $validated['form_action'] = '';
-        $validated['form_method'] = 'POST';
-    }
-
-    if ($request->section_type === 'services' && $request->has('services')) {
-
-        $services = [];
-
-        foreach ($request->input('services', []) as $service) {
-            $services[] = [
-                'title' => $service['title'] ?? '',
-                'description' => $service['description'] ?? '',
-                'icon' => $service['icon'] ?? 'bi bi-star',
-            ];
-        }
-
-        $validated['services'] = json_encode($services);
-
-    } else {
-        $validated['services'] = null;
-    }
-
-    if ($request->section_type === 'features' && $request->has('features')) {
-
-        $features = [];
-
-        foreach ($request->input('features', []) as $feature) {
-            $features[] = [
-                'title' => $feature['title'] ?? '',
-                'description' => $feature['description'] ?? '',
-                'icon' => $feature['icon'] ?? 'bi bi-check-circle',
-            ];
-        }
-
-        $validated['features'] = json_encode($features);
-
-    } else {
-        $validated['features'] = null;
-    }
-
-    if ($request->section_type === 'faq' && $request->has('faqs')) {
 
         $faqs = [];
-
-        foreach ($request->input('faqs', []) as $faq) {
-
-            if (empty($faq['question']) && empty($faq['answer'])) {
-                continue;
-            }
-
-            $faqs[] = [
-                'question' => $faq['question'] ?? '',
-                'answer' => $faq['answer'] ?? '',
-            ];
+        if ($section->section_type === 'faq' && $section->faqs) {
+            $faqs = json_decode($section->faqs, true) ?? [];
         }
 
-        $validated['faqs'] = !empty($faqs)
-            ? json_encode($faqs)
-            : null;
+        $services = [];
+        if ($section->section_type === 'services' && $section->services) {
+            $services = json_decode($section->services, true) ?? [];
+        }
 
-    } else {
-        $validated['faqs'] = null;
-    }
-
-    if ($request->section_type === 'footer') {
-
-        if ($request->hasFile('logo')) {
-            $validated['logo'] = $request->file('logo')
-                ->store('footer-logos', 'public');
+        $features = [];
+        if ($section->section_type === 'features' && $section->features) {
+            $features = json_decode($section->features, true) ?? [];
         }
 
         $addresses = [];
-
-        foreach ($request->input('addresses', []) as $address) {
-
-            if (
-                !empty($address['address']) ||
-                !empty($address['city']) ||
-                !empty($address['state']) ||
-                !empty($address['zip']) ||
-                !empty($address['country'])
-            ) {
-                $addresses[] = [
-                    'address' => $address['address'] ?? '',
-                    'city' => $address['city'] ?? '',
-                    'state' => $address['state'] ?? '',
-                    'zip' => $address['zip'] ?? '',
-                    'country' => $address['country'] ?? '',
-                ];
-            }
+        if ($section->section_type === 'footer' && $section->addresses) {
+            $addresses = json_decode($section->addresses, true) ?? [];
         }
 
-        $validated['addresses'] = !empty($addresses)
-            ? json_encode($addresses)
-            : null;
-
-    } else {
-
-        $validated['addresses'] = null;
-        $validated['logo'] = null;
+        return view(
+            'admin.pages.sections.edit',
+            compact(
+                'page',
+                'section',
+                'products',
+                'selectedProducts',
+                'testimonials',
+                'services',
+                'features',
+                'faqs',
+                'addresses'
+            )
+        );
     }
 
-    $section = PageSection::create($validated);
-
-    if (
-        $request->section_type === 'products' &&
-        $request->filled('products')
-    ) {
-        $section->products()->sync($request->products);
-    }
-
-    return redirect()
-        ->route('admin.pages.sections.index', $page)
-        ->with('success', 'Section created successfully.');
-}
-
-public function edit(Page $page, PageSection $section)
-{
-    $products = Product::query()
-        ->where('status', 1)
-        ->latest()
-        ->get();
-
-    $selectedProducts = $section->products()
-        ->pluck('products.id')
-        ->toArray();
-
-    $testimonials = [];
-    if ($section->section_type === 'testimonials' && $section->testimonials) {
-        $testimonials = json_decode($section->testimonials, true) ?? [];
-    }
-
-    $faqs = [];
-    if ($section->section_type === 'faq' && $section->faqs) {
-        $faqs = json_decode($section->faqs, true) ?? [];
-    }
-
-    $services = [];
-    if ($section->section_type === 'services' && $section->services) {
-        $services = json_decode($section->services, true) ?? [];
-    }
-
-    $features = [];
-    if ($section->section_type === 'features' && $section->features) {
-        $features = json_decode($section->features, true) ?? [];
-    }
-
-    $addresses = [];
-    if ($section->section_type === 'footer' && $section->addresses) {
-        $addresses = json_decode($section->addresses, true) ?? [];
-    }
-
-    return view(
-        'admin.pages.sections.edit',
-        compact(
-            'page',
-            'section',
-            'products',
-            'selectedProducts',
-            'testimonials',
-            'services',
-            'features',
-            'faqs',
-            'addresses'
-        )
-    );
-}
-
-public function update(Request $request, Page $page, PageSection $section)
+    public function update(Request $request, Page $page, PageSection $section)
 {
     $validated = $request->validate([
         'section_type' => 'required|string',
@@ -376,22 +389,67 @@ public function update(Request $request, Page $page, PageSection $section)
         'addresses.*.zip' => 'nullable|string|max:20',
         'addresses.*.country' => 'nullable|string|max:255',
         'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+        // Hero Multiple Images
+        'hero_images' => 'nullable|array',
+        'hero_images.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
     ]);
 
     $validated['status'] = $request->has('status') ? 1 : 0;
 
+    // =============================================
+    // Handle Section Image
+    // =============================================
     if ($request->hasFile('image')) {
-        if (
-            $section->image &&
-            Storage::disk('public')->exists($section->image)
-        ) {
+        if ($section->image && Storage::disk('public')->exists($section->image)) {
             Storage::disk('public')->delete($section->image);
         }
-
-        $validated['image'] = $request->file('image')
-            ->store('page-sections', 'public');
+        $validated['image'] = $request->file('image')->store('page-sections', 'public');
     }
 
+    // =============================================
+    // Handle Hero Multiple Images
+    // =============================================
+    if ($request->section_type === 'hero') {
+        $existingImages = $section->images ? json_decode($section->images, true) : [];
+        $newImages = [];
+
+        // Check if we have file uploads
+        if ($request->hasFile('hero_images')) {
+            // Delete old images
+            foreach ($existingImages as $oldImage) {
+                if (Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+            }
+
+            // Upload new images
+            foreach ($request->file('hero_images') as $image) {
+                if ($image && $image->isValid()) {
+                    $path = $image->store('hero-images', 'public');
+                    $newImages[] = $path;
+                }
+            }
+            $validated['images'] = json_encode($newImages);
+        } else {
+            // Keep existing images
+            $validated['images'] = $section->images;
+        }
+    } else {
+        // If not hero section, remove images
+        if ($section->images) {
+            $oldImages = json_decode($section->images, true) ?? [];
+            foreach ($oldImages as $oldImage) {
+                if (Storage::disk('public')->exists($oldImage)) {
+                    Storage::disk('public')->delete($oldImage);
+                }
+            }
+        }
+        $validated['images'] = null;
+    }
+
+    // =============================================
+    // Handle Testimonials
+    // =============================================
     if ($request->section_type === 'testimonials' && $request->has('testimonials')) {
         $testimonials = [];
         $existingTestimonials = json_decode($section->testimonials, true) ?? [];
@@ -406,16 +464,10 @@ public function update(Request $request, Page $page, PageSection $section)
             ];
 
             if ($request->hasFile("testimonials.{$index}.image")) {
-                if (
-                    $testimonialData['image'] &&
-                    Storage::disk('public')->exists($testimonialData['image'])
-                ) {
+                if ($testimonialData['image'] && Storage::disk('public')->exists($testimonialData['image'])) {
                     Storage::disk('public')->delete($testimonialData['image']);
                 }
-
-                $testimonialData['image'] = $request
-                    ->file("testimonials.{$index}.image")
-                    ->store('testimonials', 'public');
+                $testimonialData['image'] = $request->file("testimonials.{$index}.image")->store('testimonials', 'public');
             }
 
             $testimonials[] = $testimonialData;
@@ -426,33 +478,29 @@ public function update(Request $request, Page $page, PageSection $section)
         $validated['testimonials'] = null;
     }
 
+    // =============================================
+    // Handle FAQ
+    // =============================================
     if ($request->section_type === 'faq' && $request->has('faqs')) {
         $faqs = [];
-
         foreach ($request->faqs as $faq) {
-            if (
-                empty($faq['question']) &&
-                empty($faq['answer'])
-            ) {
-                continue;
+            if (!empty($faq['question']) || !empty($faq['answer'])) {
+                $faqs[] = [
+                    'question' => $faq['question'] ?? '',
+                    'answer' => $faq['answer'] ?? '',
+                ];
             }
-
-            $faqs[] = [
-                'question' => $faq['question'] ?? '',
-                'answer' => $faq['answer'] ?? '',
-            ];
         }
-
-        $validated['faqs'] = !empty($faqs)
-            ? json_encode($faqs)
-            : null;
+        $validated['faqs'] = !empty($faqs) ? json_encode($faqs) : null;
     } else {
         $validated['faqs'] = null;
     }
 
+    // =============================================
+    // Handle Contact Form
+    // =============================================
     if ($request->section_type === 'contact') {
         $formFields = [];
-
         foreach ($request->input('form_fields', []) as $field) {
             $formFields[] = [
                 'label' => $field['label'] ?? '',
@@ -463,7 +511,6 @@ public function update(Request $request, Page $page, PageSection $section)
                 'options' => $field['options'] ?? [],
             ];
         }
-
         $validated['form_fields'] = json_encode($formFields);
         $validated['form_action'] = $request->form_action ?: '/contact/submit';
         $validated['form_method'] = $request->form_method ?: 'POST';
@@ -473,9 +520,11 @@ public function update(Request $request, Page $page, PageSection $section)
         $validated['form_method'] = $section->form_method ?: 'POST';
     }
 
+    // =============================================
+    // Handle Services
+    // =============================================
     if ($request->section_type === 'services' && $request->has('services')) {
         $services = [];
-
         foreach ($request->services as $service) {
             $services[] = [
                 'title' => $service['title'] ?? '',
@@ -483,15 +532,16 @@ public function update(Request $request, Page $page, PageSection $section)
                 'icon' => $service['icon'] ?? 'bi bi-star',
             ];
         }
-
         $validated['services'] = json_encode($services);
     } else {
         $validated['services'] = null;
     }
 
+    // =============================================
+    // Handle Features
+    // =============================================
     if ($request->section_type === 'features' && $request->has('features')) {
         $features = [];
-
         foreach ($request->features as $feature) {
             $features[] = [
                 'title' => $feature['title'] ?? '',
@@ -499,38 +549,27 @@ public function update(Request $request, Page $page, PageSection $section)
                 'icon' => $feature['icon'] ?? 'bi bi-check-circle',
             ];
         }
-
         $validated['features'] = json_encode($features);
     } else {
         $validated['features'] = null;
     }
 
+    // =============================================
+    // Handle Footer
+    // =============================================
     if ($request->section_type === 'footer') {
         if ($request->hasFile('logo')) {
-            if (
-                $section->logo &&
-                Storage::disk('public')->exists($section->logo)
-            ) {
+            if ($section->logo && Storage::disk('public')->exists($section->logo)) {
                 Storage::disk('public')->delete($section->logo);
             }
-
-            $validated['logo'] = $request
-                ->file('logo')
-                ->store('footer-logos', 'public');
+            $validated['logo'] = $request->file('logo')->store('footer-logos', 'public');
         } else {
             $validated['logo'] = $section->logo;
         }
 
         $addresses = [];
-
         foreach ($request->input('addresses', []) as $address) {
-            if (
-                !empty($address['address']) ||
-                !empty($address['city']) ||
-                !empty($address['state']) ||
-                !empty($address['zip']) ||
-                !empty($address['country'])
-            ) {
+            if (!empty($address['address']) || !empty($address['city']) || !empty($address['state']) || !empty($address['zip']) || !empty($address['country'])) {
                 $addresses[] = [
                     'address' => $address['address'] ?? '',
                     'city' => $address['city'] ?? '',
@@ -540,27 +579,27 @@ public function update(Request $request, Page $page, PageSection $section)
                 ];
             }
         }
-
         $validated['addresses'] = json_encode($addresses);
     } else {
         $validated['logo'] = $section->logo;
         $validated['addresses'] = $section->addresses;
     }
 
+    // =============================================
+    // Update Section
+    // =============================================
     unset($validated['products']);
-
     $section->update($validated);
 
+    // =============================================
+    // Update Products
+    // =============================================
     if ($request->section_type === 'products') {
         $products = $request->input('products', []);
         $syncData = [];
-
         foreach ($products as $index => $productId) {
-            $syncData[$productId] = [
-                'sort_order' => $index + 1,
-            ];
+            $syncData[$productId] = ['sort_order' => $index + 1];
         }
-
         $section->products()->sync($syncData);
     } else {
         $section->products()->detach();
@@ -570,7 +609,6 @@ public function update(Request $request, Page $page, PageSection $section)
         ->route('admin.pages.sections.index', $page)
         ->with('success', 'Section updated successfully.');
 }
-
 
     public function destroy(Page $page, PageSection $section)
     {

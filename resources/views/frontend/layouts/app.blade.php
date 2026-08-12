@@ -24,42 +24,38 @@
 </head>
 
 <body>
-
     <!-- ================= NAVBAR ================= -->
-    <!-- ================= NAVBAR ================= -->
-<header class="site-navbar">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <header class="site-navbar">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center flex-wrap">
 
-            <a href="{{ url('/home') }}" class="site-logo">
                 @php
-                    $footerSection = \App\Models\PageSection::where('section_type', 'footer')
-                        ->where('status', 1)
-                        ->first();
+                    $siteLogo = \App\Models\Logo::first();
                 @endphp
-                
-                <div class="logo-wrapper">
-                    @if($footerSection && $footerSection->logo)
-                        <img src="{{ asset('storage/' . $footerSection->logo) }}" 
-                             alt="{{ $footerSection->title ?? 'Logo' }}" 
-                             style="max-height: 50px; width: auto;">
-                    @endif
-                    <span class="logo-text">E-Commerce</span>
-                </div>
-            </a>
 
-            <nav class="site-nav">
-                <a href="{{ url('/home') }}">Home</a>
-                <a href="{{ url('/about-us') }}">About Us</a>
-                <a href="{{ url('/all-product') }}">Your Products</a>
-                <a href="{{ url('/contact-us') }}">Contact</a>
-            </nav>
+                <a href="{{ url('/home') }}" class="site-logo">
+                    <div class="logo-wrapper">
 
+                        @if($siteLogo && $siteLogo->logo)
+                            <img src="{{ asset('storage/' . $siteLogo->logo) }}" alt="Logo"
+                                style="max-height: 50px; width: auto;">
+                        @endif
+
+                        <span class="logo-text">E-Commerce</span>
+
+                    </div>
+                </a>
+
+                <nav class="site-nav">
+                    <a href="{{ url('/home') }}">Home</a>
+                    <a href="{{ url('/about-us') }}">About Us</a>
+                    <a href="{{ url('/all-product') }}">Our Products</a>
+                    <a href="{{ url('/contact-us') }}">Contact</a>
+                </nav>
+
+            </div>
         </div>
-    </div>
-</header>
-
-
+    </header>
     <!-- ================= CONTENT ================= -->
     @yield('content')
 
