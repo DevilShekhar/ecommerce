@@ -83,6 +83,14 @@ Route::middleware('auth')->group(function () {
         ->name('logos.update');
     Route::get('contact-submissions', [ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
     Route::get('contact-submissions/{submission}', [ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
+    Route::resource('offer', OfferController::class)
+    ->except(['show'])
+    ->names('admin.offer');
+
+
+    // AJAX route
+    Route::get('offer/products-by-category', [OfferController::class, 'getProductsByCategory'])
+        ->name('admin.offer.products-by-category');
 
 });
 require __DIR__.'/auth.php';

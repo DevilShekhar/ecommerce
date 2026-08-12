@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use App\Models\Product;
-
 
 class PageSection extends Model
 {
@@ -26,8 +24,14 @@ class PageSection extends Model
         'form_fields',
         'form_action',
         'form_method',
-        'addresses', 
-        'logo', 
+        'addresses',
+        'logo',
+        'privacy_content',
+        'terms_content',
+        'policy_content',
+        'policy_sections',
+        'disclaimer_title',
+        'disclaimer_description',
     ];
 
     protected $casts = [
@@ -41,13 +45,13 @@ class PageSection extends Model
     }
 
     public function products()
-{
-    return $this->belongsToMany(
-        Product::class,
-        'page_section_products',
-        'page_section_id',
-        'product_id'
-    )->withPivot('sort_order')
-     ->orderBy('page_section_products.sort_order');
-}
+    {
+        return $this->belongsToMany(
+            Product::class,
+            'page_section_products',
+            'page_section_id',
+            'product_id'
+        )->withPivot('sort_order')
+            ->orderBy('page_section_products.sort_order');
+    }
 }

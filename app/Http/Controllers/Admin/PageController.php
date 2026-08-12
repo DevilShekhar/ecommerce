@@ -72,7 +72,7 @@ class PageController extends Controller
 
     public function destroy(Page $page)
     {
-         $page->update([
+        $page->update([
             'status' => 0,
         ]);
 

@@ -39,6 +39,7 @@
                                 <th>Category / Sub Category</th>
                                 <th>Price</th>
                                 <th>Tag</th>
+                                <th>Offer</th>
                                 <th>Meta Details</th>
                                 <th>Created By</th>
                                 <th>Status</th>
@@ -49,7 +50,7 @@
                             @forelse($products as $key => $product)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    
+
                                     <!-- Primary Image Thumbnail -->
                                     <td>
                                         @if($product->image)
@@ -83,12 +84,48 @@
                                         @endif
                                     </td>
 
+
+<td>
+    @if($product->activeOffers && $product->activeOffers->count())
+
+        @foreach($product->activeOffers as $offer)
+
+            <span class="badge badge-success">
+                {{ $offer->title }}
+            </span>
+
+            <br>
+
+            <small class="text-muted">
+
+                @if($offer->discount_type === 'percentage')
+
+                    {{ rtrim(rtrim(number_format($offer->discount_value, 2), '0'), '.') }}% OFF
+
+                @else
+
+                    ₹{{ number_format($offer->discount_value, 2) }} OFF
+
+                @endif
+
+            </small>
+
+        @endforeach
+
+    @else
+
+        <span class="badge badge-light">
+            No Offer
+        </span>
+
+    @endif
+</td>
                                     <!-- Click-to-Modal Meta Details -->
                                     <td>
-                                        <div class="meta-clickable" 
-                                             data-title="Meta Information - {{ $product->name }}" 
-                                             data-content="Title: {{ $product->meta_title ?? 'N/A' }}\n\nKeywords: {{ $product->meta_keywords ?? 'N/A' }}\n\nDescription/Ads: {{ $product->meta_description ?? 'N/A' }}" 
-                                             data-toggle="tooltip" 
+                                        <div class="meta-clickable"
+                                             data-title="Meta Information - {{ $product->name }}"
+                                             data-content="Title: {{ $product->meta_title ?? 'N/A' }}\n\nKeywords: {{ $product->meta_keywords ?? 'N/A' }}\n\nDescription/Ads: {{ $product->meta_description ?? 'N/A' }}"
+                                             data-toggle="tooltip"
                                              title="Click to view full meta details">
                                             <span class="text-truncate d-inline-block" style="max-width: 120px;">
                                                 {{ $product->meta_title ?? 'View Meta' }}
