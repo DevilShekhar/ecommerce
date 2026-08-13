@@ -303,117 +303,142 @@
                 <li class="active open"><a href="{{ route('dashboard') }}"><i
                             class="zmdi zmdi-home"></i><span>Dashboard</span></a>
                     {{-- MASTER --}}
-                <li>
-                    <a href="javascript:void(0);" class="menu-toggle">
-                        <i class="zmdi zmdi-settings"></i>
-                        <span>Master</span>
-                    </a>
-                    <ul class="ml-menu">
-                        @can('roles-index')
-                            <li>
-                                <a href="{{ route('roles.index') }}">
-                                    <i class="zmdi zmdi-shield-security"></i>
-                                    Roles
-                                </a>
-                            </li>
-                        @endcan
-                        @can('user-index')
-                            <li>
-                                <a href="{{ route('users.index') }}">
-                                    <i class="zmdi zmdi-account"></i>
-                                    Users
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                </li>
-                <li class="{{ request()->routeIs('coupons.*') ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-toggle">
-                        <i class="zmdi zmdi-ticket-star"></i>
-                        <span>Coupons</span>
-                    </a>
-                    <ul class="ml-menu">
-                        <li class="{{ request()->routeIs('coupons.index') ? 'active' : '' }}">
-                            <a href="{{ route('coupons.index') }}">Coupons List</a>
+                    @can('roles-index')
+                        <li>
+                            <a href="javascript:void(0);" class="menu-toggle">
+                                <i class="zmdi zmdi-settings"></i>
+                                <span>Master</span>
+                            </a>
+                            <ul class="ml-menu">
+                                @can('roles-index')
+                                    <li>
+                                        <a href="{{ route('roles.index') }}">
+                                            <i class="zmdi zmdi-shield-security"></i>
+                                            Roles
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('user-index')
+                                    <li>
+                                        <a href="{{ route('users.index') }}">
+                                            <i class="zmdi zmdi-account"></i>
+                                            Users
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
                         </li>
-                        <li class="{{ request()->routeIs('coupons.create') ? 'active' : '' }}">
-                            <a href="{{ route('coupons.create') }}">Add Coupon</a>
-                        </li>
-                    </ul>
-                </li>
+                    @endcan
+                @can('coupons.index')
+                    <li class="{{ request()->routeIs('coupons.*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="zmdi zmdi-ticket-star"></i>
+                            <span>Coupons</span>
+                        </a>
+                        <ul class="ml-menu">
+                            @can('coupons.index')
+                                <li class="{{ request()->routeIs('coupons.index') ? 'active' : '' }}">
+                                    <a href="{{ route('coupons.index') }}">Coupons List</a>
+                                </li>
+                            @endcan
+
+                            @can('coupons.create')
+                                <li class="{{ request()->routeIs('coupons.create') ? 'active' : '' }}">
+                                    <a href="{{ route('coupons.create') }}">Add Coupon</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
 
                 {{-- CATEGORIES --}}
-                <li>
-                    <a href="javascript:void(0);" class="menu-toggle">
-                        <i class="zmdi zmdi-collection-item"></i>
-                        <span>Categories</span>
-                    </a>
-                    <ul class="ml-menu">
-                        @can('product_categories-index')
-                            <li>
-                                <a href="{{ route('product_categories.index') }}">
-                                    <i class="zmdi zmdi-view-list"></i>
-                                    Product Categories
-                                </a>
-                            </li>
-                        @endcan
-                        @can('sub_categories-index')
-                            <li>
-                                <a href="{{ route('sub_categories.index') }}">
-                                    <i class="zmdi zmdi-layers"></i>
-                                    Sub Categories
-                                </a>
-                            </li>
-                        @endcan
-                        @can('brands-index')
-                            <li>
-                                <a href="{{ route('brands.index') }}">
-                                    <i class="zmdi zmdi-label"></i>
-                                    Brands
-                                </a>
-                            </li>
-                        @endcan
-                    </ul>
-                </li>
-                <li>
-                    <a href="javascript:void(0);" class="menu-toggle">
-                        <i class="zmdi zmdi-local-offer"></i>
-                        <span>Offers</span>
-                    </a>
+                @can('product_categories-index')
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="zmdi zmdi-collection-item"></i>
+                            <span>Categories</span>
+                        </a>
+                        <ul class="ml-menu">
+                            @can('product_categories-index')
+                                <li>
+                                    <a href="{{ route('product_categories.index') }}">
+                                        <i class="zmdi zmdi-view-list"></i>
+                                        Product Categories
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('sub_categories-index')
+                                <li>
+                                    <a href="{{ route('sub_categories.index') }}">
+                                        <i class="zmdi zmdi-layers"></i>
+                                        Sub Categories
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('brands-index')
+                                <li>
+                                    <a href="{{ route('brands.index') }}">
+                                        <i class="zmdi zmdi-label"></i>
+                                        Brands
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
 
-                    <ul class="ml-menu">
-                            <li>
-                                <a href="{{ route('admin.offer-category.index') }}">
-                                    <i class="zmdi zmdi-collection-item"></i>
-                                    Offer Categories
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('admin.offer.index') }}">
-                                    <i class="zmdi zmdi-local-offer"></i>
-                                    Offers
-                                </a>
-                            </li>
-                    </ul>
-                </li>
+                @can('offer-category.index')
+                    <li>
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="zmdi zmdi-local-offer"></i>
+                            <span>Offers</span>
+                        </a>
+
+                        <ul class="ml-menu">
+                            @can('offer-category.index')
+                                <li>
+                                    <a href="{{ route('admin.offer-category.index') }}">
+                                        <i class="zmdi zmdi-collection-item"></i>
+                                        Offer Categories
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('offer.index')
+                                <li>
+                                    <a href="{{ route('admin.offer.index') }}">
+                                        <i class="zmdi zmdi-local-offer"></i>
+                                        Offers
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
                 </li>
 
-                <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
-                    <a href="javascript:void(0);" class="menu-toggle">
-                        <i class="zmdi zmdi-shopping-cart"></i>
-                        <span>Products</span>
-                    </a>
-                    <ul class="ml-menu">
-                        <li class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
-                            <a href="{{ route('products.index') }}">Products List</a>
-                        </li>
-                        <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
-                            <a href="{{ route('products.create') }}">Add Product</a>
-                        </li>
-                    </ul>
-                </li>
+                @can('product.index')
+                    <li class="{{ request()->routeIs('products.*') ? 'active open' : '' }}">
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="zmdi zmdi-shopping-cart"></i>
+                            <span>Products</span>
+                        </a>
+                        <ul class="ml-menu">
+                            @can('product.index')
+                                <li class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
+                                    <a href="{{ route('products.index') }}">Products List</a>
+                                </li>
+                            @endcan
+                            @can('product.create')
+                                <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
+                                    <a href="{{ route('products.create') }}">Add Product</a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                @endcan
 
                 {{-- PAGES --}}
+                @can('website-pages')
                 <li>
                     <a href="javascript:void(0);" class="menu-toggle">
                         <i class="zmdi zmdi-file-text"></i>
@@ -436,6 +461,7 @@
                         </li>
                     </ul>
                 </li>
+                @endcan
                 @if(auth()->user()->role?->name === 'SuperAdmin')
 
                     <li>
@@ -446,6 +472,8 @@
                     </li>
 
                 @endif
+
+                 @if(auth()->user()->role?->name === 'SuperAdmin')
                 <li> <a href="javascript:void(0);" class="menu-toggle"><i class="zmdi zmdi-folder"></i><span>File
                             Manager</span></a>
                     <ul class="ml-menu">
@@ -760,6 +788,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </aside>
     <!-- Page Content -->
     <main>

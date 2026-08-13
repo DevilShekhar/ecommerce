@@ -71,7 +71,7 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-primary">
+                                                <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">
                                                     <i class="zmdi zmdi-edit"></i>
                                                 </a>
 
@@ -80,11 +80,11 @@
                                                     @csrf
                                                     @method('DELETE')
 
-                                                    @if ($user->status==1)
+                                                    @if($user->status ==1)
                                                     <button type="button" class="btn btn-sm btn-danger delete-btn">
                                                         <i class="zmdi zmdi-delete"></i>
                                                     </button>
-                                                     @endif
+                                                    @endif
                                                 </form>
                                             </td>
                                         </tr>

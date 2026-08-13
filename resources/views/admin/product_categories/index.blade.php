@@ -97,7 +97,7 @@
                                             <td>
 
                                                 <a href="{{ route('product_categories.edit', $category->id) }}"
-                                                    class="btn btn-sm btn-info">
+                                                    class="btn btn-sm btn-warning">
                                                     <i class="zmdi zmdi-edit"></i>
                                                 </a>
 

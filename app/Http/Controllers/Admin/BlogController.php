@@ -8,9 +8,8 @@ use App\Models\BlogFaq;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -20,6 +19,7 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::latest()->paginate(10);
+
         return view('admin.blog.index', compact('blogs'));
     }
 
@@ -37,22 +37,22 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name'              => 'required|string|max:255',
-            'title'             => 'required|string|max:255',
-            'description'       => 'required',
-            'image'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'meta_title'        => 'nullable|string|max:255',
-            'meta_keyword'      => 'nullable|string|max:255',
-            'meta_description'  => 'nullable|string',
-            'question.*'        => 'nullable|string',
-            'answer.*'          => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_keyword' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'question.*' => 'nullable|string',
+            'answer.*' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
 
         try {
 
-            $blog = new Blog();
+            $blog = new Blog;
             $blog->name = $request->name;
             $blog->title = $request->title;
             $blog->slug = Str::slug($request->title);
@@ -77,12 +77,12 @@ class BlogController extends Controller
 
                 foreach ($request->question as $key => $question) {
 
-                    if (!empty($question)) {
+                    if (! empty($question)) {
 
                         BlogFaq::create([
-                            'blog_id'    => $blog->id,
-                            'question'   => $question,
-                            'answer'     => $request->answer[$key] ?? '',
+                            'blog_id' => $blog->id,
+                            'question' => $question,
+                            'answer' => $request->answer[$key] ?? '',
                             'created_by' => Auth::id(),
                         ]);
                     }
@@ -131,15 +131,15 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
         $request->validate([
-            'name'              => 'required|string|max:255',
-            'title'             => 'required|string|max:255',
-            'description'       => 'required',
-            'image'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            'meta_title'        => 'nullable|string|max:255',
-            'meta_keyword'      => 'nullable|string|max:255',
-            'meta_description'  => 'nullable|string',
-            'question.*'        => 'nullable|string',
-            'answer.*'          => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'title' => 'required|string|max:255',
+            'description' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_keyword' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string',
+            'question.*' => 'nullable|string',
+            'answer.*' => 'nullable|string',
         ]);
 
         DB::beginTransaction();
@@ -179,12 +179,12 @@ class BlogController extends Controller
 
                 foreach ($request->question as $key => $question) {
 
-                    if (!empty($question)) {
+                    if (! empty($question)) {
 
                         BlogFaq::create([
-                            'blog_id'    => $blog->id,
-                            'question'   => $question,
-                            'answer'     => $request->answer[$key] ?? '',
+                            'blog_id' => $blog->id,
+                            'question' => $question,
+                            'answer' => $request->answer[$key] ?? '',
                             'created_by' => Auth::id(),
                             'updated_by' => Auth::id(),
                         ]);
@@ -207,30 +207,31 @@ class BlogController extends Controller
                 ->with('error', $e->getMessage());
         }
     }
+
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Blog $blog)
-{
-    DB::beginTransaction();
+    {
+        DB::beginTransaction();
 
-    try {
+        try {
 
-        $blog->status = 1; // Deactive
-        $blog->updated_by = Auth::id();
-        $blog->save();
+            $blog->status = 1; // Deactive
+            $blog->updated_by = Auth::id();
+            $blog->save();
 
-        DB::commit();
+            DB::commit();
 
-        return redirect()
-            ->route('blogs.index')
-            ->with('success', 'Blog deactivated successfully.');
+            return redirect()
+                ->route('blogs.index')
+                ->with('success', 'Blog deactivated successfully.');
 
-    } catch (\Exception $e) {
+        } catch (\Exception $e) {
 
-        DB::rollBack();
+            DB::rollBack();
 
-        return back()->with('error', $e->getMessage());
+            return back()->with('error', $e->getMessage());
+        }
     }
-}
 }

@@ -74,6 +74,27 @@ class PermissionSeeder extends Seeder
             'pages.index',
             'pages.edit',
             'pages.update',
+
+            //Offer-Cat
+            'offer-category.create',
+            'offer-category.index',
+            'offer-category.edit',
+            'offer-category.update',
+
+            //Offer
+            'offer.create',
+            'offer.index',
+            'offer.edit',
+            'offer.update',
+
+            //products
+            'product.create',
+            'product.index',
+            'product.edit',
+            'product.update',
+
+            //Website Pages
+            'website-pages',
         ];
 
         foreach($permissions as $permission){

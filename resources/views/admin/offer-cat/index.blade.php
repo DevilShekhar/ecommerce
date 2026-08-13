@@ -129,7 +129,7 @@
                                                         data-id="{{ $category->id }}"
                                                         data-name="{{ $category->name }}"
                                                         data-status="{{ $category->status }}">
-                                                        <i class="zmdi zmdi-edit"></i> Edit
+                                                        <i class="zmdi zmdi-edit"></i>
                                                     </button>
 
                                                     <form action="{{ route('admin.offer-category.destroy', $category) }}"
