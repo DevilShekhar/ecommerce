@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\admin\BannerController;
 use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\ContactSubmissionController;
@@ -22,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+Route::get('/server', function () {
+    return view('errors.500');
 });
 Route::get('/auth/google', [SocialLoginController::class, 'redirectGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [SocialLoginController::class, 'handleGoogle']);
@@ -75,6 +79,8 @@ Route::middleware('auth')->group(function () {
             Route::delete('pages/{page}/sections/{section}', [PageSectionController::class, 'destroy'])->name('pages.sections.destroy');
             Route::resource('offer-category', OfferCategoryController::class);
             Route::resource('offer', OfferController::class);
+            Route::resource('banners', BannerController::class);
+
         });
     Route::get('/logos', [LogoController::class, 'index'])
         ->name('logos.index');

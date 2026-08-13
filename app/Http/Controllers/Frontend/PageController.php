@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
 use App\Models\Page;
 
 class PageController extends Controller
@@ -19,7 +20,13 @@ class PageController extends Controller
             ])
             ->firstOrFail();
 
-        return view('frontend.page', compact('page'));
+        // Fetch all active banners
+        $banners = Banner::where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return view('frontend.page', compact('page', 'banners'));
     }
 
     public function show($slug)
@@ -35,9 +42,15 @@ class PageController extends Controller
             ])
             ->firstOrFail();
 
+        // Fetch all active banners
+        $banners = Banner::where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->orderBy('id', 'desc')
+            ->get();
+
         // Collect all images from the sections (adjust the field name)
         $images = $page->sections->pluck('image')->filter();
 
-        return view('frontend.page', compact('page', 'images'));
+        return view('frontend.page', compact('page', 'images', 'banners'));
     }
 }

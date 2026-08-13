@@ -47,6 +47,7 @@
                                                 <th>Title</th>
                                                 <th>Category</th>
                                                 <th>Applied To</th>
+                                                {{-- <th width="120">Offer Status</th> --}}
                                                 <th width="120">Status</th>
                                                 <th width="160" class="text-center">Action</th>
                                             </tr>
@@ -66,6 +67,13 @@
                                                                 class="text-muted">{{ $offer->productCategory->name ?? '' }}</small>
                                                         @endif
                                                     </td>
+                                                    {{-- <td>
+                                                        @if($offer->status)
+                                                            <span class="badge badge-success">Active</span>
+                                                        @else
+                                                            <span class="badge badge-danger">Inactive</span>
+                                                        @endif
+                                                    </td> --}}
                                                     <td>
                                                         @if($offer->status)
                                                             <span class="badge badge-success">Active</span>
@@ -76,7 +84,7 @@
                                                     <td class="text-center">
                                                         <a href="{{ route('admin.offer.edit', $offer) }}"
                                                             class="btn btn-warning btn-sm">
-                                                            <i class="zmdi zmdi-edit"></i> Edit
+                                                            <i class="zmdi zmdi-edit"></i>
                                                         </a>
                                                         <form action="{{ route('admin.offer.destroy', $offer) }}" method="POST"
                                                             class="d-inline delete-form">

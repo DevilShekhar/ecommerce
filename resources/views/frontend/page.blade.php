@@ -70,10 +70,60 @@
                     </div>
                 </div>
             </section>
+            {{-- =========================================================
+            ALL BANNERS CAROUSEL
+            ========================================================== --}}
+            {{-- =========================================================
+            ALL BANNERS CAROUSEL (SMALL - FLIPKART STYLE)
+            ========================================================== --}}
+            @if(isset($banners) && $banners->count() > 0)
+                <section class="banner-carousel-section small-banner-section">
+                    <div class="container">
+                        <div class="banner-carousel-wrapper">
+                            <div class="banner-carousel-container">
+                                @foreach($banners as $index => $banner)
+                                    <div class="banner-carousel-slide {{ $index === 0 ? 'active' : '' }}"
+                                        style="background-image: url('{{ asset('storage/' . $banner->image) }}');">
+                                        <div class="banner-carousel-content">
+                                            <div class="banner-carousel-text">
+                                                @if($banner->title)
+                                                    <h3 class="banner-carousel-title">{{ $banner->title }}</h3>
+                                                @endif
+                                                @if($banner->banner_type)
+                                                    <span
+                                                        class="banner-carousel-badge">{{ ucfirst(str_replace('_', ' ', $banner->banner_type)) }}</span>
+                                                @endif
+                                                <a href="{{ $banner->link_url }}" class="banner-btn">
+                                                    Shop Now <i class="bi bi-arrow-right"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
 
-        {{-- =========================================================
-        ABOUT SECTION
-        ========================================================== --}}
+                                @if($banners->count() > 1)
+                                    <div class="banner-carousel-dots">
+                                        @foreach($banners as $index => $banner)
+                                            <span class="banner-carousel-dot {{ $index === 0 ? 'active' : '' }}"
+                                                data-slide="{{ $index }}"></span>
+                                        @endforeach
+                                    </div>
+                                    <button class="banner-carousel-arrow prev" type="button">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    <button class="banner-carousel-arrow next" type="button">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            {{-- =========================================================
+            ABOUT SECTION
+            ========================================================== --}}
         @elseif($section->section_type === 'about')
 
             <section class="website-section about-section">
@@ -82,7 +132,8 @@
                         @if($section->image)
                             <div class="col-lg-6">
                                 <div class="about-image-wrapper">
-                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'About Us' }}" class="about-image">
+                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'About Us' }}"
+                                        class="about-image">
                                 </div>
                             </div>
                         @endif
@@ -111,9 +162,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        SERVICES SECTION
-        ========================================================== --}}
+            {{-- =========================================================
+            SERVICES SECTION
+            ========================================================== --}}
         @elseif($section->section_type === 'services')
 
             <section class="website-section">
@@ -148,9 +199,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        FEATURES SECTION
-        ========================================================== --}}
+            {{-- =========================================================
+            FEATURES SECTION
+            ========================================================== --}}
         @elseif($section->section_type === 'features')
 
             <section class="website-section bg-light">
@@ -185,9 +236,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        TESTIMONIALS SECTION
-        ========================================================== --}}
+            {{-- =========================================================
+            TESTIMONIALS SECTION
+            ========================================================== --}}
         @elseif($section->section_type === 'testimonials')
 
             <section class="website-section testimonials-section">
@@ -217,7 +268,8 @@
                                         </div>
                                         <div class="testimonial-author">
                                             @if(!empty($testimonial['image']))
-                                                <img src="{{ asset('storage/' . $testimonial['image']) }}" alt="{{ $testimonial['name'] ?? 'Customer' }}" class="testimonial-avatar">
+                                                <img src="{{ asset('storage/' . $testimonial['image']) }}"
+                                                    alt="{{ $testimonial['name'] ?? 'Customer' }}" class="testimonial-avatar">
                                             @else
                                                 <div class="testimonial-avatar-placeholder">
                                                     {{ strtoupper(substr($testimonial['name'] ?? 'C', 0, 1)) }}
@@ -255,9 +307,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        CTA SECTION
-        ========================================================== --}}
+            {{-- =========================================================
+            CTA SECTION
+            ========================================================== --}}
         @elseif($section->section_type === 'cta')
 
             <section class="cta-section">
@@ -282,9 +334,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        PRODUCTS SECTION WITH SIDEBAR FILTER
-        ========================================================== --}}
+            {{-- =========================================================
+            PRODUCTS SECTION WITH SIDEBAR FILTER
+            ========================================================== --}}
         @elseif($section->section_type === 'products')
 
             <section class="website-section products-section">
@@ -356,16 +408,20 @@
                                         <div class="price-inputs">
                                             <div class="price-input">
                                                 <label>Min</label>
-                                                <input type="number" id="priceMinSidebar" value="{{ $minPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                                <input type="number" id="priceMinSidebar" value="{{ $minPrice }}" min="{{ $minPrice }}"
+                                                    max="{{ $maxPrice }}">
                                             </div>
                                             <div class="price-input">
                                                 <label>Max</label>
-                                                <input type="number" id="priceMaxSidebar" value="{{ $maxPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                                <input type="number" id="priceMaxSidebar" value="{{ $maxPrice }}" min="{{ $minPrice }}"
+                                                    max="{{ $maxPrice }}">
                                             </div>
                                         </div>
                                         <div class="price-slider-wrapper">
-                                            <input type="range" id="priceSliderMinSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $minPrice }}">
-                                            <input type="range" id="priceSliderMaxSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}">
+                                            <input type="range" id="priceSliderMinSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}"
+                                                value="{{ $minPrice }}">
+                                            <input type="range" id="priceSliderMaxSidebar" min="{{ $minPrice }}" max="{{ $maxPrice }}"
+                                                value="{{ $maxPrice }}">
                                         </div>
                                         <div class="price-range-values">
                                             <span>₹<span id="rangeMinDisplaySidebar">{{ $minPrice }}</span></span>
@@ -446,16 +502,20 @@
                                             <div class="price-inputs">
                                                 <div class="price-input">
                                                     <label>Min</label>
-                                                    <input type="number" id="priceMin" value="{{ $minPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                                    <input type="number" id="priceMin" value="{{ $minPrice }}" min="{{ $minPrice }}"
+                                                        max="{{ $maxPrice }}">
                                                 </div>
                                                 <div class="price-input">
                                                     <label>Max</label>
-                                                    <input type="number" id="priceMax" value="{{ $maxPrice }}" min="{{ $minPrice }}" max="{{ $maxPrice }}">
+                                                    <input type="number" id="priceMax" value="{{ $maxPrice }}" min="{{ $minPrice }}"
+                                                        max="{{ $maxPrice }}">
                                                 </div>
                                             </div>
                                             <div class="price-slider-wrapper">
-                                                <input type="range" id="priceSliderMin" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $minPrice }}">
-                                                <input type="range" id="priceSliderMax" min="{{ $minPrice }}" max="{{ $maxPrice }}" value="{{ $maxPrice }}">
+                                                <input type="range" id="priceSliderMin" min="{{ $minPrice }}" max="{{ $maxPrice }}"
+                                                    value="{{ $minPrice }}">
+                                                <input type="range" id="priceSliderMax" min="{{ $minPrice }}" max="{{ $maxPrice }}"
+                                                    value="{{ $maxPrice }}">
                                             </div>
                                             <div class="price-range-values">
                                                 <span>₹<span id="rangeMinDisplay">{{ $minPrice }}</span></span>
@@ -511,7 +571,9 @@
                                     $isFutured = isset($product->is_futured) && $product->is_futured == 1;
                                 @endphp
 
-                                <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-item" data-category="{{ $product->category_id ?? '' }}" data-brand="{{ $product->brand_id ?? '' }}" data-price="{{ $product->price ?? 0 }}" data-stock="{{ $product->stock > 0 ? 'in' : 'out' }}">
+                                <div class="col-6 col-sm-6 col-md-4 col-lg-3 product-item" data-category="{{ $product->category_id ?? '' }}"
+                                    data-brand="{{ $product->brand_id ?? '' }}" data-price="{{ $product->price ?? 0 }}"
+                                    data-stock="{{ $product->stock > 0 ? 'in' : 'out' }}">
 
                                     <div class="product-card h-100">
                                         <div class="product-image-wrapper">
@@ -528,7 +590,8 @@
                                                             $imgUrl = asset($img);
                                                         @endphp
                                                         <div class="product-slide {{ $index === 0 ? 'active' : '' }}">
-                                                            <img src="{{ $imgUrl }}" alt="{{ $product->name }}" class="product-image" loading="lazy" onerror="this.src='{{ asset('images/placeholder.png') }}';">
+                                                            <img src="{{ $imgUrl }}" alt="{{ $product->name }}" class="product-image" loading="lazy"
+                                                                onerror="this.src='{{ asset('images/placeholder.png') }}';">
                                                         </div>
                                                     @endforeach
                                                     @if($hasMultipleImages)
@@ -601,7 +664,8 @@
 
                                             <div class="product-action">
                                                 @if($isFutured)
-                                                    <button type="button" class="btn-add-cart btn-futured" disabled title="Stay with us! This product will be available soon.">
+                                                    <button type="button" class="btn-add-cart btn-futured" disabled
+                                                        title="Stay with us! This product will be available soon.">
                                                         <i class="bi bi-star"></i> Coming Soon
                                                     </button>
                                                 @elseif($product->stock !== null && $product->stock <= 0)
@@ -636,9 +700,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        FAQ SECTION WITH IMAGE
-        ========================================================== --}}
+            {{-- =========================================================
+            FAQ SECTION WITH IMAGE
+            ========================================================== --}}
         @elseif($section->section_type === 'faq')
 
             <section class="website-section faq-section">
@@ -664,7 +728,8 @@
                             @if($section->image)
                                 <div class="col-lg-5">
                                     <div class="faq-image-wrapper">
-                                        <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'FAQ' }}" class="faq-image">
+                                        <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'FAQ' }}"
+                                            class="faq-image">
                                         <div class="faq-image-overlay">
                                             <div class="overlay-content">
                                                 <i class="bi bi-question-circle"></i>
@@ -738,9 +803,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        CONTACT FORM SECTION WITH IMAGE
-        ========================================================== --}}
+            {{-- =========================================================
+            CONTACT FORM SECTION WITH IMAGE
+            ========================================================== --}}
         @elseif($section->section_type === 'contact')
 
             <section class="website-section contact-section">
@@ -767,7 +832,8 @@
                         @if($section->image)
                             <div class="col-lg-5">
                                 <div class="contact-image-wrapper">
-                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'Contact Us' }}" class="contact-image">
+                                    <img src="{{ asset('storage/' . $section->image) }}" alt="{{ $section->title ?? 'Contact Us' }}"
+                                        class="contact-image">
                                     <div class="contact-image-overlay">
                                         <div class="overlay-content">
                                             <i class="bi bi-chat-dots"></i>
@@ -794,114 +860,130 @@
                             <div class="col-lg-7">
                                 <div class="contact-form-wrapper">
                         @else
-                            <div class="col-lg-12">
-                                <div class="contact-form-wrapper" style="max-width:800px;margin:0 auto;">
-                        @endif
+                                    <div class="col-lg-12">
+                                        <div class="contact-form-wrapper" style="max-width:800px;margin:0 auto;">
+                                @endif
 
-                        @if(session('success'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="bi bi-check-circle-fill"></i>
-                                {{ session('success') }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-
-                        @if($errors->any())
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
-                                <ul class="mb-0 mt-1">
-                                    @foreach($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        @endif
-
-                        @if(!empty($formFields) && count($formFields) > 0)
-                            <form action="{{ route('frontend.contact.submit', ['page' => $page->id, 'section' => $section->id]) }}" method="{{ strtolower($formMethod) }}" enctype="multipart/form-data" class="contact-form">
-                                @csrf
-                                <div class="row g-3">
-                                    @foreach($formFields as $field)
-                                        @php
-                                            $name = $field['name'] ?? '';
-                                            $label = $field['label'] ?? '';
-                                            $type = $field['type'] ?? 'text';
-                                            $placeholder = $field['placeholder'] ?? '';
-                                            $required = !empty($field['required']);
-                                            $options = $field['options'] ?? [];
-                                            if (is_string($options)) {
-                                                $options = array_map('trim', explode(',', $options));
-                                            }
-                                            $colClass = in_array($type, ['textarea', 'file']) ? 'col-md-12' : 'col-md-6';
-                                        @endphp
-                                        @if(!$name) @continue @endif
-                                        <div class="{{ $colClass }}">
-                                            <div class="form-group">
-                                                <label for="{{ $name }}" class="form-label">
-                                                    {{ $label }}
-                                                    @if($required) <span class="text-danger">*</span> @endif
-                                                </label>
-                                                @if($type === 'textarea')
-                                                    <textarea name="{{ $name }}" id="{{ $name }}" class="form-control" placeholder="{{ $placeholder }}" rows="4" {{ $required ? 'required' : '' }}>{{ old($name) }}</textarea>
-                                                @elseif($type === 'select')
-                                                    <select name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
-                                                        <option value="">Select {{ $label }}</option>
-                                                        @foreach($options as $option)
-                                                            <option value="{{ $option }}" {{ old($name) == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                @elseif($type === 'radio')
-                                                    <div class="radio-group">
-                                                        @foreach($options as $option)
-                                                            <div class="form-check">
-                                                                <input type="radio" class="form-check-input" name="{{ $name }}" id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}" {{ old($name) == $option ? 'checked' : '' }} {{ $required ? 'required' : '' }}>
-                                                                <label class="form-check-label" for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                @elseif($type === 'checkbox')
-                                                    <div class="checkbox-group">
-                                                        @foreach($options as $option)
-                                                            <div class="form-check">
-                                                                <input type="checkbox" class="form-check-input" name="{{ $name }}[]" id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}" {{ in_array($option, old($name, [])) ? 'checked' : '' }}>
-                                                                <label class="form-check-label" for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
-                                                            </div>
-                                                        @endforeach
-                                                    </div>
-                                                @elseif($type === 'file')
-                                                    <input type="file" name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
-                                                @else
-                                                    <input type="{{ $type === 'phone' ? 'tel' : $type }}" name="{{ $name }}" id="{{ $name }}" class="form-control" placeholder="{{ $placeholder }}" value="{{ old($name) }}" {{ $required ? 'required' : '' }}>
-                                                @endif
-                                                @error($name)
-                                                    <small class="text-danger">{{ $message }}</small>
-                                                @enderror
+                                        @if(session('success'))
+                                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                {{ session('success') }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn-main">
-                                            <i class="bi bi-send"></i>
-                                            {{ $section->button_text ?? 'Send Message' }}
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        @else
-                            <div class="text-center py-4">
-                                <i class="bi bi-info-circle display-6 text-muted"></i>
-                                <p class="text-muted mt-2">No form fields configured. Please contact the administrator.</p>
-                            </div>
-                        @endif
+                                        @endif
 
-                        @if($section->image)
-                                </div>
-                            </div>
-                        @else
-                                </div>
-                            </div>
-                        @endif
+                                        @if($errors->any())
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                                <ul class="mb-0 mt-1">
+                                                    @foreach($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                        @endif
+
+                                        @if(!empty($formFields) && count($formFields) > 0)
+                                            <form
+                                                action="{{ route('frontend.contact.submit', ['page' => $page->id, 'section' => $section->id]) }}"
+                                                method="{{ strtolower($formMethod) }}" enctype="multipart/form-data"
+                                                class="contact-form">
+                                                @csrf
+                                                <div class="row g-3">
+                                                    @foreach($formFields as $field)
+                                                        @php
+                                                            $name = $field['name'] ?? '';
+                                                            $label = $field['label'] ?? '';
+                                                            $type = $field['type'] ?? 'text';
+                                                            $placeholder = $field['placeholder'] ?? '';
+                                                            $required = !empty($field['required']);
+                                                            $options = $field['options'] ?? [];
+                                                            if (is_string($options)) {
+                                                                $options = array_map('trim', explode(',', $options));
+                                                            }
+                                                            $colClass = in_array($type, ['textarea', 'file']) ? 'col-md-12' : 'col-md-6';
+                                                        @endphp
+                                                        @if(!$name) @continue @endif
+                                                        <div class="{{ $colClass }}">
+                                                            <div class="form-group">
+                                                                <label for="{{ $name }}" class="form-label">
+                                                                    {{ $label }}
+                                                                    @if($required) <span class="text-danger">*</span> @endif
+                                                                </label>
+                                                                @if($type === 'textarea')
+                                                                    <textarea name="{{ $name }}" id="{{ $name }}" class="form-control"
+                                                                        placeholder="{{ $placeholder }}" rows="4" {{ $required ? 'required' : '' }}>{{ old($name) }}</textarea>
+                                                                @elseif($type === 'select')
+                                                                    <select name="{{ $name }}" id="{{ $name }}" class="form-control" {{ $required ? 'required' : '' }}>
+                                                                        <option value="">Select {{ $label }}</option>
+                                                                        @foreach($options as $option)
+                                                                            <option value="{{ $option }}" {{ old($name) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                @elseif($type === 'radio')
+                                                                    <div class="radio-group">
+                                                                        @foreach($options as $option)
+                                                                            <div class="form-check">
+                                                                                <input type="radio" class="form-check-input" name="{{ $name }}"
+                                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
+                                                                                    {{ old($name) == $option ? 'checked' : '' }} {{ $required ? 'required' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @elseif($type === 'checkbox')
+                                                                    <div class="checkbox-group">
+                                                                        @foreach($options as $option)
+                                                                            <div class="form-check">
+                                                                                <input type="checkbox" class="form-check-input" name="{{ $name }}[]"
+                                                                                    id="{{ $name }}_{{ Str::slug($option) }}" value="{{ $option }}"
+                                                                                    {{ in_array($option, old($name, [])) ? 'checked' : '' }}>
+                                                                                <label class="form-check-label"
+                                                                                    for="{{ $name }}_{{ Str::slug($option) }}">{{ $option }}</label>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                @elseif($type === 'file')
+                                                                    <input type="file" name="{{ $name }}" id="{{ $name }}" class="form-control"
+                                                                        {{ $required ? 'required' : '' }}>
+                                                                @else
+                                                                    <input type="{{ $type === 'phone' ? 'tel' : $type }}" name="{{ $name }}"
+                                                                        id="{{ $name }}" class="form-control" placeholder="{{ $placeholder }}"
+                                                                        value="{{ old($name) }}" {{ $required ? 'required' : '' }}>
+                                                                @endif
+                                                                @error($name)
+                                                                    <small class="text-danger">{{ $message }}</small>
+                                                                @enderror
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                    <div class="col-md-12">
+                                                        <button type="submit" class="btn-main">
+                                                            <i class="bi bi-send"></i>
+                                                            {{ $section->button_text ?? 'Send Message' }}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        @else
+                                            <div class="text-center py-4">
+                                                <i class="bi bi-info-circle display-6 text-muted"></i>
+                                                <p class="text-muted mt-2">No form fields configured. Please contact the administrator.
+                                                </p>
+                                            </div>
+                                        @endif
+
+                                        @if($section->image)
+                                                </div>
+                                            </div>
+                                        @else
+                                        </div>
+                                    </div>
+                                @endif
                     </div>
 
                     @if($section->button_text && $section->button_url)
@@ -915,13 +997,14 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        PRIVACY & POLICY SECTION WITH FULL-WIDTH IMAGE
-        ========================================================== --}}
+            {{-- =========================================================
+            PRIVACY & POLICY SECTION WITH FULL-WIDTH IMAGE
+            ========================================================== --}}
         @elseif($section->section_type === 'privacy_policy')
 
             {{-- Full Width Image Section --}}
-            <section class="policy-image-section" style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
+            <section class="policy-image-section"
+                style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
                 <div class="policy-image-overlay-full"></div>
                 <div class="policy-image-content">
                     <div class="container">
@@ -1004,9 +1087,9 @@
                 </div>
             </section>
 
-        {{-- =========================================================
-        FOOTER SECTION - REMOVED (Now in layouts/app.blade.php)
-        ========================================================== --}}
+            {{-- =========================================================
+            FOOTER SECTION - REMOVED (Now in layouts/app.blade.php)
+            ========================================================== --}}
 
         @endif
         {{-- =========================================================
@@ -1014,43 +1097,42 @@
         ========================================================== --}}
         @if($section->section_type === 'disclaimer')
 
-        <section class="website-section disclaimer-section"
+            <section class="website-section disclaimer-section"
                 style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
-            <div class="disclaimer-overlay"></div>
-            <div class="container">
-                <div class="row align-items-center">
-                    @if($section->image)
-                        <div class="col-lg-5">
-                            <div class="disclaimer-image-wrapper">
-                                <img src="{{ asset('storage/' . $section->image) }}"
-                                    alt="{{ $section->disclaimer_title ?? 'Disclaimer' }}"
-                                    class="disclaimer-image">
+                <div class="disclaimer-overlay"></div>
+                <div class="container">
+                    <div class="row align-items-center">
+                        @if($section->image)
+                            <div class="col-lg-5">
+                                <div class="disclaimer-image-wrapper">
+                                    <img src="{{ asset('storage/' . $section->image) }}"
+                                        alt="{{ $section->disclaimer_title ?? 'Disclaimer' }}" class="disclaimer-image">
+                                </div>
                             </div>
-                        </div>
-                    @endif
-                    <div class="{{ $section->image ? 'col-lg-7' : 'col-lg-12' }}">
-                        <div class="disclaimer-content">
-                            @if($section->disclaimer_title)
-                                <h2 class="disclaimer-title">{{ $section->disclaimer_title }}</h2>
-                            @endif
-                            @if($section->disclaimer_description)
-                                <div class="disclaimer-description">
-                                    {!! $section->disclaimer_description !!}
-                                </div>
-                            @endif
-                            @if($section->button_text && $section->button_url)
-                                <div class="mt-4">
-                                    <a href="{{ url($section->button_url) }}" class="btn-main">
-                                        {{ $section->button_text }}
-                                        <i class="bi bi-arrow-right"></i>
-                                    </a>
-                                </div>
-                            @endif
+                        @endif
+                        <div class="{{ $section->image ? 'col-lg-7' : 'col-lg-12' }}">
+                            <div class="disclaimer-content">
+                                @if($section->disclaimer_title)
+                                    <h2 class="disclaimer-title">{{ $section->disclaimer_title }}</h2>
+                                @endif
+                                @if($section->disclaimer_description)
+                                    <div class="disclaimer-description">
+                                        {!! $section->disclaimer_description !!}
+                                    </div>
+                                @endif
+                                @if($section->button_text && $section->button_url)
+                                    <div class="mt-4">
+                                        <a href="{{ url($section->button_url) }}" class="btn-main">
+                                            {{ $section->button_text }}
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
         @endif
 
@@ -1062,12 +1144,340 @@
 @push('styles')
     <style>
         /* ============================================================
-           PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
-           ============================================================ */
+       SMALL BANNER CAROUSEL - FLIPKART STYLE
+       ============================================================ */
+        .small-banner-section {
+            padding: 15px 0;
+            background: #f1f3f6;
+        }
+
+        .banner-carousel-wrapper {
+            background: #fff;
+            border-radius: 8px;
+            padding: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .banner-carousel-container {
+            position: relative;
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+
+        .banner-carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+            z-index: 0;
+            border-radius: 6px;
+        }
+
+        .banner-carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .banner-carousel-content {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 30px;
+            background: linear-gradient(90deg, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+            border-radius: 6px;
+        }
+
+        .banner-carousel-text {
+            max-width: 50%;
+        }
+
+        .banner-carousel-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .banner-carousel-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-bottom: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 12px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .banner-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 18px;
+            background: #fff;
+            color: #0f172a;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 4px;
+        }
+
+        .banner-btn:hover {
+            background: #3b82f6;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .banner-btn i {
+            font-size: 12px;
+        }
 
         /* ============================================================
-           FULL WIDTH IMAGE SECTION (Takes Full Section)
-           ============================================================ */
+       CAROUSEL DOTS
+       ============================================================ */
+        .banner-carousel-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .banner-carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .banner-carousel-dot.active {
+            background: #fff;
+            width: 22px;
+            border-radius: 4px;
+        }
+
+        .banner-carousel-dot:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ============================================================
+       CAROUSEL ARROWS
+       ============================================================ */
+        .banner-carousel-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            color: #0f172a;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            opacity: 0;
+        }
+
+        .banner-carousel-container:hover .banner-carousel-arrow {
+            opacity: 1;
+        }
+
+        .banner-carousel-arrow:hover {
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .banner-carousel-arrow:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .banner-carousel-arrow.prev {
+            left: 8px;
+        }
+
+        .banner-carousel-arrow.next {
+            right: 8px;
+        }
+
+        .banner-carousel-arrow i {
+            font-size: 14px;
+        }
+
+        /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+        @media (max-width: 991px) {
+            .banner-carousel-container {
+                height: 150px;
+            }
+
+            .banner-carousel-title {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .small-banner-section {
+                padding: 10px 0;
+            }
+
+            .banner-carousel-container {
+                height: 130px;
+            }
+
+            .banner-carousel-title {
+                font-size: 15px;
+            }
+
+            .banner-carousel-text {
+                max-width: 60%;
+            }
+
+            .banner-carousel-arrow {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+                opacity: 1;
+            }
+
+            .banner-carousel-arrow i {
+                font-size: 12px;
+            }
+
+            .banner-carousel-arrow.prev {
+                left: 4px;
+            }
+
+            .banner-carousel-arrow.next {
+                right: 4px;
+            }
+
+            .banner-btn {
+                padding: 4px 12px;
+                font-size: 10px;
+            }
+
+            .banner-carousel-content {
+                padding: 0 15px;
+            }
+
+            .banner-carousel-badge {
+                font-size: 8px;
+                padding: 2px 8px;
+            }
+
+            .banner-carousel-dot {
+                width: 6px;
+                height: 6px;
+            }
+
+            .banner-carousel-dot.active {
+                width: 16px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .banner-carousel-container {
+                height: 100px;
+            }
+
+            .banner-carousel-title {
+                font-size: 12px;
+                margin-bottom: 2px;
+            }
+
+            .banner-carousel-text {
+                max-width: 65%;
+            }
+
+            .banner-carousel-badge {
+                font-size: 7px;
+                padding: 1px 6px;
+                margin-bottom: 3px;
+            }
+
+            .banner-btn {
+                padding: 3px 10px;
+                font-size: 9px;
+                margin-top: 2px;
+            }
+
+            .banner-btn i {
+                font-size: 9px;
+            }
+
+            .banner-carousel-arrow {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
+            }
+
+            .banner-carousel-arrow i {
+                font-size: 10px;
+            }
+
+            .banner-carousel-dot {
+                width: 5px;
+                height: 5px;
+                gap: 5px;
+            }
+
+            .banner-carousel-dot.active {
+                width: 12px;
+            }
+        }
+
+        /* ============================================================
+       ANIMATION
+       ============================================================ */
+        @keyframes fadeInUpSmall {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .banner-carousel-slide.active .banner-carousel-text {
+            animation: fadeInUpSmall 0.5s ease forwards;
+        }
+
+        /* ============================================================
+                       PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
+                       ============================================================ */
         .policy-image-section {
             position: relative;
             width: 100%;
@@ -1178,8 +1588,8 @@
         }
 
         /* ============================================================
-           CONTENT SECTION (Below the Image) - WIDE CONTENT
-           ============================================================ */
+                       CONTENT SECTION (Below the Image) - WIDE CONTENT
+                       ============================================================ */
         .policy-content-section {
             background: #f8fafc;
             padding: 80px 0 100px;
@@ -1256,8 +1666,8 @@
         }
 
         /* ============================================================
-           POLICY SECTIONS
-           ============================================================ */
+                       POLICY SECTIONS
+                       ============================================================ */
         .policy-sections {
             margin-top: 40px;
             padding-top: 40px;
@@ -1312,8 +1722,8 @@
         }
 
         /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+                       RESPONSIVE
+                       ============================================================ */
         @media (max-width: 991px) {
             .policy-image-section {
                 min-height: 450px;
@@ -1539,8 +1949,8 @@
         }
 
         /* ============================================================
-           MOBILE FILTER SIDEBAR
-           ============================================================ */
+                       MOBILE FILTER SIDEBAR
+                       ============================================================ */
         .mobile-filter-toggle {
             display: none;
             position: sticky;
@@ -1848,8 +2258,8 @@
         }
 
         /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+                       RESPONSIVE
+                       ============================================================ */
         @media (max-width: 768px) {
             .desktop-filter {
                 display: none !important;
@@ -1874,8 +2284,8 @@
         }
 
         /* ============================================================
-           HERO SECTION WITH CAROUSEL
-           ============================================================ */
+                       HERO SECTION WITH CAROUSEL
+                       ============================================================ */
         .hero-section {
             position: relative;
             min-height: 650px;
@@ -2041,8 +2451,8 @@
         }
 
         /* ============================================================
-           WEBSITE SECTIONS
-           ============================================================ */
+                       WEBSITE SECTIONS
+                       ============================================================ */
         .website-section {
             padding: 80px 0;
         }
@@ -2085,8 +2495,8 @@
         }
 
         /* ============================================================
-           ABOUT SECTION
-           ============================================================ */
+                       ABOUT SECTION
+                       ============================================================ */
         .about-section {
             background: #f8fafc;
         }
@@ -2099,8 +2509,8 @@
         }
 
         /* ============================================================
-           SERVICES & FEATURES
-           ============================================================ */
+                       SERVICES & FEATURES
+                       ============================================================ */
         .service-card {
             background: #fff;
             border-radius: 12px;
@@ -2181,8 +2591,8 @@
         }
 
         /* ============================================================
-           TESTIMONIALS
-           ============================================================ */
+                       TESTIMONIALS
+                       ============================================================ */
         .testimonials-section {
             background: #f8fafc;
         }
@@ -2287,8 +2697,8 @@
         }
 
         /* ============================================================
-           CTA SECTION
-           ============================================================ */
+                       CTA SECTION
+                       ============================================================ */
         .cta-section {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             color: #fff;
@@ -2329,8 +2739,8 @@
         }
 
         /* ============================================================
-           PRODUCTS
-           ============================================================ */
+                       PRODUCTS
+                       ============================================================ */
         .filter-bar {
             background: #fff;
             border: 1px solid #e2e8f0;
@@ -2894,8 +3304,8 @@
         }
 
         /* ============================================================
-           FAQ SECTION WITH IMAGE
-           ============================================================ */
+                       FAQ SECTION WITH IMAGE
+                       ============================================================ */
         .faq-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3061,8 +3471,8 @@
         }
 
         /* ============================================================
-           CONTACT SECTION
-           ============================================================ */
+                       CONTACT SECTION
+                       ============================================================ */
         .contact-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3278,8 +3688,8 @@
         }
 
         /* ============================================================
-           FOOTER SECTION
-           ============================================================ */
+                       FOOTER SECTION
+                       ============================================================ */
         .site-footer {
             position: relative;
             background-color: #0f172a;
@@ -3368,8 +3778,8 @@
         }
 
         /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+                       RESPONSIVE
+                       ============================================================ */
         @media (max-width: 991px) {
             .hero-title {
                 font-size: 40px;
@@ -4107,6 +4517,111 @@
                     closeSidebar();
                 }
             }, 250);
+        });
+
+        // =============================================
+        // SMALL BANNER CAROUSEL
+        // =============================================
+        function initSmallBannerCarousel() {
+            const container = document.querySelector('.banner-carousel-container');
+            if (!container) return;
+
+            const slides = container.querySelectorAll('.banner-carousel-slide');
+            const dots = container.querySelectorAll('.banner-carousel-dot');
+            const prevBtn = container.querySelector('.banner-carousel-arrow.prev');
+            const nextBtn = container.querySelector('.banner-carousel-arrow.next');
+
+            if (slides.length <= 1) return;
+
+            let currentSlide = 0;
+            let autoplayInterval = null;
+            const autoplayDelay = 4000;
+
+            function goToSlide(index) {
+                slides.forEach(s => s.classList.remove('active'));
+                dots.forEach(d => d.classList.remove('active'));
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                currentSlide = index;
+            }
+
+            function nextSlide() {
+                goToSlide((currentSlide + 1) % slides.length);
+            }
+
+            function prevSlide() {
+                goToSlide((currentSlide - 1 + slides.length) % slides.length);
+            }
+
+            function startAutoplay() {
+                if (autoplayInterval) clearInterval(autoplayInterval);
+                autoplayInterval = setInterval(nextSlide, autoplayDelay);
+            }
+
+            function stopAutoplay() {
+                if (autoplayInterval) {
+                    clearInterval(autoplayInterval);
+                    autoplayInterval = null;
+                }
+            }
+
+            // Dot clicks
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function () {
+                    stopAutoplay();
+                    goToSlide(index);
+                    startAutoplay();
+                });
+            });
+
+            // Arrow clicks
+            if (nextBtn) {
+                nextBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    stopAutoplay();
+                    nextSlide();
+                    startAutoplay();
+                });
+            }
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    stopAutoplay();
+                    prevSlide();
+                    startAutoplay();
+                });
+            }
+
+            // Hover pause
+            container.addEventListener('mouseenter', stopAutoplay);
+            container.addEventListener('mouseleave', startAutoplay);
+
+            // Touch support
+            let touchStartX = 0;
+            container.addEventListener('touchstart', function (e) {
+                touchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            container.addEventListener('touchend', function (e) {
+                const diff = touchStartX - e.changedTouches[0].screenX;
+                if (Math.abs(diff) > 30) {
+                    stopAutoplay();
+                    if (diff > 0) {
+                        nextSlide();
+                    } else {
+                        prevSlide();
+                    }
+                    startAutoplay();
+                }
+            }, { passive: true });
+
+            startAutoplay();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            initSmallBannerCarousel();
         });
     </script>
 @endpush
