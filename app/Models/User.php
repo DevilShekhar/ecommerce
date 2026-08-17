@@ -26,7 +26,19 @@ class User extends Authenticatable
         'provider',
         'provider_id',
         'avatar',
-        'address', 'status', 'role_id',
+        'address', 'status', 'role_id', 'latitude',
+        'longitude',
+        'location_address',
+        'city',
+        'state',
+        'country', 'pincode',
+
+    ];
+
+    protected $casts = [
+        'address' => 'array',
+        'latitude' => 'decimal:7',
+        'longitude' => 'decimal:7',
     ];
 
     /**
@@ -49,12 +61,17 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-             'address' => 'array',
+            'address' => 'array',
         ];
     }
 
     public function role()
     {
         return $this->belongsTo(Role::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
     }
 }

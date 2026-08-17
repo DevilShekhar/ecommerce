@@ -16,16 +16,16 @@ class WishlistController extends Controller
      */
     public function index()
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $wishlistItems = Wishlist::with('product')
             ->where('user_id', $user->id)
             ->latest()
             ->paginate(12);
 
-        $wishlistCount = Wishlist::where('user_id', $user->id)->count();
+        $wishlistCount = Wishlist::query()->where('user_id', $user->id)->count();
 
-        $categories = ProductCategory::where('status', 1)
+        $categories = ProductCategory::query()->where('status', 1)
             ->latest()
             ->get();
 
@@ -43,7 +43,7 @@ class WishlistController extends Controller
     public function toggle(Request $request, $productId)
     {
         // Check product
-        $product = Product::where('id', $productId)
+        $product = Product::query()->where('id', $productId)
             ->where('status', 1)
             ->first();
 
@@ -57,7 +57,7 @@ class WishlistController extends Controller
         $userId = Auth::id();
 
         // Check existing wishlist
-        $existing = Wishlist::where('user_id', $userId)
+        $existing = Wishlist::query()->where('user_id', $userId)
             ->where('product_id', $productId)
             ->first();
 
@@ -82,7 +82,7 @@ class WishlistController extends Controller
         }
 
         // Updated count
-        $wishlistCount = Wishlist::where('user_id', $userId)->count();
+        $wishlistCount = Wishlist::query()->where('user_id', $userId)->count();
 
         return response()->json([
             'success' => true,
@@ -98,7 +98,26 @@ class WishlistController extends Controller
      */
     public function destroy($id)
     {
-        $wishlist = Wishlist::where('user_id', Auth::id())
+        $wishlist = Wishlist::query()->where('user_id', Auth::id())
+            ->where('id', $id)
+            ->first();
+
+        if (! $wishlist) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Wishlist item not found',
+            ], 404);
+        }
+
+        $wishlist->delete();
+
+        return redirect()
+            ->route('customer.wishlist')
+            ->with('success', 'Product removed from wishlist.');
+    }
+    public function remove($id)
+    {
+        $wishlist = Wishlist::query()->where('user_id', Auth::id())
             ->where('id', $id)
             ->first();
 

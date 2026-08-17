@@ -29,7 +29,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'address' => 'nullable|string|max:1000',
+            'address' => 'nullable|string|max:1000',    
             'role_id' => 'nullable|exists:roles,id',
         ]);
         $validated['status'] = 1;

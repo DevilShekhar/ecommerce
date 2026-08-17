@@ -35,14 +35,6 @@ Route::get('/auth/google/callback', [SocialLoginController::class, 'handleGoogle
 Route::get('/auth/facebook', [SocialLoginController::class, 'redirectFacebook'])->name('facebook.login');
 Route::get('/auth/facebook/callback', [SocialLoginController::class, 'handleFacebook']);
 
-// =============================================
-// ✅ REMOVE DUPLICATE DASHBOARD ROUTE
-// =============================================
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');  // ← REMOVE THIS
-
-// Profile Routes (Laravel Default)
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -101,20 +93,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
-    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
 });
-
-// =============================================
-// ✅ CUSTOMER DASHBOARD ROUTES - ONLY ONE
 // =============================================
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard - SINGLE ROUTE
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // ================================
-    // NEW: Customer Dashboard
-    // ================================
     Route::get('/customer-dashboard', [DashboardController::class, 'customerDashboard'])
         ->name('customer.dashboard');
 
@@ -133,21 +119,22 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])
         ->name('customer.wishlist.remove');
+
     Route::get('/customer/products', [DashboardController::class, 'customerProducts'])
         ->name('customer.products');
     Route::get('/checkout', [CheckoutController::class, 'checkout'])
         ->name('checkout');
 
-    Route::post('/cart/add/{productId}', [CheckoutController::class, 'addToCart'])
+    Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])
         ->name('cart.add');
-    Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
 
-    // Cart Routes - Uncomment when CartController exists
-    // Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    // Route::post('/cart/add/{productId}', [CartController::class, 'add'])->name('cart.add');
-    // Route::put('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-    // Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-    // Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+    Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])
+        ->name('cart.remove');
+    Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
+    Route::post('/cart/update/{key}', [CheckoutController::class, 'updateCart'])->name('cart.update');
+    Route::get('/checkout/addresses', [CheckoutController::class, 'getAddresses'])->name('checkout.addresses');
+    Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])
+    ->name('checkout.applyCoupon');
 
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');
