@@ -845,7 +845,7 @@
                                 <a href="{{ route('checkout') }}"><i class="bi bi-credit-card"></i> Checkout</a>
                             </li>
                             <li>
-                                <a href="#"><i class="bi bi-geo-alt"></i> Addresses</a>
+                                <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
                             </li>
                             <li>
                                 <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
