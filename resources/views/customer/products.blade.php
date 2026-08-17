@@ -694,12 +694,6 @@
 
                                     <div class="wishlist-product-buttons">
 
-                                        <button type="button" class="btn btn-remove-wishlist" data-product-id="{{ $product->id }}"
-                                            onclick="toggleWishlist(this)">
-                                            <i class="bi bi-trash"></i>
-                                            Remove
-                                        </button>
-
                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1">
                                             @csrf
 
