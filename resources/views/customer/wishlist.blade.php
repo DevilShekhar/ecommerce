@@ -920,18 +920,6 @@
                                 <i class="bi bi-trash3"></i>
 
                             </button>
-
-
-                            {{-- Heart --}}
-
-                            <button type="button"
-                                    class="heart-wishlist-btn"
-                                    title="Wishlist">
-
-                                <i class="bi bi-heart-fill"></i>
-
-                            </button>
-
                         </div>
 
                     @endif
