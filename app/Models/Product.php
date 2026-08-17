@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
@@ -82,5 +83,22 @@ class Product extends Model
             'product_id',
             'page_section_id'
         )->withPivot('sort_order');
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function isInWishlist($userId = null)
+    {
+        if (! $userId) {
+            $userId = Auth::id();
+        }
+        if (! $userId) {
+            return false;
+        }
+
+        return $this->wishlists()->where('user_id', $userId)->exists();
     }
 }

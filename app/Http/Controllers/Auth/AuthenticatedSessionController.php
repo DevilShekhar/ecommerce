@@ -29,8 +29,8 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
+        // Inactive account check
         if ($user->status == 0) {
-
             Auth::logout();
 
             throw ValidationException::withMessages([
@@ -40,7 +40,21 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // =============================================
+        // Role-based redirect
+        // =============================================
+        $roleName = $user->role?->name;   // because role is a relationship
+
+        if ($roleName === 'SuperAdmin') {
+            return redirect()->intended(route('dashboard'));
+        }
+
+        if ($roleName === 'customer') {
+            return redirect()->intended(route('customer.dashboard'));
+        }
+
+        // Fallback for any other role
+        return redirect()->intended(route('home'));
     }
 
     /**

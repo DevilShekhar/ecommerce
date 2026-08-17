@@ -10,7 +10,7 @@ class PageController extends Controller
 {
     public function home()
     {
-        $page = Page::query()->where('slug', 'home')
+        $page = Page::query()->where('slug', '/')
             ->where('status', true)
             ->with([
                 'sections' => function ($query) {

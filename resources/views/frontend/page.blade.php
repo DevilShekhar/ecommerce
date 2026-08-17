@@ -662,6 +662,7 @@
                                                 </div>
                                             @endif
 
+                                            {{-- In your products section, replace the product action section --}}
                                             <div class="product-action">
                                                 @if($isFutured)
                                                     <button type="button" class="btn-add-cart btn-futured" disabled
@@ -673,9 +674,19 @@
                                                         <i class="bi bi-x-circle"></i> Out of Stock
                                                     </button>
                                                 @else
-                                                    <button type="button" class="btn-add-cart">
-                                                        <i class="bi bi-cart-plus"></i> Add to Cart
-                                                    </button>
+                                                    @auth
+                                                        {{-- User is logged in - show add to cart button --}}
+                                                        <button type="button" class="btn-add-cart add-to-cart-btn"
+                                                            data-product-id="{{ $product->id }}" onclick="addToCart({{ $product->id }})">
+                                                            <i class="bi bi-cart-plus"></i> Add to Cart
+                                                        </button>
+                                                    @else
+                                                        {{-- User is not logged in - show login required button --}}
+                                                        <button type="button" class="btn-add-cart login-required-btn" onclick="redirectToLogin()"
+                                                            data-product-id="{{ $product->id }}">
+                                                            <i class="bi bi-box-arrow-in-right"></i> Login to Add
+                                                        </button>
+                                                    @endauth
                                                 @endif
                                             </div>
                                         </div>
@@ -1144,8 +1155,8 @@
 @push('styles')
     <style>
         /* ============================================================
-       SMALL BANNER CAROUSEL - FLIPKART STYLE
-       ============================================================ */
+           SMALL BANNER CAROUSEL - FLIPKART STYLE
+           ============================================================ */
         .small-banner-section {
             padding: 15px 0;
             background: #f1f3f6;
@@ -1250,8 +1261,8 @@
         }
 
         /* ============================================================
-       CAROUSEL DOTS
-       ============================================================ */
+           CAROUSEL DOTS
+           ============================================================ */
         .banner-carousel-dots {
             position: absolute;
             bottom: 10px;
@@ -1283,8 +1294,8 @@
         }
 
         /* ============================================================
-       CAROUSEL ARROWS
-       ============================================================ */
+           CAROUSEL ARROWS
+           ============================================================ */
         .banner-carousel-arrow {
             position: absolute;
             top: 50%;
@@ -1333,8 +1344,8 @@
         }
 
         /* ============================================================
-       RESPONSIVE
-       ============================================================ */
+           RESPONSIVE
+           ============================================================ */
         @media (max-width: 991px) {
             .banner-carousel-container {
                 height: 150px;
@@ -1457,8 +1468,8 @@
         }
 
         /* ============================================================
-       ANIMATION
-       ============================================================ */
+           ANIMATION
+           ============================================================ */
         @keyframes fadeInUpSmall {
             from {
                 opacity: 0;
@@ -1476,8 +1487,8 @@
         }
 
         /* ============================================================
-                       PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
-                       ============================================================ */
+                           PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
+                           ============================================================ */
         .policy-image-section {
             position: relative;
             width: 100%;
@@ -1588,8 +1599,8 @@
         }
 
         /* ============================================================
-                       CONTENT SECTION (Below the Image) - WIDE CONTENT
-                       ============================================================ */
+                           CONTENT SECTION (Below the Image) - WIDE CONTENT
+                           ============================================================ */
         .policy-content-section {
             background: #f8fafc;
             padding: 80px 0 100px;
@@ -1666,8 +1677,8 @@
         }
 
         /* ============================================================
-                       POLICY SECTIONS
-                       ============================================================ */
+                           POLICY SECTIONS
+                           ============================================================ */
         .policy-sections {
             margin-top: 40px;
             padding-top: 40px;
@@ -1722,8 +1733,8 @@
         }
 
         /* ============================================================
-                       RESPONSIVE
-                       ============================================================ */
+                           RESPONSIVE
+                           ============================================================ */
         @media (max-width: 991px) {
             .policy-image-section {
                 min-height: 450px;
@@ -1949,8 +1960,8 @@
         }
 
         /* ============================================================
-                       MOBILE FILTER SIDEBAR
-                       ============================================================ */
+                           MOBILE FILTER SIDEBAR
+                           ============================================================ */
         .mobile-filter-toggle {
             display: none;
             position: sticky;
@@ -2258,8 +2269,8 @@
         }
 
         /* ============================================================
-                       RESPONSIVE
-                       ============================================================ */
+                           RESPONSIVE
+                           ============================================================ */
         @media (max-width: 768px) {
             .desktop-filter {
                 display: none !important;
@@ -2284,8 +2295,8 @@
         }
 
         /* ============================================================
-                       HERO SECTION WITH CAROUSEL
-                       ============================================================ */
+                           HERO SECTION WITH CAROUSEL
+                           ============================================================ */
         .hero-section {
             position: relative;
             min-height: 650px;
@@ -2451,8 +2462,8 @@
         }
 
         /* ============================================================
-                       WEBSITE SECTIONS
-                       ============================================================ */
+                           WEBSITE SECTIONS
+                           ============================================================ */
         .website-section {
             padding: 80px 0;
         }
@@ -2495,8 +2506,8 @@
         }
 
         /* ============================================================
-                       ABOUT SECTION
-                       ============================================================ */
+                           ABOUT SECTION
+                           ============================================================ */
         .about-section {
             background: #f8fafc;
         }
@@ -2509,8 +2520,8 @@
         }
 
         /* ============================================================
-                       SERVICES & FEATURES
-                       ============================================================ */
+                           SERVICES & FEATURES
+                           ============================================================ */
         .service-card {
             background: #fff;
             border-radius: 12px;
@@ -2591,8 +2602,8 @@
         }
 
         /* ============================================================
-                       TESTIMONIALS
-                       ============================================================ */
+                           TESTIMONIALS
+                           ============================================================ */
         .testimonials-section {
             background: #f8fafc;
         }
@@ -2697,8 +2708,8 @@
         }
 
         /* ============================================================
-                       CTA SECTION
-                       ============================================================ */
+                           CTA SECTION
+                           ============================================================ */
         .cta-section {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             color: #fff;
@@ -2739,8 +2750,8 @@
         }
 
         /* ============================================================
-                       PRODUCTS
-                       ============================================================ */
+                           PRODUCTS
+                           ============================================================ */
         .filter-bar {
             background: #fff;
             border: 1px solid #e2e8f0;
@@ -3304,8 +3315,8 @@
         }
 
         /* ============================================================
-                       FAQ SECTION WITH IMAGE
-                       ============================================================ */
+                           FAQ SECTION WITH IMAGE
+                           ============================================================ */
         .faq-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3471,8 +3482,8 @@
         }
 
         /* ============================================================
-                       CONTACT SECTION
-                       ============================================================ */
+                           CONTACT SECTION
+                           ============================================================ */
         .contact-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3688,8 +3699,8 @@
         }
 
         /* ============================================================
-                       FOOTER SECTION
-                       ============================================================ */
+                           FOOTER SECTION
+                           ============================================================ */
         .site-footer {
             position: relative;
             background-color: #0f172a;
@@ -3778,8 +3789,8 @@
         }
 
         /* ============================================================
-                       RESPONSIVE
-                       ============================================================ */
+                           RESPONSIVE
+                           ============================================================ */
         @media (max-width: 991px) {
             .hero-title {
                 font-size: 40px;
@@ -4623,5 +4634,14 @@
         document.addEventListener('DOMContentLoaded', function () {
             initSmallBannerCarousel();
         });
+        // =============================================
+// REDIRECT TO LOGIN
+// =============================================
+function redirectToLogin() {
+    // Get the current URL to redirect back after login
+    const currentUrl = window.location.href;
+    // Redirect to login page with return URL
+    window.location.href = '/login?redirect=' + encodeURIComponent(currentUrl);
+}
     </script>
 @endpush
