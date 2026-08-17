@@ -1,498 +1,1090 @@
+
+
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
 
 @section('content')
-    <section class="content">
-        <div class="body_scroll">
-            <div class="block-header">
-                <div class="row">
-                    <div class="col-lg-7 col-md-6 col-sm-12">
-                        <h2>Welcome, {{ Auth::user()->name }}!</h2>
 
-                        <ul class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('dashboard') }}">
-                                    <i class="zmdi zmdi-home"></i> Aero
-                                </a>
-                            </li>
+@php
+    $user = Auth::user();
+    $roleName = $user?->role?->name;
+@endphp
 
-                            <li class="breadcrumb-item">eCommerce</li>
+<section class="content">
+    <div class="body_scroll">
 
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ul>
+        {{-- ============================
+            BLOCK HEADER
+        ============================= --}}
+        <div class="block-header">
+            <div class="row">
 
-                        <button class="btn btn-primary btn-icon mobile_menu" type="button">
-                            <i class="zmdi zmdi-sort-amount-desc"></i>
-                        </button>
-                    </div>
-                    <div class="col-lg-5 col-md-6 col-sm-12">
-                        <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn" type="button"><i
-                                class="zmdi zmdi-arrow-right"></i></button>
-                    </div>
+                <div class="col-lg-7 col-md-6 col-sm-12">
+                    <h2>Welcome, {{ $user->name ?? 'User' }}!</h2>
+
+                    <ul class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('dashboard') }}">
+                                <i class="zmdi zmdi-home"></i>
+                                Aero
+                            </a>
+                        </li>
+
+                        <li class="breadcrumb-item active">
+                            Dashboard
+                        </li>
+                    </ul>
+
+                    <button class="btn btn-primary btn-icon mobile_menu"
+                            type="button">
+                        <i class="zmdi zmdi-sort-amount-desc"></i>
+                    </button>
                 </div>
-            </div>
-            <div class="container-fluid">
-                <div class="row clearfix">
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
-                        <div class="card">
-                            <div class="body">
-                                <input type="text" class="knob" value="42" data-linecap="round" data-width="100"
-                                    data-height="100" data-thickness="0.08" data-fgColor="#00adef" readonly>
-                                <p>Customers</p>
-                                <div class="d-flex bd-highlight text-center mt-4">
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Direct</small>
-                                        <h5 class="mb-0">254</h5>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Discovery</small>
-                                        <h5 class="mb-0">254</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
-                        <div class="card">
-                            <div class="body">
-                                <input type="text" class="knob" value="81" data-linecap="round" data-width="100"
-                                    data-height="100" data-thickness="0.08" data-fgColor="#ee2558" readonly>
-                                <p>Total Orders</p>
-                                <div class="d-flex bd-highlight text-center mt-4">
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Internal</small>
-                                        <h5 class="mb-0">34GB</h5>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">External</small>
-                                        <h5 class="mb-0">531GB</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
-                        <div class="card">
-                            <div class="body">
-                                <input type="text" class="knob" value="62" data-linecap="round" data-width="100"
-                                    data-height="100" data-thickness="0.08" data-fgColor="#8f78db" readonly>
-                                <p>Investiment</p>
-                                <div class="d-flex bd-highlight text-center mt-4">
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Internal</small>
-                                        <h5 class="mb-0">25<small>(-23%)</small></h5>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">External</small>
-                                        <h5 class="mb-0">12<small>(+150%)</small></h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 col-sm-6 col-6 text-center">
-                        <div class="card">
-                            <div class="body">
-                                <input type="text" class="knob" value="38" data-linecap="round" data-width="100"
-                                    data-height="100" data-thickness="0.08" data-fgColor="#f67a82" readonly>
-                                <p>Revenue</p>
-                                <div class="d-flex bd-highlight text-center mt-4">
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Inbound</small>
-                                        <h5 class="mb-0">15K</h5>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <small class="text-muted">Outbound</small>
-                                        <h5 class="mb-0">2K</h5>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                <div class="col-lg-5 col-md-6 col-sm-12">
+                    <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn"
+                            type="button">
+                        <i class="zmdi zmdi-arrow-right"></i>
+                    </button>
                 </div>
-                <div class="row clearfix">
-                    <div class="col-lg-8 col-md-12">
-                        <div class="card product-report">
-                            <div class="header">
-                                <h2><strong>Annual</strong> Report</h2>
-                                <ul class="header-dropdown">
-                                    <li class="dropdown"> <a href="javascript:void(0);" class="dropdown-toggle"
-                                            data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                            <i class="zmdi zmdi-more"></i> </a>
-                                        <ul class="dropdown-menu dropdown-menu-right">
-                                            <li><a href="javascript:void(0);">Action</a></li>
-                                            <li><a href="javascript:void(0);">Another action</a></li>
-                                            <li><a href="javascript:void(0);">Something else</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="remove">
-                                        <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="body">
-                                <div class="row clearfix">
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
-                                        <div class="icon xl-amber m-b-15"><i class="zmdi zmdi-chart-donut"></i></div>
-                                        <div class="col-in">
-                                            <small class="text-muted mt-0">Sales Report</small>
-                                            <h4 class="mt-0">$4,516</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
-                                        <div class="icon xl-blue m-b-15"><i class="zmdi zmdi-chart"></i></div>
-                                        <div class="col-in">
-                                            <small class="text-muted mt-0">Annual Revenue</small>
-                                            <h4 class="mt-0">$6,481</h4>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
-                                        <div class="icon xl-purple m-b-15"><i class="zmdi zmdi-card"></i></div>
-                                        <div class="col-in">
-                                            <small class="text-muted mt-0">Total Profit</small>
-                                            <h4 class="mt-0">$3,915</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="area_chart"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-12">
-                        <div class="card">
-                            <div class="header">
-                                <h2><strong>Popular</strong> Products</h2>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-hover theme-color c_table">
-                                    <thead>
-                                        <tr>
-                                            <th>Item</th>
-                                            <th></th>
-                                            <th>Views</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td class="w70"><img class="w50" src="assets/images/ecommerce/1.png" alt="">
-                                            </td>
-                                            <td><a href="javascript:void(0)" class="text-muted">PlayStation 4 1TB (Jet
-                                                    Black)</a></td>
-                                            <td>3,432</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="w50" src="assets/images/ecommerce/2.png" alt=""></td>
-                                            <td><a href="javascript:void(0)" class="text-muted">Printed color block
-                                                    T-shirt</a></td>
-                                            <td>852</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="w50" src="assets/images/ecommerce/3.png" alt=""></td>
-                                            <td><a href="javascript:void(0)" class="text-muted">Wireless headphones</a></td>
-                                            <td>1,321</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="w50" src="assets/images/ecommerce/4.png" alt=""></td>
-                                            <td><a href="javascript:void(0)" class="text-muted">PlayStation 4 1TB (Jet
-                                                    Black)</a></td>
-                                            <td>980</td>
-                                        </tr>
-                                        <tr>
-                                            <td><img class="w50" src="assets/images/ecommerce/5.png" alt=""></td>
-                                            <td><a href="javascript:void(0)" class="text-muted">Knit beanie with patch</a>
-                                            </td>
-                                            <td>2,518</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row clearfix">
-                    <div class="col-xl-8 col-lg-7 col-md-12">
-                        <div class="card">
-                            <div class="body">
-                                <ul class="row list-unstyled c_review">
-                                    <li class="col-12">
-                                        <div class="avatar">
-                                            <a href="javascript:void(0);"><img class="rounded"
-                                                    src="assets/images/sm/avatar2.jpg" alt="user" width="60"></a>
-                                        </div>
-                                        <div class="comment-action">
-                                            <h6 class="c_name">Hossein Shams</h6>
-                                            <p class="c_msg m-b-0">Cras sit amet nibh libero, in gravida nulla. Nulla vel
-                                                metus scelerisque ante sollicitudin commodo. </p>
-                                            <div class="badge badge-info">iPhone 8</div>
-                                            <span class="m-l-10">
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                            </span>
-                                            <small class="comment-date float-sm-right">Dec 21, 2019</small>
-                                        </div>
-                                    </li>
-                                    <li class="col-12">
-                                        <div class="avatar">
-                                            <a href="javascript:void(0);"><img class="rounded"
-                                                    src="assets/images/sm/avatar3.jpg" alt="user" width="60"></a>
-                                        </div>
-                                        <div class="comment-action">
-                                            <h6 class="c_name">Tim Hank</h6>
-                                            <p class="c_msg m-b-0">It is a long established fact that a reader will be
-                                                distracted by the readable content of a page when looking at its layout</p>
-                                            <div class="badge badge-info">Nokia 8</div>
-                                            <span class="m-l-10">
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                            </span>
-                                            <small class="comment-date float-sm-right">Dec 18, 2019</small>
-                                        </div>
-                                    </li>
-                                    <li class="col-12">
-                                        <div class="avatar">
-                                            <a href="javascript:void(0);"><img class="rounded"
-                                                    src="assets/images/sm/avatar4.jpg" alt="user" width="60"></a>
-                                        </div>
-                                        <div class="comment-action">
-                                            <h6 class="c_name">Maryam Amiri</h6>
-                                            <p class="c_msg m-b-0">There are many variations of passages of Lorem Ipsum
-                                                available, but the majority have suffered alteration in some form, by
-                                                injected humour,</p>
-                                            <div class="badge badge-info">Samsung Galaxy S8</div>
-                                            <span class="m-l-10">
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                            </span>
-                                            <small class="comment-date float-sm-right">Dec 18, 2019</small>
-                                        </div>
-                                    </li>
-                                    <li class="col-12">
-                                        <div class="avatar">
-                                            <a href="javascript:void(0);"><img class="rounded"
-                                                    src="assets/images/sm/avatar5.jpg" alt="user" width="60"></a>
-                                        </div>
-                                        <div class="comment-action">
-                                            <h6 class="c_name">Gary Camara</h6>
-                                            <p class="c_msg m-b-0">Lorem Ipsum is simply dummy text of the printing and
-                                                typesetting industry</p>
-                                            <div class="badge badge-info">HTC U11</div>
-                                            <span class="m-l-10">
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i class="zmdi zmdi-star col-amber"></i></a>
-                                                <a href="javascript:void(0);"><i
-                                                        class="zmdi zmdi-star-outline text-muted"></i></a>
-                                            </span>
-                                            <small class="comment-date float-sm-right">Dec 13, 2019</small>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-5 col-md-12">
-                        <div class="card mcard_1">
-                            <div class="img">
-                                <img src="assets/images/image-gallery/2.jpg" class="img-fluid" alt="">
-                            </div>
-                            <div class="body">
-                                <div class="user">
-                                    <img src="assets/images/sm/avatar1.jpg" class="rounded-circle img-raised"
-                                        alt="profile-image">
-                                    <h5 class="mt-3 mb-1">Eliana Smith</h5>
-                                    <span>Designer, Developer, Traveler</span>
-                                </div>
-                                <button class="btn btn-primary">FOLLOW</button>
-                                <div class="d-flex bd-highlight text-center mt-4">
-                                    <div class="flex-fill bd-highlight">
-                                        <h5 class="mb-0">128</h5>
-                                        <small>Article</small>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <h5 class="mb-0">1,528</h5>
-                                        <small>Followers</small>
-                                    </div>
-                                    <div class="flex-fill bd-highlight">
-                                        <h5 class="mb-0">321</h5>
-                                        <small>Following</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row clearfix">
-                    <div class="col-md-12 col-lg-12">
-                        <div class="card visitors-map">
-                            <div class="header">
-                                <h2><strong>Top</strong> Selling Country</h2>
-                            </div>
-                            <div class="row">
-                                <div class="col-xl-8 col-lg-8 col-md-12">
-                                    <div class="body">
-                                        <div id="world-map-markers" class="jvector-map"></div>
-                                    </div>
-                                </div>
-                                <div class="col-xl-4 col-lg-4 col-md-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-hover c_table theme-color mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th>Contrary</th>
-                                                    <th>2017</th>
-                                                    <th>2018</th>
-                                                    <th>Change</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td>USA</td>
-                                                    <td>2,009</td>
-                                                    <td>3,591</td>
-                                                    <td>7.01% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>India</td>
-                                                    <td>1,129</td>
-                                                    <td>1,361</td>
-                                                    <td>3.01% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Canada</td>
-                                                    <td>2,009</td>
-                                                    <td>2,901</td>
-                                                    <td>9.01% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Australia</td>
-                                                    <td>954</td>
-                                                    <td>901</td>
-                                                    <td>5.71% <i class="zmdi zmdi-trending-down text-warning"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Germany</td>
-                                                    <td>594</td>
-                                                    <td>500</td>
-                                                    <td>6.11% <i class="zmdi zmdi-trending-down text-warning"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>UK</td>
-                                                    <td>1,500</td>
-                                                    <td>1,971</td>
-                                                    <td>8.50% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Other</td>
-                                                    <td>4,236</td>
-                                                    <td>4,591</td>
-                                                    <td>9.15% <i class="zmdi zmdi-trending-up text-success"></i></td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row clearfix">
-                    <div class="col-sm-12 col-md-12 col-lg-12">
-                        <div class="card">
-                            <div class="header">
-                                <h2><strong>Recent</strong> Orders</h2>
-                                <ul class="header-dropdown">
-                                    <li class="dropdown"> <a href="javascript:void(0);" class="dropdown-toggle"
-                                            data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                            <i class="zmdi zmdi-more"></i> </a>
-                                        <ul class="dropdown-menu dropdown-menu-right slideUp">
-                                            <li><a href="javascript:void(0);">Action</a></li>
-                                            <li><a href="javascript:void(0);">Another action</a></li>
-                                            <li><a href="javascript:void(0);">Something else</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="remove">
-                                        <a role="button" class="boxs-close"><i class="zmdi zmdi-close"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="table-responsive">
-                                <table class="table table-hover c_table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width:60px;">SrNo.</th>
-                                            <th>Name</th>
-                                            <th>Item</th>
-                                            <th>Address</th>
-                                            <th>Quantity</th>
-                                            <th>Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><img src="http://via.placeholder.com/60x40" alt="Product img"></td>
-                                            <td>Hossein</td>
-                                            <td>IPONE-7</td>
-                                            <td>Porterfield 508 Virginia Street Chicago, IL 60653</td>
-                                            <td>3</td>
-                                            <td><span class="badge badge-success">DONE</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="http://via.placeholder.com/60x40" alt="Product img"></td>
-                                            <td>Camara</td>
-                                            <td>NOKIA-8</td>
-                                            <td>2595 Pearlman Avenue Sudbury, MA 01776 </td>
-                                            <td>3</td>
-                                            <td><span class="badge badge-success">DONE</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="http://via.placeholder.com/60x40" alt="Product img"></td>
-                                            <td>Maryam</td>
-                                            <td>NOKIA-456</td>
-                                            <td>Porterfield 508 Virginia Street Chicago, IL 60653</td>
-                                            <td>4</td>
-                                            <td><span class="badge badge-success">DONE</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="http://via.placeholder.com/60x40" alt="Product img"></td>
-                                            <td>Micheal</td>
-                                            <td>SAMSANG PRO</td>
-                                            <td>508 Virginia Street Chicago, IL 60653</td>
-                                            <td>1</td>
-                                            <td><span class="badge badge-success">DONE</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="http://via.placeholder.com/60x40" alt="Product img"></td>
-                                            <td>Frank</td>
-                                            <td>NOKIA-456</td>
-                                            <td>1516 Holt Street West Palm Beach, FL 33401</td>
-                                            <td>13</td>
-                                            <td><span class="badge badge-warning">PENDING</span></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+
             </div>
         </div>
-    </section>
 
+
+        <div class="container-fluid">
+            <div class="dashboard-wrapper">
+
+
+                {{-- ============================================
+                    SUPER ADMIN DASHBOARD
+                ============================================= --}}
+                @if($roleName === 'SuperAdmin')
+
+                    {{-- TOP STATISTICS --}}
+                    <div class="row clearfix">
+
+                        {{-- Total Customers --}}
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-blue-soft">
+                                        <i class="zmdi zmdi-accounts"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Total Customers
+                                    </p>
+
+                                    <h3 class="stat-value">
+                                        {{ $totalCustomers ?? 0 }}
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Registered Customers
+                                    </small>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{-- Total Products --}}
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-red-soft">
+                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Total Products
+                                    </p>
+
+                                    <h3 class="stat-value">
+                                        {{ $totalProducts ?? 0 }}
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Available Products
+                                    </small>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{-- Wishlist --}}
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-purple-soft">
+                                        <i class="zmdi zmdi-favorite"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Wishlist Items
+                                    </p>
+
+                                    <h3 class="stat-value">
+                                        {{ $totalWishlist ?? 0 }}
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        All Customer Wishlist
+                                    </small>
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        {{-- Admin --}}
+                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-green-soft">
+                                        <i class="zmdi zmdi-account"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Logged In As
+                                    </p>
+
+                                    <h5 class="stat-value-name">
+                                        {{ $user->name }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Super Administrator
+                                    </small>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    {{-- ADMIN OVERVIEW --}}
+                    <div class="row clearfix">
+
+                        <div class="col-lg-8 col-md-12">
+
+                            <div class="card">
+                                <div class="header">
+                                    <h2>
+                                        <strong>Dashboard</strong> Overview
+                                    </h2>
+                                </div>
+
+                                <div class="body">
+
+                                    <div class="row">
+
+                                        <div class="col-md-4 col-sm-4 text-center mb-4">
+                                            <div class="overview-item">
+                                                <div class="overview-icon">
+                                                    <i class="zmdi zmdi-accounts"></i>
+                                                </div>
+
+                                                <h3>
+                                                    {{ $totalCustomers ?? 0 }}
+                                                </h3>
+
+                                                <span>
+                                                    Customers
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 col-sm-4 text-center mb-4">
+                                            <div class="overview-item">
+                                                <div class="overview-icon">
+                                                    <i class="zmdi zmdi-shopping-basket"></i>
+                                                </div>
+
+                                                <h3>
+                                                    {{ $totalProducts ?? 0 }}
+                                                </h3>
+
+                                                <span>
+                                                    Products
+                                                </span>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 col-sm-4 text-center mb-4">
+                                            <div class="overview-item">
+                                                <div class="overview-icon">
+                                                    <i class="zmdi zmdi-favorite"></i>
+                                                </div>
+
+                                                <h3>
+                                                    {{ $totalWishlist ?? 0 }}
+                                                </h3>
+
+                                                <span>
+                                                    Wishlist Items
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- QUICK ACTIONS --}}
+                        <div class="col-lg-4 col-md-12">
+
+                            <div class="card">
+                                <div class="header">
+                                    <h2>
+                                        <strong>Quick</strong> Actions
+                                    </h2>
+                                </div>
+
+                                <div class="body">
+
+                                    @if(Route::has('users.index'))
+                                        <a href="{{ route('users.index') }}"
+                                           class="quick-action-btn">
+                                            <span>
+                                                <i class="zmdi zmdi-accounts"></i>
+                                                Manage Users
+                                            </span>
+
+                                            <i class="zmdi zmdi-arrow-right"></i>
+                                        </a>
+                                    @endif
+
+
+                                    @if(Route::has('products.index'))
+                                        <a href="{{ route('products.index') }}"
+                                           class="quick-action-btn">
+                                            <span>
+                                                <i class="zmdi zmdi-shopping-cart"></i>
+                                                Manage Products
+                                            </span>
+
+                                            <i class="zmdi zmdi-arrow-right"></i>
+                                        </a>
+                                    @endif
+
+
+                                    @if(Route::has('product_categories.index'))
+                                        <a href="{{ route('product_categories.index') }}"
+                                           class="quick-action-btn">
+                                            <span>
+                                                <i class="zmdi zmdi-view-list"></i>
+                                                Categories
+                                            </span>
+
+                                            <i class="zmdi zmdi-arrow-right"></i>
+                                        </a>
+                                    @endif
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ADMIN INFORMATION --}}
+                    <div class="row clearfix">
+
+                        <div class="col-lg-12">
+
+                            <div class="card">
+
+                                <div class="header">
+                                    <h2>
+                                        <strong>Administrator</strong> Information
+                                    </h2>
+                                </div>
+
+                                <div class="body">
+
+                                    <div class="row">
+
+                                        <div class="col-lg-4 col-md-4 mb-3">
+                                            <div class="info-box">
+                                                <small>Name</small>
+                                                <h6>{{ $user->name }}</h6>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-lg-4 col-md-4 mb-3">
+                                            <div class="info-box">
+                                                <small>Email</small>
+                                                <h6>{{ $user->email }}</h6>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-lg-4 col-md-4 mb-3">
+                                            <div class="info-box">
+                                                <small>Role</small>
+                                                <h6>
+                                                    <span class="badge badge-danger">
+                                                        {{ $roleName }}
+                                                    </span>
+                                                </h6>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                {{-- ============================================
+                    CUSTOMER DASHBOARD
+                ============================================= --}}
+                @elseif($roleName === 'customer')
+
+                    {{-- CUSTOMER WELCOME --}}
+                    <div class="row clearfix">
+
+                        <div class="col-lg-12">
+
+                            <div class="card customer-welcome-card">
+
+                                <div class="body">
+
+                                    <div class="row align-items-center">
+
+                                        <div class="col-lg-8 col-md-8">
+
+                                            <div class="customer-welcome-content">
+
+                                                <div class="customer-avatar">
+                                                    {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                                                </div>
+
+                                                <div>
+                                                    <h3>
+                                                        Hello, {{ $user->name }}! 👋
+                                                    </h3>
+
+                                                    <p class="mb-0">
+                                                        Welcome back! Explore your wishlist and discover more products.
+                                                    </p>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <div class="col-lg-4 col-md-4 text-md-right mt-3 mt-md-0">
+
+                                            @if(Route::has('shop'))
+                                                <a href="{{ route('shop') }}"
+                                                   class="btn btn-primary">
+                                                    <i class="zmdi zmdi-shopping-cart"></i>
+                                                    Shop Now
+                                                </a>
+                                            @endif
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- CUSTOMER STATS --}}
+                    <div class="row clearfix">
+
+                        {{-- Wishlist Count --}}
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-red-soft">
+                                        <i class="zmdi zmdi-favorite"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Wishlist Items
+                                    </p>
+
+                                    <h3 class="stat-value">
+                                        {{ $wishlistCount ?? 0 }}
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Your saved products
+                                    </small>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- Member Since --}}
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-blue-soft">
+                                        <i class="zmdi zmdi-calendar"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Member Since
+                                    </p>
+
+                                    <h5 class="stat-value-name">
+                                        {{ optional($user->created_at)->format('d M Y') }}
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Account created date
+                                    </small>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- Account Status --}}
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+
+                            <div class="card dashboard-stat-card">
+                                <div class="body text-center">
+
+                                    <div class="stat-icon bg-green-soft">
+                                        <i class="zmdi zmdi-check-circle"></i>
+                                    </div>
+
+                                    <p class="stat-title">
+                                        Account Status
+                                    </p>
+
+                                    <h5 class="stat-value-name">
+                                        Active
+                                    </h5>
+
+                                    <small class="text-muted">
+                                        Customer Account
+                                    </small>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- WISHLIST PRODUCTS --}}
+                    <div class="row clearfix">
+
+                        <div class="col-lg-12">
+
+                            <div class="card">
+
+                                <div class="header">
+
+                                    <h2>
+                                        <strong>My</strong> Wishlist
+                                    </h2>
+
+                                    @if(Route::has('customer.wishlist'))
+                                        <ul class="header-dropdown">
+                                            <li>
+                                                <a href="{{ route('customer.wishlist') }}"
+                                                   class="btn btn-sm btn-primary">
+                                                    View All
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    @endif
+
+                                </div>
+
+
+                                <div class="body">
+
+                                    @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
+
+                                        <div class="row">
+
+                                            @foreach($wishlistProducts->take(8) as $item)
+
+                                                @if($item->product)
+
+                                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+
+                                                        <div class="wishlist-product-card">
+
+                                                            {{-- Product Image --}}
+                                                            <div class="wishlist-product-image">
+
+                                                                @if(!empty($item->product->image))
+
+                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                         alt="{{ $item->product->name }}">
+
+                                                                @else
+
+                                                                    <div class="no-product-image">
+                                                                        <i class="zmdi zmdi-image"></i>
+                                                                    </div>
+
+                                                                @endif
+
+                                                            </div>
+
+
+                                                            {{-- Product Details --}}
+                                                            <div class="wishlist-product-body">
+
+                                                                <h6>
+                                                                    {{ $item->product->name }}
+                                                                </h6>
+
+                                                                <h5>
+                                                                    ₹{{ number_format($item->product->price ?? 0, 2) }}
+                                                                </h5>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                @endif
+
+                                            @endforeach
+
+                                        </div>
+
+
+                                    @else
+
+                                        {{-- EMPTY WISHLIST --}}
+                                        <div class="empty-wishlist">
+
+                                            <div class="empty-wishlist-icon">
+                                                <i class="zmdi zmdi-favorite-outline"></i>
+                                            </div>
+
+                                            <h4>Your Wishlist is Empty</h4>
+
+                                            <p>
+                                                Save your favorite products here and view them anytime.
+                                            </p>
+
+                                            @if(Route::has('shop'))
+                                                <a href="{{ route('shop') }}"
+                                                   class="btn btn-primary">
+                                                    <i class="zmdi zmdi-shopping-cart"></i>
+                                                    Start Shopping
+                                                </a>
+                                            @endif
+
+                                        </div>
+
+                                    @endif
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                {{-- ============================================
+                    OTHER ROLES
+                ============================================= --}}
+                @else
+
+                    <div class="card dashboard-empty-card">
+
+                        <div class="body">
+                            <div class="empty-content">
+
+                                <div class="empty-icon">
+                                    <i class="zmdi zmdi-info-outline"></i>
+                                </div>
+
+                                <h4>Dashboard Content Not Configured</h4>
+
+                                <p class="text-muted">
+                                    Your current role is:
+                                    <strong>{{ $roleName ?? 'No Role Assigned' }}</strong>
+                                </p>
+
+                                @if(Route::has('home'))
+                                    <a href="{{ route('home') }}"
+                                       class="btn btn-primary">
+                                        <i class="zmdi zmdi-home"></i>
+                                        Go to Home
+                                    </a>
+                                @endif
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                @endif
+
+
+            </div>
+        </div>
+
+    </div>
+</section>
 
 @endsection
+
+
+@push('css')
+<style>
+
+    /* ==========================================
+       MAIN BACKGROUND
+    ========================================== */
+
+    .content {
+        background:
+            radial-gradient(circle at top right, rgba(0, 173, 239, 0.10), transparent 35%),
+            radial-gradient(circle at bottom left, rgba(143, 120, 219, 0.08), transparent 40%),
+            linear-gradient(135deg, #f5f7fb 0%, #eef2f7 100%);
+        min-height: 100vh;
+    }
+
+    .body_scroll {
+        min-height: 100vh;
+        padding-bottom: 30px;
+    }
+
+
+    /* ==========================================
+       MAIN WRAPPER
+    ========================================== */
+
+    .dashboard-wrapper {
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 30px rgba(30, 50, 80, 0.06);
+    }
+
+
+    /* ==========================================
+       CARDS
+    ========================================== */
+
+    .dashboard-wrapper .card {
+        border: none;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+    }
+
+    .dashboard-wrapper .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+    }
+
+
+    /* ==========================================
+       HEADER
+    ========================================== */
+
+    .block-header h2 {
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+
+    /* ==========================================
+       STATISTICS
+    ========================================== */
+
+    .dashboard-stat-card {
+        height: 100%;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 15px;
+        border-radius: 15px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 26px;
+    }
+
+    .bg-blue-soft {
+        background: rgba(0, 173, 239, 0.12);
+        color: #00adef;
+    }
+
+    .bg-red-soft {
+        background: rgba(238, 37, 88, 0.12);
+        color: #ee2558;
+    }
+
+    .bg-purple-soft {
+        background: rgba(143, 120, 219, 0.12);
+        color: #8f78db;
+    }
+
+    .bg-green-soft {
+        background: rgba(40, 167, 69, 0.12);
+        color: #28a745;
+    }
+
+    .stat-title {
+        color: #7b8794;
+        margin-bottom: 5px;
+        font-size: 14px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 5px;
+    }
+
+    .stat-value-name {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+
+    /* ==========================================
+       OVERVIEW
+    ========================================== */
+
+    .overview-item {
+        padding: 20px 10px;
+        border-radius: 12px;
+        background: #f8faff;
+    }
+
+    .overview-icon {
+        font-size: 25px;
+        margin-bottom: 10px;
+        color: #00adef;
+    }
+
+    .overview-item h3 {
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .overview-item span {
+        color: #8a94a6;
+        font-size: 13px;
+    }
+
+
+    /* ==========================================
+       QUICK ACTIONS
+    ========================================== */
+
+    .quick-action-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        padding: 13px 15px;
+        margin-bottom: 10px;
+
+        border-radius: 10px;
+        background: #f7f9fc;
+
+        color: #4b5563;
+        text-decoration: none;
+
+        transition: all 0.25s ease;
+    }
+
+    .quick-action-btn:hover {
+        background: #00adef;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+    .quick-action-btn span i {
+        margin-right: 8px;
+    }
+
+
+    /* ==========================================
+       ADMIN INFO
+    ========================================== */
+
+    .info-box {
+        padding: 15px;
+        background: #f8faff;
+        border-radius: 10px;
+        height: 100%;
+    }
+
+    .info-box small {
+        color: #8a94a6;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+
+    /* ==========================================
+       CUSTOMER WELCOME
+    ========================================== */
+
+    .customer-welcome-card {
+        background:
+            linear-gradient(
+                135deg,
+                rgba(0, 173, 239, 0.08),
+                rgba(143, 120, 219, 0.08)
+            );
+    }
+
+    .customer-welcome-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .customer-avatar {
+        width: 65px;
+        height: 65px;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(135deg, #00adef, #4b7bec);
+
+        color: #ffffff;
+        font-size: 25px;
+        font-weight: 700;
+
+        flex-shrink: 0;
+    }
+
+    .customer-welcome-content h3 {
+        margin-bottom: 5px;
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+    .customer-welcome-content p {
+        color: #7b8794;
+    }
+
+
+    /* ==========================================
+       WISHLIST PRODUCT
+    ========================================== */
+
+    .wishlist-product-card {
+        height: 100%;
+        border-radius: 12px;
+        overflow: hidden;
+
+        background: #ffffff;
+        border: 1px solid #edf0f5;
+
+        transition: all 0.3s ease;
+    }
+
+    .wishlist-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .wishlist-product-image {
+        height: 190px;
+        background: #f7f9fc;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        overflow: hidden;
+    }
+
+    .wishlist-product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .no-product-image {
+        font-size: 45px;
+        color: #c4cbd4;
+    }
+
+    .wishlist-product-body {
+        padding: 15px;
+    }
+
+    .wishlist-product-body h6 {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 10px;
+
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .wishlist-product-body h5 {
+        color: #00adef;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+
+    /* ==========================================
+       EMPTY WISHLIST
+    ========================================== */
+
+    .empty-wishlist {
+        text-align: center;
+        padding: 45px 20px;
+    }
+
+    .empty-wishlist-icon {
+        width: 80px;
+        height: 80px;
+
+        margin: 0 auto 20px;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(238, 37, 88, 0.08);
+        color: #ee2558;
+
+        font-size: 35px;
+    }
+
+    .empty-wishlist h4 {
+        color: #2c3e50;
+        font-weight: 700;
+    }
+
+    .empty-wishlist p {
+        color: #8a94a6;
+    }
+
+
+    /* ==========================================
+       EMPTY ROLE DASHBOARD
+    ========================================== */
+
+    .dashboard-empty-card {
+        min-height: 330px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #f8faff 100%
+        );
+    }
+
+    .dashboard-empty-card .empty-content {
+        text-align: center;
+    }
+
+    .dashboard-empty-card .empty-icon {
+        width: 75px;
+        height: 75px;
+
+        margin: 0 auto 20px;
+        border-radius: 50%;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        background: linear-gradient(135deg, #eef5ff, #e5edff);
+        color: #4b7bec;
+
+        font-size: 32px;
+    }
+
+
+    /* ==========================================
+       RESPONSIVE
+    ========================================== */
+
+    @media (max-width: 767px) {
+
+        .dashboard-wrapper {
+            padding: 12px;
+        }
+
+        .customer-welcome-content {
+            align-items: flex-start;
+        }
+
+        .stat-value {
+            font-size: 22px;
+        }
+
+        .wishlist-product-image {
+            height: 160px;
+        }
+    }
+
+</style>
+@endpush
