@@ -57,7 +57,27 @@
             background: #fff;
             padding: 0 10px;
             margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08)
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Mobile */
+        @media (max-width: 576px) {
+            .checkout-steps {
+                padding: 0;
+                margin-bottom: 8px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .checkout-steps::-webkit-scrollbar {
+                display: none;
+            }
+
+            .checkout-steps>* {
+                min-width: max-content;
+            }
         }
 
         .steps-wrapper {
@@ -1444,6 +1464,121 @@
                 width: 100%;
             }
         }
+
+        /* Continue Button Disabled State */
+        .continue-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        .continue-btn:disabled:hover {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+
+        /* Stock Status Styles */
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 2px;
+            margin-bottom: 6px;
+        }
+
+        .stock-status i {
+            font-size: 14px;
+        }
+
+        .stock-status.in-stock {
+            color: #16a34a;
+        }
+
+        .stock-status.low-stock {
+            color: #f59e0b;
+        }
+
+        .stock-status.out-of-stock {
+            color: #ef4444;
+        }
+
+        .cart-item-qty-select:disabled {
+            background: #f3f4f6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .cart-item-qty-select option:disabled {
+            color: #9ca3af;
+        }
+
+        /* Out of stock item styling */
+        .cart-item.out-of-stock-item {
+            opacity: 0.6;
+            background: #fef2f2;
+        }
+
+        .cart-item.out-of-stock-item .cart-item-name {
+            color: #dc2626;
+        }
+
+        /* Confirmation Modal Styles */
+        #confirmModal .modal-box {
+            max-width: 450px !important;
+            padding: 28px !important;
+        }
+
+        #confirmModal .modal-box h4 {
+            margin: 0 0 8px !important;
+            font-weight: 700 !important;
+            color: #172033 !important;
+        }
+
+        #confirmModal .modal-box p {
+            color: #64748b !important;
+            font-size: 14px !important;
+            margin: 0 !important;
+        }
+
+        #confirmModal .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dbe2ea;
+            background: #fff;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #475569;
+            transition: all 0.2s;
+        }
+
+        #confirmModal .btn-secondary:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        #confirmModal .btn-primary {
+            flex: 2;
+            padding: 12px;
+            border: 0;
+            background: #2878f0;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        #confirmModal .btn-primary:hover {
+            background: #1765d1;
+        }
+
+        #confirmModal .btn-primary:disabled,
+        #confirmModal .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
     </style>
 @endsection
 
@@ -1712,6 +1847,8 @@
                                 </div>
                                 <h5>Payment Method</h5>
                             </div>
+
+                            {{-- UPI --}}
                             <label class="payment-method selected">
                                 <input type="radio" name="payment_method" value="upi" class="payment-radio" checked>
                                 <div class="payment-method-info">
@@ -1724,6 +1861,8 @@
                                     <span class="payment-logo-paytm">paytm</span>
                                 </div>
                             </label>
+
+                            {{-- Credit/Debit Card --}}
                             <label class="payment-method">
                                 <input type="radio" name="payment_method" value="card" class="payment-radio">
                                 <div class="payment-method-info">
@@ -1736,21 +1875,31 @@
                                     <span class="payment-logo-rupay">RuPay</span>
                                 </div>
                             </label>
+
+                            {{-- Net Banking --}}
                             <label class="payment-method">
                                 <input type="radio" name="payment_method" value="netbanking" class="payment-radio">
                                 <div class="payment-method-info">
                                     <div class="payment-method-title">Net Banking</div>
                                     <div class="payment-method-subtitle">All major banks</div>
                                 </div>
-                                <div class="payment-logos"><span>SBI</span><span>HDFC</span><span>ICICI</span></div>
+                                <div class="payment-logos">
+                                    <span>SBI</span>
+                                    <span>HDFC</span>
+                                    <span>ICICI</span>
+                                </div>
                             </label>
+
+                            {{-- Cash on Delivery --}}
                             <label class="payment-method">
                                 <input type="radio" name="payment_method" value="cod" class="payment-radio">
                                 <div class="payment-method-info">
                                     <div class="payment-method-title">Cash on Delivery</div>
                                     <div class="payment-method-subtitle">Pay when you receive</div>
                                 </div>
-                                <div class="payment-logos"><i class="bi bi-cash-coin fs-5 text-success"></i></div>
+                                <div class="payment-logos">
+                                    <i class="bi bi-cash-coin fs-5 text-success"></i>
+                                </div>
                             </label>
                         </div>
                     </div>
@@ -1840,7 +1989,7 @@
                             </div>
                         @endif
 
-                        {{-- PLACE ORDER BUTTON (hidden initially) --}}
+                        {{-- PLACE ORDER BUTTON --}}
                         <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
                             <i class="bi bi-lock-fill me-2"></i>Place Order
                         </button>
@@ -1915,6 +2064,60 @@
 
     {{-- TOAST --}}
     <div class="toast-container-custom" id="toastContainer"></div>
+    {{-- CONFIRMATION MODAL --}}
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box" style="max-width: 450px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div
+                    style="width: 60px; height: 60px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 30px; color: #d97706;"></i>
+                </div>
+                <h4 style="margin: 0 0 8px; font-weight: 700; color: #172033;">Confirm Your Order</h4>
+                <p style="color: #64748b; font-size: 14px; margin: 0;">Please review your order details before placing.</p>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <div
+                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                    <span style="color: #64748b; font-size: 13px;">Items</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
+                        id="confirmItems">{{ $cartCount ?? 0 }}</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                    <span style="color: #64748b; font-size: 13px;">Subtotal</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
+                        id="confirmSubtotal">₹{{ number_format($subtotal ?? 0, 0) }}</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                    <span style="color: #64748b; font-size: 13px;">Delivery Charges</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmShipping">FREE</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                    <span style="color: #64748b; font-size: 13px;">Coupon Discount</span>
+                    <span style="font-weight: 600; color: #16a34a; font-size: 13px;" id="confirmDiscount">- ₹0</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                    <span style="font-weight: 700; color: #172033; font-size: 15px;">Total Amount</span>
+                    <span style="font-weight: 700; color: #2878f0; font-size: 18px;"
+                        id="confirmTotal">₹{{ number_format($total ?? 0, 0) }}</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-secondary" id="cancelOrderBtn"
+                    style="flex: 1; padding: 12px; border: 1px solid #dbe2ea; background: #fff; border-radius: 6px; font-weight: 600; cursor: pointer; color: #475569;">
+                    <i class="bi bi-x-lg me-1"></i> Cancel
+                </button>
+                <button class="btn-primary" id="confirmOrderBtn"
+                    style="flex: 2; padding: 12px; border: 0; background: #2878f0; border-radius: 6px; font-weight: 600; cursor: pointer; color: #fff;">
+                    <i class="bi bi-check-lg me-1"></i> Confirm Order
+                </button>
+            </div>
+        </div>
+    </div>
 
     {{-- ADD ADDRESS MODAL --}}
     <div class="address-modal-overlay" id="addressChoiceModal">
@@ -1986,6 +2189,7 @@
             var csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
             var pendingQtyKey = null;
             var currentStep = 1;
+            var isProcessingOrder = false;
 
             // ============================================================
             // TOAST NOTIFICATIONS
@@ -2036,7 +2240,6 @@
                 var continueBtn = document.getElementById('continueBtn');
                 var placeOrderBtn = document.getElementById('placeOrderBtn');
 
-                // Update steps
                 document.querySelectorAll('.checkout-step').forEach(function (el) {
                     var stepNum = parseInt(el.dataset.step);
                     el.classList.remove('active', 'completed');
@@ -2063,7 +2266,7 @@
             window.goToStep = goToStep;
 
             // ============================================================
-            // CONTINUE BUTTON - Move to Payment
+            // CONTINUE BUTTON
             // ============================================================
             var continueBtn = document.getElementById('continueBtn');
             if (continueBtn) {
@@ -2086,13 +2289,10 @@
                     if (e.target.closest('.address-actions')) {
                         return;
                     }
-
                     document.querySelectorAll('.address-card').forEach(function (item) {
                         item.classList.remove('selected');
                     });
-
                     this.classList.add('selected');
-
                     showToast('success', 'Address Selected', 'This address will be used for your delivery.');
                 });
             });
@@ -2101,16 +2301,12 @@
                 button.addEventListener('click', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-
                     var card = this.closest('.address-card');
                     if (!card) return;
-
                     document.querySelectorAll('.address-card').forEach(function (item) {
                         item.classList.remove('selected');
                     });
-
                     card.classList.add('selected');
-
                     showToast('success', 'Address Selected', 'This address will be used for your delivery.');
                 });
             });
@@ -2160,8 +2356,7 @@
                     if (pendingQtyKey) {
                         updateCartQuantity(pendingQtyKey, qty);
 
-                        var select = document.querySelector('.cart-item-qty-select[data-cart-key="' + pendingQtyKey +
-                            '"]');
+                        var select = document.querySelector('.cart-item-qty-select[data-cart-key="' + pendingQtyKey + '"]');
                         if (select) {
                             var optionExists = false;
                             select.querySelectorAll('option').forEach(function (opt) {
@@ -2286,8 +2481,7 @@
                                     if (document.querySelectorAll('.cart-item').length === 0) {
                                         showToast('info', 'Cart Empty', 'Your cart is empty. Redirecting...');
                                         setTimeout(function () {
-                                            window.location.href =
-                                                "{{ route('customer.products') }}";
+                                            window.location.href = "{{ route('customer.products') }}";
                                         }, 800);
                                     }
                                 }, 300);
@@ -2346,65 +2540,300 @@
             });
 
             // ============================================================
-            // PLACE ORDER
+            // CONFIRMATION MODAL
+            // ============================================================
+            var confirmModal = document.getElementById('confirmModal');
+            var cancelOrderBtn = document.getElementById('cancelOrderBtn');
+            var confirmOrderBtn = document.getElementById('confirmOrderBtn');
+
+            function showConfirmModal() {
+                if (confirmModal) {
+                    var subtotalEl = document.getElementById('subtotalDisplay');
+                    var totalEl = document.getElementById('totalDisplay');
+                    var discountEl = document.getElementById('discountDisplay');
+                    var couponRow = document.getElementById('couponDiscountRow');
+
+                    var confirmItems = document.getElementById('confirmItems');
+                    var confirmSubtotal = document.getElementById('confirmSubtotal');
+                    var confirmTotal = document.getElementById('confirmTotal');
+                    var confirmDiscount = document.getElementById('confirmDiscount');
+
+                    if (confirmItems) {
+                        var itemsCount = document.querySelectorAll('.cart-item').length;
+                        confirmItems.textContent = itemsCount;
+                    }
+
+                    if (confirmSubtotal && subtotalEl) {
+                        confirmSubtotal.textContent = subtotalEl.textContent;
+                    }
+
+                    if (confirmTotal && totalEl) {
+                        confirmTotal.textContent = totalEl.textContent;
+                    }
+
+                    if (confirmDiscount) {
+                        if (couponRow && couponRow.style.display !== 'none' && discountEl) {
+                            confirmDiscount.textContent = discountEl.textContent;
+                            confirmDiscount.style.display = 'block';
+                        } else {
+                            confirmDiscount.textContent = '- ₹0';
+                        }
+                    }
+
+                    confirmModal.classList.add('active');
+                }
+            }
+
+            function closeConfirmModal() {
+                if (confirmModal) {
+                    confirmModal.classList.remove('active');
+                }
+            }
+
+            if (cancelOrderBtn) {
+                cancelOrderBtn.addEventListener('click', function () {
+                    closeConfirmModal();
+                });
+            }
+
+            if (confirmModal) {
+                confirmModal.addEventListener('click', function (e) {
+                    if (e.target === confirmModal) {
+                        closeConfirmModal();
+                    }
+                });
+            }
+
+            // ============================================================
+            // PLACE ORDER - Show Confirmation Modal
             // ============================================================
             var placeBtn = document.getElementById('placeOrderBtn');
             if (placeBtn) {
                 placeBtn.addEventListener('click', function () {
-                    var btn = this;
+                    showConfirmModal();
+                });
+            }
+
+            // ============================================================
+            // CONFIRM ORDER - Place the actual order
+            // ============================================================
+            if (confirmOrderBtn) {
+                confirmOrderBtn.addEventListener('click', function () {
+                    if (isProcessingOrder) return;
+
+                    var btn = confirmOrderBtn;
+                    var cancelBtn = cancelOrderBtn;
+
                     btn.disabled = true;
+                    cancelBtn.disabled = true;
                     btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
 
                     var selectedAddress = document.querySelector('.address-card.selected');
                     var addressId = selectedAddress ? selectedAddress.dataset.addressId : null;
 
                     var selectedPayment = document.querySelector('.payment-method.selected');
-                    var paymentMethod = selectedPayment ? selectedPayment.querySelector('.payment-radio')
-                        .value : 'upi';
+                    var paymentMethod = selectedPayment ? selectedPayment.querySelector('.payment-radio').value : 'upi';
 
                     if (!addressId) {
                         showToast('error', 'Error', 'Please select a delivery address.');
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
+                        cancelBtn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
                         return;
                     }
 
-                    var orderData = {
-                        address_id: addressId,
-                        payment_method: paymentMethod
-                    };
-
-                    fetch('{{ route("checkout.place") }}', {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(orderData)
-                    })
-                        .then(function (response) { return response.json(); })
-                        .then(function (data) {
-                            if (data.success) {
-                                showToast('success', 'Success!', data.message);
-                                // Move to step 3 (confirmation)
-                                goToStep(3);
-                                setTimeout(function () {
-                                    window.location.href = '{{ route("customer.dashboard") }}';
-                                }, 2000);
-                            } else {
-                                showToast('error', 'Error!', data.message || 'Failed to place order.');
-                                btn.disabled = false;
-                                btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
-                            }
-                        })
-                        .catch(function (error) {
-                            console.error('Order error:', error);
-                            showToast('error', 'Error!', 'Something went wrong. Please try again.');
-                            btn.disabled = false;
-                            btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
-                        });
+                    // For COD - place order directly
+                    if (paymentMethod === 'cod') {
+                        placeCodOrder(addressId, paymentMethod, btn, cancelBtn);
+                    } else {
+                        // For online payments (upi, card, netbanking) - create Razorpay order
+                        // Pass the actual payment method to Razorpay
+                        createRazorpayOrder(addressId, paymentMethod, btn, cancelBtn);
+                    }
                 });
+            }
+
+            // ============================================================
+            // PLACE COD ORDER
+            // ============================================================
+            function placeCodOrder(addressId, paymentMethod, btn, cancelBtn) {
+                var orderData = {
+                    address_id: addressId,
+                    payment_method: paymentMethod,
+                    notes: ''
+                };
+
+                fetch('{{ route("checkout.place") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            closeConfirmModal();
+                            showToast('success', 'Success!', data.message);
+                            setTimeout(function () {
+                                window.location.href = data.redirect_url || '{{ route("customer.dashboard") }}';
+                            }, 2000);
+                        } else {
+                            showToast('error', 'Error!', data.message || 'Failed to place order.');
+                            btn.disabled = false;
+                            cancelBtn.disabled = false;
+                            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Order error:', error);
+                        showToast('error', 'Error!', 'Something went wrong. Please try again.');
+                        btn.disabled = false;
+                        cancelBtn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                    });
+            }
+
+            // ============================================================
+            // CREATE RAZORPAY ORDER
+            // ============================================================
+            function createRazorpayOrder(addressId, paymentMethod, btn, cancelBtn) {
+                isProcessingOrder = true;
+
+                fetch('{{ route("checkout.create.razorpay.order") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            closeConfirmModal();
+                            // Pass the payment method to Razorpay checkout
+                            openRazorpayCheckout(data, addressId, paymentMethod);
+
+                            setTimeout(function () {
+                                btn.disabled = false;
+                                cancelBtn.disabled = false;
+                                btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                                isProcessingOrder = false;
+                            }, 500);
+                        } else {
+                            showToast('error', 'Error!', data.message || 'Failed to initialize payment.');
+                            btn.disabled = false;
+                            cancelBtn.disabled = false;
+                            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                            isProcessingOrder = false;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Razorpay error:', error);
+                        showToast('error', 'Error!', 'Something went wrong. Please try again.');
+                        btn.disabled = false;
+                        cancelBtn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                        isProcessingOrder = false;
+                    });
+            }
+
+
+            // ============================================================
+            // OPEN RAZORPAY CHECKOUT
+            // ============================================================
+            function openRazorpayCheckout(data, addressId, paymentMethod) {
+                var options = {
+                    key: data.key,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: data.name,
+                    description: data.description,
+                    order_id: data.razorpay_order_id,
+                    prefill: {
+                        name: data.prefill.name,
+                        email: data.prefill.email,
+                        contact: data.prefill.contact
+                    },
+                    notes: data.notes,
+                    handler: function (response) {
+                        // Payment successful - verify
+                        verifyRazorpayPayment(response, addressId, paymentMethod);
+                    },
+                    modal: {
+                        ondismiss: function () {
+                            isProcessingOrder = false;
+                            var confirmBtn = document.getElementById('confirmOrderBtn');
+                            var cancelBtn = document.getElementById('cancelOrderBtn');
+                            if (confirmBtn) {
+                                confirmBtn.disabled = false;
+                                confirmBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                            }
+                            if (cancelBtn) {
+                                cancelBtn.disabled = false;
+                            }
+                            showToast('info', 'Payment Cancelled', 'You cancelled the payment. You can try again.');
+                        }
+                    },
+                    theme: {
+                        color: '#2878f0'
+                    }
+                };
+
+                var rzp = new Razorpay(options);
+                rzp.open();
+            }
+
+            // ============================================================
+            // VERIFY RAZORPAY PAYMENT
+            // ============================================================
+            function verifyRazorpayPayment(response, addressId, paymentMethod) {
+                var placeBtn = document.getElementById('placeOrderBtn');
+                if (placeBtn) {
+                    placeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
+                }
+
+                fetch('{{ route("checkout.verify.razorpay") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature,
+                        address_id: addressId,
+                        payment_method: paymentMethod // This will be 'razorpay'
+                    })
+                })
+                    .then(function (response) { return response.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            showToast('success', 'Payment Success!', data.message);
+                            setTimeout(function () {
+                                window.location.href = data.redirect_url || '{{ route("customer.dashboard") }}';
+                            }, 2000);
+                        } else {
+                            showToast('error', 'Payment Failed!', data.message || 'Payment verification failed.');
+                            if (placeBtn) {
+                                placeBtn.disabled = false;
+                                placeBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
+                            }
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Verification error:', error);
+                        showToast('error', 'Error!', 'Payment verification failed. Please contact support.');
+                        if (placeBtn) {
+                            placeBtn.disabled = false;
+                            placeBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
+                        }
+                    });
             }
 
             // ============================================================
@@ -2631,10 +3060,8 @@
                             .then(function (data) {
                                 if (data && data.address) {
                                     var address = data.address;
-                                    var area = address.suburb || address.neighbourhood || address
-                                        .quarter || address.residential || address.village || '';
-                                    var city = address.city || address.town || address.municipality ||
-                                        address.city_district || address.county || '';
+                                    var area = address.suburb || address.neighbourhood || address.quarter || address.residential || address.village || '';
+                                    var city = address.city || address.town || address.municipality || address.city_district || address.county || '';
                                     var state = address.state || '';
                                     var country = address.country || '';
                                     var pincode = address.postcode || '';
@@ -2658,12 +3085,10 @@
                                     }
                                     if (modalUseBtn) {
                                         modalUseBtn.disabled = false;
-                                        modalUseBtn.innerHTML =
-                                            '<i class="bi bi-check-circle me-1"></i>Use This Location';
+                                        modalUseBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i>Use This Location';
                                     }
 
-                                    showToast('success', 'Location Found',
-                                        'Your address has been detected successfully.');
+                                    showToast('success', 'Location Found', 'Your address has been detected successfully.');
                                 } else {
                                     throw new Error('Address could not be determined.');
                                 }
@@ -2673,29 +3098,22 @@
                                     modalStatus.textContent = 'GPS detected but address could not be found.';
                                 }
                                 if (modalAddress) {
-                                    modalAddress.textContent =
-                                        'Your GPS location was detected, but we could not determine the address. You can still use the GPS coordinates.';
+                                    modalAddress.textContent = 'Your GPS location was detected, but we could not determine the address. You can still use the GPS coordinates.';
                                 }
                                 if (modalUseBtn) {
                                     modalUseBtn.disabled = false;
-                                    modalUseBtn.innerHTML =
-                                        '<i class="bi bi-geo-alt-fill me-1"></i>Use GPS Location';
+                                    modalUseBtn.innerHTML = '<i class="bi bi-geo-alt-fill me-1"></i>Use GPS Location';
                                 }
-                                showToast('info', 'GPS Location',
-                                    'GPS detected but address could not be determined. You can still use the GPS coordinates.'
-                                );
+                                showToast('info', 'GPS Location', 'GPS detected but address could not be determined. You can still use the GPS coordinates.');
                             });
                     },
                     function (error) {
                         if (error.code === error.PERMISSION_DENIED) {
-                            showToast('error', 'Location Permission',
-                                'Please allow location access in your browser.');
+                            showToast('error', 'Location Permission', 'Please allow location access in your browser.');
                         } else if (error.code === error.POSITION_UNAVAILABLE) {
-                            showToast('error', 'Location Unavailable',
-                                'Unable to determine your current location.');
+                            showToast('error', 'Location Unavailable', 'Unable to determine your current location.');
                         } else if (error.code === error.TIMEOUT) {
-                            showToast('error', 'Location Timeout',
-                                'Location detection took too long. Please try again.');
+                            showToast('error', 'Location Timeout', 'Location detection took too long. Please try again.');
                         } else {
                             showToast('error', 'Location Error', 'Unable to detect your current location.');
                         }
@@ -2735,14 +3153,10 @@
                                 '</div>' +
                                 '<div class="address-line">' + (detectedLocationData.address || 'GPS Location') +
                                 '</div>' +
-                                (detectedLocationData.city ? '<div class="address-line">' + detectedLocationData
-                                    .city + '</div>' : '') +
-                                (detectedLocationData.state ? '<div class="address-line">' + detectedLocationData
-                                    .state + '</div>' : '') +
-                                (detectedLocationData.pincode ? '<div class="address-line">Pincode: ' +
-                                    detectedLocationData.pincode + '</div>' : '') +
-                                '<div class="phone">Lat: ' + detectedLatitude.toFixed(6) + ', Lng: ' +
-                                detectedLongitude.toFixed(6) + '</div>' +
+                                (detectedLocationData.city ? '<div class="address-line">' + detectedLocationData.city + '</div>' : '') +
+                                (detectedLocationData.state ? '<div class="address-line">' + detectedLocationData.state + '</div>' : '') +
+                                (detectedLocationData.pincode ? '<div class="address-line">Pincode: ' + detectedLocationData.pincode + '</div>' : '') +
+                                '<div class="phone">Lat: ' + detectedLatitude.toFixed(6) + ', Lng: ' + detectedLongitude.toFixed(6) + '</div>' +
                                 '</div>' +
                                 '<div class="address-tag">Selected</div>';
 
@@ -2755,14 +3169,15 @@
                             });
                         }
 
-                        showToast('success', 'Location Selected',
-                            'Your current location has been set as delivery address.');
+                        showToast('success', 'Location Selected', 'Your current location has been set as delivery address.');
                         closeAddressChoiceModal();
                     } else {
                         showToast('error', 'Error', 'Please detect your location first.');
                     }
                 });
             }
+
+            console.log('Checkout loaded successfully!');
         });
     </script>
 @endsection

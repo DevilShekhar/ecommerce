@@ -11,6 +11,7 @@ use App\Http\Controllers\admin\DashboardController;
 use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
 use App\Http\Controllers\admin\OfferController;
+use App\Http\Controllers\admin\OrderController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
@@ -134,7 +135,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/cart/update/{key}', [CheckoutController::class, 'updateCart'])->name('cart.update');
     Route::get('/checkout/addresses', [CheckoutController::class, 'getAddresses'])->name('checkout.addresses');
     Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])
-    ->name('checkout.applyCoupon');
+        ->name('checkout.applyCoupon');
 
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');
@@ -165,7 +166,27 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/account-password', [CustomerAccountController::class, 'updatePassword'])
         ->name('account.password.update');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::post('/checkout/create-razorpay-order', [CheckoutController::class, 'createRazorpayOrder'])
+        ->name('checkout.create.razorpay.order')
+        ->middleware('auth');
 
+    Route::post('/checkout/verify-razorpay-payment', [CheckoutController::class, 'verifyRazorpayPayment'])
+        ->name('checkout.verify.razorpay')
+        ->middleware('auth');
+    Route::get('/my-orders', [OrderController::class, 'index'])
+        ->name('customer.orders.index');
+
+    Route::get('/my-orders/{order}', [OrderController::class, 'show'])
+        ->name('customer.orders.show');
+    Route::get('/orders', [OrderController::class, 'index'])
+        ->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])
+        ->name('orders.show');
+    Route::patch('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])
+        ->name('admin.orders.status.update');
+
+});
 // Public Routes
 Route::get('/contact', function () {
     return view('contact');

@@ -661,6 +661,9 @@
 
 <body>
     @yield('styles')
+    @php
+        $user = auth()->user();
+    @endphp
 
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
@@ -676,7 +679,7 @@
                 <a href="{{ route('customer.products') }}"><i class="bi bi-box-seam"></i> Products</a>
             </li>
             <li>
-                <a href="#"><i class="bi bi-bag-check"></i> My Orders</a>
+                <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My Orders</a>
             </li>
             <li class="@if(Route::currentRouteName() == 'customer.wishlist') active @endif">
                 <a href="{{ route('customer.wishlist') }}">
@@ -792,7 +795,7 @@
                                     @php
                                         $firstLetter = strtoupper(substr(trim($user->name), 0, 1));
                                     @endphp
-                                    <div class="avatar-placeholder">{{ $firstLetter }}</div>
+                                    <div class="avatar-placeholder">{{ $firstLetter ?? 'A'}}</div>
                                 </div>
                                 <div class="user-info d-none d-md-block">
                                     <small>Hi, {{ explode(' ', $user->name)[0] }}</small>
@@ -801,7 +804,8 @@
                                 <i class="bi bi-chevron-down"></i>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{{ route('account.settings') }}">Edit Profile</a></li>
+                                <li><a class="dropdown-item" href="{{ route('account.settings') }}">Edit Profile</a>
+                                </li>
                                 <li><a class="dropdown-item" href="{{ route('customer.dashboard') }}">Dashboard</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
@@ -833,7 +837,7 @@
                                 <a href="{{ route('customer.products') }}"><i class="bi bi-box-seam"></i> Products</a>
                             </li>
                             <li>
-                                <a href="#"><i class="bi bi-bag-check"></i> My Orders</a>
+                                <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My Orders</a>
                             </li>
                             <li class="@if(Route::currentRouteName() == 'customer.wishlist') active @endif">
                                 <a href="{{ route('customer.wishlist') }}">
@@ -884,6 +888,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         // Sidebar toggle functions
         function toggleSidebar() {

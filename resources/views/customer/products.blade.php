@@ -92,8 +92,8 @@
 
 
         /* ==========================================
-           WISHLIST PRODUCT GRID
-        ========================================== */
+               WISHLIST PRODUCT GRID
+            ========================================== */
 
         .wishlist-products-row {
             margin-bottom: 28px;
@@ -287,8 +287,8 @@
 
 
         /* ==========================================
-           RECOMMENDED SECTION
-        ========================================== */
+               RECOMMENDED SECTION
+            ========================================== */
 
         .recommended-section {
             background: #fff;
@@ -561,8 +561,8 @@
     <div class="wishlist-page">
 
         <!-- ======================================
-             WISHLIST HEADER
-        ======================================= -->
+                 WISHLIST HEADER
+            ======================================= -->
         <div class="wishlist-top">
 
             <div class="wishlist-title-area">
@@ -598,8 +598,8 @@
 
 
         <!-- ======================================
-             WISHLIST PRODUCTS
-        ======================================= -->
+                 WISHLIST PRODUCTS
+            ======================================= -->
         @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
 
             <div class="row g-4 wishlist-products-row">
@@ -715,32 +715,12 @@
                 @endforeach
 
             </div>
-
-        @else
-
-            <div class="empty-products">
-
-                <i class="bi bi-heart"></i>
-
-                <h4>Your Wishlist is Empty</h4>
-
-                <p>
-                    Products that you add to your wishlist will appear here.
-                </p>
-
-                <a href="{{ route('shop') }}" class="wishlist-action-btn primary mt-2">
-                    <i class="bi bi-cart3"></i>
-                    Start Shopping
-                </a>
-
-            </div>
-
         @endif
 
 
         <!-- ======================================
-             RECOMMENDED FOR YOU
-        ======================================= -->
+                 RECOMMENDED FOR YOU
+            ======================================= -->
         <div class="recommended-section">
 
             <div class="recommended-header">
@@ -757,11 +737,6 @@
                     </div>
 
                 </div>
-
-                <a href="{{ route('shop') }}" class="recommended-view-all">
-                    View All
-                    <i class="bi bi-arrow-right"></i>
-                </a>
 
             </div>
 

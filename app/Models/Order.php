@@ -27,6 +27,9 @@ class Order extends Model
         'latitude',
         'longitude',
         'notes',
+        'razorpay_order_id',
+        'razorpay_payment_id',
+        'razorpay_signature',
     ];
 
     protected $casts = [

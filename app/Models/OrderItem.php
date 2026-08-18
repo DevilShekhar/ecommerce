@@ -30,6 +30,7 @@ class OrderItem extends Model
         'total' => 'decimal:2',
         'variants' => 'array',
         'specification' => 'array',
+         'image' => 'array',
     ];
 
     public function order()

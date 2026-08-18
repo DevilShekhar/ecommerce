@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Razorpay\Api\Api;
 
 class CheckoutController extends Controller
 {
@@ -34,10 +35,33 @@ class CheckoutController extends Controller
             return redirect()->back()->with('error', 'Product not found.');
         }
 
+        // Check stock
+        if ($product->stock <= 0) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This product is out of stock.',
+                ], 400);
+            }
+
+            return redirect()->back()->with('error', 'This product is out of stock.');
+        }
+
         $cart = session()->get('cart', []);
 
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity']++;
+            $newQty = $cart[$product->id]['quantity'] + 1;
+            if ($newQty > $product->stock) {
+                if ($request->expectsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Only '.$product->stock.' items available in stock.',
+                    ], 400);
+                }
+
+                return redirect()->back()->with('error', 'Only '.$product->stock.' items available in stock.');
+            }
+            $cart[$product->id]['quantity'] = $newQty;
         } else {
             $cart[$product->id] = [
                 'id' => $product->id,
@@ -45,6 +69,7 @@ class CheckoutController extends Controller
                 'price' => $product->price,
                 'quantity' => 1,
                 'image' => $product->image,
+                'stock' => $product->stock,
             ];
         }
 
@@ -85,8 +110,9 @@ class CheckoutController extends Controller
         $cartCount = count($cart);
 
         $subtotal = 0;
+        $hasOutOfStock = false;
 
-        foreach ($cart as $item) {
+        foreach ($cart as $key => $item) {
             if (is_object($item)) {
                 $item = (array) $item;
             }
@@ -107,6 +133,12 @@ class CheckoutController extends Controller
             }
 
             $subtotal += (float) $price * (int) $quantity;
+
+            // Check stock
+            $product = Product::find($item['id'] ?? null);
+            if ($product && $product->stock <= 0) {
+                $hasOutOfStock = true;
+            }
         }
 
         $addresses = $user->address;
@@ -140,13 +172,14 @@ class CheckoutController extends Controller
             'total',
             'user',
             'addresses',
-            'defaultAddress', 'categories'
+            'defaultAddress',
+            'categories',
+            'hasOutOfStock'
         ));
     }
 
     public function removeFromCart($key)
     {
-
         try {
             $cart = session()->get('cart', []);
 
@@ -182,201 +215,209 @@ class CheckoutController extends Controller
     }
 
     public function placeOrder(Request $request)
-    {
-        // dd($request->all());
-        try {
-            $user = Auth::user();
+{
+    try {
+        $user = Auth::user();
 
-            if (! $user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please login to place order.',
-                ], 401);
+        if (! $user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please login to place order.',
+            ], 401);
+        }
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart) || ! is_array($cart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your cart is empty.',
+            ], 400);
+        }
+
+        // Fix: Add 'razorpay' to the validation rules
+        $request->validate([
+            'address_id' => 'nullable',
+            'payment_method' => 'required|string|in:cod,upi,card,netbanking,razorpay',
+            'notes' => 'nullable|string|max:1000',
+            'razorpay_payment_id' => 'nullable|string',
+            'razorpay_order_id' => 'nullable|string',
+            'razorpay_signature' => 'nullable|string',
+        ]);
+
+        $addresses = $user->address;
+
+        if (is_string($addresses)) {
+            $addresses = json_decode($addresses, true);
+        }
+
+        if (! is_array($addresses)) {
+            $addresses = [];
+        }
+
+        $addressId = $request->address_id;
+        $selectedAddress = null;
+
+        if ($addressId !== null) {
+            foreach ($addresses as $address) {
+                if (
+                    isset($address['id']) &&
+                    (string) $address['id'] === (string) $addressId
+                ) {
+                    $selectedAddress = $address;
+                    break;
+                }
+            }
+        }
+
+        if (! $selectedAddress) {
+            $selectedAddress = collect($addresses)
+                ->firstWhere('is_default', true);
+        }
+
+        if (! $selectedAddress) {
+            $selectedAddress = [
+                'address' => $user->location_address ?? '',
+                'city' => $user->city ?? '',
+                'state' => $user->state ?? '',
+                'country' => $user->country ?? '',
+                'pincode' => $user->pincode ?? '',
+            ];
+        }
+
+        $shippingAddress = $selectedAddress['address'] ?? $user->location_address ?? '';
+        $shippingCity = $selectedAddress['city'] ?? $user->city ?? '';
+        $shippingState = $selectedAddress['state'] ?? $user->state ?? '';
+        $shippingCountry = $selectedAddress['country'] ?? $user->country ?? '';
+        $shippingPincode = $selectedAddress['pincode'] ?? $user->pincode ?? '';
+
+        $latitude = $selectedAddress['latitude'] ?? $user->latitude ?? null;
+        $longitude = $selectedAddress['longitude'] ?? $user->longitude ?? null;
+
+        $shipping = 0;
+        $discount = 0;
+        $subtotal = 0;
+        $orderItems = [];
+
+        foreach ($cart as $cartItem) {
+            if (! is_array($cartItem)) {
+                continue;
             }
 
-            $cart = session()->get('cart', []);
+            $productId = $cartItem['id'] ?? null;
+            $quantity = (int) ($cartItem['quantity'] ?? 1);
 
-            if (empty($cart) || ! is_array($cart)) {
+            if (! $productId || $quantity < 1) {
+                continue;
+            }
+
+            $product = Product::with([
+                'category',
+                'subCategory',
+                'brand',
+            ])->where('id', $productId)
+                ->where('status', 1)
+                ->first();
+
+            if (! $product) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Your cart is empty.',
+                    'message' => 'One of the products in your cart is no longer available.',
                 ], 400);
             }
 
-            $request->validate([
-                'address_id' => 'nullable',
-                'payment_method' => 'required|string|in:cod,upi,card',
-                'notes' => 'nullable|string|max:1000',
+            if ($product->stock < $quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only ' . $product->stock . ' ' . $product->name . ' available in stock.',
+                ], 400);
+            }
+
+            $price = (float) $product->price;
+            $itemTotal = $price * $quantity;
+
+            $subtotal += $itemTotal;
+
+            $orderItems[] = [
+                'product' => $product,
+                'quantity' => $quantity,
+                'price' => $price,
+                'total' => $itemTotal,
+            ];
+        }
+
+        if (empty($orderItems)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No valid products found in your cart.',
+            ], 400);
+        }
+
+        $total = $subtotal + $shipping - $discount;
+
+        DB::beginTransaction();
+
+        try {
+            $orderNumber = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
+
+            $paymentStatus = 'pending';
+            $paymentMethod = $request->payment_method;
+
+            // If payment method is 'razorpay' or has razorpay payment id, mark as paid
+            if ($paymentMethod === 'razorpay' || $request->razorpay_payment_id) {
+                $paymentStatus = 'paid';
+                $paymentMethod = 'razorpay'; // Normalize to razorpay
+            } elseif ($paymentMethod === 'cod') {
+                $paymentStatus = 'pending';
+            }
+
+            $order = Order::create([
+                'user_id' => $user->id,
+                'order_number' => $orderNumber,
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'discount' => $discount,
+                'total' => $total,
+                'payment_method' => $paymentMethod,
+                'payment_status' => $paymentStatus,
+                'order_status' => 'pending',
+                'shipping_address' => $shippingAddress,
+                'shipping_city' => $shippingCity,
+                'shipping_state' => $shippingState,
+                'shipping_country' => $shippingCountry,
+                'shipping_pincode' => $shippingPincode,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'notes' => $request->notes,
+                'razorpay_order_id' => $request->razorpay_order_id,
+                'razorpay_payment_id' => $request->razorpay_payment_id,
+                'razorpay_signature' => $request->razorpay_signature,
             ]);
 
-            $addresses = $user->address;
+            foreach ($orderItems as $item) {
+                $product = $item['product'];
 
-            if (is_string($addresses)) {
-                $addresses = json_decode($addresses, true);
-            }
-
-            if (! is_array($addresses)) {
-                $addresses = [];
-            }
-
-            $addressId = $request->address_id;
-
-            $selectedAddress = null;
-
-            if ($addressId !== null) {
-                foreach ($addresses as $address) {
-                    if (
-                        isset($address['id']) &&
-                        (string) $address['id'] === (string) $addressId
-                    ) {
-                        $selectedAddress = $address;
-                        break;
-                    }
-                }
-            }
-            if (! $selectedAddress) {
-                $selectedAddress = collect($addresses)
-                    ->firstWhere('is_default', true);
-            }
-            $shippingAddress = $selectedAddress['address'] ?? $user->location_address ?? '';
-            $shippingCity = $selectedAddress['city'] ?? $user->city ?? '';
-            $shippingState = $selectedAddress['state'] ?? $user->state ?? '';
-            $shippingCountry = $selectedAddress['country'] ?? $user->country ?? '';
-            $shippingPincode = $selectedAddress['pincode'] ?? $user->pincode ?? '';
-
-            $latitude = $selectedAddress['latitude'] ?? $user->latitude;
-            $longitude = $selectedAddress['longitude'] ?? $user->longitude;
-
-            $shipping = 0;
-            $discount = 0;
-            $subtotal = 0;
-
-            $orderItems = [];
-
-            foreach ($cart as $cartItem) {
-                if (! is_array($cartItem)) {
-                    continue;
-                }
-
-                $productId = $cartItem['id'] ?? null;
-                $quantity = (int) ($cartItem['quantity'] ?? 1);
-
-                if (! $productId || $quantity < 1) {
-                    continue;
-                }
-
-                /*
-                 * Always retrieve the product from DB.
-                 */
-                $product = Product::with([
-                    'category',
-                    'subCategory',
-                    'brand',
-                ])->where('id', $productId)
-                    ->where('status', 1)
-                    ->first();
-
-                if (! $product) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'One of the products in your cart is no longer available.',
-                    ], 400);
-                }
-                $price = (float) $product->price;
-                $itemTotal = $price * $quantity;
-
-                $subtotal += $itemTotal;
-
-                $orderItems[] = [
-                    'product' => $product,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'total' => $itemTotal,
-                ];
-            }
-
-            if (empty($orderItems)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No valid products found in your cart.',
-                ], 400);
-            }
-
-            $total = $subtotal + $shipping - $discount;
-
-            $order = DB::transaction(function () use (
-                $user,
-                $orderItems,
-                $subtotal,
-                $shipping,
-                $discount,
-                $total,
-                $shippingAddress,
-                $shippingCity,
-                $shippingState,
-                $shippingCountry,
-                $shippingPincode,
-                $latitude,
-                $longitude,
-                $request) {
-                /*
-                 * Generate unique order number.
-                 */
-                $orderNumber = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
-
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'order_number' => $orderNumber,
-                    'subtotal' => $subtotal,
-                    'shipping' => $shipping,
-                    'discount' => $discount,
-                    'total' => $total,
-                    'payment_method' => $request->payment_method,
-                    'payment_status' => $request->payment_method === 'cod'
-                        ? 'pending'
-                        : 'pending',
-                    'order_status' => 'pending',
-                    'shipping_address' => $shippingAddress,
-                    'shipping_city' => $shippingCity,
-                    'shipping_state' => $shippingState,
-                    'shipping_country' => $shippingCountry,
-                    'shipping_pincode' => $shippingPincode,
-                    'latitude' => $latitude,
-                    'longitude' => $longitude,
-                    'notes' => $request->notes,
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product->id,
+                    'category_id' => $product->category_id,
+                    'sub_category_id' => $product->sub_category_id,
+                    'brand_id' => $product->brand_id,
+                    'product_name' => $product->name,
+                    'sku' => $product->sku,
+                    'price' => $item['price'],
+                    'quantity' => $item['quantity'],
+                    'total' => $item['total'],
+                    'image' => $product->image,
+                    'variants' => $product->variants,
+                    'specification' => $product->specification,
                 ]);
 
-                foreach ($orderItems as $item) {
-                    $product = $item['product'];
+                $product->decrement('stock', $item['quantity']);
+            }
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $product->id,
-                        'category_id' => $product->category_id,
-                        'sub_category_id' => $product->sub_category_id,
-                        'brand_id' => $product->brand_id,
-                        'product_name' => $product->name,
-                        'sku' => $product->sku,
-                        'price' => $item['price'],
-                        'quantity' => $item['quantity'],
-                        'total' => $item['total'],
-                        'image' => $product->image,
-                        'variants' => $product->variants,
-                        'specification' => $product->specification,
-                    ]);
+            DB::commit();
 
-                    /*
-                     * Reduce product stock.
-                     */
-                    $product->decrement('stock', $item['quantity']);
-                }
-
-                return $order;
-            });
-
-            /*
-             * Clear cart only after successful order creation.
-             */
             session()->forget('cart');
 
             return response()->json([
@@ -385,20 +426,32 @@ class CheckoutController extends Controller
                 'order_id' => $order->id,
                 'order_number' => $order->order_number,
                 'total' => $order->total,
+                'redirect_url' => route('customer.dashboard'),
             ]);
 
         } catch (\Exception $e) {
-            Log::error('Place order error: '.$e->getMessage(), [
-                'user_id' => Auth::id(),
-                'trace' => $e->getTraceAsString(),
-            ]);
+            DB::rollBack();
+            Log::error('Order creation failed: ' . $e->getMessage());
+        Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to place order. Please try again.',
+                'message' => 'Failed to create order: ' . $e->getMessage(),
             ], 500);
         }
+
+    } catch (\Exception $e) {
+        Log::error('Place order error: ' . $e->getMessage(), [
+            'user_id' => Auth::id(),
+            'trace' => $e->getTraceAsString(),
+        ]);
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to place order: ' . $e->getMessage(),
+        ], 500);
     }
+}
 
     public function updateCart(Request $request, $key)
     {
@@ -418,13 +471,21 @@ class CheckoutController extends Controller
 
             $quantity = (int) $request->quantity;
 
-            $product = Product::find($cart[$key]['id']);
+            $product = Product::query()->find($cart[$key]['id']);
 
             if (! $product) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Product not found.',
                 ], 404);
+            }
+
+            // Check stock
+            if ($quantity > $product->stock) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only '.$product->stock.' items available in stock.',
+                ], 400);
             }
 
             $cart[$key]['quantity'] = $quantity;
@@ -492,7 +553,6 @@ class CheckoutController extends Controller
 
         $today = Carbon::today();
 
-        // Check start date
         if ($coupon->start_date && $today->lt($coupon->start_date)) {
             return response()->json([
                 'success' => false,
@@ -500,7 +560,6 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Check expiry date
         if ($coupon->end_date && $today->gt($coupon->end_date)) {
             return response()->json([
                 'success' => false,
@@ -508,7 +567,6 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Check usage limit
         if (
             ! is_null($coupon->usage_limit) &&
             $coupon->used_count >= $coupon->usage_limit
@@ -519,7 +577,6 @@ class CheckoutController extends Controller
             ], 422);
         }
 
-        // Check minimum order amount
         if (
             $coupon->minimum_order_amount > 0 &&
             $orderAmount < $coupon->minimum_order_amount
@@ -533,12 +590,9 @@ class CheckoutController extends Controller
 
         $discountAmount = 0;
 
-        // Percentage discount
         if ($coupon->discount_type === 'percentage') {
-
             $discountAmount = ($orderAmount * $coupon->discount_value) / 100;
 
-            // Apply maximum discount limit
             if (
                 ! is_null($coupon->maximum_discount) &&
                 $coupon->maximum_discount > 0 &&
@@ -548,13 +602,10 @@ class CheckoutController extends Controller
             }
 
         } elseif ($coupon->discount_type === 'flat') {
-
             $discountAmount = (float) $coupon->discount_value;
         }
 
-        // Discount should never exceed order amount
         $discountAmount = min($discountAmount, $orderAmount);
-
         $finalAmount = max($orderAmount - $discountAmount, 0);
 
         return response()->json([
@@ -571,4 +622,153 @@ class CheckoutController extends Controller
             'final_amount' => round($finalAmount, 2),
         ]);
     }
+
+    public function createRazorpayOrder(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if (! $user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please login to continue.',
+                ], 401);
+            }
+
+            $cart = session()->get('cart', []);
+
+            if (empty($cart)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your cart is empty.',
+                ], 400);
+            }
+
+            // Calculate total
+            $subtotal = 0;
+            foreach ($cart as $item) {
+                $subtotal += $item['price'] * $item['quantity'];
+            }
+
+            // Apply coupon if exists
+            $discount = 0;
+            $couponCode = session()->get('applied_coupon_code');
+            if ($couponCode) {
+                $coupon = Coupon::query()->where('code', $couponCode)->first();
+                if ($coupon) {
+                    if ($coupon->discount_type === 'percentage') {
+                        $discount = ($subtotal * $coupon->discount_value) / 100;
+                        if ($coupon->maximum_discount && $discount > $coupon->maximum_discount) {
+                            $discount = $coupon->maximum_discount;
+                        }
+                    } else {
+                        $discount = $coupon->discount_value;
+                    }
+                    $discount = min($discount, $subtotal);
+                }
+            }
+
+            $total = $subtotal - $discount;
+            $total = max($total, 0);
+
+            $api = new Api(
+                config('services.razorpay.key'),
+                config('services.razorpay.secret')
+            );
+
+            $razorpayOrder = $api->order->create([
+                'receipt' => 'order_'.time(),
+                'amount' => (int) round($total * 100),
+                'currency' => 'INR',
+                'payment_capture' => 1,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'key' => config('services.razorpay.key'),
+                'razorpay_order_id' => $razorpayOrder['id'],
+                'amount' => $razorpayOrder['amount'],
+                'currency' => 'INR',
+                'name' => config('app.name'),
+                'description' => 'Order Payment',
+                'prefill' => [
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'contact' => $user->phone ?? '',
+                ],
+                'notes' => [
+                    'user_id' => $user->id,
+                ],
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Razorpay order creation failed: '.$e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to initialize payment. Please try again.',
+            ], 500);
+        }
+    }
+
+   public function verifyRazorpayPayment(Request $request)
+{
+    try {
+        $request->validate([
+            'razorpay_payment_id' => 'required|string',
+            'razorpay_order_id' => 'required|string',
+            'razorpay_signature' => 'required|string',
+            'address_id' => 'nullable',
+            'payment_method' => 'required|string|in:upi,card,netbanking,razorpay',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
+
+        $attributes = [
+            'razorpay_order_id' => $request->razorpay_order_id,
+            'razorpay_payment_id' => $request->razorpay_payment_id,
+            'razorpay_signature' => $request->razorpay_signature,
+        ];
+
+        $api->utility->verifyPaymentSignature($attributes);
+
+        // Payment verified - place order with razorpay as payment method
+        $orderRequest = new Request([
+            'address_id' => $request->address_id,
+            'payment_method' => 'razorpay',
+            'notes' => $request->notes,
+            'razorpay_payment_id' => $request->razorpay_payment_id,
+            'razorpay_order_id' => $request->razorpay_order_id,
+            'razorpay_signature' => $request->razorpay_signature,
+        ]);
+
+        $response = $this->placeOrder($orderRequest);
+
+        if ($response->getStatusCode() === 200) {
+            $data = $response->getData();
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment verified and order placed successfully!',
+                'order_id' => $data->order_id ?? null,
+                'order_number' => $data->order_number ?? null,
+                'redirect_url' => route('customer.dashboard'),
+            ]);
+        }
+
+        return $response;
+
+    } catch (\Exception $e) {
+        Log::error('Razorpay verification failed: ' . $e->getMessage());
+        Log::error('Stack trace: ' . $e->getTraceAsString());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Payment verification failed: ' . $e->getMessage(),
+        ], 422);
+    }
+}
 }
