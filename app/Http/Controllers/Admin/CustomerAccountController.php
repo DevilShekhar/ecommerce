@@ -141,6 +141,7 @@ class CustomerAccountController extends Controller
             'state' => 'required|string|max:100',
             'country' => 'required|string|max:100',
             'pincode' => 'required|string|max:20',
+            'shipping_mobile' => $user->mobile,
         ]);
 
         $user = Auth::user();
