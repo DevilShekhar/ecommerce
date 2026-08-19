@@ -177,28 +177,6 @@
             font-weight: 700
         }
 
-        /* Payment Section */
-        .payment-section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .payment-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .address-section {
             padding: 12px 16px
         }
@@ -392,80 +370,6 @@
 
         .add-address-btn:hover {
             text-decoration: underline
-        }
-
-        .payment-method {
-            display: flex;
-            align-items: center;
-            margin: 0 16px 10px;
-            padding: 10px 14px;
-            border: 1px solid var(--checkout-border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all .2s
-        }
-
-        .payment-method:hover {
-            border-color: #b8d1ff
-        }
-
-        .payment-method.selected {
-            border-color: #7aaafa;
-            background: #fbfdff
-        }
-
-        .payment-radio {
-            width: 16px;
-            height: 16px;
-            margin-right: 12px;
-            accent-color: var(--checkout-primary)
-        }
-
-        .payment-method-info {
-            flex: 1
-        }
-
-        .payment-method-title {
-            font-size: 13px;
-            font-weight: 700;
-            margin-bottom: 2px
-        }
-
-        .payment-method-subtitle {
-            font-size: 11px;
-            color: var(--checkout-muted)
-        }
-
-        .payment-logos {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 12px;
-            font-weight: 700
-        }
-
-        .payment-logo-gpay {
-            color: #4285f4
-        }
-
-        .payment-logo-phonepe {
-            color: #6739b7
-        }
-
-        .payment-logo-paytm {
-            color: #00a9e0
-        }
-
-        .payment-logo-visa {
-            color: #1a3f8f
-        }
-
-        .payment-logo-mastercard {
-            color: #e65a31
-        }
-
-        .payment-logo-rupay {
-            color: #1556a5
         }
 
         .cart-item {
@@ -1579,6 +1483,11 @@
             opacity: 0.6;
             cursor: not-allowed;
         }
+
+        /* Payment section hidden */
+        .payment-section {
+            display: none !important;
+        }
     </style>
 @endsection
 
@@ -1595,32 +1504,6 @@
                 <div class="secure-checkout">
                     <div class="secure-icon"><i class="bi bi-lock-fill"></i></div>
                     <div><strong>100% Secure Checkout</strong><span>SSL Encrypted</span></div>
-                </div>
-            </div>
-        </div>
-
-        {{-- STEPS --}}
-        <div class="checkout-steps">
-            <div class="steps-wrapper">
-                <div class="checkout-step active" data-step="1" onclick="goToStep(1)">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Delivery</div>
-                    <div class="step-subtitle">Shipping Address</div>
-                </div>
-                <div class="checkout-step" data-step="2" onclick="goToStep(2)">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Payment</div>
-                    <div class="step-subtitle">Payment Method</div>
-                </div>
-                <div class="checkout-step" data-step="3" onclick="goToStep(3)">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Review</div>
-                    <div class="step-subtitle">Review Your Order</div>
-                </div>
-                <div class="checkout-step" data-step="4" onclick="goToStep(4)">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Confirmation</div>
-                    <div class="step-subtitle">Order Complete</div>
                 </div>
             </div>
         </div>
@@ -1838,70 +1721,9 @@
                         </div>
                     </div>
 
-                    {{-- PAYMENT SECTION --}}
+                    {{-- PAYMENT SECTION - Hidden, kept for compatibility --}}
                     <div id="paymentSection" class="payment-section">
-                        <div class="checkout-card">
-                            <div class="checkout-card-header">
-                                <div class="checkout-card-icon">
-                                    <i class="bi bi-credit-card-fill"></i>
-                                </div>
-                                <h5>Payment Method</h5>
-                            </div>
-
-                            {{-- UPI --}}
-                            <label class="payment-method selected">
-                                <input type="radio" name="payment_method" value="upi" class="payment-radio" checked>
-                                <div class="payment-method-info">
-                                    <div class="payment-method-title">UPI / QR Code</div>
-                                    <div class="payment-method-subtitle">Pay using any UPI app</div>
-                                </div>
-                                <div class="payment-logos">
-                                    <span class="payment-logo-gpay">G Pay</span>
-                                    <span class="payment-logo-phonepe">●</span>
-                                    <span class="payment-logo-paytm">paytm</span>
-                                </div>
-                            </label>
-
-                            {{-- Credit/Debit Card --}}
-                            <label class="payment-method">
-                                <input type="radio" name="payment_method" value="card" class="payment-radio">
-                                <div class="payment-method-info">
-                                    <div class="payment-method-title">Credit / Debit Card</div>
-                                    <div class="payment-method-subtitle">Visa, Mastercard, Rupay & more</div>
-                                </div>
-                                <div class="payment-logos">
-                                    <span class="payment-logo-visa">VISA</span>
-                                    <span class="payment-logo-mastercard">●●</span>
-                                    <span class="payment-logo-rupay">RuPay</span>
-                                </div>
-                            </label>
-
-                            {{-- Net Banking --}}
-                            <label class="payment-method">
-                                <input type="radio" name="payment_method" value="netbanking" class="payment-radio">
-                                <div class="payment-method-info">
-                                    <div class="payment-method-title">Net Banking</div>
-                                    <div class="payment-method-subtitle">All major banks</div>
-                                </div>
-                                <div class="payment-logos">
-                                    <span>SBI</span>
-                                    <span>HDFC</span>
-                                    <span>ICICI</span>
-                                </div>
-                            </label>
-
-                            {{-- Cash on Delivery --}}
-                            <label class="payment-method">
-                                <input type="radio" name="payment_method" value="cod" class="payment-radio">
-                                <div class="payment-method-info">
-                                    <div class="payment-method-title">Cash on Delivery</div>
-                                    <div class="payment-method-subtitle">Pay when you receive</div>
-                                </div>
-                                <div class="payment-logos">
-                                    <i class="bi bi-cash-coin fs-5 text-success"></i>
-                                </div>
-                            </label>
-                        </div>
+                        <!-- Hidden payment section -->
                     </div>
                 </div>
 
@@ -2064,48 +1886,41 @@
 
     {{-- TOAST --}}
     <div class="toast-container-custom" id="toastContainer"></div>
+
     {{-- CONFIRMATION MODAL --}}
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-box" style="max-width: 450px;">
-            <div style="text-align: center; margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 15px;">
                 <div
-                    style="width: 60px; height: 60px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
-                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 30px; color: #d97706;"></i>
+                    style="width: 55px; height: 55px; border-radius: 50%; background: #fef3c7; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 26px; color: #d97706;"></i>
                 </div>
-                <h4 style="margin: 0 0 8px; font-weight: 700; color: #172033;">Confirm Your Order</h4>
-                <p style="color: #64748b; font-size: 14px; margin: 0;">Please review your order details before placing.</p>
+                <h4 style="margin: 0 0 4px; font-weight: 700; color: #172033; font-size: 18px;">Confirm Your Order</h4>
+                <p style="color: #64748b; font-size: 13px; margin: 0;">Please review your order details before placing.</p>
             </div>
 
-            <div style="background: #f8fafc; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-                <div
-                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+            <div style="background: #f8fafc; border-radius: 8px; padding: 12px 15px; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Items</span>
-                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
-                        id="confirmItems">{{ $cartCount ?? 0 }}</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmItems">{{ $cartCount ?? 0 }}</span>
                 </div>
-                <div
-                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Subtotal</span>
-                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
-                        id="confirmSubtotal">₹{{ number_format($subtotal ?? 0, 0) }}</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmSubtotal">₹{{ number_format($subtotal ?? 0, 0) }}</span>
                 </div>
-                <div
-                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Delivery Charges</span>
                     <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmShipping">FREE</span>
                 </div>
-                <div
-                    style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5eaf1;">
+                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Coupon Discount</span>
                     <span style="font-weight: 600; color: #16a34a; font-size: 13px;" id="confirmDiscount">- ₹0</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                <div style="display: flex; justify-content: space-between; padding: 8px 0;">
                     <span style="font-weight: 700; color: #172033; font-size: 15px;">Total Amount</span>
-                    <span style="font-weight: 700; color: #2878f0; font-size: 18px;"
-                        id="confirmTotal">₹{{ number_format($total ?? 0, 0) }}</span>
+                    <span style="font-weight: 700; color: #2878f0; font-size: 18px;" id="confirmTotal">₹{{ number_format($finalTotal ?? 0, 0) }}</span>
                 </div>
             </div>
-
             <div style="display: flex; gap: 10px;">
                 <button class="btn-secondary" id="cancelOrderBtn"
                     style="flex: 1; padding: 12px; border: 1px solid #dbe2ea; background: #fff; border-radius: 6px; font-weight: 600; cursor: pointer; color: #475569;">
@@ -2113,7 +1928,7 @@
                 </button>
                 <button class="btn-primary" id="confirmOrderBtn"
                     style="flex: 2; padding: 12px; border: 0; background: #2878f0; border-radius: 6px; font-weight: 600; cursor: pointer; color: #fff;">
-                    <i class="bi bi-check-lg me-1"></i> Confirm Order
+                    <i class="bi bi-lock-fill me-1"></i> Pay Now
                 </button>
             </div>
         </div>
@@ -2236,7 +2051,6 @@
             function goToStep(step) {
                 currentStep = step;
                 var deliverySection = document.getElementById('deliverySection');
-                var paymentSection = document.getElementById('paymentSection');
                 var continueBtn = document.getElementById('continueBtn');
                 var placeOrderBtn = document.getElementById('placeOrderBtn');
 
@@ -2250,23 +2064,18 @@
                     }
                 });
 
+                // Only step 1 is visible now
                 if (step === 1) {
                     deliverySection.style.display = 'block';
-                    paymentSection.classList.remove('active');
                     continueBtn.style.display = 'block';
                     placeOrderBtn.style.display = 'none';
-                } else if (step === 2) {
-                    deliverySection.style.display = 'block';
-                    paymentSection.classList.add('active');
-                    continueBtn.style.display = 'none';
-                    placeOrderBtn.style.display = 'block';
                 }
             }
 
             window.goToStep = goToStep;
 
             // ============================================================
-            // CONTINUE BUTTON
+            // CONTINUE BUTTON - Show loader for 2s then show Place Order
             // ============================================================
             var continueBtn = document.getElementById('continueBtn');
             if (continueBtn) {
@@ -2276,8 +2085,25 @@
                         showToast('error', 'Address Required', 'Please select a delivery address.');
                         return;
                     }
-                    goToStep(2);
-                    showToast('success', 'Step 2', 'Proceed to payment method.');
+
+                    // Show loader on continue button
+                    var originalText = continueBtn.innerHTML;
+                    continueBtn.disabled = true;
+                    continueBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+                    // After 2 seconds, hide loader, hide continue button, show place order button
+                    setTimeout(function () {
+                        continueBtn.style.display = 'none';
+                        var placeOrderBtn = document.getElementById('placeOrderBtn');
+                        if (placeOrderBtn) {
+                            placeOrderBtn.style.display = 'block';
+                            placeOrderBtn.disabled = false;
+                            // Reset the continue button for future use
+                            continueBtn.innerHTML = originalText;
+                            continueBtn.disabled = false;
+                        }
+                        showToast('success', 'Ready to Order', 'Please review and place your order.');
+                    }, 2000);
                 });
             }
 
@@ -2526,15 +2352,17 @@
             }
 
             // ============================================================
-            // PAYMENT METHOD SELECTION
+            // PAYMENT METHOD SELECTION IN MODAL
             // ============================================================
-            document.querySelectorAll('.payment-method').forEach(function (method) {
-                method.addEventListener('click', function () {
-                    document.querySelectorAll('.payment-method').forEach(function (item) {
-                        item.classList.remove('selected');
+            document.querySelectorAll('.payment-method-option').forEach(function (option) {
+                option.addEventListener('click', function () {
+                    document.querySelectorAll('.payment-method-option').forEach(function (item) {
+                        item.style.borderColor = '#e5eaf1';
+                        item.style.background = 'transparent';
                     });
-                    this.classList.add('selected');
-                    var radio = this.querySelector('.payment-radio');
+                    this.style.borderColor = '#2878f0';
+                    this.style.background = '#f8fbff';
+                    var radio = this.querySelector('input[type="radio"]');
                     if (radio) radio.checked = true;
                 });
             });
@@ -2631,24 +2459,24 @@
                     var selectedAddress = document.querySelector('.address-card.selected');
                     var addressId = selectedAddress ? selectedAddress.dataset.addressId : null;
 
-                    var selectedPayment = document.querySelector('.payment-method.selected');
-                    var paymentMethod = selectedPayment ? selectedPayment.querySelector('.payment-radio').value : 'upi';
+                    // Get selected payment method from modal
+                    var selectedPaymentRadio = document.querySelector('input[name="modal_payment_method"]:checked');
+                    var paymentMethod = selectedPaymentRadio ? selectedPaymentRadio.value : 'online';
 
                     if (!addressId) {
                         showToast('error', 'Error', 'Please select a delivery address.');
                         btn.disabled = false;
                         cancelBtn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                        btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                         return;
                     }
 
-                    // For COD - place order directly
+                    // If COD, place order directly
                     if (paymentMethod === 'cod') {
-                        placeCodOrder(addressId, paymentMethod, btn, cancelBtn);
+                        placeCodOrder(addressId, btn, cancelBtn);
                     } else {
-                        // For online payments (upi, card, netbanking) - create Razorpay order
-                        // Pass the actual payment method to Razorpay
-                        createRazorpayOrder(addressId, paymentMethod, btn, cancelBtn);
+                        // For online payments - create Razorpay order
+                        createRazorpayOrder(addressId, btn, cancelBtn);
                     }
                 });
             }
@@ -2656,10 +2484,10 @@
             // ============================================================
             // PLACE COD ORDER
             // ============================================================
-            function placeCodOrder(addressId, paymentMethod, btn, cancelBtn) {
+            function placeCodOrder(addressId, btn, cancelBtn) {
                 var orderData = {
                     address_id: addressId,
-                    payment_method: paymentMethod,
+                    payment_method: 'cod',
                     notes: ''
                 };
 
@@ -2684,7 +2512,7 @@
                             showToast('error', 'Error!', data.message || 'Failed to place order.');
                             btn.disabled = false;
                             cancelBtn.disabled = false;
-                            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                            btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                         }
                     })
                     .catch(function (error) {
@@ -2692,14 +2520,14 @@
                         showToast('error', 'Error!', 'Something went wrong. Please try again.');
                         btn.disabled = false;
                         cancelBtn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                        btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                     });
             }
 
             // ============================================================
             // CREATE RAZORPAY ORDER
             // ============================================================
-            function createRazorpayOrder(addressId, paymentMethod, btn, cancelBtn) {
+            function createRazorpayOrder(addressId, btn, cancelBtn) {
                 isProcessingOrder = true;
 
                 fetch('{{ route("checkout.create.razorpay.order") }}', {
@@ -2714,20 +2542,19 @@
                     .then(function (data) {
                         if (data.success) {
                             closeConfirmModal();
-                            // Pass the payment method to Razorpay checkout
-                            openRazorpayCheckout(data, addressId, paymentMethod);
+                            openRazorpayCheckout(data, addressId);
 
                             setTimeout(function () {
                                 btn.disabled = false;
                                 cancelBtn.disabled = false;
-                                btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                                btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                                 isProcessingOrder = false;
                             }, 500);
                         } else {
                             showToast('error', 'Error!', data.message || 'Failed to initialize payment.');
                             btn.disabled = false;
                             cancelBtn.disabled = false;
-                            btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                            btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                             isProcessingOrder = false;
                         }
                     })
@@ -2736,16 +2563,15 @@
                         showToast('error', 'Error!', 'Something went wrong. Please try again.');
                         btn.disabled = false;
                         cancelBtn.disabled = false;
-                        btn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                        btn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                         isProcessingOrder = false;
                     });
             }
 
-
             // ============================================================
             // OPEN RAZORPAY CHECKOUT
             // ============================================================
-            function openRazorpayCheckout(data, addressId, paymentMethod) {
+            function openRazorpayCheckout(data, addressId) {
                 var options = {
                     key: data.key,
                     amount: data.amount,
@@ -2761,7 +2587,7 @@
                     notes: data.notes,
                     handler: function (response) {
                         // Payment successful - verify
-                        verifyRazorpayPayment(response, addressId, paymentMethod);
+                        verifyRazorpayPayment(response, addressId);
                     },
                     modal: {
                         ondismiss: function () {
@@ -2770,7 +2596,7 @@
                             var cancelBtn = document.getElementById('cancelOrderBtn');
                             if (confirmBtn) {
                                 confirmBtn.disabled = false;
-                                confirmBtn.innerHTML = '<i class="bi bi-check-lg me-1"></i> Confirm Order';
+                                confirmBtn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                             }
                             if (cancelBtn) {
                                 cancelBtn.disabled = false;
@@ -2790,7 +2616,7 @@
             // ============================================================
             // VERIFY RAZORPAY PAYMENT
             // ============================================================
-            function verifyRazorpayPayment(response, addressId, paymentMethod) {
+            function verifyRazorpayPayment(response, addressId) {
                 var placeBtn = document.getElementById('placeOrderBtn');
                 if (placeBtn) {
                     placeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
@@ -2808,7 +2634,7 @@
                         razorpay_order_id: response.razorpay_order_id,
                         razorpay_signature: response.razorpay_signature,
                         address_id: addressId,
-                        payment_method: paymentMethod // This will be 'razorpay'
+                        payment_method: 'razorpay'
                     })
                 })
                     .then(function (response) { return response.json(); })
@@ -2824,6 +2650,11 @@
                                 placeBtn.disabled = false;
                                 placeBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
                             }
+                            var confirmBtn = document.getElementById('confirmOrderBtn');
+                            if (confirmBtn) {
+                                confirmBtn.disabled = false;
+                                confirmBtn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
+                            }
                         }
                     })
                     .catch(function (error) {
@@ -2832,6 +2663,11 @@
                         if (placeBtn) {
                             placeBtn.disabled = false;
                             placeBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Place Order';
+                        }
+                        var confirmBtn = document.getElementById('confirmOrderBtn');
+                        if (confirmBtn) {
+                            confirmBtn.disabled = false;
+                            confirmBtn.innerHTML = '<i class="bi bi-lock-fill me-1"></i> Pay Now';
                         }
                     });
             }

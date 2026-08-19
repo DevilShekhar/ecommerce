@@ -20,17 +20,6 @@
             padding: 0
         }
 
-        .top-announce-bar {
-            background: #0f172a;
-            color: #fff;
-            font-size: 13px;
-            padding: 8px 0
-        }
-
-        .top-announce-bar i {
-            margin-right: 6px
-        }
-
         .customer-header {
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
@@ -38,6 +27,67 @@
             position: sticky;
             top: 0;
             z-index: 100
+        }
+
+        /* Header action */
+        .action-item {
+            position: relative;
+        }
+
+        /* Count badge */
+        .badge-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            min-width: 17px;
+            height: 17px;
+            padding: 0 5px;
+            border-radius: 50px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            line-height: 1;
+            z-index: 10;
+        }
+
+        /* Mobile View */
+        @media (max-width: 768px) {
+
+            .header-actions {
+                gap: 14px !important;
+                flex-shrink: 0;
+            }
+
+            .action-item {
+                display: flex;
+                position: relative !important;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .action-item i {
+                font-size: 20px;
+            }
+
+            /* Hide text but keep icons and counts */
+            .action-item>span:not(.badge-count) {
+                display: none;
+            }
+
+            /* Make sure count is visible */
+            .badge-count {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                position: absolute !important;
+                top: -7px !important;
+                right: -9px !important;
+                z-index: 999 !important;
+                min-width: 17px;
+                height: 17px;
+                font-size: 9px;
+            }
         }
 
         .brand-logo {
@@ -720,20 +770,6 @@
     </div>
 
     <div class="customer-dashboard">
-
-        <!-- TOP BAR -->
-        <div class="top-announce-bar">
-            <div class="container-fluid d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-4">
-                    <span><i class="bi bi-truck"></i> Free Shipping on orders above ₹999</span>
-                    <span><i class="bi bi-arrow-repeat"></i> 30 Days Easy Returns</span>
-                </div>
-                <div>
-                    <span><i class="bi bi-phone"></i> Download App & Get 10% Off</span>
-                </div>
-            </div>
-        </div>
-
         <!-- HEADER -->
         <header class="customer-header">
             <div class="container-fluid">
@@ -744,7 +780,7 @@
                         <i class="bi bi-list"></i>
                     </button>
 
-                    <a href="{{ route('home') }}" class="brand-logo">
+                    <a href="{{ route('dashboard') }}" class="brand-logo">
                         <span class="logo-icon"><i class="bi bi-bag-fill"></i></span>
                         <span class="logo-text">ShopEase</span>
                     </a>
@@ -837,7 +873,8 @@
                                 <a href="{{ route('customer.products') }}"><i class="bi bi-box-seam"></i> Products</a>
                             </li>
                             <li>
-                                <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My Orders</a>
+                                <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My
+                                    Orders</a>
                             </li>
                             <li class="@if(Route::currentRouteName() == 'customer.wishlist') active @endif">
                                 <a href="{{ route('customer.wishlist') }}">

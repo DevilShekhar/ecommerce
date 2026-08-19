@@ -4,11 +4,13 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
+use App\Models\InventoryTransaction;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
@@ -18,7 +20,13 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with(['category', 'subCategory', 'brand', 'creator'])
+        $products = Product::with([
+            'category',
+            'subCategory',
+            'brand',
+            'creator',
+            'inventoryTransactions.creator',
+        ])
             ->latest()
             ->get();
 
@@ -198,5 +206,54 @@ class ProductController extends Controller
             ->get();
 
         return response()->json($subcategories);
+    }
+
+    public function addStock(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'quantity' => 'required|integer|min:1',
+            'supplier_name' => 'nullable|string|max:255',
+            'invoice_number' => 'nullable|string|max:255',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        DB::transaction(function () use ($validated, $product) {
+
+            // Always get the latest stock from DB
+            $product->refresh();
+
+            $stockBefore = (int) $product->stock;
+            $quantity = (int) $validated['quantity'];
+            $stockAfter = $stockBefore + $quantity;
+
+            // Update product's current stock
+            $product->update([
+                'stock' => $stockAfter,
+                'updated_by' => Auth::id(),
+            ]);
+
+            // Record inventory transaction
+            InventoryTransaction::create([
+                'product_id' => $product->id,
+                'type' => 'stock_in',
+                'quantity' => $quantity,
+                'stock_before' => $stockBefore,
+                'stock_after' => $stockAfter,
+
+                'reference_type' => 'manual',
+                'reference_id' => null,
+
+                'supplier_name' => $validated['supplier_name'] ?? null,
+                'invoice_number' => $validated['invoice_number'] ?? null,
+                'notes' => $validated['notes'] ?? null,
+
+                'created_by' => Auth::id(),
+            ]);
+        });
+
+        return back()->with(
+            'success',
+            $validated['quantity'].' stock added successfully for '.$product->name.'.'
+        );
     }
 }

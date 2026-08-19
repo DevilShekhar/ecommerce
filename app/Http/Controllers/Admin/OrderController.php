@@ -13,12 +13,6 @@ class OrderController extends Controller
     public function index()
     {
         $user = Auth::user();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Super Admin
-        |--------------------------------------------------------------------------
-        */
         if ($user->role?->name === 'SuperAdmin') {
 
             $orders = Order::with([
@@ -29,7 +23,7 @@ class OrderController extends Controller
                 ->latest()
                 ->paginate(10);
 
-            $categories = ProductCategory::where('status', 1)
+            $categories = ProductCategory::query()->where('status', 1)
                 ->orderBy('name')
                 ->get();
 
@@ -38,12 +32,6 @@ class OrderController extends Controller
                 'categories'
             ));
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Customer
-        |--------------------------------------------------------------------------
-        */
         $orders = Order::where('user_id', $user->id)
             ->with([
                 'items.product',
@@ -52,7 +40,7 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
-        $categories = ProductCategory::where('status', 1)
+        $categories = ProductCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
@@ -69,7 +57,7 @@ class OrderController extends Controller
     {
         $user = Auth::user();
 
-        $categories = ProductCategory::where('status', 1)
+        $categories = ProductCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
@@ -97,36 +85,36 @@ class OrderController extends Controller
         return view('admin.orders.show', compact('order', 'categories', 'orders'));
     }
 
- public function updateStatus(Request $request, Order $order)
-{
-    if (auth()->user()->role?->name !== 'SuperAdmin') {
-        abort(403, 'Unauthorized access.');
+    public function updateStatus(Request $request, Order $order)
+    {
+        if (Auth::user()->role?->name !== 'SuperAdmin') {
+            abort(403, 'Unauthorized access.');
+        }
+
+        $statusFlow = [
+            'pending' => 'confirmed',
+            'confirmed' => 'processing',
+            'processing' => 'packed',
+            'packed' => 'shipped',
+            'shipped' => 'out_for_delivery',
+            'out_for_delivery' => 'delivered',
+        ];
+
+        $currentStatus = strtolower($order->order_status ?? 'pending');
+
+        if (! isset($statusFlow[$currentStatus])) {
+            return back()->with('error', 'This order status cannot be changed further.');
+        }
+
+        $nextStatus = $statusFlow[$currentStatus];
+
+        $order->update([
+            'order_status' => $nextStatus,
+        ]);
+
+        return back()->with(
+            'success',
+            'Order status changed to '.ucwords(str_replace('_', ' ', $nextStatus)).'.'
+        );
     }
-
-    $statusFlow = [
-        'pending' => 'confirmed',
-        'confirmed' => 'processing',
-        'processing' => 'packed',
-        'packed' => 'shipped',
-        'shipped' => 'out_for_delivery',
-        'out_for_delivery' => 'delivered',
-    ];
-
-    $currentStatus = strtolower($order->order_status ?? 'pending');
-
-    if (!isset($statusFlow[$currentStatus])) {
-        return back()->with('error', 'This order status cannot be changed further.');
-    }
-
-    $nextStatus = $statusFlow[$currentStatus];
-
-    $order->update([
-        'order_status' => $nextStatus,
-    ]);
-
-    return back()->with(
-        'success',
-        'Order status changed to ' . ucwords(str_replace('_', ' ', $nextStatus)) . '.'
-    );
-}
 }

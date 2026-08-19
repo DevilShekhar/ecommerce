@@ -73,9 +73,6 @@
             {{-- =========================================================
             ALL BANNERS CAROUSEL
             ========================================================== --}}
-            {{-- =========================================================
-            ALL BANNERS CAROUSEL (SMALL - FLIPKART STYLE)
-            ========================================================== --}}
             @if(isset($banners) && $banners->count() > 0)
                 <section class="banner-carousel-section small-banner-section">
                     <div class="container">
@@ -665,9 +662,9 @@
                                             {{-- In your products section, replace the product action section --}}
                                             <div class="product-action">
                                                 @if($isFutured)
-                                                    <button type="button" class="btn-add-cart btn-futured" disabled
-                                                        title="Stay with us! This product will be available soon.">
-                                                        <i class="bi bi-star"></i> Coming Soon
+                                                    <button type="button" class="rec-add-cart btn-futured notify-me-btn"
+                                                        data-product-id="{{ $product->id }}">
+                                                        <i class="bi bi-bell"></i> Notify Me
                                                     </button>
                                                 @elseif($product->stock !== null && $product->stock <= 0)
                                                     <button type="button" class="btn-add-cart" disabled>
@@ -1155,8 +1152,8 @@
 @push('styles')
     <style>
         /* ============================================================
-           SMALL BANNER CAROUSEL - FLIPKART STYLE
-           ============================================================ */
+                       SMALL BANNER CAROUSEL - FLIPKART STYLE
+                       ============================================================ */
         .small-banner-section {
             padding: 15px 0;
             background: #f1f3f6;
@@ -1261,8 +1258,8 @@
         }
 
         /* ============================================================
-           CAROUSEL DOTS
-           ============================================================ */
+                       CAROUSEL DOTS
+                       ============================================================ */
         .banner-carousel-dots {
             position: absolute;
             bottom: 10px;
@@ -1294,8 +1291,8 @@
         }
 
         /* ============================================================
-           CAROUSEL ARROWS
-           ============================================================ */
+                       CAROUSEL ARROWS
+                       ============================================================ */
         .banner-carousel-arrow {
             position: absolute;
             top: 50%;
@@ -1344,8 +1341,8 @@
         }
 
         /* ============================================================
-           RESPONSIVE
-           ============================================================ */
+                       RESPONSIVE
+                       ============================================================ */
         @media (max-width: 991px) {
             .banner-carousel-container {
                 height: 150px;
@@ -1468,8 +1465,8 @@
         }
 
         /* ============================================================
-           ANIMATION
-           ============================================================ */
+                       ANIMATION
+                       ============================================================ */
         @keyframes fadeInUpSmall {
             from {
                 opacity: 0;
@@ -1487,8 +1484,8 @@
         }
 
         /* ============================================================
-                           PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
-                           ============================================================ */
+                                       PRIVACY & POLICY - FULL WIDTH IMAGE SECTION
+                                       ============================================================ */
         .policy-image-section {
             position: relative;
             width: 100%;
@@ -1599,8 +1596,8 @@
         }
 
         /* ============================================================
-                           CONTENT SECTION (Below the Image) - WIDE CONTENT
-                           ============================================================ */
+                                       CONTENT SECTION (Below the Image) - WIDE CONTENT
+                                       ============================================================ */
         .policy-content-section {
             background: #f8fafc;
             padding: 80px 0 100px;
@@ -1677,8 +1674,8 @@
         }
 
         /* ============================================================
-                           POLICY SECTIONS
-                           ============================================================ */
+                                       POLICY SECTIONS
+                                       ============================================================ */
         .policy-sections {
             margin-top: 40px;
             padding-top: 40px;
@@ -1733,8 +1730,8 @@
         }
 
         /* ============================================================
-                           RESPONSIVE
-                           ============================================================ */
+                                       RESPONSIVE
+                                       ============================================================ */
         @media (max-width: 991px) {
             .policy-image-section {
                 min-height: 450px;
@@ -1960,8 +1957,8 @@
         }
 
         /* ============================================================
-                           MOBILE FILTER SIDEBAR
-                           ============================================================ */
+                                       MOBILE FILTER SIDEBAR
+                                       ============================================================ */
         .mobile-filter-toggle {
             display: none;
             position: sticky;
@@ -2269,8 +2266,8 @@
         }
 
         /* ============================================================
-                           RESPONSIVE
-                           ============================================================ */
+                                       RESPONSIVE
+                                       ============================================================ */
         @media (max-width: 768px) {
             .desktop-filter {
                 display: none !important;
@@ -2295,8 +2292,8 @@
         }
 
         /* ============================================================
-                           HERO SECTION WITH CAROUSEL
-                           ============================================================ */
+                                       HERO SECTION WITH CAROUSEL
+                                       ============================================================ */
         .hero-section {
             position: relative;
             min-height: 650px;
@@ -2462,8 +2459,8 @@
         }
 
         /* ============================================================
-                           WEBSITE SECTIONS
-                           ============================================================ */
+                                       WEBSITE SECTIONS
+                                       ============================================================ */
         .website-section {
             padding: 80px 0;
         }
@@ -2506,8 +2503,8 @@
         }
 
         /* ============================================================
-                           ABOUT SECTION
-                           ============================================================ */
+                                       ABOUT SECTION
+                                       ============================================================ */
         .about-section {
             background: #f8fafc;
         }
@@ -2520,8 +2517,8 @@
         }
 
         /* ============================================================
-                           SERVICES & FEATURES
-                           ============================================================ */
+                                       SERVICES & FEATURES
+                                       ============================================================ */
         .service-card {
             background: #fff;
             border-radius: 12px;
@@ -2602,8 +2599,8 @@
         }
 
         /* ============================================================
-                           TESTIMONIALS
-                           ============================================================ */
+                                       TESTIMONIALS
+                                       ============================================================ */
         .testimonials-section {
             background: #f8fafc;
         }
@@ -2708,8 +2705,8 @@
         }
 
         /* ============================================================
-                           CTA SECTION
-                           ============================================================ */
+                                       CTA SECTION
+                                       ============================================================ */
         .cta-section {
             background: linear-gradient(135deg, #0f172a, #1e293b);
             color: #fff;
@@ -2750,8 +2747,8 @@
         }
 
         /* ============================================================
-                           PRODUCTS
-                           ============================================================ */
+                                       PRODUCTS
+                                       ============================================================ */
         .filter-bar {
             background: #fff;
             border: 1px solid #e2e8f0;
@@ -3315,8 +3312,8 @@
         }
 
         /* ============================================================
-                           FAQ SECTION WITH IMAGE
-                           ============================================================ */
+                                       FAQ SECTION WITH IMAGE
+                                       ============================================================ */
         .faq-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3482,8 +3479,8 @@
         }
 
         /* ============================================================
-                           CONTACT SECTION
-                           ============================================================ */
+                                       CONTACT SECTION
+                                       ============================================================ */
         .contact-section {
             background: #f8fafc;
             padding: 80px 0;
@@ -3699,8 +3696,8 @@
         }
 
         /* ============================================================
-                           FOOTER SECTION
-                           ============================================================ */
+                                       FOOTER SECTION
+                                       ============================================================ */
         .site-footer {
             position: relative;
             background-color: #0f172a;
@@ -3789,8 +3786,8 @@
         }
 
         /* ============================================================
-                           RESPONSIVE
-                           ============================================================ */
+                                       RESPONSIVE
+                                       ============================================================ */
         @media (max-width: 991px) {
             .hero-title {
                 font-size: 40px;
@@ -4635,13 +4632,145 @@
             initSmallBannerCarousel();
         });
         // =============================================
-// REDIRECT TO LOGIN
-// =============================================
-function redirectToLogin() {
-    // Get the current URL to redirect back after login
-    const currentUrl = window.location.href;
-    // Redirect to login page with return URL
-    window.location.href = '/login?redirect=' + encodeURIComponent(currentUrl);
-}
+        // REDIRECT TO LOGIN
+        // =============================================
+        function redirectToLogin() {
+            // Get the current URL to redirect back after login
+            const currentUrl = window.location.href;
+            // Redirect to login page with return URL
+            window.location.href = '/login?redirect=' + encodeURIComponent(currentUrl);
+        }
+    </script>
+    <script>
+        const notifyMeUrl = "{{ route('customer.notify-me') }}";
+        const currentUserEmail = @json(auth()->user()->email ?? null);
+
+        document.addEventListener('click', function (e) {
+
+            const button = e.target.closest('.notify-me-btn');
+
+            if (!button) return;
+
+            const productId = button.dataset.productId;
+
+            // User email already exists
+            if (currentUserEmail) {
+
+                button.disabled = true;
+
+                fetch(notifyMeUrl, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector(
+                            'meta[name="csrf-token"]'
+                        ).getAttribute('content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        product_id: productId
+                    })
+                })
+                    .then(async response => {
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(
+                                data.message || 'Something went wrong'
+                            );
+                        }
+
+                        return data;
+                    })
+                    .then(data => {
+
+                        if (data.success) {
+
+                            showSidebarToast(
+                                'success',
+                                'Notify Me',
+                                data.message
+                            );
+
+                        } else {
+
+                            showSidebarToast(
+                                'error',
+                                'Error',
+                                data.message || 'Something went wrong.'
+                            );
+                        }
+                    })
+                    .catch(error => {
+
+                        console.error(error);
+
+                        showSidebarToast(
+                            'error',
+                            'Error',
+                            error.message || 'Something went wrong.'
+                        );
+                    })
+                    .finally(() => {
+                        button.disabled = false;
+                    });
+
+                return;
+            }
+
+            // No registered email → ask email
+            const email = prompt('Please enter your email address:');
+
+            if (!email) {
+                return;
+            }
+
+            button.disabled = true;
+
+            fetch(notifyMeUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    email: email
+                })
+            })
+                .then(async response => {
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || 'Invalid email address');
+                    }
+
+                    return data;
+                })
+                .then(data => {
+                    showSidebarToast(
+                        'success',
+                        'Notify Me',
+                        data.message
+                    );
+                })
+                .catch(error => {
+                    console.error(error);
+
+                    showSidebarToast(
+                        'error',
+                        'Error',
+                        error.message || 'Something went wrong.'
+                    );
+                })
+                .finally(() => {
+                    button.disabled = false;
+                });
+
+        });
     </script>
 @endpush

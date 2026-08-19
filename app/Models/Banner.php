@@ -41,18 +41,18 @@ class Banner extends Model
     }
 
     // Scope for active banners
-    public function scopeActive($query)
-    {
-        return $query->where('status', 1)
-            ->where(function($q) {
-                $q->whereNull('start_date')
-                  ->orWhere('start_date', '<=', now());
-            })
-            ->where(function($q) {
-                $q->whereNull('end_date')
-                  ->orWhere('end_date', '>=', now());
-            });
-    }
+public function scopeActive($query)
+{
+    return $query->where('status', 1)
+        ->where(function($q) {
+            $q->whereNull('start_date')
+              ->orWhere('start_date', '<=', now());
+        })
+        ->where(function($q) {
+            $q->whereNull('end_date')
+              ->orWhere('end_date', '>=', now());
+        });
+}
 
     // Get link URL - Simple version without route dependencies
     public function getLinkUrlAttribute()

@@ -35,12 +35,6 @@ class User extends Authenticatable
 
     ];
 
-    protected $casts = [
-        'address' => 'array',
-        'latitude' => 'decimal:7',
-        'longitude' => 'decimal:7',
-    ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -62,6 +56,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'address' => 'array',
+            'latitude' => 'decimal:7',
+            'longitude' => 'decimal:7',
         ];
     }
 

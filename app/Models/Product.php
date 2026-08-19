@@ -101,4 +101,14 @@ class Product extends Model
 
         return $this->wishlists()->where('user_id', $userId)->exists();
     }
+
+    public function latestInventoryTransaction()
+    {
+        return $this->hasOne(InventoryTransaction::class)->latestOfMany();
+    }
+
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
 }

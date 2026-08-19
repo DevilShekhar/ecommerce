@@ -867,68 +867,113 @@
             | REMOVE FROM WISHLIST
             |--------------------------------------------------------------------------
             */
-            document.querySelectorAll('.remove-wishlist-btn').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+            /*
+|--------------------------------------------------------------------------
+| REMOVE FROM WISHLIST
+|--------------------------------------------------------------------------
+*/
+document.querySelectorAll('.remove-wishlist-btn').forEach(button => {
 
-                    const url = this.dataset.url;
-                    const id = this.dataset.id;
+    button.addEventListener('click', function (e) {
 
-                    console.log('=== REMOVE CLICK ===');
-                    console.log('data-id  :', id);
-                    console.log('data-url :', url);
+        e.preventDefault();
+        e.stopPropagation();
 
-                    if (!url) {
-                        console.error('data-url is missing!');
-                        showToast('error', 'Error', 'Invalid request URL.');
-                        return;
-                    }
+        const url = this.dataset.url;
+        const removeBtn = this;
 
-                    const productCard = this.closest('.wishlist-item');
-                    const removeBtn = this;
+        if (!url) {
+            showToast(
+                'error',
+                'Error',
+                'Invalid wishlist URL.'
+            );
+            return;
+        }
 
-                    removeBtn.disabled = true;
-                    removeBtn.innerHTML = '<i class="bi bi-hourglass-split"></i>';
+        // Disable button while request is processing
+        removeBtn.disabled = true;
+        removeBtn.innerHTML =
+            '<i class="bi bi-hourglass-split"></i>';
 
-                    fetch(url, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-HTTP-Method-Override': 'DELETE'
-                        }
-                    })
-                        .then(response => {
-                            console.log('Response status:', response.status);
-                            if (!response.ok) {
-                                return response.json().then(data => {
-                                    throw new Error(data.message || `HTTP error! status: ${response.status}`);
-                                });
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            console.log('Response data:', data);
-                            if (data.success) {
-                                showToast('success', 'Removed from wishlist', 'Product has been removed from your wishlist.');
-                                setTimeout(() => {
-                                    window.location.reload();
-                                }, 800);
-                            } else {
-                                showToast('error', 'Error', data.message || 'Failed to remove item.');
-                                restoreRemoveButton(removeBtn);
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Fetch error:', err);
-                            showToast('error', 'Error', err.message || 'Something went wrong.');
-                            restoreRemoveButton(removeBtn);
-                        });
-                });
-            });
+        fetch(url, {
+            method: 'DELETE',
+
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+
+        .then(async response => {
+
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message ||
+                    `Request failed with status ${response.status}`
+                );
+            }
+
+            return data;
+        })
+
+        .then(data => {
+
+            console.log('Wishlist remove response:', data);
+
+            if (data.success) {
+
+                showToast(
+                    'success',
+                    'Removed from wishlist',
+                    data.message ||
+                    'Product has been removed from your wishlist.'
+                );
+
+                /*
+                |--------------------------------------------------------------------------
+                | REFRESH PAGE AFTER SUCCESS
+                |--------------------------------------------------------------------------
+                */
+                setTimeout(() => {
+                    window.location.reload();
+                }, 700);
+
+            } else {
+
+                showToast(
+                    'error',
+                    'Error',
+                    data.message ||
+                    'Failed to remove item from wishlist.'
+                );
+
+                restoreRemoveButton(removeBtn);
+            }
+        })
+
+        .catch(error => {
+
+            console.error(
+                'Wishlist remove error:',
+                error
+            );
+
+            showToast(
+                'error',
+                'Error',
+                error.message ||
+                'Something went wrong while removing the product.'
+            );
+
+            restoreRemoveButton(removeBtn);
+        });
+    });
+
+});
 
             /*
             |--------------------------------------------------------------------------

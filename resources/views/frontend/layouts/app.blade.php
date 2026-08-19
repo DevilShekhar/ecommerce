@@ -64,6 +64,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
         }
 
         .site-logo {
@@ -105,7 +106,13 @@
             gap: 24px;
         }
 
-        .site-nav a {
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
             color: #475569;
             text-decoration: none;
             font-size: 15px;
@@ -114,11 +121,11 @@
             transition: color 0.3s ease;
         }
 
-        .site-nav a:hover {
+        .nav-links a:hover {
             color: #3b82f6;
         }
 
-        .site-nav a::after {
+        .nav-links a::after {
             content: '';
             position: absolute;
             bottom: -4px;
@@ -129,8 +136,14 @@
             transition: width 0.3s ease;
         }
 
-        .site-nav a:hover::after {
+        .nav-links a:hover::after {
             width: 100%;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
         /* Wishlist Link */
@@ -138,9 +151,11 @@
             position: relative;
             display: inline-flex;
             align-items: center;
+            gap: 6px;
             color: #475569;
             text-decoration: none;
-            font-size: 20px;
+            font-size: 15px;
+            font-weight: 500;
             transition: color 0.3s ease;
             padding: 4px 6px;
         }
@@ -150,7 +165,7 @@
         }
 
         .wishlist-link i {
-            font-size: 22px;
+            font-size: 20px;
         }
 
         .wishlist-badge {
@@ -171,100 +186,123 @@
         }
 
         @keyframes pulse-badge {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
-        /* ============================================================
-           THREE DOTS / HAMBURGER MENU (Mobile)
-           ============================================================ */
-        .navbar-toggle {
-            display: none;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px;
+        .account-btn,
+        .login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
             border-radius: 8px;
-            transition: background 0.2s ease;
-        }
-
-        .navbar-toggle:hover {
-            background: #f1f5f9;
-        }
-
-        .navbar-toggle .dot {
-            display: block;
-            width: 5px;
-            height: 5px;
-            margin: 3px 0;
-            background: #0f172a;
-            border-radius: 50%;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
             transition: all 0.3s ease;
         }
 
-        .navbar-toggle.active .dot:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-            width: 20px;
-            height: 2px;
-            border-radius: 2px;
+        .account-btn {
+            background: #f1f5f9;
+            color: #0f172a;
         }
 
-        .navbar-toggle.active .dot:nth-child(2) {
-            opacity: 0;
+        .account-btn:hover {
+            background: #e2e8f0;
+            color: #0f172a;
         }
 
-        .navbar-toggle.active .dot:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-            width: 20px;
-            height: 2px;
-            border-radius: 2px;
+        .login-btn {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .login-btn:hover {
+            background: #2563eb;
+            color: #fff;
+        }
+
+        /* ============================================================
+           MOBILE TOGGLE
+           ============================================================ */
+        .mobile-menu-toggle {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            padding: 9px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #111827;
+            transition: all 0.2s ease;
+        }
+
+        .mobile-menu-toggle:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .mobile-menu-toggle i {
+            font-size: 22px;
+            line-height: 1;
         }
 
         /* ============================================================
            MOBILE MENU
            ============================================================ */
         .navbar-mobile-menu {
-            display: none;
-            background: #fff;
-            padding: 16px 20px;
-            border-top: 1px solid #e2e8f0;
-            width: 100%;
-        }
-
-        .navbar-mobile-menu.open {
             display: block;
-            animation: slideDown 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            width: 100%;
+            transition: max-height 0.35s ease, opacity 0.25s ease, margin 0.3s ease;
         }
 
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .navbar-mobile-menu.show {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 12px;
         }
 
         .navbar-mobile-menu ul {
             list-style: none;
-            padding: 0;
+            padding: 8px;
             margin: 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #fff;
         }
 
         .navbar-mobile-menu ul li {
-            margin-bottom: 2px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .navbar-mobile-menu ul li:last-child {
+            border-bottom: none;
         }
 
         .navbar-mobile-menu ul li a {
-            display: block;
-            padding: 10px 12px;
-            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 12px;
             text-decoration: none;
-            font-size: 14px;
+            color: #172033;
+            font-size: 15px;
             font-weight: 500;
-            border-radius: 8px;
+            border-radius: 6px;
             transition: all 0.2s ease;
         }
 
@@ -274,54 +312,61 @@
         }
 
         .navbar-mobile-menu ul li a i {
-            margin-right: 10px;
-            width: 20px;
+            width: 22px;
+            font-size: 18px;
             text-align: center;
         }
 
-        .navbar-mobile-menu ul li a .mobile-badge {
-            background: #ef4444;
+        .mobile-badge {
+            margin-left: auto;
+            min-width: 23px;
+            height: 23px;
+            padding: 0 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            background: #2878f0;
             color: #fff;
-            font-size: 10px;
-            padding: 1px 6px;
-            border-radius: 50%;
-            margin-left: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .mobile-auth-item a {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .mobile-auth-item a:hover {
+            background: #eef5ff;
         }
 
         /* ============================================================
            RESPONSIVE
            ============================================================ */
-        @media (max-width: 768px) {
+        @media (max-width: 991px) {
+
+            /* Hide desktop navigation */
             .site-nav {
                 display: none;
             }
 
-            .navbar-toggle {
-                display: block;
+            /* Show mobile toggle */
+            .mobile-menu-toggle {
+                display: inline-flex;
+            }
+
+            /* Container adjustments */
+            .site-navbar .container {
+                flex-wrap: wrap;
             }
 
             .logo-text {
-                font-size: 18px;
+                font-size: 20px;
             }
 
             .logo-wrapper img {
-                max-height: 35px;
-            }
-
-            .wishlist-link {
-                font-size: 17px;
-            }
-
-            .wishlist-link i {
-                font-size: 19px;
-            }
-
-            .wishlist-badge {
-                font-size: 9px;
-                min-width: 16px;
-                top: -6px;
-                right: -6px;
-                padding: 1px 5px;
+                max-height: 40px;
             }
         }
 
@@ -335,9 +380,45 @@
             }
 
             .logo-wrapper img {
-                max-height: 30px;
+                max-height: 32px;
+            }
+
+            .mobile-menu-toggle {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .mobile-menu-toggle i {
+                font-size: 18px;
+            }
+
+            .navbar-mobile-menu ul li a {
+                font-size: 14px;
+                padding: 11px 10px;
+            }
+
+            .navbar-mobile-menu ul {
+                padding: 6px;
+            }
+
+            .wishlist-badge {
+                font-size: 9px;
+                min-width: 16px;
+                top: -6px;
+                right: -6px;
+                padding: 1px 5px;
             }
         }
+
+        /* ============================================================
+           SCROLL EFFECT
+           ============================================================ */
+        .site-navbar.is-scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 1px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        @stack('styles')
     </style>
 
     @stack('styles')
@@ -347,73 +428,130 @@
     <!-- ================= NAVBAR ================= -->
     <header class="site-navbar" id="siteNavbar">
         <div class="container">
-            <div class="d-flex justify-content-between align-items-center flex-wrap" style="width:100%;">
 
-                <a href="{{ url('/home') }}" class="site-logo">
-                    <div class="logo-wrapper">
-                        @if($siteLogo && $siteLogo->logo)
-                            <img src="{{ asset('storage/' . $siteLogo->logo) }}" alt="{{ $siteLogo->site_name ?? 'Logo' }}">
-                        @endif
-                        <span class="logo-text">{{ $siteLogo->site_name ?? 'E-Commerce' }}</span>
-                    </div>
-                </a>
+            <!-- Logo -->
+            <a href="{{ url('/') }}" class="site-logo">
+                <div class="logo-wrapper">
+                    @if($siteLogo && $siteLogo->logo)
+                        <img src="{{ asset('storage/' . $siteLogo->logo) }}" alt="{{ $siteLogo->site_name ?? 'Logo' }}">
+                    @endif
 
-                <!-- Desktop Navigation -->
-                <nav class="site-nav">
+                    <span class="logo-text">
+                        {{ $siteLogo->site_name ?? 'E-Commerce' }}
+                    </span>
+                </div>
+            </a>
+
+            <!-- Desktop Navigation -->
+            <nav class="site-nav">
+                <div class="nav-links">
                     <a href="{{ url('/') }}">Home</a>
                     <a href="{{ url('/about-us') }}">About Us</a>
                     <a href="{{ url('/all-product') }}">Our Products</a>
                     <a href="{{ url('/contact-us') }}">Contact</a>
+                </div>
 
-                    <!-- Wishlist Link - Available to Everyone -->
-                    <a href="{{ route('wishlist.index') }}" class="wishlist-link" title="Wishlist">
-    <i class="bi bi-heart"></i>
-    @auth
-        @php
-            $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
-        @endphp
-        @if($wishlistCount > 0)
-            <span class="wishlist-badge">{{ $wishlistCount }}</span>
-        @endif
-    @else
-        <span class="wishlist-badge" id="guestWishlistBadge" style="display: none;">0</span>
-    @endauth
-</a>
-                </nav>
+                <div class="nav-actions">
+                    <a href="{{ route('wishlist.index') }}" class="wishlist-link">
+                        <i class="bi bi-heart"></i>
+                        <span>Wishlist</span>
 
-                <!-- Mobile Three Dots Button -->
-                <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                    <span class="dot"></span>
-                </button>
+                        @auth
+                            <span class="wishlist-badge {{ $wishlistCount > 0 ? '' : 'd-none' }}">
+                                {{ $wishlistCount }}
+                            </span>
+                        @else
+                            <span class="wishlist-badge d-none" id="guestWishlistBadge">0</span>
+                        @endauth
+                    </a>
 
-            </div>
+                    @auth
+                        <a href="{{ route('customer.dashboard') }}" class="account-btn">
+                            <i class="bi bi-person-circle"></i>
+                            <span>My Account</span>
+                        </a>
+                    @else
+                        <a href="{{ url('/login') }}" class="login-btn">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>Login</span>
+                        </a>
+                    @endauth
+                </div>
+            </nav>
 
-            <!-- Mobile Menu -->
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="navbarToggle" type="button" aria-label="Toggle navigation"
+                aria-expanded="false">
+                <i class="bi bi-list"></i>
+                <span>Menu</span>
+            </button>
+
+            <!-- Mobile Expandable Menu -->
             <div class="navbar-mobile-menu" id="mobileMenu">
                 <ul>
-                    <li><a href="{{ url('/home') }}"><i class="bi bi-house"></i> Home</a></li>
-                    <li><a href="{{ url('/about-us') }}"><i class="bi bi-info-circle"></i> About Us</a></li>
-                    <li><a href="{{ url('/all-product') }}"><i class="bi bi-grid"></i> Our Products</a></li>
-                    <li><a href="{{ url('/contact-us') }}"><i class="bi bi-envelope"></i> Contact</a></li>
+                    <li>
+                        <a href="{{ url('/') }}">
+                            <i class="bi bi-house"></i>
+                            Home
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/about-us') }}">
+                            <i class="bi bi-info-circle"></i>
+                            About Us
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/all-product') }}">
+                            <i class="bi bi-grid"></i>
+                            Our Products
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ url('/contact-us') }}">
+                            <i class="bi bi-envelope"></i>
+                            Contact
+                        </a>
+                    </li>
+
                     <li>
                         <a href="{{ route('wishlist.index') }}">
-                            <i class="bi bi-heart"></i> Wishlist
+                            <i class="bi bi-heart"></i>
+                            Wishlist
+
                             @auth
-                                @php
-                                    $wishlistCount = \App\Models\Wishlist::where('user_id', auth()->id())->count();
-                                @endphp
                                 @if($wishlistCount > 0)
-                                    <span class="mobile-badge">{{ $wishlistCount }}</span>
+                                    <span class="mobile-badge">
+                                        {{ $wishlistCount }}
+                                    </span>
                                 @endif
                             @else
-                                <span class="mobile-badge" id="guestMobileWishlistBadge" style="display: none;">0</span>
+                                <span class="mobile-badge d-none" id="guestMobileWishlistBadge">
+                                    0
+                                </span>
                             @endauth
                         </a>
                     </li>
+
+                    <li class="mobile-auth-item">
+                        @auth
+                            <a href="{{ route('customer.dashboard') }}">
+                                <i class="bi bi-person-circle"></i>
+                                My Account
+                            </a>
+                        @else
+                            <a href="{{ url('/login') }}">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                Login
+                            </a>
+                        @endauth
+                    </li>
                 </ul>
             </div>
+
         </div>
     </header>
 
@@ -429,7 +567,7 @@
 
     @if($footerSection)
         <footer class="site-footer"
-        style="background-image: url('{{ $footerSection->image ? asset('storage/' . $footerSection->image) : '' }}');">
+            style="background-image: url('{{ $footerSection->image ? asset('storage/' . $footerSection->image) : '' }}');">
             <div class="footer-overlay"></div>
 
             <div class="container">
@@ -438,8 +576,7 @@
                     <div class="col-lg-3 col-md-6">
                         @if($footerSection->logo)
                             <img src="{{ asset('storage/' . $footerSection->logo) }}"
-                                 alt="{{ $footerSection->title ?? 'Logo' }}"
-                                 class="footer-logo">
+                                alt="{{ $footerSection->title ?? 'Logo' }}" class="footer-logo">
                         @endif
                         @if($footerSection->content)
                             <p class="footer-about">{{ $footerSection->content }}</p>
@@ -527,23 +664,40 @@
 
     <script>
         // =============================================
-        // NAVBAR TOGGLE (Three Dots)
+        // NAVBAR TOGGLE
         // =============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggle = document.getElementById('navbarToggle');
+        document.addEventListener('DOMContentLoaded', function () {
+            const navbarToggle = document.getElementById('navbarToggle');
             const mobileMenu = document.getElementById('mobileMenu');
 
-            if (toggle && mobileMenu) {
-                toggle.addEventListener('click', function() {
-                    this.classList.toggle('active');
-                    mobileMenu.classList.toggle('open');
+            if (navbarToggle && mobileMenu) {
+                navbarToggle.addEventListener('click', function () {
+                    const isOpen = mobileMenu.classList.toggle('show');
+
+                    navbarToggle.setAttribute(
+                        'aria-expanded',
+                        isOpen ? 'true' : 'false'
+                    );
+
+                    const icon = navbarToggle.querySelector('i');
+
+                    if (isOpen) {
+                        icon.classList.remove('bi-list');
+                        icon.classList.add('bi-x-lg');
+                    } else {
+                        icon.classList.remove('bi-x-lg');
+                        icon.classList.add('bi-list');
+                    }
                 });
 
                 // Close menu when clicking a link
-                mobileMenu.querySelectorAll('a').forEach(function(link) {
-                    link.addEventListener('click', function() {
-                        toggle.classList.remove('active');
-                        mobileMenu.classList.remove('open');
+                mobileMenu.querySelectorAll('a').forEach(function (link) {
+                    link.addEventListener('click', function () {
+                        mobileMenu.classList.remove('show');
+                        const icon = navbarToggle.querySelector('i');
+                        icon.classList.remove('bi-x-lg');
+                        icon.classList.add('bi-list');
+                        navbarToggle.setAttribute('aria-expanded', 'false');
                     });
                 });
             }
@@ -553,7 +707,7 @@
             // =============================================
             var nav = document.getElementById('siteNavbar');
             if (nav) {
-                window.addEventListener('scroll', function() {
+                window.addEventListener('scroll', function () {
                     if (window.scrollY > 8) {
                         nav.classList.add('is-scrolled');
                     } else {
@@ -593,21 +747,21 @@
             updateGuestWishlistBadge();
 
             // Update when localStorage changes
-            window.addEventListener('storage', function(e) {
+            window.addEventListener('storage', function (e) {
                 if (e.key === 'guest_wishlist') {
                     updateGuestWishlistBadge();
                 }
             });
 
             // Also update when wishlist button is clicked (custom event)
-            document.addEventListener('wishlistUpdated', function() {
+            document.addEventListener('wishlistUpdated', function () {
                 updateGuestWishlistBadge();
             });
 
             // Override the showToast and wishlist functions to trigger badge update
             const originalShowToast = window.showToast;
             if (originalShowToast) {
-                window.showToast = function(message) {
+                window.showToast = function (message) {
                     originalShowToast(message);
                     // Dispatch custom event to update badge
                     document.dispatchEvent(new Event('wishlistUpdated'));
@@ -619,4 +773,5 @@
     @stack('scripts')
 
 </body>
+
 </html>
