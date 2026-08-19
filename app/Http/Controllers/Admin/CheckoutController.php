@@ -8,6 +8,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductNotification;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -215,243 +217,243 @@ class CheckoutController extends Controller
     }
 
     public function placeOrder(Request $request)
-{
-    try {
-        $user = Auth::user();
+    {
+        try {
+            $user = Auth::user();
 
-        if (! $user) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please login to place order.',
-            ], 401);
-        }
+            if (! $user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Please login to place order.',
+                ], 401);
+            }
 
-        $cart = session()->get('cart', []);
+            $cart = session()->get('cart', []);
 
-        if (empty($cart) || ! is_array($cart)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Your cart is empty.',
-            ], 400);
-        }
+            if (empty($cart) || ! is_array($cart)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your cart is empty.',
+                ], 400);
+            }
 
-        // Fix: Add 'razorpay' to the validation rules
-        $request->validate([
-            'address_id' => 'nullable',
-            'payment_method' => 'required|string|in:cod,upi,card,netbanking,razorpay',
-            'notes' => 'nullable|string|max:1000',
-            'razorpay_payment_id' => 'nullable|string',
-            'razorpay_order_id' => 'nullable|string',
-            'razorpay_signature' => 'nullable|string',
-        ]);
+            // Fix: Add 'razorpay' to the validation rules
+            $request->validate([
+                'address_id' => 'nullable',
+                'payment_method' => 'required|string|in:cod,upi,card,netbanking,razorpay',
+                'notes' => 'nullable|string|max:1000',
+                'razorpay_payment_id' => 'nullable|string',
+                'razorpay_order_id' => 'nullable|string',
+                'razorpay_signature' => 'nullable|string',
+            ]);
 
-        $addresses = $user->address;
+            $addresses = $user->address;
 
-        if (is_string($addresses)) {
-            $addresses = json_decode($addresses, true);
-        }
+            if (is_string($addresses)) {
+                $addresses = json_decode($addresses, true);
+            }
 
-        if (! is_array($addresses)) {
-            $addresses = [];
-        }
+            if (! is_array($addresses)) {
+                $addresses = [];
+            }
 
-        $addressId = $request->address_id;
-        $selectedAddress = null;
+            $addressId = $request->address_id;
+            $selectedAddress = null;
 
-        if ($addressId !== null) {
-            foreach ($addresses as $address) {
-                if (
-                    isset($address['id']) &&
-                    (string) $address['id'] === (string) $addressId
-                ) {
-                    $selectedAddress = $address;
-                    break;
+            if ($addressId !== null) {
+                foreach ($addresses as $address) {
+                    if (
+                        isset($address['id']) &&
+                        (string) $address['id'] === (string) $addressId
+                    ) {
+                        $selectedAddress = $address;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (! $selectedAddress) {
-            $selectedAddress = collect($addresses)
-                ->firstWhere('is_default', true);
-        }
-
-        if (! $selectedAddress) {
-            $selectedAddress = [
-                'address' => $user->location_address ?? '',
-                'city' => $user->city ?? '',
-                'state' => $user->state ?? '',
-                'country' => $user->country ?? '',
-                'pincode' => $user->pincode ?? '',
-            ];
-        }
-
-        $shippingAddress = $selectedAddress['address'] ?? $user->location_address ?? '';
-        $shippingCity = $selectedAddress['city'] ?? $user->city ?? '';
-        $shippingState = $selectedAddress['state'] ?? $user->state ?? '';
-        $shippingCountry = $selectedAddress['country'] ?? $user->country ?? '';
-        $shippingPincode = $selectedAddress['pincode'] ?? $user->pincode ?? '';
-
-        $latitude = $selectedAddress['latitude'] ?? $user->latitude ?? null;
-        $longitude = $selectedAddress['longitude'] ?? $user->longitude ?? null;
-
-        $shipping = 0;
-        $discount = 0;
-        $subtotal = 0;
-        $orderItems = [];
-
-        foreach ($cart as $cartItem) {
-            if (! is_array($cartItem)) {
-                continue;
+            if (! $selectedAddress) {
+                $selectedAddress = collect($addresses)
+                    ->firstWhere('is_default', true);
             }
 
-            $productId = $cartItem['id'] ?? null;
-            $quantity = (int) ($cartItem['quantity'] ?? 1);
-
-            if (! $productId || $quantity < 1) {
-                continue;
+            if (! $selectedAddress) {
+                $selectedAddress = [
+                    'address' => $user->location_address ?? '',
+                    'city' => $user->city ?? '',
+                    'state' => $user->state ?? '',
+                    'country' => $user->country ?? '',
+                    'pincode' => $user->pincode ?? '',
+                ];
             }
 
-            $product = Product::with([
-                'category',
-                'subCategory',
-                'brand',
-            ])->where('id', $productId)
-                ->where('status', 1)
-                ->first();
+            $shippingAddress = $selectedAddress['address'] ?? $user->location_address ?? '';
+            $shippingCity = $selectedAddress['city'] ?? $user->city ?? '';
+            $shippingState = $selectedAddress['state'] ?? $user->state ?? '';
+            $shippingCountry = $selectedAddress['country'] ?? $user->country ?? '';
+            $shippingPincode = $selectedAddress['pincode'] ?? $user->pincode ?? '';
 
-            if (! $product) {
+            $latitude = $selectedAddress['latitude'] ?? $user->latitude ?? null;
+            $longitude = $selectedAddress['longitude'] ?? $user->longitude ?? null;
+
+            $shipping = 0;
+            $discount = 0;
+            $subtotal = 0;
+            $orderItems = [];
+
+            foreach ($cart as $cartItem) {
+                if (! is_array($cartItem)) {
+                    continue;
+                }
+
+                $productId = $cartItem['id'] ?? null;
+                $quantity = (int) ($cartItem['quantity'] ?? 1);
+
+                if (! $productId || $quantity < 1) {
+                    continue;
+                }
+
+                $product = Product::with([
+                    'category',
+                    'subCategory',
+                    'brand',
+                ])->where('id', $productId)
+                    ->where('status', 1)
+                    ->first();
+
+                if (! $product) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'One of the products in your cart is no longer available.',
+                    ], 400);
+                }
+
+                if ($product->stock < $quantity) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Only '.$product->stock.' '.$product->name.' available in stock.',
+                    ], 400);
+                }
+
+                $price = (float) $product->price;
+                $itemTotal = $price * $quantity;
+
+                $subtotal += $itemTotal;
+
+                $orderItems[] = [
+                    'product' => $product,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'total' => $itemTotal,
+                ];
+            }
+
+            if (empty($orderItems)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'One of the products in your cart is no longer available.',
+                    'message' => 'No valid products found in your cart.',
                 ], 400);
             }
 
-            if ($product->stock < $quantity) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Only ' . $product->stock . ' ' . $product->name . ' available in stock.',
-                ], 400);
-            }
+            $total = $subtotal + $shipping - $discount;
 
-            $price = (float) $product->price;
-            $itemTotal = $price * $quantity;
+            DB::beginTransaction();
 
-            $subtotal += $itemTotal;
+            try {
+                $orderNumber = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
 
-            $orderItems[] = [
-                'product' => $product,
-                'quantity' => $quantity,
-                'price' => $price,
-                'total' => $itemTotal,
-            ];
-        }
-
-        if (empty($orderItems)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No valid products found in your cart.',
-            ], 400);
-        }
-
-        $total = $subtotal + $shipping - $discount;
-
-        DB::beginTransaction();
-
-        try {
-            $orderNumber = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
-
-            $paymentStatus = 'pending';
-            $paymentMethod = $request->payment_method;
-
-            // If payment method is 'razorpay' or has razorpay payment id, mark as paid
-            if ($paymentMethod === 'razorpay' || $request->razorpay_payment_id) {
-                $paymentStatus = 'paid';
-                $paymentMethod = 'razorpay'; // Normalize to razorpay
-            } elseif ($paymentMethod === 'cod') {
                 $paymentStatus = 'pending';
-            }
+                $paymentMethod = $request->payment_method;
 
-            $order = Order::create([
-                'user_id' => $user->id,
-                'order_number' => $orderNumber,
-                'subtotal' => $subtotal,
-                'shipping' => $shipping,
-                'discount' => $discount,
-                'total' => $total,
-                'payment_method' => $paymentMethod,
-                'payment_status' => $paymentStatus,
-                'order_status' => 'pending',
-                'shipping_address' => $shippingAddress,
-                'shipping_city' => $shippingCity,
-                'shipping_state' => $shippingState,
-                'shipping_country' => $shippingCountry,
-                'shipping_pincode' => $shippingPincode,
-                'latitude' => $latitude,
-                'longitude' => $longitude,
-                'notes' => $request->notes,
-                'razorpay_order_id' => $request->razorpay_order_id,
-                'razorpay_payment_id' => $request->razorpay_payment_id,
-                'razorpay_signature' => $request->razorpay_signature,
-            ]);
+                // If payment method is 'razorpay' or has razorpay payment id, mark as paid
+                if ($paymentMethod === 'razorpay' || $request->razorpay_payment_id) {
+                    $paymentStatus = 'paid';
+                    $paymentMethod = 'razorpay'; // Normalize to razorpay
+                } elseif ($paymentMethod === 'cod') {
+                    $paymentStatus = 'pending';
+                }
 
-            foreach ($orderItems as $item) {
-                $product = $item['product'];
-
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product->id,
-                    'category_id' => $product->category_id,
-                    'sub_category_id' => $product->sub_category_id,
-                    'brand_id' => $product->brand_id,
-                    'product_name' => $product->name,
-                    'sku' => $product->sku,
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'],
-                    'total' => $item['total'],
-                    'image' => $product->image,
-                    'variants' => $product->variants,
-                    'specification' => $product->specification,
+                $order = Order::create([
+                    'user_id' => $user->id,
+                    'order_number' => $orderNumber,
+                    'subtotal' => $subtotal,
+                    'shipping' => $shipping,
+                    'discount' => $discount,
+                    'total' => $total,
+                    'payment_method' => $paymentMethod,
+                    'payment_status' => $paymentStatus,
+                    'order_status' => 'pending',
+                    'shipping_address' => $shippingAddress,
+                    'shipping_city' => $shippingCity,
+                    'shipping_state' => $shippingState,
+                    'shipping_country' => $shippingCountry,
+                    'shipping_pincode' => $shippingPincode,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'notes' => $request->notes,
+                    'razorpay_order_id' => $request->razorpay_order_id,
+                    'razorpay_payment_id' => $request->razorpay_payment_id,
+                    'razorpay_signature' => $request->razorpay_signature,
                 ]);
 
-                $product->decrement('stock', $item['quantity']);
+                foreach ($orderItems as $item) {
+                    $product = $item['product'];
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'category_id' => $product->category_id,
+                        'sub_category_id' => $product->sub_category_id,
+                        'brand_id' => $product->brand_id,
+                        'product_name' => $product->name,
+                        'sku' => $product->sku,
+                        'price' => $item['price'],
+                        'quantity' => $item['quantity'],
+                        'total' => $item['total'],
+                        'image' => $product->image,
+                        'variants' => $product->variants,
+                        'specification' => $product->specification,
+                    ]);
+
+                    $product->decrement('stock', $item['quantity']);
+                }
+
+                DB::commit();
+
+                session()->forget('cart');
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Order placed successfully! Your order has been confirmed.',
+                    'order_id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'total' => $order->total,
+                    'redirect_url' => route('customer.dashboard'),
+                ]);
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Order creation failed: '.$e->getMessage());
+                Log::error('Stack trace: '.$e->getTraceAsString());
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to create order: '.$e->getMessage(),
+                ], 500);
             }
 
-            DB::commit();
-
-            session()->forget('cart');
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Order placed successfully! Your order has been confirmed.',
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-                'total' => $order->total,
-                'redirect_url' => route('customer.dashboard'),
-            ]);
-
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Order creation failed: ' . $e->getMessage());
-        Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Place order error: '.$e->getMessage(), [
+                'user_id' => Auth::id(),
+                'trace' => $e->getTraceAsString(),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create order: ' . $e->getMessage(),
+                'message' => 'Failed to place order: '.$e->getMessage(),
             ], 500);
         }
-
-    } catch (\Exception $e) {
-        Log::error('Place order error: ' . $e->getMessage(), [
-            'user_id' => Auth::id(),
-            'trace' => $e->getTraceAsString(),
-        ]);
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to place order: ' . $e->getMessage(),
-        ], 500);
     }
-}
 
     public function updateCart(Request $request, $key)
     {
@@ -711,64 +713,118 @@ class CheckoutController extends Controller
         }
     }
 
-   public function verifyRazorpayPayment(Request $request)
-{
-    try {
+    public function verifyRazorpayPayment(Request $request)
+    {
+        try {
+            $request->validate([
+                'razorpay_payment_id' => 'required|string',
+                'razorpay_order_id' => 'required|string',
+                'razorpay_signature' => 'required|string',
+                'address_id' => 'nullable',
+                'payment_method' => 'required|string|in:upi,card,netbanking,razorpay',
+                'notes' => 'nullable|string|max:1000',
+            ]);
+
+            $api = new Api(
+                config('services.razorpay.key'),
+                config('services.razorpay.secret')
+            );
+
+            $attributes = [
+                'razorpay_order_id' => $request->razorpay_order_id,
+                'razorpay_payment_id' => $request->razorpay_payment_id,
+                'razorpay_signature' => $request->razorpay_signature,
+            ];
+
+            $api->utility->verifyPaymentSignature($attributes);
+
+            // Payment verified - place order with razorpay as payment method
+            $orderRequest = new Request([
+                'address_id' => $request->address_id,
+                'payment_method' => 'razorpay',
+                'notes' => $request->notes,
+                'razorpay_payment_id' => $request->razorpay_payment_id,
+                'razorpay_order_id' => $request->razorpay_order_id,
+                'razorpay_signature' => $request->razorpay_signature,
+            ]);
+
+            $response = $this->placeOrder($orderRequest);
+
+            if ($response->getStatusCode() === 200) {
+                $data = $response->getData();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Payment verified and order placed successfully!',
+                    'order_id' => $data->order_id ?? null,
+                    'order_number' => $data->order_number ?? null,
+                    'redirect_url' => route('customer.dashboard'),
+                ]);
+            }
+
+            return $response;
+
+        } catch (\Exception $e) {
+            Log::error('Razorpay verification failed: '.$e->getMessage());
+            Log::error('Stack trace: '.$e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment verification failed: '.$e->getMessage(),
+            ], 422);
+        }
+    }
+
+    public function store(Request $request)
+    {
         $request->validate([
-            'razorpay_payment_id' => 'required|string',
-            'razorpay_order_id' => 'required|string',
-            'razorpay_signature' => 'required|string',
-            'address_id' => 'nullable',
-            'payment_method' => 'required|string|in:upi,card,netbanking,razorpay',
-            'notes' => 'nullable|string|max:1000',
+            'product_id' => 'required|exists:products,id',
+            'email' => 'nullable|email',
         ]);
 
-        $api = new Api(
-            config('services.razorpay.key'),
-            config('services.razorpay.secret')
-        );
+        $user = Auth::user();
 
-        $attributes = [
-            'razorpay_order_id' => $request->razorpay_order_id,
-            'razorpay_payment_id' => $request->razorpay_payment_id,
-            'razorpay_signature' => $request->razorpay_signature,
-        ];
+        // Get email from request first, otherwise use logged-in user's email
+        $email = $request->input('email');
 
-        $api->utility->verifyPaymentSignature($attributes);
+        if (empty($email) && $user && ! empty($user->email)) {
+            $email = $user->email;
+        }
 
-        // Payment verified - place order with razorpay as payment method
-        $orderRequest = new Request([
-            'address_id' => $request->address_id,
-            'payment_method' => 'razorpay',
-            'notes' => $request->notes,
-            'razorpay_payment_id' => $request->razorpay_payment_id,
-            'razorpay_order_id' => $request->razorpay_order_id,
-            'razorpay_signature' => $request->razorpay_signature,
-        ]);
+        // Final validation
+        if (empty($email) || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please provide a valid email address.',
+            ], 422);
+        }
 
-        $response = $this->placeOrder($orderRequest);
+        $email = strtolower(trim($email));
 
-        if ($response->getStatusCode() === 200) {
-            $data = $response->getData();
+        // Check already registered
+        $notification = ProductNotification::where('product_id', $request->product_id)
+            ->where('email', $email)
+            ->first();
+
+        if ($notification) {
             return response()->json([
                 'success' => true,
-                'message' => 'Payment verified and order placed successfully!',
-                'order_id' => $data->order_id ?? null,
-                'order_number' => $data->order_number ?? null,
-                'redirect_url' => route('customer.dashboard'),
+                'exists' => true,
+                'message' => 'You are already registered. We will notify you when this product is available.',
             ]);
         }
 
-        return $response;
-
-    } catch (\Exception $e) {
-        Log::error('Razorpay verification failed: ' . $e->getMessage());
-        Log::error('Stack trace: ' . $e->getTraceAsString());
+        // Store notification
+        ProductNotification::create([
+            'product_id' => $request->product_id,
+            'user_id' => $user?->id,
+            'email' => $email,
+        ]);
 
         return response()->json([
-            'success' => false,
-            'message' => 'Payment verification failed: ' . $e->getMessage(),
-        ], 422);
+            'success' => true,
+            'exists' => false,
+            'message' => 'You have been registered successfully. We will notify you when this product is available.',
+        ]);
     }
-}
 }

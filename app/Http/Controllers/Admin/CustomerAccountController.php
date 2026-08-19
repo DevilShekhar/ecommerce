@@ -405,36 +405,28 @@ class CustomerAccountController extends Controller
     /**
      * Update Password
      */
-    public function updatePassword(Request $request)
-    {
-        $request->validate([
-            'current_password' => ['required'],
-            'password' => [
-                'required',
-                'confirmed',
-                Password::defaults(),
-            ],
-        ]);
+   /**
+ * Update Password
+ */
+public function updatePassword(Request $request)
+{
+    $request->validate([
+        'password' => [
+            'required',
+            'string',
+            'confirmed',
+            'min:8',
+        ],
+    ]);
 
-        $user = Auth::user();
+    $user = Auth::user();
 
-        if (!Hash::check(
-            $request->current_password,
-            $user->password
-        )) {
+    $user->password = Hash::make($request->password);
+    $user->save();
 
-            return back()->withErrors([
-                'current_password' => 'Current password is incorrect.',
-            ]);
-        }
-
-        $user->update([
-            'password' => Hash::make($request->password),
-        ]);
-
-        return back()->with(
-            'success',
-            'Password updated successfully.'
-        );
-    }
+    return back()->with(
+        'success',
+        'Password created successfully. You can now log in using your email and this password.'
+    );
+}
 }

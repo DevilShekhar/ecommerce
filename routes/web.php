@@ -128,6 +128,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])
         ->name('cart.add');
+    Route::post('/customer/notify-me', [CheckoutController::class, 'store'])->name('customer.notify-me');
+
+    Route::get('/customer/product-details/{id}', [DashboardController::class, 'getProductDetails'])->name('customer.product.details');
+
+    Route::post('/products/{product}/add-stock',[ProductController::class, 'addStock'])->name('products.add-stock');    
 
     Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])
         ->name('cart.remove');

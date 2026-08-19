@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Banner;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\User;
@@ -69,13 +71,28 @@ class DashboardController extends Controller
             ->latest()
             ->take(8)
             ->get();
+        $banners = Banner::where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->orderByDesc('id')
+            ->get();
+
+        $orderStatusCounts = [
+            'pending' => Order::where('order_status', 'pending')->count(),
+            'confirmed' => Order::where('order_status', 'confirmed')->count(),
+            'processing' => Order::where('order_status', 'processing')->count(),
+            'packed' => Order::where('order_status', 'packed')->count(),
+            'shipped' => Order::where('order_status', 'shipped')->count(),
+            'out_for_delivery' => Order::where('order_status', 'out_for_delivery')->count(),
+            'delivered' => Order::where('order_status', 'delivered')->count(),
+            'cancelled' => Order::where('order_status', 'cancelled')->count(),
+        ];
 
         return view('customer.dashboard', compact(
             'user',
             'wishlistCount',
             'wishlistProducts',
             'categories',
-            'recommendedProducts'
+            'recommendedProducts', 'banners','orderStatusCounts'
         ));
     }
 
@@ -113,7 +130,46 @@ class DashboardController extends Controller
             'user',
             'wishlistProducts',
             'wishlistCount',
-            'categories','recommendedProducts'
+            'categories', 'recommendedProducts'
         ));
+    }
+
+    public function getProductDetails($id)
+    {
+        $product = Product::with('category')->findOrFail($id);
+
+        $images = $product->image
+            ? array_values(array_filter(array_map('trim', explode(',', $product->image))))
+            : [];
+
+        $firstImage = $images[0] ?? null;
+
+        if ($firstImage) {
+            $firstImage = preg_replace('#^storage/#', '', $firstImage);
+            $imageUrl = asset($firstImage);
+        } else {
+            $imageUrl = asset('images/placeholder.png');
+        }
+
+        $discount = $product->discount ?? 0;
+        $originalPrice = $product->price ?? 0;
+        $price = $originalPrice - ($originalPrice * $discount / 100);
+
+        return response()->json([
+            'success' => true,
+
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'category' => $product->category->name ?? 'Jewellery',
+                'price' => $price,
+                'formatted_price' => '₹'.number_format($price, 0),
+                'image' => $imageUrl,
+                'description' => $product->specification ?? 'No product description available.',
+                'stock' => $product->stock,
+                'is_out_of_stock' => $product->stock !== null && $product->stock <= 0,
+                'is_futured' => (int) ($product->is_futured ?? 0) === 1,
+            ],
+        ]);
     }
 }

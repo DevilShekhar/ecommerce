@@ -932,7 +932,7 @@
                         <i class="bi bi-bag-x"></i>
                         <h4>No Orders Yet</h4>
                         <p>You haven't placed any orders yet.</p>
-                        <a href="{{ url('/') }}" class="btn btn-primary mt-2">
+                        <a href="{{ route('customer.products') }}" class="btn btn-primary mt-2">
                             Start Shopping
                         </a>
                     </div>

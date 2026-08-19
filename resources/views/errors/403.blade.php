@@ -232,7 +232,7 @@
             </div>
 
             <div class="action-buttons">
-                <a href="/" class="btn btn-primary">
+                <a href="{{ route('dashboard') }}" class="btn btn-primary">
                     <i class="fa-solid fa-house"></i> Go to Homepage
                 </a>
                 <a href="{{ route('dashboard') }}" class="btn btn-secondary">

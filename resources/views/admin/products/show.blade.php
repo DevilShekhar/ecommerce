@@ -32,7 +32,7 @@
 
         <div class="container-fluid">
             <div class="row clearfix">
-                
+
                 <!-- Left Column: Product Images & Core Status -->
                 <div class="col-lg-4 col-md-12">
                     <div class="card">
@@ -103,7 +103,7 @@
 
                 <!-- Right Column: Full Details -->
                 <div class="col-lg-8 col-md-12">
-                    
+
                     <!-- General Details -->
                     <div class="card">
                         <div class="header">
@@ -142,7 +142,7 @@
                         </div>
                         <div class="body">
                             <p style="white-space: pre-wrap; word-break: break-word;" class="mb-0">
-                                {{ $product->specification ?? 'No specification added.' }}
+                                {!! $product->specification ?? '<p>No specification added.</p>' !!}
                             </p>
                         </div>
                     </div>
