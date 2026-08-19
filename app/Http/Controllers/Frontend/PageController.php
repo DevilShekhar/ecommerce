@@ -21,7 +21,7 @@ class PageController extends Controller
             ->firstOrFail();
 
         // Fetch all active banners
-        $banners = Banner::where('status', 1)
+        $banners = Banner::query()->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
             ->get();
@@ -43,7 +43,7 @@ class PageController extends Controller
             ->firstOrFail();
 
         // Fetch all active banners
-        $banners = Banner::where('status', 1)
+        $banners = Banner::query()->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
             ->get();

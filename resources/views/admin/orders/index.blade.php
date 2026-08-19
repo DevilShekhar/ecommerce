@@ -129,33 +129,65 @@
                                                         @php
                                                             $status = strtolower($order->order_status ?? 'pending');
                                                         @endphp
+
                                                         @if($status === 'completed')
                                                             <span class="badge badge-success">
                                                                 Completed
                                                             </span>
+
                                                         @elseif($status === 'cancelled')
                                                             <span class="badge badge-danger">
                                                                 Cancelled
                                                             </span>
+
                                                         @elseif($status === 'processing')
                                                             <span class="badge badge-info">
                                                                 Processing
                                                             </span>
+
                                                         @elseif($status === 'shipped')
                                                             <span class="badge badge-primary">
                                                                 Shipped
                                                             </span>
+
                                                         @elseif($status === 'pending')
                                                             <span class="badge badge-warning">
                                                                 Pending
                                                             </span>
+
                                                         @elseif($status === 'delivered')
                                                             <span class="badge badge-success">
                                                                 Delivered
                                                             </span>
+
+                                                        @elseif($status === 'return_requested')
+                                                            <span class="badge badge-warning">
+                                                                Return Requested
+                                                            </span>
+
+                                                        @elseif($status === 'approved' || $status === 'return_approved')
+                                                            <span class="badge badge-info">
+                                                                Return Approved
+                                                            </span>
+
+                                                        @elseif($status === 'rejected' || $status === 'return_rejected')
+                                                            <span class="badge badge-danger">
+                                                                Return Rejected
+                                                            </span>
+
+                                                        @elseif($status === 'refunded')
+                                                            <span class="badge badge-success">
+                                                                Refunded
+                                                            </span>
+
+                                                        @elseif($status === 'returned')
+                                                            <span class="badge badge-secondary">
+                                                                Returned
+                                                            </span>
+
                                                         @else
                                                             <span class="badge badge-secondary">
-                                                                {{ ucfirst($status) }}
+                                                                {{ ucwords(str_replace('_', ' ', $status)) }}
                                                             </span>
                                                         @endif
                                                     </td>

@@ -1,41 +1,39 @@
 @extends('layouts.app')
-
 @section('title', 'Order ' . $order->order_number)
-
 @section('content')
     <style>
         .order-header-card,
         .status-card,
         .status-timeline-card {
-            border-radius: 12px
+            border-radius: 12px;
         }
 
         .order-header-card .body {
-            padding: 22px 25px
+            padding: 22px 25px;
         }
 
         .order-header-card h4 {
             font-weight: 700;
-            color: #172033
+            color: #172033;
         }
 
         .order-status-badge {
             font-size: 13px;
-            padding: 9px 15px
+            padding: 9px 15px;
         }
 
         .status-card {
-            border: 1px solid #dbe7f7
+            border: 1px solid #dbe7f7;
         }
 
         .status-card .body {
-            padding: 20px 25px
+            padding: 20px 25px;
         }
 
         .current-status-box {
             display: flex;
             align-items: center;
-            gap: 15px
+            gap: 15px;
         }
 
         .status-icon {
@@ -47,58 +45,52 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px
+            font-size: 22px;
         }
 
         .status-label {
             display: block;
             font-size: 12px;
             color: #64748b;
-            margin-bottom: 4px
+            margin-bottom: 4px;
         }
 
         .current-status-box h5 {
             font-weight: 700;
-            color: #172033
-        }
-
-        .next-status-btn {
-            padding: 10px 17px;
-            font-weight: 600;
-            border-radius: 7px
+            color: #172033;
         }
 
         .delivered-message {
             color: #168a4a;
             font-weight: 600;
-            font-size: 15px
+            font-size: 15px;
         }
 
         .delivered-message i {
-            margin-right: 5px
+            margin-right: 5px;
         }
 
         .final-status-message {
             color: #64748b;
-            font-weight: 600
+            font-weight: 600;
         }
 
         .status-timeline-card .body {
-            padding: 25px
+            padding: 25px;
         }
 
         .order-timeline {
             display: flex;
             position: relative;
             justify-content: space-between;
-            gap: 10px
+            gap: 10px;
         }
 
         .timeline-item {
             flex: 1;
             text-align: center;
             position: relative;
-            min-width: 80px
+            min-width: 80px;
         }
 
         .timeline-icon {
@@ -113,40 +105,42 @@
             margin: 0 auto 10px;
             position: relative;
             z-index: 2;
-            font-size: 18px
+            font-size: 18px;
         }
 
         .timeline-item.completed .timeline-icon {
             background: #2878f0;
-            color: #fff
+            color: #fff;
         }
 
         .timeline-item.current .timeline-icon {
-            box-shadow: 0 0 0 5px #eaf3ff
+            background: #2878f0;
+            color: #fff;
+            box-shadow: 0 0 0 5px #eaf3ff;
         }
 
         .timeline-content strong {
             display: block;
             font-size: 12px;
-            color: #172033
+            color: #172033;
         }
 
         .timeline-content span {
             display: block;
             font-size: 11px;
-            margin-top: 4px
+            margin-top: 4px;
         }
 
         .timeline-current {
-            color: #2878f0
+            color: #2878f0;
         }
 
         .timeline-completed {
-            color: #168a4a
+            color: #168a4a;
         }
 
         .timeline-pending {
-            color: #94a3b8
+            color: #94a3b8;
         }
 
         .timeline-line {
@@ -156,11 +150,11 @@
             top: 21px;
             left: calc(50% + 21px);
             width: calc(100% - 42px);
-            z-index: 1
+            z-index: 1;
         }
 
         .timeline-line.active {
-            background: #2878f0
+            background: #2878f0;
         }
 
         .additional-status {
@@ -168,22 +162,75 @@
             padding-top: 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between
+            justify-content: space-between;
         }
 
         .additional-status-title {
             font-size: 13px;
             color: #64748b;
-            font-weight: 600
+            font-weight: 600;
         }
 
         .additional-status-badge {
             padding: 7px 12px;
             border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .return-requested-badge {
             background: #fff7e6;
             color: #d97706;
-            font-size: 12px;
-            font-weight: 600
+        }
+
+        .return-approved-badge {
+            background: #e9f9ef;
+            color: #168a4a;
+        }
+
+        .return-rejected-badge {
+            background: #fff0f0;
+            color: #dc3545;
+        }
+
+        .refunded-badge {
+            background: #e9f9ef;
+            color: #168a4a;
+        }
+
+        .return-action-card {
+            border: 1px solid #f1dfb5;
+            background: #fffdf7;
+        }
+
+        .return-action-card .header {
+            border-bottom: 1px solid #f1dfb5;
+        }
+
+        .return-action-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .return-info-box {
+            background: #f8fafc;
+            border: 1px solid #e5eaf1;
+            border-radius: 8px;
+            padding: 14px 16px;
+        }
+
+        .refund-box {
+            background: #effcf4;
+            border: 1px solid #c9efd7;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .refund-amount {
+            font-size: 22px;
+            font-weight: 700;
+            color: #168a4a;
         }
 
         .order-product-item {
@@ -191,16 +238,16 @@
             align-items: center;
             gap: 18px;
             padding: 18px 0;
-            border-bottom: 1px solid #e5eaf1
+            border-bottom: 1px solid #e5eaf1;
         }
 
         .order-product-item:first-child {
-            padding-top: 0
+            padding-top: 0;
         }
 
         .order-product-item:last-child {
             border-bottom: 0;
-            padding-bottom: 0
+            padding-bottom: 0;
         }
 
         .product-image {
@@ -213,35 +260,35 @@
             background: #f8fafc;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
         }
 
         .product-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover
+            object-fit: cover;
         }
 
         .product-image i {
             font-size: 28px;
-            color: #94a3b8
+            color: #94a3b8;
         }
 
         .product-details {
-            flex: 1
+            flex: 1;
         }
 
         .product-details h6 {
             font-weight: 700;
             color: #172033;
-            margin-bottom: 5px
+            margin-bottom: 5px;
         }
 
         .product-sku,
         .product-quantity {
             font-size: 12px;
             color: #64748b;
-            margin-top: 4px
+            margin-top: 4px;
         }
 
         .product-variants {
@@ -250,29 +297,29 @@
             flex-wrap: wrap;
             font-size: 12px;
             color: #64748b;
-            margin-top: 5px
+            margin-top: 5px;
         }
 
         .product-total {
             font-weight: 700;
             color: #172033;
-            white-space: nowrap
+            white-space: nowrap;
         }
 
         .summary-row {
             display: flex;
             justify-content: space-between;
             padding: 10px 0;
-            color: #64748b
+            color: #64748b;
         }
 
         .summary-row strong {
-            color: #172033
+            color: #172033;
         }
 
         .discount-row,
         .discount-row strong {
-            color: #168a4a
+            color: #168a4a;
         }
 
         .summary-total {
@@ -282,81 +329,221 @@
             margin-top: 10px;
             padding-top: 16px;
             font-size: 17px;
-            color: #172033
+            color: #172033;
         }
 
         .info-row {
-            margin-bottom: 15px
+            margin-bottom: 15px;
         }
 
         .info-row:last-child {
-            margin-bottom: 0
+            margin-bottom: 0;
         }
 
         .info-label {
             font-size: 11px;
             color: #64748b;
-            margin-bottom: 5px
+            margin-bottom: 5px;
         }
 
         .info-value {
             font-weight: 600;
             color: #172033;
-            word-break: break-word
+            word-break: break-word;
         }
 
         .payment-paid {
-            color: #168a4a !important
+            color: #168a4a !important;
         }
 
         .payment-pending {
-            color: #d97706 !important
+            color: #d97706 !important;
         }
 
         .shipping-address .address-main {
             font-weight: 600;
-            color: #172033
+            color: #172033;
+            white-space: pre-line;
         }
 
         .shipping-address .address-location {
             color: #64748b;
-            margin-top: 7px
+            margin-top: 7px;
         }
 
-        @media(max-width:991px) {
+        .return-alert {
+            border-radius: 8px;
+            padding: 15px 18px;
+        }
+
+        .return-action-box {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e5eaf1;
+            background: #fff;
+            height: 100%;
+            transition: all .3s ease;
+        }
+
+        .return-action-box:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .06);
+        }
+
+        .return-accept-box {
+            border-color: #b7e4c7;
+            background: #f6fdf9;
+        }
+
+        .return-reject-box {
+            border-color: #f5c6cb;
+            background: #fff8f8;
+        }
+
+        .return-action-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .return-action-header i {
+            font-size: 28px;
+        }
+
+        .return-action-header h5 {
+            margin: 0;
+            font-weight: 700;
+            color: #172033;
+            font-size: 16px;
+        }
+
+        .return-action-box .btn-block {
+            width: 100%;
+        }
+
+        .return-action-box .form-group {
+            margin-bottom: 12px;
+        }
+
+        .return-action-box .form-control {
+            border-radius: 8px;
+            border-color: #e5eaf1;
+            font-size: 13px;
+            resize: vertical;
+        }
+
+        .return-action-box .form-control:focus {
+            border-color: #2878f0;
+            box-shadow: 0 0 0 3px rgba(40, 120, 240, .1);
+        }
+
+        .return-info-footer {
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5eaf1;
+        }
+
+        .return-info-footer i {
+            color: #2878f0;
+            margin-right: 6px;
+        }
+
+        @media(max-width:768px) {
+            .return-action-box {
+                margin-bottom: 16px;
+            }
+
             .order-timeline {
                 overflow-x: auto;
-                padding-bottom: 10px
+                padding-bottom: 10px;
             }
 
             .timeline-item {
-                min-width: 120px
+                min-width: 120px;
             }
         }
 
         @media(max-width:576px) {
             .current-status-box {
-                align-items: flex-start
+                align-items: flex-start;
             }
 
             .order-product-item {
-                align-items: flex-start
+                align-items: flex-start;
             }
 
             .product-total {
-                margin-left: auto
+                margin-left: auto;
             }
 
             .additional-status {
-                display: block
+                display: block;
             }
 
             .additional-status-badge {
                 display: inline-block;
-                margin-top: 8px
+                margin-top: 8px;
             }
         }
     </style>
+    @php
+        $returnRequest = $order->returns()->latest()->first();
+        $isSuperAdmin = auth()->check() && auth()->user()->role?->name === 'SuperAdmin';
+        $statusLabels = [
+            'pending' => 'Pending',
+            'confirmed' => 'Confirmed',
+            'processing' => 'Processing',
+            'packed' => 'Packed',
+            'shipped' => 'Shipped',
+            'out_for_delivery' => 'Out for Delivery',
+            'delivered' => 'Delivered',
+            'cancelled' => 'Cancelled',
+            'return_requested' => 'Return Requested',
+            'approved' => 'Return Approved',
+            'rejected' => 'Return Rejected',
+            'returned' => 'Returned',
+            'refunded' => 'Refunded',
+            'failed' => 'Failed',
+            'completed' => 'Completed'
+        ];
+        $statusIcons = [
+            'pending' => 'zmdi-time',
+            'confirmed' => 'zmdi-check-circle',
+            'processing' => 'zmdi-settings',
+            'packed' => 'zmdi-archive',
+            'shipped' => 'zmdi-truck',
+            'out_for_delivery' => 'zmdi-navigation',
+            'delivered' => 'zmdi-check-all',
+            'cancelled' => 'zmdi-close-circle',
+            'return_requested' => 'zmdi-undo',
+            'return_approved' => 'zmdi-check-circle',
+            'return_rejected' => 'zmdi-close-circle',
+            'returned' => 'zmdi-undo',
+            'refunded' => 'zmdi-money',
+            'failed' => 'zmdi-alert-circle',
+            'completed' => 'zmdi-check-circle'
+        ];
+        $currentStatus = strtolower($order->order_status ?? 'pending');
+        $isReturnFlow = $returnRequest && in_array($returnRequest->status, ['return_requested', 'approved', 'rejected', 'refunded']);
+        $statusBadgeClass = match ($currentStatus) {
+            'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery' => 'status-processing',
+            'delivered', 'completed' => 'status-delivered',
+            'cancelled', 'returned', 'refunded', 'failed' => 'status-cancelled',
+            default => 'status-pending'
+        };
+        $mainStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered'];
+        $currentIndex = array_search($currentStatus, $mainStatuses, true);
+        if ($currentIndex === false) {
+            $currentIndex = -1;
+        }
+        $nextStatus = match ($currentStatus) {
+            'pending' => 'confirmed', 'confirmed' => 'processing', 'processing' => 'packed',
+            'packed' => 'shipped', 'shipped' => 'out_for_delivery', 'out_for_delivery' => 'delivered',
+            default => null
+        };
+        $nextStatusLabel = $nextStatus ? ($statusLabels[$nextStatus] ?? ucfirst(str_replace('_', ' ', $nextStatus))) : null;
+    @endphp
     <section class="content">
         <div class="body_scroll">
             <div class="block-header">
@@ -364,329 +551,375 @@
                     <div class="col-lg-7 col-md-6 col-sm-12">
                         <h2>Order Details</h2>
                         <ul class="breadcrumb">
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('dashboard') }}">
-                                    <i class="zmdi zmdi-home"></i> Dashboard
-                                </a>
-                            </li>
-                            <li class="breadcrumb-item">
-                                <a href="{{ route('orders.index') }}">Orders</a>
-                            </li>
+                            <li class="breadcrumb-item"><a href="{{ route('dashboard') }}"><i class="zmdi zmdi-home"></i>
+                                    Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('orders.index') }}">Orders</a></li>
                             <li class="breadcrumb-item active">Order Details</li>
                         </ul>
                     </div>
                     <div class="col-lg-5 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('orders.index') }}" class="btn btn-primary">
-                            <i class="zmdi zmdi-arrow-left"></i> Back to Orders
-                        </a>
+                        <a href="{{ route('orders.index') }}" class="btn btn-primary"><i class="zmdi zmdi-arrow-left"></i>
+                            Back to Orders</a>
                     </div>
                 </div>
             </div>
-
             <div class="container-fluid">
-
-                @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show">
-                        <i class="zmdi zmdi-check-circle"></i>
-                        {{ session('success') }}
-                        <button type="button" class="close" data-dismiss="alert">
-                            <span>&times;</span>
-                        </button>
+                @if($returnRequest)
+                    <div class="card return-action-card mt-4">
+                        <div class="header">
+                            <h2>
+                                <strong>Return</strong> Request
+                                @if($returnRequest->status === 'return_requested')
+                                    <span class="badge badge-warning ml-2">Pending Approval</span>
+                                @elseif($returnRequest->status === 'approved')
+                                    <span class="badge badge-success ml-2">Approved</span>
+                                @elseif($returnRequest->status === 'rejected')
+                                    <span class="badge badge-danger ml-2">Rejected</span>
+                                @elseif($returnRequest->status === 'refunded')
+                                    <span class="badge badge-info ml-2">Refunded</span>
+                                @endif
+                            </h2>
+                        </div>
+                        <div class="body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Return Status</div>
+                                        <div class="info-value">
+                                            @if($returnRequest->status === 'return_requested')
+                                                <span class="additional-status-badge return-requested-badge"><i
+                                                        class="zmdi zmdi-time"></i> Return Requested</span>
+                                            @elseif($returnRequest->status === 'approved')
+                                                <span class="additional-status-badge return-approved-badge"><i
+                                                        class="zmdi zmdi-check-circle"></i> Return Approved</span>
+                                            @elseif($returnRequest->status === 'rejected')
+                                                <span class="additional-status-badge return-rejected-badge"><i
+                                                        class="zmdi zmdi-close-circle"></i> Return Rejected</span>
+                                            @elseif($returnRequest->status === 'refunded')
+                                                <span class="additional-status-badge refunded-badge"><i class="zmdi zmdi-money"></i>
+                                                    Refunded</span>
+                                            @else
+                                                <span
+                                                    class="badge badge-secondary">{{ ucfirst(str_replace('_', ' ', $returnRequest->status)) }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Refund Amount</div>
+                                        <div class="info-value">₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Product</div>
+                                        <div class="info-value">{{ $returnRequest->product_name ?? '-' }}</div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-row">
+                                        <div class="info-label">Quantity</div>
+                                        <div class="info-value">{{ $returnRequest->quantity ?? 0 }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            @if($returnRequest->reason)
+                                <div class="info-row">
+                                    <div class="info-label">Return Reason</div>
+                                    <div class="info-value">{{ $returnRequest->reason }}</div>
+                                </div>
+                            @endif
+                            @if($returnRequest->customer_note)
+                                <div class="info-row">
+                                    <div class="info-label">Customer Note</div>
+                                    <div class="return-info-box">{{ $returnRequest->customer_note }}</div>
+                                </div>
+                            @endif
+                            @if($returnRequest->admin_note)
+                                <div class="info-row">
+                                    <div class="info-label">Admin Note</div>
+                                    <div class="return-info-box">{{ $returnRequest->admin_note }}</div>
+                                </div>
+                            @endif
+                            @if($isSuperAdmin && $returnRequest->status === 'return_requested' && $returnRequest->id)
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="return-action-box return-accept-box">
+                                            <div class="return-action-header">
+                                                <i class="zmdi zmdi-check-circle text-success"></i>
+                                                <h5>Approve Return</h5>
+                                            </div>
+                                            <p class="text-muted small">Approve this return request. Customer will be notified.</p>
+                                            <form action="{{ route('orders.returns.approve', $returnRequest->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to APPROVE this return request?')">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label>Admin Note (Optional)</label>
+                                                    <textarea name="admin_note" class="form-control" rows="2"
+                                                        placeholder="Add any notes for the customer..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-success btn-block"><i
+                                                        class="zmdi zmdi-check"></i> Approve Return</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="return-action-box return-reject-box">
+                                            <div class="return-action-header">
+                                                <i class="zmdi zmdi-close-circle text-danger"></i>
+                                                <h5>Reject Return</h5>
+                                            </div>
+                                            <p class="text-muted small">Reject this return request with a reason.</p>
+                                            <form action="{{ route('orders.returns.reject', $returnRequest->id) }}" method="POST"
+                                                onsubmit="return confirm('Are you sure you want to REJECT this return request?')">
+                                                @csrf
+                                                <div class="form-group">
+                                                    <label>Rejection Reason <span class="text-danger">*</span></label>
+                                                    <textarea name="admin_note" class="form-control" rows="2" required
+                                                        placeholder="Enter reason for rejecting..."></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-danger btn-block"><i
+                                                        class="zmdi zmdi-close"></i> Reject Return</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="return-info-footer mt-3">
+                                    <i class="zmdi zmdi-info-outline"></i>
+                                    <small class="text-muted">Customer will be notified via email about your decision.</small>
+                                </div>
+                            @endif
+                            @if($isSuperAdmin && $returnRequest->status === 'approved' && $returnRequest->id)
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="refund-box mb-3">
+                                            <div class="return-action-title mb-1">Return Approved</div>
+                                            <div class="text-muted mb-2">The return request has been approved. Refund can now be
+                                                processed.</div>
+                                            <div class="refund-amount">₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}
+                                            </div>
+                                            <small class="text-muted">Refund Amount</small>
+                                        </div>
+                                        <form action="{{ route('orders.returns.refund', $returnRequest->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-primary btn-block"
+                                                onclick="return confirm('Are you sure you want to process this refund?')">
+                                                <i class="zmdi zmdi-money"></i> Process Refund
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+                            @if($returnRequest->status === 'rejected')
+                                <div class="alert alert-danger return-alert mt-3 mb-0">
+                                    <i class="zmdi zmdi-close-circle"></i>
+                                    <strong>Return Request Rejected</strong>
+                                    @if($returnRequest->admin_note)
+                                        <br><span>Reason: {{ $returnRequest->admin_note }}</span>
+                                    @endif
+                                </div>
+                            @endif
+                            @if($returnRequest->status === 'refunded')
+                                <div class="alert alert-success return-alert mt-3 mb-0">
+                                    <i class="zmdi zmdi-check-circle"></i>
+                                    <strong>Refund Completed</strong>
+                                    @if($returnRequest->refunded_at)
+                                        <br>Refunded on:
+                                        {{ $returnRequest->refunded_at instanceof \Carbon\Carbon ? $returnRequest->refunded_at->format('d M Y, h:i A') : $returnRequest->refunded_at }}
+                                    @endif
+                                    <br>Refund Amount: <strong>₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}</strong>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @elseif($order->order_status === 'return_requested')
+                    <div class="card return-action-card mt-4">
+                        <div class="header">
+                            <h2><strong>Return</strong> Request <span class="badge badge-warning ml-2">Pending</span></h2>
+                        </div>
+                        <div class="body">
+                            <div class="alert alert-warning">
+                                <i class="zmdi zmdi-alert-triangle"></i>
+                                <strong>Return request detected but no return record found.</strong>
+                                <br>Please create a return record for this order.
+                                <br><small>Order Status: {{ $order->order_status }}</small>
+                            </div>
+                        </div>
                     </div>
                 @endif
-
-                @if(session('error'))
-                    <div class="alert alert-danger alert-dismissible fade show">
-                        <i class="zmdi zmdi-alert-circle"></i>
-                        {{ session('error') }}
-                        <button type="button" class="close" data-dismiss="alert">
-                            <span>&times;</span>
-                        </button>
+                <div class="card mt-4">
+                    <div class="header">
+                        <h2><strong>Order</strong> Status Management</h2>
                     </div>
-                @endif
-
-                @php
-                    $currentStatus = strtolower($order->order_status ?? 'pending');
-
-                    $statusFlow = [
-                        'pending' => 'confirmed',
-                        'confirmed' => 'processing',
-                        'processing' => 'packed',
-                        'packed' => 'shipped',
-                        'shipped' => 'out_for_delivery',
-                        'out_for_delivery' => 'delivered',
-                    ];
-
-                    $statusLabels = [
-                        'pending' => 'Pending',
-                        'confirmed' => 'Confirmed',
-                        'processing' => 'Processing',
-                        'packed' => 'Packed',
-                        'shipped' => 'Shipped',
-                        'out_for_delivery' => 'Out For Delivery',
-                        'delivered' => 'Delivered',
-                        'cancelled' => 'Cancelled',
-                        'returned' => 'Returned',
-                        'refunded' => 'Refunded',
-                    ];
-
-                    $statusIcons = [
-                        'pending' => 'zmdi-time',
-                        'confirmed' => 'zmdi-check',
-                        'processing' => 'zmdi-settings',
-                        'packed' => 'zmdi-case',
-                        'shipped' => 'zmdi-truck',
-                        'out_for_delivery' => 'zmdi-bike',
-                        'delivered' => 'zmdi-home',
-                        'cancelled' => 'zmdi-close',
-                        'returned' => 'zmdi-rotate-left',
-                        'refunded' => 'zmdi-money',
-                    ];
-
-                    $nextStatus = $statusFlow[$currentStatus] ?? null;
-                    $nextStatusLabel = $nextStatus ? $statusLabels[$nextStatus] : null;
-
-                    $statusBadgeClass = match ($currentStatus) {
-                        'pending' => 'badge-warning',
-                        'confirmed' => 'badge-primary',
-                        'processing' => 'badge-info',
-                        'packed' => 'badge-info',
-                        'shipped' => 'badge-info',
-                        'out_for_delivery' => 'badge-primary',
-                        'delivered' => 'badge-success',
-                        'cancelled' => 'badge-danger',
-                        'returned' => 'badge-warning',
-                        'refunded' => 'badge-success',
-                        default => 'badge-secondary',
-                    };
-
-                    $mainStatuses = [
-                        'pending',
-                        'confirmed',
-                        'processing',
-                        'packed',
-                        'shipped',
-                        'out_for_delivery',
-                        'delivered',
-                    ];
-
-                    $currentIndex = array_search($currentStatus, $mainStatuses);
-                    if ($currentIndex === false) {
-                        $currentIndex = -1;
-                    }
-                @endphp
-
+                    <div class="body">
+                        <div class="mb-3">
+                            <strong>Current Status:</strong>
+                            <span
+                                class="badge badge-primary ml-2">{{ $statusLabels[$currentStatus] ?? ucfirst(str_replace('_', ' ', $currentStatus)) }}</span>
+                        </div>
+                        <div class="d-flex flex-wrap" style="gap:10px;">
+                            @if($nextStatus && !$isReturnFlow && !in_array($currentStatus, ['delivered', 'returned', 'refunded', 'cancelled']))
+                                <form action="{{ route('orders.update-status', $order->id) }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="status" value="{{ $nextStatus }}">
+                                    <button type="submit" class="btn btn-primary"><i class="zmdi zmdi-arrow-right"></i> Mark as
+                                        {{ $nextStatusLabel }}</button>
+                                </form>
+                            @endif
+                            @if($returnRequest)
+                                @if($returnRequest->status === 'return_requested')
+                                    <div class="alert alert-warning mb-0"><i class="zmdi zmdi-time"></i> Return request is waiting
+                                        for <strong>Super Admin approval.</strong></div>
+                                @elseif($returnRequest->status === 'approved')
+                                    <div class="alert alert-success mb-0"><i class="zmdi zmdi-check-circle"></i> Return approved.
+                                        Refund is pending.</div>
+                                @elseif($returnRequest->status === 'rejected')
+                                    <div class="alert alert-danger mb-0"><i class="zmdi zmdi-close-circle"></i> Return request has
+                                        been rejected.</div>
+                                @elseif($returnRequest->status === 'refunded')
+                                    <div class="alert alert-success mb-0"><i class="zmdi zmdi-money"></i> Refund has been completed.
+                                    </div>
+                                @endif
+                            @endif
+                        </div>
+                        @if(in_array($currentStatus, ['cancelled', 'refunded']))
+                            <div class="alert alert-info mt-3 mb-0"><strong>This order has reached its final status:</strong>
+                                {{ $statusLabels[$currentStatus] }}</div>
+                        @endif
+                    </div>
+                </div>
                 <div class="row clearfix">
-
                     <div class="col-lg-12">
-
                         <div class="card order-header-card">
                             <div class="body">
-
                                 <div class="row align-items-center">
-
                                     <div class="col-md-8">
-                                        <h4 class="mb-1">
-                                            Order {{ $order->order_number }}
-                                        </h4>
-                                        <p class="text-muted mb-0">
-                                            Placed on
-                                            {{ $order->created_at?->format('d M Y, h:i A') ?? '-' }}
-                                        </p>
+                                        <h4 class="mb-1">Order {{ $order->order_number }}</h4>
+                                        <p class="text-muted mb-0">Placed on
+                                            {{ $order->created_at?->format('d M Y, h:i A') ?? '-' }}</p>
                                     </div>
-
                                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
                                         <span class="badge {{ $statusBadgeClass }} order-status-badge">
                                             <i class="zmdi {{ $statusIcons[$currentStatus] ?? 'zmdi-info' }}"></i>
-                                            {{ $statusLabels[$currentStatus] ?? ucfirst($currentStatus) }}
+                                            {{ $statusLabels[$currentStatus] ?? ucfirst(str_replace('_', ' ', $currentStatus)) }}
                                         </span>
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
-
                     </div>
-
                     <div class="col-lg-12">
-
                         <div class="card status-card">
-
                             <div class="body">
-
                                 <div class="row align-items-center">
-
                                     <div class="col-lg-8 col-md-7">
-
                                         <div class="current-status-box">
-
-                                            <div class="status-icon">
-                                                <i class="zmdi {{ $statusIcons[$currentStatus] ?? 'zmdi-info' }}"></i>
+                                            <div class="status-icon"><i
+                                                    class="zmdi {{ $statusIcons[$currentStatus] ?? 'zmdi-info' }}"></i>
                                             </div>
-
                                             <div>
-                                                <span class="status-label">
-                                                    Current Order Status
-                                                </span>
-
+                                                <span class="status-label">Current Order Status</span>
                                                 <h5 class="mb-0">
-                                                    {{ $statusLabels[$currentStatus] ?? ucfirst($currentStatus) }}
+                                                    {{ $statusLabels[$currentStatus] ?? ucfirst(str_replace('_', ' ', $currentStatus)) }}
                                                 </h5>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                     <div class="col-lg-4 col-md-5 text-md-right mt-3 mt-md-0">
-
                                         @if($currentStatus === 'delivered')
-
-                                            <div class="delivered-message">
-                                                <i class="zmdi zmdi-check-circle"></i>
-                                                Order Delivered
-                                            </div>
-
-                                        @elseif(in_array($currentStatus, ['cancelled', 'returned', 'refunded']))
-
-                                            <div class="final-status-message">
-                                                <i class="zmdi zmdi-info-outline"></i>
-                                                {{ $statusLabels[$currentStatus] }}
-                                            </div>
-
+                                            <div class="delivered-message"><i class="zmdi zmdi-check-circle"></i> Order
+                                                Delivered</div>
+                                        @elseif($isReturnFlow)
+                                            <div class="final-status-message"><i class="zmdi zmdi-undo"></i> Return:
+                                                {{ ucfirst(str_replace('_', ' ', $returnRequest->status)) }}</div>
+                                        @elseif(in_array($currentStatus, ['cancelled', 'returned', 'refunded', 'failed']))
+                                            <div class="final-status-message"><i class="zmdi zmdi-info-outline"></i>
+                                                {{ $statusLabels[$currentStatus] ?? ucfirst($currentStatus) }}</div>
                                         @elseif($nextStatus)
-
-                                                <form action="{{ route('admin.orders.status.update', $order->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('PATCH')
-
-                                                    <button type="submit" class="btn btn-primary next-status-btn">
-                                                        <i class="zmdi {{ $statusIcons[$nextStatus] }}"></i>
-                                                        Move to {{ $nextStatusLabel }}
-                                                    </button>
-                                                </form>
-
-
+                                            <div class="final-status-message">Next: {{ $nextStatusLabel }}</div>
                                         @endif
-
                                     </div>
-
                                 </div>
-
                             </div>
                         </div>
-
                     </div>
-
                     <div class="col-lg-12">
-
                         <div class="card status-timeline-card">
-
                             <div class="body">
-
-                                <h5 class="mb-4">
-                                    <strong>Order</strong> Status Timeline
-                                </h5>
-
+                                <h5 class="mb-4"><strong>Order</strong> Status Timeline</h5>
                                 <div class="order-timeline">
-
                                     @foreach($mainStatuses as $index => $status)
-
                                         @php
-                                            $isCompleted = $currentIndex >= $index;
-                                            $isCurrent = $currentStatus === $status;
+                                            $isCompleted = $currentIndex > $index;
+                                            $isCurrent = $currentIndex === $index;
                                             $isLast = $index === count($mainStatuses) - 1;
                                         @endphp
-
                                         <div
                                             class="timeline-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
-
-                                            <div class="timeline-icon">
-                                                <i class="zmdi {{ $statusIcons[$status] }}"></i>
-                                            </div>
-
+                                            <div class="timeline-icon"><i
+                                                    class="zmdi {{ $statusIcons[$status] ?? 'zmdi-info' }}"></i></div>
                                             <div class="timeline-content">
-
-                                                <strong>
-                                                    {{ $statusLabels[$status] }}
-                                                </strong>
-
-                                                @if($isCurrent)
-                                                    <span class="timeline-current">
-                                                        Current Status
-                                                    </span>
-                                                @elseif($isCompleted)
-                                                    <span class="timeline-completed">
-                                                        Completed
-                                                    </span>
-                                                @else
-                                                    <span class="timeline-pending">
-                                                        Pending
-                                                    </span>
+                                                <strong>{{ $statusLabels[$status] ?? ucfirst(str_replace('_', ' ', $status)) }}</strong>
+                                                @if($isCurrent && $order->status_updated_at)
+                                                    <div class="small text-muted mt-1">
+                                                        {{ $order->status_updated_at->format('d M Y, h:i A') }}</div>
                                                 @endif
-
+                                                @if($isCurrent)
+                                                    <span class="timeline-current">Current Status</span>
+                                                @elseif($isCompleted)
+                                                    <span class="timeline-completed">Completed</span>
+                                                @else
+                                                    <span class="timeline-pending">Pending</span>
+                                                @endif
                                             </div>
-
                                             @if(!$isLast)
                                                 <div class="timeline-line {{ $currentIndex > $index ? 'active' : '' }}"></div>
                                             @endif
-
                                         </div>
-
                                     @endforeach
-
                                 </div>
-
-                                @if(in_array($currentStatus, ['cancelled', 'returned', 'refunded']))
-
+                                @if($returnRequest)
                                     <div class="additional-status mt-4">
-
-                                        <div class="additional-status-title">
-                                            Additional Status
-                                        </div>
-
-                                        <div class="additional-status-badge">
-                                            <i class="zmdi {{ $statusIcons[$currentStatus] ?? 'zmdi-info' }}"></i>
-                                            {{ $statusLabels[$currentStatus] }}
-                                        </div>
-
+                                        <div class="additional-status-title">Return Status</div>
+                                        @if($returnRequest->status === 'return_requested')
+                                            <div class="additional-status-badge return-requested-badge"><i
+                                                    class="zmdi zmdi-time"></i> Return Requested</div>
+                                        @elseif($returnRequest->status === 'approved')
+                                            <div class="additional-status-badge return-approved-badge"><i
+                                                    class="zmdi zmdi-check-circle"></i> Return Approved</div>
+                                        @elseif($returnRequest->status === 'rejected')
+                                            <div class="additional-status-badge return-rejected-badge"><i
+                                                    class="zmdi zmdi-close-circle"></i> Return Rejected</div>
+                                        @elseif($returnRequest->status === 'refunded')
+                                            <div class="additional-status-badge refunded-badge"><i class="zmdi zmdi-money"></i>
+                                                Refunded</div>
+                                        @endif
                                     </div>
-
                                 @endif
-
                             </div>
                         </div>
-
                     </div>
-
                     <div class="col-lg-8">
-
                         <div class="card">
-
                             <div class="header">
-                                <h2>
-                                    <strong>Order</strong> Items
-                                    <span class="text-muted">
-                                        ({{ $order->items->count() }})
-                                    </span>
-                                </h2>
+                                <h2><strong>Order</strong> Items <span
+                                        class="text-muted">({{ $order->items->count() }})</span></h2>
                             </div>
-
                             <div class="body">
-
                                 @forelse($order->items as $item)
-
                                     @php
                                         $imageValue = $item->image;
-
                                         if (!$imageValue && $item->product) {
                                             $imageValue = $item->product->image;
                                         }
-
                                         $images = $imageValue ? array_map('trim', explode(',', $imageValue)) : [];
                                         $firstImage = $images[0] ?? null;
-
                                         if ($firstImage) {
                                             $firstImage = preg_replace('#^storage/#', '', $firstImage);
                                             $imgUrl = asset($firstImage);
@@ -694,299 +927,198 @@
                                             $imgUrl = null;
                                         }
                                     @endphp
-
                                     <div class="order-product-item">
-
                                         <div class="product-image">
-
                                             @if($imgUrl)
                                                 <img src="{{ $imgUrl }}" alt="{{ $item->product_name }}"
                                                     onerror="this.src='{{ asset('images/placeholder.png') }}'">
                                             @else
                                                 <i class="zmdi zmdi-image"></i>
                                             @endif
-
                                         </div>
-
                                         <div class="product-details">
-
-                                            <h6>
-                                                {{ $item->product_name }}
-                                            </h6>
-
+                                            <h6>{{ $item->product_name }}</h6>
                                             @if($item->sku)
-                                                <div class="product-sku">
-                                                    SKU: {{ $item->sku }}
-                                                </div>
-                                            @endif
-
+                                            <div class="product-sku">SKU: {{ $item->sku }}</div>@endif
                                             @if(!empty($item->variants))
-
                                                 @php
                                                     $variants = $item->variants;
-
                                                     if (is_string($variants)) {
-                                                        $variants = json_decode($variants, true);
+                                                        $decodedVariants = json_decode($variants, true);
+                                                        if (json_last_error() === JSON_ERROR_NONE) {
+                                                            $variants = $decodedVariants;
+                                                        }
                                                     }
                                                 @endphp
-
                                                 @if(is_array($variants) && count($variants))
-
                                                     <div class="product-variants">
-
                                                         @foreach($variants as $key => $value)
-
-                                                            <span>
-                                                                <strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
-                                                                {{ is_array($value) ? implode(', ', $value) : $value }}
-                                                            </span>
-
+                                                            <span><strong>{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong>
+                                                                {{ is_array($value) ? implode(', ', $value) : $value }}</span>
                                                         @endforeach
-
                                                     </div>
-
                                                 @endif
-
                                             @endif
-
-                                            <div class="product-quantity">
-                                                ₹{{ number_format($item->price ?? 0, 2) }}
-                                                ×
-                                                {{ $item->quantity }}
-                                            </div>
-
+                                            <div class="product-quantity">₹{{ number_format($item->price ?? 0, 2) }} ×
+                                                {{ $item->quantity }}</div>
                                         </div>
-
                                         <div class="product-total">
-                                            ₹{{ number_format($item->total ?? 0, 2) }}
+                                            ₹{{ number_format($item->total ?? (($item->price ?? 0) * ($item->quantity ?? 0)), 2) }}
                                         </div>
-
                                     </div>
-
                                 @empty
-
-                                    <div class="text-center text-muted py-4">
-                                        No items found for this order.
-                                    </div>
-
+                                    <div class="text-center text-muted py-4">No items found for this order.</div>
                                 @endforelse
-
                             </div>
-
                         </div>
-
                         <div class="card">
-
                             <div class="header">
-                                <h2>
-                                    <i class="zmdi zmdi-pin"></i>
-                                    <strong>Shipping</strong> Address
-                                </h2>
+                                <h2><i class="zmdi zmdi-pin"></i> <strong>Shipping</strong> Address</h2>
                             </div>
-
                             <div class="body">
-
+                                @php
+                                    $shippingAddress = collect($order->user->address ?? [])->firstWhere('is_default', true) ?? collect($order->user->address ?? [])->first();
+                                @endphp
                                 <div class="shipping-address">
-
-                                    <div class="address-main">
-                                        {{ $order->shipping_address ?? 'Address not available' }}
-                                    </div>
-
+                                    <div class="address-main"><strong>Mobile:</strong>
+                                        {{ $shippingAddress['mobile'] ?? '-' }}</div>
+                                    <div class="address-main"><strong>Address:</strong>
+                                        {{ $order->shipping_address ?? 'Address not available' }}</div>
                                     <div class="address-location">
-
-                                        {{ collect([
-        $order->shipping_city,
-        $order->shipping_state,
-        $order->shipping_country,
-        $order->shipping_pincode
-    ])->filter()->implode(', ') }}
-
+                                        {{ collect([$order->shipping_city, $order->shipping_state, $order->shipping_country, $order->shipping_pincode])->filter()->implode(', ') }}
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                         @if($order->notes)
-
                             <div class="card">
-
                                 <div class="header">
-                                    <h2>
-                                        <strong>Order</strong> Notes
-                                    </h2>
+                                    <h2><strong>Order</strong> Notes</h2>
                                 </div>
-
                                 <div class="body">
-
-                                    <p class="mb-0 text-muted">
-                                        {{ $order->notes }}
-                                    </p>
-
+                                    <p class="mb-0 text-muted">{{ $order->notes }}</p>
                                 </div>
-
                             </div>
-
                         @endif
-
                     </div>
-
                     <div class="col-lg-4">
-
                         <div class="card">
-
                             <div class="header">
-                                <h2>
-                                    <strong>Order</strong> Summary
-                                </h2>
+                                <h2><strong>Order</strong> Summary</h2>
                             </div>
-
                             <div class="body">
-
                                 <div class="summary-row">
-                                    <span>Subtotal</span>
-                                    <strong>
-                                        ₹{{ number_format($order->subtotal ?? 0, 2) }}
-                                    </strong>
+                                    <span>Subtotal</span><strong>₹{{ number_format($order->subtotal ?? 0, 2) }}</strong>
                                 </div>
-
                                 @if(($order->discount ?? 0) > 0)
-
-                                    <div class="summary-row discount-row">
-                                        <span>Discount</span>
-                                        <strong>
-                                            - ₹{{ number_format($order->discount, 2) }}
-                                        </strong>
-                                    </div>
-
+                                    <div class="summary-row discount-row"><span>Discount</span><strong>-
+                                            ₹{{ number_format($order->discount, 2) }}</strong></div>
                                 @endif
-
-                                <div class="summary-row">
-                                    <span>Shipping</span>
-                                    <strong>
-                                        @if(($order->shipping ?? 0) > 0)
-                                            ₹{{ number_format($order->shipping, 2) }}
-                                        @else
-                                            Free
-                                        @endif
-                                    </strong>
-                                </div>
-
+                                <div class="summary-row"><span>Shipping</span><strong>@if(($order->shipping ?? 0) > 0)
+                                ₹{{ number_format($order->shipping, 2) }} @else Free @endif</strong></div>
                                 <div class="summary-total">
-                                    <span>Total</span>
-                                    <strong>
-                                        ₹{{ number_format($order->total ?? 0, 2) }}
-                                    </strong>
-                                </div>
-
+                                    <span>Total</span><strong>₹{{ number_format($order->total ?? 0, 2) }}</strong></div>
                             </div>
-
                         </div>
-
                         <div class="card">
-
                             <div class="header">
-                                <h2>
-                                    <strong>Payment</strong> Details
-                                </h2>
+                                <h2><strong>Payment</strong> Details</h2>
                             </div>
-
                             <div class="body">
-
                                 <div class="info-row">
-                                    <div class="info-label">
-                                        Payment Method
-                                    </div>
-
+                                    <div class="info-label">Payment Method</div>
                                     <div class="info-value text-uppercase">
-                                        {{ str_replace('_', ' ', $order->payment_method ?? 'N/A') }}
-                                    </div>
+                                        {{ str_replace('_', ' ', $order->payment_method ?? 'N/A') }}</div>
                                 </div>
-
                                 <div class="info-row">
-                                    <div class="info-label">
-                                        Payment Status
-                                    </div>
-
-                                    @php
-                                        $paymentStatus = strtolower($order->payment_status ?? 'pending');
-                                    @endphp
-
+                                    <div class="info-label">Payment Status</div>
+                                    @php $paymentStatus = strtolower($order->payment_status ?? 'pending'); @endphp
                                     <div
                                         class="info-value {{ $paymentStatus === 'paid' ? 'payment-paid' : 'payment-pending' }}">
-                                        {{ ucfirst($paymentStatus) }}
-                                    </div>
+                                        {{ ucfirst($paymentStatus) }}</div>
                                 </div>
-
                                 @if($order->razorpay_payment_id)
-
                                     <div class="info-row">
-                                        <div class="info-label">
-                                            Razorpay Payment ID
-                                        </div>
-
-                                        <div class="info-value">
-                                            {{ $order->razorpay_payment_id }}
-                                        </div>
+                                        <div class="info-label">Razorpay Payment ID</div>
+                                        <div class="info-value">{{ $order->razorpay_payment_id }}</div>
                                     </div>
-
                                 @endif
-
                             </div>
-
                         </div>
-
-                        @if($order->user)
-
+                        @if($returnRequest && $returnRequest->status === 'refunded')
                             <div class="card">
-
                                 <div class="header">
-                                    <h2>
-                                        <strong>Customer</strong> Details
-                                    </h2>
+                                    <h2><strong>Refund</strong> Details</h2>
                                 </div>
-
                                 <div class="body">
-
+                                    <div class="refund-box">
+                                        <div class="info-label">Refund Amount</div>
+                                        <div class="refund-amount">₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}
+                                        </div>
+                                        @if($returnRequest->refunded_at)
+                                            <div class="small text-muted mt-2">Refunded on:
+                                                {{ $returnRequest->refunded_at instanceof \Carbon\Carbon ? $returnRequest->refunded_at->format('d M Y, h:i A') : $returnRequest->refunded_at }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        @if($order->user)
+                            <div class="card">
+                                <div class="header">
+                                    <h2><strong>Customer</strong> Details</h2>
+                                </div>
+                                <div class="body">
                                     <div class="info-row">
                                         <div class="info-label">Name</div>
-                                        <div class="info-value">
-                                            {{ $order->user->name }}
-                                        </div>
+                                        <div class="info-value">{{ $order->user->name }}</div>
                                     </div>
-
                                     <div class="info-row">
                                         <div class="info-label">Email</div>
-                                        <div class="info-value">
-                                            {{ $order->user->email ?? '-' }}
-                                        </div>
+                                        <div class="info-value">{{ $order->user->email ?? '-' }}</div>
                                     </div>
-
                                     @if($order->user->mobile)
-
                                         <div class="info-row">
                                             <div class="info-label">Mobile</div>
-                                            <div class="info-value">
-                                                {{ $order->user->mobile }}
-                                            </div>
+                                            <div class="info-value">{{ $order->user->mobile }}</div>
                                         </div>
-
                                     @endif
-
                                 </div>
-
                             </div>
-
                         @endif
-
                     </div>
-
                 </div>
-
             </div>
         </div>
     </section>
+    @if($returnRequest && $returnRequest->id && $isSuperAdmin && $returnRequest->status === 'return_requested')
+        <div class="modal fade" id="rejectReturnModal" tabindex="-1" role="dialog" aria-labelledby="rejectReturnModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectReturnModalLabel">Reject Return Request</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('orders.returns.reject', $returnRequest->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Rejection Reason <span class="text-danger">*</span></label>
+                                <textarea name="admin_note" class="form-control" rows="4" required
+                                    placeholder="Enter reason for rejecting this return request..."></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger"><i class="zmdi zmdi-close"></i> Reject Return</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
 @endsection
-

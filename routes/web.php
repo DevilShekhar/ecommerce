@@ -12,6 +12,7 @@ use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
 use App\Http\Controllers\admin\OfferController;
 use App\Http\Controllers\admin\OrderController;
+use App\Http\Controllers\admin\OrderReturnController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
@@ -132,7 +133,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/customer/product-details/{id}', [DashboardController::class, 'getProductDetails'])->name('customer.product.details');
 
-    Route::post('/products/{product}/add-stock',[ProductController::class, 'addStock'])->name('products.add-stock');    
+    Route::post('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
 
     Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])
         ->name('cart.remove');
@@ -141,6 +142,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/checkout/addresses', [CheckoutController::class, 'getAddresses'])->name('checkout.addresses');
     Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])
         ->name('checkout.applyCoupon');
+    Route::post(
+        '/orders/{order}/update-status',
+        [OrderController::class, 'updateStatus']
+    )->name('orders.update-status');
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])
+        ->name('customer.orders.cancel');
+    Route::patch('/orders/{order}/return', [OrderController::class, 'requestReturn'])->name('customer.orders.return');
+
+    Route::get('/orders/returns/{return}', [OrderReturnController::class, 'show'])->name('orders.returns.show');
+
+    Route::post('/orders/returns/{return}/approve', [OrderReturnController::class, 'approve'])->name('orders.returns.approve');
+
+    Route::post('/orders/returns/{return}/reject', [OrderReturnController::class, 'reject'])->name('orders.returns.reject');
+
+    Route::post('/orders/returns/{return}/refund', [OrderReturnController::class, 'refund'])->name('orders.returns.refund');
 
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');

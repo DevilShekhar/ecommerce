@@ -53,7 +53,7 @@ class DashboardController extends Controller
         }
 
         // Wishlist
-        $wishlistProducts = Wishlist::where('user_id', $user->id)
+        $wishlistProducts = Wishlist::query()->where('user_id', $user->id)
             ->with('product')
             ->latest()
             ->get();
@@ -61,17 +61,17 @@ class DashboardController extends Controller
         $wishlistCount = $wishlistProducts->count();
 
         // Categories
-        $categories = ProductCategory::where('status', 1)
+        $categories = ProductCategory::query()->where('status', 1)
             ->latest()
             ->take(7)
             ->get();
 
         // Recommended Products
-        $recommendedProducts = Product::where('status', 1)
+        $recommendedProducts = Product::query()->where('status', 1)
             ->latest()
             ->take(8)
             ->get();
-        $banners = Banner::where('status', 1)
+        $banners = Banner::query()->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderByDesc('id')
             ->get();
