@@ -28,11 +28,11 @@ class OfferController extends Controller
      */
     public function create()
     {
-        $categories = OfferCategory::where('status', 1)
+        $categories = OfferCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
-        $productCategories = ProductCategory::where('status', 1)
+        $productCategories = ProductCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
@@ -44,13 +44,40 @@ class OfferController extends Controller
      */
     public function store(Request $request)
     {
+        // If "Other (Add New)" is selected
+        if ($request->offer_category_id === 'other') {
+
+            // Validate new category
+            $request->validate([
+                'new_offer_category' => [
+                    'required',
+                    'string',
+                    'max:255',
+                    'unique:offer_categories,name',
+                ],
+            ]);
+
+            // Create new Offer Category
+            $newCategory = OfferCategory::create([
+                'name' => $request->new_offer_category,
+                'status' => 1,
+            ]);
+
+            // Replace "other" with newly created category ID
+            $request->merge([
+                'offer_category_id' => $newCategory->id,
+            ]);
+        }
+
+        // Now validate the offer
         $validated = $this->validateOffer($request);
 
-        // Clean fields based on apply_to
+        // If offer applies to category, no specific product is needed
         if ($validated['apply_to'] === 'category') {
             $validated['product_id'] = null;
         }
 
+        // Create offer
         Offer::create($validated);
 
         return redirect()
@@ -63,18 +90,18 @@ class OfferController extends Controller
      */
     public function edit(Offer $offer)
     {
-        $categories = OfferCategory::where('status', 1)
+        $categories = OfferCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
-        $productCategories = ProductCategory::where('status', 1)
+        $productCategories = ProductCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
 
         // Pre-load products when editing a product-level offer
         $products = collect();
         if ($offer->apply_to === 'product' && $offer->product_category_id) {
-            $products = Product::where('category_id', $offer->product_category_id)
+            $products = Product::query()->where('category_id', $offer->product_category_id)
                 ->where('status', 1)
                 ->orderBy('name')
                 ->get();
@@ -126,32 +153,19 @@ class OfferController extends Controller
      */
     public function getProductsByCategory(Request $request)
     {
-        try {
-            $request->validate([
-                'product_category_id' => 'required|exists:product_categories,id',
-            ]);
+        $request->validate([
+            'product_category_id' => 'required|exists:product_categories,id',
+        ]);
 
-            $products = Product::where('category_id', $request->product_category_id)
-                ->where('status', 1)
-                ->orderBy('name')
-                ->get(['id', 'name']);
+        $products = Product::query()->where('category_id', $request->product_category_id)
+            ->where('status', 1)
+            ->orderBy('name')
+            ->select('id', 'name')
+            ->get();
 
-            // Log the data for debugging
-            \Log::info('Products fetched:', ['count' => $products->count(), 'products' => $products->toArray()]);
-
-            return response()->json($products);
-
-        } catch (\Exception $e) {
-            \Log::error('Error in getProductsByCategory:', [
-                'message' => $e->getMessage(),
-                'line' => $e->getLine(),
-                'file' => $e->getFile(),
-            ]);
-
-            return response()->json([
-                'error' => 'An error occurred: '.$e->getMessage(),
-            ], 500);
-        }
+        return response()->json([
+            'data' => $products,
+        ]);
     }
 
     /**
@@ -201,7 +215,7 @@ class OfferController extends Controller
 
         // Extra safety: product must belong to selected category
         if ($request->apply_to === 'product' && $request->filled('product_id')) {
-            $product = Product::find($request->product_id);
+            $product = Product::query()->find($request->product_id);
 
             if (! $product || $product->category_id != $request->product_category_id) {
                 return back()

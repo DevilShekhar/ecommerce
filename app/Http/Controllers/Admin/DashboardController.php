@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
@@ -86,13 +87,33 @@ class DashboardController extends Controller
             'delivered' => Order::where('order_status', 'delivered')->count(),
             'cancelled' => Order::where('order_status', 'cancelled')->count(),
         ];
+        // Inside the controller method
+        $now = now()->toDateString();
+
+        $activeOffers = Offer::query()->where('status', 1)
+            ->whereDate('start_date', '<=', $now)
+            ->whereDate('end_date', '>=', $now)
+            ->get();
+
+        $recommendedProducts->each(function ($product) use ($activeOffers) {
+            $offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'product' && $o->product_id == $product->id;
+            });
+            if (! $offer) {
+                $offer = $activeOffers->first(function ($o) use ($product) {
+                    return $o->apply_to === 'category' && $o->product_category_id == $product->category_id;
+                });
+            }
+
+            $product->active_offer = $offer;
+        });
 
         return view('customer.dashboard', compact(
             'user',
             'wishlistCount',
             'wishlistProducts',
             'categories',
-            'recommendedProducts', 'banners','orderStatusCounts'
+            'recommendedProducts', 'banners', 'orderStatusCounts'
         ));
     }
 
@@ -125,6 +146,26 @@ class DashboardController extends Controller
             ->latest()
             ->take(8)
             ->get();
+        // Inside the controller method
+        $now = now()->toDateString();
+
+        $activeOffers = Offer::query()->where('status', 1)
+            ->whereDate('start_date', '<=', $now)
+            ->whereDate('end_date', '>=', $now)
+            ->get();
+
+        $recommendedProducts->each(function ($product) use ($activeOffers) {
+            $offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'product' && $o->product_id == $product->id;
+            });
+            if (! $offer) {
+                $offer = $activeOffers->first(function ($o) use ($product) {
+                    return $o->apply_to === 'category' && $o->product_category_id == $product->category_id;
+                });
+            }
+
+            $product->active_offer = $offer;
+        });
 
         return view('customer.products', compact(
             'user',

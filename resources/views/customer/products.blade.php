@@ -92,8 +92,8 @@
 
 
         /* ==========================================
-                                                               WISHLIST PRODUCT GRID
-                                                            ========================================== */
+                                                                       WISHLIST PRODUCT GRID
+                                                                    ========================================== */
 
         .wishlist-products-row {
             margin-bottom: 28px;
@@ -383,8 +383,8 @@
         }
 
         /* ==========================================
-                                                               RECOMMENDED SECTION
-                                                            ========================================== */
+                                                                       RECOMMENDED SECTION
+                                                                    ========================================== */
 
         .recommended-section {
             background: #fff;
@@ -722,8 +722,8 @@
         }
 
         /* ==========================================
-                                       RIGHT SIDE SIDEBAR TOASTER
-                                    ========================================== */
+                                               RIGHT SIDE SIDEBAR TOASTER
+                                            ========================================== */
 
         .sidebar-toast-container {
             position: fixed;
@@ -890,8 +890,8 @@
         }
 
         /* ==========================================
-                   PRODUCT DETAILS MODAL
-                ========================================== */
+                           PRODUCT DETAILS MODAL
+                        ========================================== */
 
         .product-details-modal-content {
             border: 0;
@@ -1062,16 +1062,31 @@
                 padding: 28px 22px;
             }
         }
+
+        .offer-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 4px;
+            z-index: 6;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .offer-badge.fixed {
+            background: #f59e0b;
+        }
     </style>
 @endsection
 
 @section('content')
 
     <div class="wishlist-page">
-
-        <!-- ======================================
-                                                                 WISHLIST HEADER
-                                                            ======================================= -->
         <div class="wishlist-top">
 
             <div class="wishlist-title-area">
@@ -1097,18 +1112,13 @@
                     Clear Wishlist
                 </button>
 
-                <button type="button" class="wishlist-action-btn primary" onclick="addAllToCart()">
-                    <i class="bi bi-cart3"></i>
-                    Add All to Cart
-                </button>
-
             </div>
         </div>
 
 
         <!-- ======================================
-                                                                 WISHLIST PRODUCTS
-                                                            ======================================= -->
+                WISHLIST PRODUCTS
+        ======================================= -->
         @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
 
             <div class="row g-4 wishlist-products-row">
@@ -1118,24 +1128,66 @@
                     @php
                         $product = $wishlist->product;
 
-                        $images = $product && $product->image
-                            ? array_map('trim', explode(',', $product->image))
-                            : [];
+                        if ($product) {
 
-                        $firstImage = $images[0] ?? null;
+                            /*
+                             * PRODUCT IMAGE
+                             */
+                            $images = $product->image
+                                ? array_map('trim', explode(',', $product->image))
+                                : [];
 
-                        if ($firstImage) {
-                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                            $imgUrl = asset($firstImage);
-                        } else {
-                            $imgUrl = null;
+                            $firstImage = $images[0] ?? null;
+
+                            if ($firstImage) {
+                                $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                                $imgUrl = asset($firstImage);
+                            } else {
+                                $imgUrl = null;
+                            }
+
+
+                            /*
+                             * PRODUCT STATUS
+                             */
+                            $isFutured = isset($product->is_futured) && $product->is_futured == 1;
+                            $isNew = isset($product->is_futured) && $product->is_futured == 2;
+
+                            $isOutOfStock = $product->stock !== null && $product->stock <= 0;
+
+                            $isLowStock = $product->stock !== null
+                                && $product->stock > 0
+                                && $product->stock <= 5;
+
+
+                            /*
+                             * ACTIVE OFFER
+                             */
+                            $activeOffer = $product->active_offer ?? null;
+
+                            $originalPrice = $product->price ?? 0;
+                            $discountedPrice = $originalPrice;
+
+                            if ($activeOffer) {
+
+                                if ($activeOffer->discount_type === 'percentage') {
+
+                                    $discountedPrice = $originalPrice -
+                                        ($originalPrice * $activeOffer->discount_value / 100);
+
+                                } else {
+
+                                    $discountedPrice = max(
+                                        0,
+                                        $originalPrice - $activeOffer->discount_value
+                                    );
+
+                                }
+
+                            }
                         }
-
-                        $isFutured = isset($product->is_futured) && $product->is_futured == 1;
-                        $isNew = isset($product->is_futured) && $product->is_futured == 2;
-                        $isOutOfStock = $product->stock !== null && $product->stock <= 0;
-                        $isLowStock = $product->stock !== null && $product->stock > 0 && $product->stock <= 5;
                     @endphp
+
 
                     @if($product)
 
@@ -1144,74 +1196,179 @@
                             <div class="wishlist-product-card product-details-trigger" data-product-id="{{ $product->id }}"
                                 style="cursor: pointer;">
 
-                                <!-- Image -->
+
+                                <!-- =========================
+                                             PRODUCT IMAGE
+                                        ========================== -->
                                 <div class="wishlist-product-image">
 
                                     @if($imgUrl)
+
                                         <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
                                             onerror="this.src='{{ asset('images/placeholder.png') }}'">
+
                                     @else
+
                                         <div class="wishlist-no-image">
                                             <i class="bi bi-image"></i>
                                         </div>
+
                                     @endif
 
-                                    <!-- Badges -->
-                                    @if($isFutured)
+
+                                    <!-- =========================
+                                                 OFFER / PRODUCT BADGE
+                                            ========================== -->
+
+                                    @if($activeOffer)
+
+                                        <span class="product-badge offer-badge">
+
+                                            @if($activeOffer->discount_type === 'percentage')
+
+                                                {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}% OFF
+
+                                            @else
+
+                                                ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
+
+                                            @endif
+
+                                        </span>
+
+                                    @elseif($isFutured)
+
                                         <span class="product-badge futured-badge">
-                                            <i class="bi bi-star-fill"></i> Futured
+                                            <i class="bi bi-star-fill"></i>
+                                            Futured
                                         </span>
+
                                     @elseif($isNew)
+
                                         <span class="product-badge new-badge">
-                                            <i class="bi bi-fire"></i> New
+                                            <i class="bi bi-fire"></i>
+                                            New
                                         </span>
+
                                     @endif
+
+
+                                    <!-- =========================
+                                                 STOCK BADGE
+                                            ========================== -->
 
                                     @if($product->stock !== null)
+
                                         <span class="stock-badge {{ $isOutOfStock ? 'out-of-stock' : 'in-stock' }}">
                                             {{ $isOutOfStock ? 'Out of Stock' : 'In Stock' }}
                                         </span>
+
                                     @endif
+
+
+                                    <!-- =========================
+                                                 CATEGORY BADGE
+                                            ========================== -->
 
                                     @if($product->category)
-                                        <span class="category-badge">{{ $product->category->name }}</span>
+
+                                        <span class="category-badge">
+                                            {{ $product->category->name }}
+                                        </span>
+
                                     @endif
 
-                                    <button class="heart-display" data-product-id="{{ $product->id }}" onclick="toggleWishlist(this)">
+
+                                    <!-- =========================
+                                                 WISHLIST BUTTON
+                                            ========================== -->
+
+                                    <button class="heart-display" data-product-id="{{ $product->id }}"
+                                        onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
+
                                         <i class="bi bi-heart-fill"></i>
+
                                     </button>
 
                                 </div>
 
 
-                                <!-- Details -->
+
+                                <!-- =========================
+                                             PRODUCT DETAILS
+                                        ========================== -->
+
                                 <div class="wishlist-product-details">
 
+
+                                    <!-- Category -->
                                     <div class="product-category">
                                         {{ $product->category->name ?? 'Jewellery' }}
                                     </div>
 
+
+                                    <!-- Product Name -->
                                     <div class="wishlist-product-name">
                                         {{ $product->name }}
                                     </div>
 
+
+                                    <!-- Rating -->
                                     <div class="wishlist-rating">
+
                                         <div class="stars">
+
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star-fill"></i>
                                             <i class="bi bi-star-half"></i>
+
                                         </div>
 
-                                        <span class="review-count">(128)</span>
+                                        <span class="review-count">
+                                            (128)
+                                        </span>
+
                                     </div>
+
+
+                                    <!-- =========================
+                                                 PRICE
+                                            ========================== -->
 
                                     <div class="wishlist-price">
-                                        ₹{{ number_format($product->price, 0) }}
+
+                                        @if($activeOffer)
+
+                                            <span style="color:#ef4444; font-weight:700;">
+                                                ₹{{ number_format($discountedPrice, 0) }}
+                                            </span>
+
+                                            <span style="
+                                                            font-size:13px;
+                                                            color:#94a3b8;
+                                                            text-decoration:line-through;
+                                                            margin-left:6px;
+                                                        ">
+                                                ₹{{ number_format($originalPrice, 0) }}
+                                            </span>
+
+                                        @else
+
+                                            ₹{{ number_format($originalPrice, 0) }}
+
+                                        @endif
+
                                     </div>
 
+
+                                    <!-- =========================
+                                                 PRODUCT FEATURES
+                                            ========================== -->
+
                                     <ul class="wishlist-features">
+
                                         <li>
                                             <i class="bi bi-gem"></i>
                                             Premium Quality Product
@@ -1226,28 +1383,53 @@
                                             <i class="bi bi-arrow-counterclockwise"></i>
                                             Easy 7-Day Returns
                                         </li>
+
                                     </ul>
+
+
+                                    <!-- =========================
+                                                 ACTION BUTTONS
+                                            ========================== -->
 
                                     <div class="wishlist-product-buttons">
 
                                         @if($isFutured)
+
                                             <button type="button" class="btn btn-wishlist-cart btn-futured w-100"
-                                                onclick="notifyMe({{ $product->id }})">
-                                                <i class="bi bi-bell"></i> Notify Me
+                                                onclick="event.preventDefault(); event.stopPropagation(); notifyMe({{ $product->id }})">
+
+                                                <i class="bi bi-bell"></i>
+                                                Notify Me
+
                                             </button>
+
+
                                         @elseif($isOutOfStock)
+
                                             <button type="button" class="btn btn-wishlist-cart w-100" disabled>
-                                                <i class="bi bi-x-circle"></i> Out of Stock
+
+                                                <i class="bi bi-x-circle"></i>
+                                                Out of Stock
+
                                             </button>
+
+
                                         @else
-                                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1">
+
+                                            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1"
+                                                onclick="event.stopPropagation();">
+
                                                 @csrf
 
                                                 <button type="submit" class="btn btn-wishlist-cart w-100">
+
                                                     <i class="bi bi-cart3"></i>
                                                     Add to Cart
+
                                                 </button>
+
                                             </form>
+
                                         @endif
 
                                     </div>
@@ -1259,170 +1441,265 @@
                         </div>
 
                     @endif
+
                 @endforeach
 
             </div>
+
+
         @else
 
-            <!-- Empty State -->
+            <!-- =========================
+                 EMPTY WISHLIST
+            ========================== -->
+
             <div class="empty-products">
+
                 <i class="bi bi-heart"></i>
-                <h4>Your wishlist is empty</h4>
-                <p>Start adding your favorite products to your wishlist!</p>
+
+                <h4>
+                    Your wishlist is empty
+                </h4>
+
+                <p>
+                    Start adding your favorite products to your wishlist!
+                </p>
+
                 <a href="{{ route('customer.products') }}" class="btn btn-primary mt-3">
-                    <i class="bi bi-shop"></i> Start Shopping
+
+                    <i class="bi bi-shop"></i>
+                    Start Shopping
+
                 </a>
+
             </div>
 
         @endif
 
-            <div class="recommended-header">
-                <div class="recommended-title">
+        <div class="recommended-header">
+            <div class="recommended-title">
 
-                    <div class="recommend-icon">
-                        <i class="bi bi-stars"></i>
-                    </div>
+                <div class="recommend-icon">
+                    <i class="bi bi-stars"></i>
+                </div>
 
-                    <div>
-                        <h4>Recommended for You</h4>
-                        <p>Handpicked products just for you</p>
-                    </div>
-
+                <div>
+                    <h4>Recommended for You</h4>
+                    <p>Handpicked products just for you</p>
                 </div>
 
             </div>
 
+        </div>
 
-            <div class="row g-4">
 
-                @forelse($recommendedProducts ?? [] as $product)
+        <div class="row g-4">
 
-                    @php
-                        $images = $product->image
-                            ? array_map('trim', explode(',', $product->image))
-                            : [];
+            @forelse($recommendedProducts ?? [] as $product)
 
-                        $firstImage = $images[0] ?? null;
+                @php
+                    $images = $product->image
+                        ? array_map('trim', explode(',', $product->image))
+                        : [];
 
-                        if ($firstImage) {
-                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                            $imgUrl = asset($firstImage);
+                    $firstImage = $images[0] ?? null;
+
+                    if ($firstImage) {
+                        $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                        $imgUrl = asset($firstImage);
+                    } else {
+                        $imgUrl = null;
+                    }
+
+                    /*
+                     * ACTIVE OFFER
+                     */
+                    $activeOffer = $product->active_offer ?? null;
+
+                    $originalPrice = $product->price ?? 0;
+                    $discountedPrice = $originalPrice;
+
+                    if ($activeOffer) {
+                        if ($activeOffer->discount_type === 'percentage') {
+                            $discountedPrice = $originalPrice -
+                                ($originalPrice * $activeOffer->discount_value / 100);
                         } else {
-                            $imgUrl = null;
+                            $discountedPrice = max(
+                                0,
+                                $originalPrice - $activeOffer->discount_value
+                            );
                         }
+                    }
 
-                        $discount = $product->discount ?? 0;
-                        $originalPrice = $product->price ?? 0;
-                        $discountedPrice = $originalPrice - ($originalPrice * $discount / 100);
+                    $isFutured = isset($product->is_futured) && $product->is_futured == 1;
+                    $isNew = isset($product->is_futured) && $product->is_futured == 2;
 
-                        $isFutured = isset($product->is_futured) && $product->is_futured == 1;
-                        $isNew = isset($product->is_futured) && $product->is_futured == 2;
-                        $isOutOfStock = $product->stock !== null && $product->stock <= 0;
-                    @endphp
+                    $isOutOfStock = $product->stock !== null && $product->stock <= 0;
+                @endphp
 
 
-                    <div class="col-xl col-lg-3 col-md-4 col-sm-6">
+                <div class="col-xl col-lg-3 col-md-4 col-sm-6">
 
-                        <div class="rec-product-card product-details-trigger" data-product-id="{{ $product->id }}"
-                            style="cursor: pointer;">
+                    <div class="rec-product-card product-details-trigger" data-product-id="{{ $product->id }}"
+                        style="cursor: pointer;">
 
-                            <div class="rec-product-img">
+                        <div class="rec-product-img">
 
-                                @if($imgUrl)
-                                    <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
-                                        onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                            @if($imgUrl)
+                                <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
+                                    onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                            @else
+                                <div class="wishlist-no-image">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                            @endif
+
+
+                            {{-- OFFER BADGE --}}
+                            @if($activeOffer)
+
+                                <span class="rec-product-badge offer-badge">
+                                    @if($activeOffer->discount_type === 'percentage')
+                                        {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}% OFF
+                                    @else
+                                        ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
+                                    @endif
+                                </span>
+
+                            @elseif($isFutured)
+
+                                <span class="rec-product-badge futured-badge">
+                                    <i class="bi bi-star-fill"></i> Futured
+                                </span>
+
+                            @elseif($isNew)
+
+                                <span class="rec-product-badge new-badge">
+                                    <i class="bi bi-fire"></i> New
+                                </span>
+
+                            @endif
+
+
+                            {{-- STOCK BADGE --}}
+                            @if($product->stock !== null)
+                                <span class="rec-stock-badge {{ $isOutOfStock ? 'out-of-stock' : 'in-stock' }}">
+                                    {{ $isOutOfStock ? 'Out of Stock' : 'In Stock' }}
+                                </span>
+                            @endif
+
+
+                            {{-- WISHLIST --}}
+                            <button class="rec-heart wishlist-btn" data-product-id="{{ $product->id }}"
+                                onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
+                                <i class="bi bi-heart"></i>
+                            </button>
+
+                        </div>
+
+
+                        <div class="rec-product-info">
+
+                            {{-- CATEGORY --}}
+                            <div class="rec-category">
+                                {{ $product->category->name ?? 'Product' }}
+                            </div>
+
+
+                            {{-- PRODUCT NAME --}}
+                            <h6 title="{{ $product->name }}">
+                                {{ Str::limit($product->name, 25) }}
+                            </h6>
+
+
+                            {{-- PRICE --}}
+                            <div class="rec-price">
+
+                                @if($activeOffer)
+
+                                    <span style="color:#ef4444; font-weight:700;">
+                                        ₹{{ number_format($discountedPrice, 0) }}
+                                    </span>
+
+                                    <span style="
+                                                        font-size:12px;
+                                                        color:#94a3b8;
+                                                        text-decoration:line-through;
+                                                        margin-left:6px;
+                                                    ">
+                                        ₹{{ number_format($originalPrice, 0) }}
+                                    </span>
+
                                 @else
-                                    <div class="wishlist-no-image">
-                                        <i class="bi bi-image"></i>
-                                    </div>
+
+                                    ₹{{ number_format($originalPrice, 0) }}
+
                                 @endif
 
-                                <!-- Badges -->
-                                @if($isFutured)
-                                    <span class="rec-product-badge futured-badge">
-                                        <i class="bi bi-star-fill"></i> Futured
-                                    </span>
-                                @elseif($isNew)
-                                    <span class="rec-product-badge new-badge">
-                                        <i class="bi bi-fire"></i> New
-                                    </span>
-                                @endif
+                            </div>
 
-                                @if($product->stock !== null)
-                                    <span class="rec-stock-badge {{ $isOutOfStock ? 'out-of-stock' : 'in-stock' }}">
-                                        {{ $isOutOfStock ? 'Out of Stock' : 'In Stock' }}
-                                    </span>
-                                @endif
 
-                                <button class="rec-heart wishlist-btn" data-product-id="{{ $product->id }}"
-                                    onclick="toggleWishlist(this)">
-                                    <i class="bi bi-heart"></i>
+                            {{-- RATING --}}
+                            <div class="rec-rating">
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-fill"></i>
+                                <i class="bi bi-star-half"></i>
+
+                                <span>(96)</span>
+                            </div>
+
+
+                            {{-- ADD TO CART --}}
+                            @if($isFutured)
+
+                                <button type="button" class="rec-add-cart btn-futured notify-me-btn"
+                                    data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
+                                    <i class="bi bi-bell"></i>
+                                    Notify Me
                                 </button>
 
-                            </div>
+                            @elseif($isOutOfStock)
 
+                                <button type="button" class="rec-add-cart" disabled>
+                                    <i class="bi bi-x-circle"></i>
+                                    Out of Stock
+                                </button>
 
-                            <div class="rec-product-info">
+                            @else
 
-                                <div class="rec-category">
-                                    {{ $product->category->name ?? 'Product' }}
-                                </div>
+                                <form class="add-to-cart-form" action="{{ route('cart.add', $product->id) }}" method="POST"
+                                    onclick="event.stopPropagation();">
 
-                                <h6 title="{{ $product->name }}">
-                                    {{ Str::limit($product->name, 25) }}
-                                </h6>
+                                    @csrf
 
-                                <div class="rec-price">
-                                    ₹{{ number_format($discountedPrice, 0) }}
-                                </div>
-
-                                <div class="rec-rating">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i>
-
-                                    <span>(96)</span>
-                                </div>
-
-                                @if($isFutured)
-                                    <button type="button" class="rec-add-cart btn-futured notify-me-btn"
-                                        data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                                        <i class="bi bi-bell"></i> Notify Me
+                                    <button type="submit" class="rec-add-cart">
+                                        <i class="bi bi-cart3 me-1"></i>
+                                        Add to Cart
                                     </button>
-                                @elseif($isOutOfStock)
-                                    <button type="button" class="rec-add-cart" disabled>
-                                        <i class="bi bi-x-circle"></i> Out of Stock
-                                    </button>
-                                @else
-                                    <form class="add-to-cart-form" action="{{ route('cart.add', $product->id) }}" method="POST">
-                                        @csrf
 
-                                        <button type="submit" class="rec-add-cart">
-                                            <i class="bi bi-cart3 me-1"></i>
-                                            Add to Cart
-                                        </button>
-                                    </form>
-                                @endif
+                                </form>
 
-                            </div>
+                            @endif
 
                         </div>
 
                     </div>
 
-                @empty
+                </div>
 
-                    <div class="col-12 text-center py-4 text-muted">
-                        No recommended products available.
-                    </div>
+            @empty
 
-                @endforelse
+                <div class="col-12 text-center py-4 text-muted">
+                    No recommended products available.
+                </div>
 
-            </div>
+            @endforelse
 
         </div>
+
+    </div>
 
     </div>
     <!-- PRODUCT DETAILS MODAL -->
@@ -1752,27 +2029,27 @@
                 toast.className = `sidebar-toast ${type}`;
 
                 toast.innerHTML = `
-                                        <div class="sidebar-toast-content">
+                                                <div class="sidebar-toast-content">
 
-                                            <div class="sidebar-toast-icon">
-                                                <i class="bi ${icons[type] || icons.info}"></i>
-                                            </div>
+                                                    <div class="sidebar-toast-icon">
+                                                        <i class="bi ${icons[type] || icons.info}"></i>
+                                                    </div>
 
-                                            <div class="sidebar-toast-body">
-                                                <div class="sidebar-toast-title">${title}</div>
-                                                <div class="sidebar-toast-message">${message}</div>
-                                            </div>
+                                                    <div class="sidebar-toast-body">
+                                                        <div class="sidebar-toast-title">${title}</div>
+                                                        <div class="sidebar-toast-message">${message}</div>
+                                                    </div>
 
-                                            <button type="button"
-                                                    class="sidebar-toast-close"
-                                                    aria-label="Close">
-                                                <i class="bi bi-x-lg"></i>
-                                            </button>
+                                                    <button type="button"
+                                                            class="sidebar-toast-close"
+                                                            aria-label="Close">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
 
-                                        </div>
+                                                </div>
 
-                                        <div class="sidebar-toast-progress"></div>
-                                    `;
+                                                <div class="sidebar-toast-progress"></div>
+                                            `;
 
                 container.appendChild(toast);
 
@@ -2027,13 +2304,13 @@
                         if (product.is_futured) {
 
                             actionContainer.innerHTML = `
-                                <button type="button"
-                                        class="product-modal-notify notify-me-btn"
-                                        data-product-id="${product.id}">
-                                    <i class="bi bi-bell me-2"></i>
-                                    Notify Me
-                                </button>
-                            `;
+                                        <button type="button"
+                                                class="product-modal-notify notify-me-btn"
+                                                data-product-id="${product.id}">
+                                            <i class="bi bi-bell me-2"></i>
+                                            Notify Me
+                                        </button>
+                                    `;
 
                         }
 
@@ -2041,13 +2318,13 @@
                         else if (product.is_out_of_stock) {
 
                             actionContainer.innerHTML = `
-                                <button type="button"
-                                        class="product-modal-add-cart"
-                                        disabled>
-                                    <i class="bi bi-x-circle me-2"></i>
-                                    Out of Stock
-                                </button>
-                            `;
+                                        <button type="button"
+                                                class="product-modal-add-cart"
+                                                disabled>
+                                            <i class="bi bi-x-circle me-2"></i>
+                                            Out of Stock
+                                        </button>
+                                    `;
 
                         }
 
@@ -2055,15 +2332,15 @@
                         else {
 
                             actionContainer.innerHTML = `
-                                 <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1">
-                                                        @csrf
+                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1">
+                                                                @csrf
 
-                                                        <button type="submit" class="btn btn-wishlist-cart w-100">
-                                                            <i class="bi bi-cart3"></i>
-                                                            Add to Cart
-                                                        </button>
-                                                    </form>
-                            `;
+                                                                <button type="submit" class="btn btn-wishlist-cart w-100">
+                                                                    <i class="bi bi-cart3"></i>
+                                                                    Add to Cart
+                                                                </button>
+                                                            </form>
+                                    `;
                         }
 
                         document.getElementById('productModalLoader').style.display = 'none';

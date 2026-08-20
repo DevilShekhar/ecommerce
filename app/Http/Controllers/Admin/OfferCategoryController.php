@@ -10,7 +10,7 @@ class OfferCategoryController extends Controller
 {
     public function index()
     {
-        $categories = OfferCategory::latest()->get();
+        $categories = OfferCategory::query()->latest()->get();
         return view('admin.offer-cat.index', compact('categories'));
     }
 

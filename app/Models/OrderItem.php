@@ -30,7 +30,7 @@ class OrderItem extends Model
         'total' => 'decimal:2',
         'variants' => 'array',
         'specification' => 'array',
-         'image' => 'array',
+        'image' => 'array',
     ];
 
     public function order()
@@ -56,5 +56,10 @@ class OrderItem extends Model
     public function brand()
     {
         return $this->belongsTo(Brand::class, 'brand_id');
+    }
+
+    public function rating()
+    {
+        return $this->hasOne(ProductRating::class, 'order_item_id');
     }
 }

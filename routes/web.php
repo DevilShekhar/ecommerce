@@ -85,10 +85,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/logos/update', [LogoController::class, 'update'])->name('logos.update');
     Route::get('contact-submissions', [ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
     Route::get('contact-submissions/{submission}', [ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
+    Route::get('offer/products-by-category', [OfferController::class, 'getProductsByCategory'])
+        ->name('admin.offer.products-by-category');
     Route::resource('offer', OfferController::class)
         ->except(['show'])
         ->names('admin.offer');
-    Route::get('offer/products-by-category', [OfferController::class, 'getProductsByCategory'])->name('admin.offer.products-by-category');
 });
 
 // Wishlist Routes (Old)
@@ -158,6 +159,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/orders/returns/{return}/refund', [OrderReturnController::class, 'refund'])->name('orders.returns.refund');
 
+    Route::post('/orders/rating', [OrderController::class, 'submitRating'])->name('customer.orders.rating');
+
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');
     Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.details');
@@ -197,6 +200,8 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('auth');
     Route::get('/my-orders', [OrderController::class, 'index'])
         ->name('customer.orders.index');
+    Route::get('/customer/returns-refunds', [CustomerAccountController::class, 'returns'])
+        ->name('customer.returns.index');
 
     Route::get('/my-orders/{order}', [OrderController::class, 'show'])
         ->name('customer.orders.show');

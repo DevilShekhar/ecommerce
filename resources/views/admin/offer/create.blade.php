@@ -49,23 +49,34 @@
                             <form action="{{ route('admin.offer.store') }}" method="POST">
                                 @csrf
 
-                                {{-- Offer Category --}}
                                 <div class="form-group">
                                     <label>Offer Category <span class="text-danger">*</span></label>
-                                    <select name="offer_category_id" class="form-control" required>
+                                    <select name="offer_category_id" id="offer_category_id" class="form-control" required>
                                         <option value="">Select Category</option>
                                         @foreach($categories as $cat)
                                             <option value="{{ $cat->id }}" {{ old('offer_category_id') == $cat->id ? 'selected' : '' }}>
                                                 {{ $cat->name }}
                                             </option>
                                         @endforeach
+                                        <option value="other" {{ old('offer_category_id') == 'other' ? 'selected' : '' }}>
+                                            Other (Add New)
+                                        </option>
                                     </select>
                                     @error('offer_category_id')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
                                 </div>
 
-                                {{-- Title --}}
+                                <div class="form-group" id="new_category_wrapper" style="display: none;">
+                                    <label>New Offer Category Name <span class="text-danger">*</span></label>
+                                    <input type="text" name="new_offer_category" id="new_offer_category"
+                                           class="form-control" value="{{ old('new_offer_category') }}"
+                                           placeholder="Enter new category name">
+                                    @error('new_offer_category')
+                                        <small class="text-danger">{{ $message }}</small>
+                                    @enderror
+                                </div>
+
                                 <div class="form-group">
                                     <label>Title <span class="text-danger">*</span></label>
                                     <input type="text" name="title" class="form-control"
@@ -75,7 +86,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- Description --}}
                                 <div class="form-group">
                                     <label>Description</label>
                                     <textarea name="description" class="summernote">{{ old('description') }}</textarea>
@@ -84,7 +94,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- Apply Offer To --}}
                                 <div class="form-group">
                                     <label>Apply Offer To <span class="text-danger">*</span></label>
                                     <select name="apply_to" id="apply_to" class="form-control" required>
@@ -101,7 +110,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- Product Category (shown for both) --}}
                                 <div class="form-group" id="product_category_wrapper" style="display:none;">
                                     <label>Product Category <span class="text-danger">*</span></label>
                                     <select name="product_category_id" id="product_category_id" class="form-control">
@@ -117,7 +125,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- Product (only when apply_to = product) --}}
                                 <div class="form-group" id="product_wrapper" style="display:none;">
                                     <label>Product <span class="text-danger">*</span></label>
                                     <select name="product_id" id="product_id" class="form-control">
@@ -128,7 +135,6 @@
                                     @enderror
                                 </div>
 
-                                {{-- Discount Type + Value --}}
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -165,7 +171,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Dates --}}
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -189,7 +194,6 @@
                                     </div>
                                 </div>
 
-                                {{-- Status --}}
                                 <div class="form-group">
                                     <label>Status</label>
                                     <select name="status" class="form-control">
@@ -223,7 +227,6 @@
 <script>
 $(document).ready(function () {
 
-    // ===================== SUMMERNOTE =====================
     $('.summernote').summernote({
         height: 250,
         placeholder: 'Write offer description...',
@@ -239,7 +242,6 @@ $(document).ready(function () {
         ]
     });
 
-    // ===================== DISCOUNT SYMBOL =====================
     function updateDiscountSymbol() {
         let type = $('#discount_type').val();
         $('#discountSymbol').text(type === 'fixed' ? '₹' : '%');
@@ -247,7 +249,6 @@ $(document).ready(function () {
     $('#discount_type').on('change', updateDiscountSymbol);
     updateDiscountSymbol();
 
-    // ===================== SHOW / HIDE FIELDS =====================
     function toggleApplyFields() {
         let applyTo = $('#apply_to').val();
 
@@ -272,20 +273,26 @@ $(document).ready(function () {
     $('#apply_to').on('change', function () {
         toggleApplyFields();
         $('#product_id').html('<option value="">Select Product</option>');
+        if (typeof $.fn.selectpicker !== 'undefined') {
+            $('#product_id').selectpicker('refresh');
+        }
     });
 
-    // ===================== LOAD PRODUCTS (FIXED) =====================
     function loadProducts(categoryId, selectedId = null) {
-        console.log('Loading products for category:', categoryId);
-
         let $select = $('#product_id');
 
         if (!categoryId) {
             $select.html('<option value="">Select Product</option>');
+            if (typeof $.fn.selectpicker !== 'undefined') {
+                $select.selectpicker('refresh');
+            }
             return;
         }
 
         $select.html('<option value="">Loading...</option>');
+        if (typeof $.fn.selectpicker !== 'undefined') {
+            $select.selectpicker('refresh');
+        }
 
         $.ajax({
             url: "{{ route('admin.offer.products-by-category') }}",
@@ -295,11 +302,7 @@ $(document).ready(function () {
                 product_category_id: categoryId
             },
             success: function (response) {
-                console.log('AJAX Success Response:', response);
-
-                // Make sure we have an array
                 let products = Array.isArray(response) ? response : (response.data || []);
-
                 let html = '<option value="">Select Product</option>';
 
                 if (products.length === 0) {
@@ -313,35 +316,44 @@ $(document).ready(function () {
                 }
 
                 $select.html(html);
-                console.log('Dropdown updated successfully');
+
+                if (typeof $.fn.selectpicker !== 'undefined') {
+                    $select.selectpicker('refresh');
+                } else if (typeof $.fn.select2 !== 'undefined') {
+                    $select.trigger('change');
+                } else {
+                    $select.trigger('change');
+                }
             },
             error: function (xhr, status, error) {
-                console.error('AJAX Error:', status, error);
-                console.error('Response:', xhr.responseText);
                 $select.html('<option value="">Error loading products</option>');
+                if (typeof $.fn.selectpicker !== 'undefined') {
+                    $select.selectpicker('refresh');
+                }
             }
         });
     }
 
-    // When category changes
     $(document).on('change', '#product_category_id', function () {
         let catId = $(this).val();
         loadProducts(catId);
     });
 
-    // ===================== INITIAL STATE =====================
-    toggleApplyFields();
-
-    // For EDIT page – load products on page load
-    let existingCategory = $('#product_category_id').val();
-    let existingProduct  = $('#product_id').val() || "{{ old('product_id', $offer->product_id ?? '') }}";
-
-    if (existingCategory) {
-        console.log('Page load – loading existing products');
-        loadProducts(existingCategory, existingProduct);
+    function toggleNewCategory() {
+        if ($('#offer_category_id').val() === 'other') {
+            $('#new_category_wrapper').show();
+            $('#new_offer_category').prop('required', true);
+        } else {
+            $('#new_category_wrapper').hide();
+            $('#new_offer_category').prop('required', false).val('');
+        }
     }
 
-    // For CREATE page – if old input exists after validation error
+    $('#offer_category_id').on('change', toggleNewCategory);
+
+    toggleApplyFields();
+    toggleNewCategory();
+
     @if(old('product_category_id'))
         loadProducts("{{ old('product_category_id') }}", "{{ old('product_id') }}");
     @endif
