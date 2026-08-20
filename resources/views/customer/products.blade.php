@@ -92,8 +92,8 @@
 
 
         /* ==========================================
-                                                                       WISHLIST PRODUCT GRID
-                                                                    ========================================== */
+                                                                           WISHLIST PRODUCT GRID
+                                                                        ========================================== */
 
         .wishlist-products-row {
             margin-bottom: 28px;
@@ -383,8 +383,8 @@
         }
 
         /* ==========================================
-                                                                       RECOMMENDED SECTION
-                                                                    ========================================== */
+                                                                           RECOMMENDED SECTION
+                                                                        ========================================== */
 
         .recommended-section {
             background: #fff;
@@ -722,8 +722,8 @@
         }
 
         /* ==========================================
-                                               RIGHT SIDE SIDEBAR TOASTER
-                                            ========================================== */
+                                                   RIGHT SIDE SIDEBAR TOASTER
+                                                ========================================== */
 
         .sidebar-toast-container {
             position: fixed;
@@ -890,8 +890,8 @@
         }
 
         /* ==========================================
-                           PRODUCT DETAILS MODAL
-                        ========================================== */
+                               PRODUCT DETAILS MODAL
+                            ========================================== */
 
         .product-details-modal-content {
             border: 0;
@@ -1117,8 +1117,8 @@
 
 
         <!-- ======================================
-                WISHLIST PRODUCTS
-        ======================================= -->
+                    WISHLIST PRODUCTS
+            ======================================= -->
         @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
 
             <div class="row g-4 wishlist-products-row">
@@ -1198,8 +1198,8 @@
 
 
                                 <!-- =========================
-                                             PRODUCT IMAGE
-                                        ========================== -->
+                                                             PRODUCT IMAGE
+                                                        ========================== -->
                                 <div class="wishlist-product-image">
 
                                     @if($imgUrl)
@@ -1217,8 +1217,8 @@
 
 
                                     <!-- =========================
-                                                 OFFER / PRODUCT BADGE
-                                            ========================== -->
+                                                                 OFFER / PRODUCT BADGE
+                                                            ========================== -->
 
                                     @if($activeOffer)
 
@@ -1254,8 +1254,8 @@
 
 
                                     <!-- =========================
-                                                 STOCK BADGE
-                                            ========================== -->
+                                                                 STOCK BADGE
+                                                            ========================== -->
 
                                     @if($product->stock !== null)
 
@@ -1267,8 +1267,8 @@
 
 
                                     <!-- =========================
-                                                 CATEGORY BADGE
-                                            ========================== -->
+                                                                 CATEGORY BADGE
+                                                            ========================== -->
 
                                     @if($product->category)
 
@@ -1280,8 +1280,8 @@
 
 
                                     <!-- =========================
-                                                 WISHLIST BUTTON
-                                            ========================== -->
+                                                                 WISHLIST BUTTON
+                                                            ========================== -->
 
                                     <button class="heart-display" data-product-id="{{ $product->id }}"
                                         onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
@@ -1295,8 +1295,8 @@
 
 
                                 <!-- =========================
-                                             PRODUCT DETAILS
-                                        ========================== -->
+                                                             PRODUCT DETAILS
+                                                        ========================== -->
 
                                 <div class="wishlist-product-details">
 
@@ -1334,8 +1334,8 @@
 
 
                                     <!-- =========================
-                                                 PRICE
-                                            ========================== -->
+                                                                 PRICE
+                                                            ========================== -->
 
                                     <div class="wishlist-price">
 
@@ -1346,11 +1346,11 @@
                                             </span>
 
                                             <span style="
-                                                            font-size:13px;
-                                                            color:#94a3b8;
-                                                            text-decoration:line-through;
-                                                            margin-left:6px;
-                                                        ">
+                                                                                font-size:13px;
+                                                                                color:#94a3b8;
+                                                                                text-decoration:line-through;
+                                                                                margin-left:6px;
+                                                                            ">
                                                 ₹{{ number_format($originalPrice, 0) }}
                                             </span>
 
@@ -1364,8 +1364,8 @@
 
 
                                     <!-- =========================
-                                                 PRODUCT FEATURES
-                                            ========================== -->
+                                                                 PRODUCT FEATURES
+                                                            ========================== -->
 
                                     <ul class="wishlist-features">
 
@@ -1388,8 +1388,8 @@
 
 
                                     <!-- =========================
-                                                 ACTION BUTTONS
-                                            ========================== -->
+                                                                 ACTION BUTTONS
+                                                            ========================== -->
 
                                     <div class="wishlist-product-buttons">
 
@@ -1450,8 +1450,8 @@
         @else
 
             <!-- =========================
-                 EMPTY WISHLIST
-            ========================== -->
+                         EMPTY WISHLIST
+                    ========================== -->
 
             <div class="empty-products">
 
@@ -1622,11 +1622,11 @@
                                     </span>
 
                                     <span style="
-                                                        font-size:12px;
-                                                        color:#94a3b8;
-                                                        text-decoration:line-through;
-                                                        margin-left:6px;
-                                                    ">
+                                                                    font-size:12px;
+                                                                    color:#94a3b8;
+                                                                    text-decoration:line-through;
+                                                                    margin-left:6px;
+                                                                ">
                                         ₹{{ number_format($originalPrice, 0) }}
                                     </span>
 
@@ -2029,27 +2029,27 @@
                 toast.className = `sidebar-toast ${type}`;
 
                 toast.innerHTML = `
-                                                <div class="sidebar-toast-content">
+                                                    <div class="sidebar-toast-content">
 
-                                                    <div class="sidebar-toast-icon">
-                                                        <i class="bi ${icons[type] || icons.info}"></i>
+                                                        <div class="sidebar-toast-icon">
+                                                            <i class="bi ${icons[type] || icons.info}"></i>
+                                                        </div>
+
+                                                        <div class="sidebar-toast-body">
+                                                            <div class="sidebar-toast-title">${title}</div>
+                                                            <div class="sidebar-toast-message">${message}</div>
+                                                        </div>
+
+                                                        <button type="button"
+                                                                class="sidebar-toast-close"
+                                                                aria-label="Close">
+                                                            <i class="bi bi-x-lg"></i>
+                                                        </button>
+
                                                     </div>
 
-                                                    <div class="sidebar-toast-body">
-                                                        <div class="sidebar-toast-title">${title}</div>
-                                                        <div class="sidebar-toast-message">${message}</div>
-                                                    </div>
-
-                                                    <button type="button"
-                                                            class="sidebar-toast-close"
-                                                            aria-label="Close">
-                                                        <i class="bi bi-x-lg"></i>
-                                                    </button>
-
-                                                </div>
-
-                                                <div class="sidebar-toast-progress"></div>
-                                            `;
+                                                    <div class="sidebar-toast-progress"></div>
+                                                `;
 
                 container.appendChild(toast);
 
@@ -2216,6 +2216,10 @@
 
             const detailsUrl = "{{ url('/customer/product-details') }}";
 
+            // Define these outside so they're available in the closure
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const addToCartBaseUrl = "{{ url('/cart/add') }}";
+
             document.addEventListener('click', function (e) {
 
                 const card = e.target.closest('.product-details-trigger');
@@ -2235,25 +2239,26 @@
 
                 if (!productId) return;
 
-                document.getElementById('productModalLoader').style.display = 'flex';
-                document.getElementById('productModalContent').style.display = 'none';
+                const loader = document.getElementById('productModalLoader');
+                const content = document.getElementById('productModalContent');
+
+                if (loader) loader.style.display = 'flex';
+                if (content) content.style.display = 'none';
 
                 productModal.show();
 
                 fetch(detailsUrl + '/' + productId, {
                     method: 'GET',
                     headers: {
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     }
                 })
                     .then(async response => {
-
                         const data = await response.json();
-
                         if (!response.ok) {
                             throw new Error(data.message || 'Failed to load product details');
                         }
-
                         return data;
                     })
                     .then(data => {
@@ -2264,87 +2269,88 @@
 
                         const product = data.product;
 
-                        document.getElementById('modalProductImage').src = product.image;
-                        document.getElementById('modalProductImage').alt = product.name;
-
-                        document.getElementById('modalProductCategory').textContent =
-                            product.category;
-
-                        document.getElementById('modalProductCategoryInfo').textContent =
-                            product.category;
-
-                        document.getElementById('modalProductName').textContent =
-                            product.name;
-
-                        document.getElementById('modalProductPrice').textContent =
-                            product.formatted_price;
-
-                        document.getElementById('modalProductDescription').innerHTML =
-                            product.description;
-
-                        const stockElement =
-                            document.getElementById('modalProductStock');
-
-                        if (product.is_out_of_stock) {
-                            stockElement.textContent = 'Out of Stock';
-                            stockElement.style.color = '#dc2626';
-                        } else {
-                            stockElement.textContent =
-                                product.stock !== null
-                                    ? 'In Stock'
-                                    : 'In Stock';
-
-                            stockElement.style.color = '#16a34a';
+                        // Set image
+                        const img = document.getElementById('modalProductImage');
+                        if (img) {
+                            img.src = product.image || '{{ asset('images/placeholder.png') }}';
+                            img.alt = product.name || 'Product';
                         }
 
-                        const actionContainer =
-                            document.getElementById('modalProductAction');
+                        // Set category
+                        const category = document.getElementById('modalProductCategory');
+                        if (category) category.textContent = product.category || 'Product';
+
+                        const categoryInfo = document.getElementById('modalProductCategoryInfo');
+                        if (categoryInfo) categoryInfo.textContent = product.category || 'Product';
+
+                        // Set name
+                        const name = document.getElementById('modalProductName');
+                        if (name) name.textContent = product.name || 'Product';
+
+                        // Set price
+                        const price = document.getElementById('modalProductPrice');
+                        if (price) price.textContent = product.formatted_price || '₹0.00';
+
+                        // Set description
+                        const desc = document.getElementById('modalProductDescription');
+                        if (desc) desc.innerHTML = product.description || 'No description available.';
+
+                        // Set stock
+                        const stock = document.getElementById('modalProductStock');
+                        if (stock) {
+                            if (product.is_out_of_stock) {
+                                stock.textContent = 'Out of Stock';
+                                stock.style.color = '#dc2626';
+                            } else {
+                                stock.textContent = 'In Stock';
+                                stock.style.color = '#16a34a';
+                            }
+                        }
+
+                        const actionContainer = document.getElementById('modalProductAction');
+                        if (!actionContainer) return;
 
                         // FUTURED PRODUCT → NOTIFY ME
                         if (product.is_futured) {
-
                             actionContainer.innerHTML = `
-                                        <button type="button"
-                                                class="product-modal-notify notify-me-btn"
-                                                data-product-id="${product.id}">
-                                            <i class="bi bi-bell me-2"></i>
-                                            Notify Me
-                                        </button>
-                                    `;
-
+                            <button type="button"
+                                    class="product-modal-notify notify-me-btn"
+                                    data-product-id="${product.id}">
+                                <i class="bi bi-bell me-2"></i>
+                                Notify Me
+                            </button>
+                        `;
                         }
-
                         // OUT OF STOCK
                         else if (product.is_out_of_stock) {
-
                             actionContainer.innerHTML = `
-                                        <button type="button"
-                                                class="product-modal-add-cart"
-                                                disabled>
-                                            <i class="bi bi-x-circle me-2"></i>
-                                            Out of Stock
-                                        </button>
-                                    `;
-
+                            <button type="button"
+                                    class="product-modal-add-cart"
+                                    disabled>
+                                <i class="bi bi-x-circle me-2"></i>
+                                Out of Stock
+                            </button>
+                        `;
                         }
-
-                        // ADD TO CART
+                        // ADD TO CART - FIXED: Use JavaScript variables, not Blade syntax
                         else {
+                            // Build the URL using JavaScript concatenation
+                            const addToCartUrl = addToCartBaseUrl + '/' + product.id;
 
                             actionContainer.innerHTML = `
-                                         <form action="{{ route('cart.add', $product->id) }}" method="POST" class="flex-grow-1">
-                                                                @csrf
-
-                                                                <button type="submit" class="btn btn-wishlist-cart w-100">
-                                                                    <i class="bi bi-cart3"></i>
-                                                                    Add to Cart
-                                                                </button>
-                                                            </form>
-                                    `;
+                            <form action="${addToCartUrl}" method="POST" class="flex-grow-1">
+                                <input type="hidden" name="_token" value="${csrfToken}">
+                                <button type="submit" class="btn btn-wishlist-cart w-100">
+                                    <i class="bi bi-cart3"></i>
+                                    Add to Cart
+                                </button>
+                            </form>
+                        `;
                         }
 
-                        document.getElementById('productModalLoader').style.display = 'none';
-                        document.getElementById('productModalContent').style.display = 'block';
+                        // Hide loader, show content
+                        if (loader) loader.style.display = 'none';
+                        if (content) content.style.display = 'block';
 
                     })
                     .catch(error => {
@@ -2353,11 +2359,20 @@
 
                         productModal.hide();
 
-                        showSidebarToast(
-                            'error',
-                            'Error',
-                            error.message || 'Failed to load product details.'
-                        );
+                        // Use the existing toast function if available
+                        if (typeof showSidebarToast === 'function') {
+                            showSidebarToast(
+                                'error',
+                                'Error',
+                                error.message || 'Failed to load product details.'
+                            );
+                        } else if (typeof showToast === 'function') {
+                            showToast(
+                                'error',
+                                'Error',
+                                error.message || 'Failed to load product details.'
+                            );
+                        }
                     });
 
             });
