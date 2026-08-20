@@ -480,7 +480,24 @@
                 height: 100px;
             }
         }
+        .offer-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            z-index: 6;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
 
+        .offer-badge.fixed {
+            background: #f59e0b;
+        }
     </style>
 @endsection
 
@@ -750,7 +767,7 @@
             <div class="section-card">
                 <div class="section-header">
                     <h5>Recommended for You</h5>
-                    <a href="{{ route('shop') }}" class="view-all">View All</a>
+                    <a href="{{ route('customer.products') }}" class="view-all">View All</a>
                 </div>
 
                 <div class="product-slider">
@@ -775,6 +792,18 @@
                                     @else
                                         <div class="no-img"><i class="bi bi-image"></i></div>
                                     @endif
+
+                                    {{-- OFFER BADGE --}}
+                                    @if(isset($product->active_offer) && $product->active_offer)
+                                        <div class="offer-badge {{ $product->active_offer->discount_type === 'fixed' ? 'fixed' : '' }}">
+                                            @if($product->active_offer->discount_type === 'percentage')
+                                                {{ rtrim(rtrim(number_format($product->active_offer->discount_value, 2), '0'), '.') }}% OFF
+                                            @else
+                                                ₹{{ number_format($product->active_offer->discount_value, 0) }} OFF
+                                            @endif
+                                        </div>
+                                    @endif
+
                                     <button class="wishlist-btn" data-product-id="{{ $product->id }}"
                                         onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
                                         <i class="bi bi-heart"></i>
@@ -782,7 +811,24 @@
                                 </div>
                                 <div class="product-info">
                                     <h6>{{ $product->name }}</h6>
-                                    <div class="price"><span class="current">₹{{ number_format($product->price, 0) }}</span></div>
+                                    <div class="price">
+                                        @if(isset($product->active_offer) && $product->active_offer)
+                                            @php
+                                                $original = $product->price;
+                                                if ($product->active_offer->discount_type === 'percentage') {
+                                                    $discounted = $original - ($original * $product->active_offer->discount_value / 100);
+                                                } else {
+                                                    $discounted = max(0, $original - $product->active_offer->discount_value);
+                                                }
+                                            @endphp
+                                            <span class="current" style="color:#ef4444;">₹{{ number_format($discounted, 0) }}</span>
+                                            <span style="font-size:12px; color:#94a3b8; text-decoration:line-through; margin-left:6px;">
+                                                ₹{{ number_format($original, 0) }}
+                                            </span>
+                                        @else
+                                            <span class="current">₹{{ number_format($product->price, 0) }}</span>
+                                        @endif
+                                    </div>
                                 </div>
                             </a>
                         </div>

@@ -842,8 +842,8 @@
         }
 
         /* ============================================
-                                       PRODUCT DETAILS MODAL STYLES
-                               ============================================ */
+                                                                   PRODUCT DETAILS MODAL STYLES
+                                                           ============================================ */
 
         .product-details-modal-content {
             border: none;
@@ -1289,8 +1289,8 @@
         }
 
         /* ============================================
-                       HORIZONTAL TIMELINE
-                    ============================================ */
+                                                   HORIZONTAL TIMELINE
+                                                ============================================ */
 
         .tracking-timeline-horizontal {
             display: flex;
@@ -1444,8 +1444,8 @@
         }
 
         /* ============================================
-                       MOBILE RESPONSIVE
-                    ============================================ */
+                                                   MOBILE RESPONSIVE
+                                                ============================================ */
 
         @media (max-width: 768px) {
             .tracking-timeline-horizontal {
@@ -1521,8 +1521,8 @@
         }
 
         /* ============================================
-                       RETURN ORDER STYLES
-                    ============================================ */
+                                                   RETURN ORDER STYLES
+                                                ============================================ */
 
         .tracking-return-section {
             border: 1px solid #b7d7ff;
@@ -1652,6 +1652,37 @@
             .return-confirmation-actions button {
                 width: 100%;
             }
+        }
+
+        .order-rating-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5eaf1;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .rating-stars .star {
+            font-size: 32px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .rating-stars .star:hover,
+        .rating-stars .star.active {
+            color: #fbbf24;
+            transform: scale(1.1);
+        }
+
+        .rating-text {
+            margin: 8px 0 0;
+            font-size: 13px;
+            color: #64748b;
         }
     </style>
 @endsection
@@ -1870,22 +1901,36 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                @php
+                                    $canReturn = false;
+
+                                    if ($order->order_status === 'delivered' && $order->status_updated_at) {
+                                        $canReturn = now()->lte(
+                                            \Carbon\Carbon::parse($order->status_updated_at)->addDays(7)
+                                        );
+                                    }
+                                @endphp
                                 @if($trackingStatus === 'delivered')
-                                    <div class="tracking-action-section tracking-return-section">
-                                        <div class="tracking-action-info">
-                                            <div>
-                                                <h6>Need to return this order?</h6>
-                                                <p>
-                                                    You can request a return within 15 days of delivery.
-                                                </p>
+                                    @if($canReturn)
+                                        <div class="tracking-action-section tracking-return-section">
+                                            <div class="tracking-action-info">
+                                                <div>
+                                                    <h6>Need to return this order?</h6>
+                                                    <p>
+                                                        You can request a return within 7 days of delivery.
+                                                    </p>
+                                                </div>
+
+                                                <button type="button" class="return-order-btn"
+                                                    onclick="showReturnConfirmation({{ $order->id }})">
+                                                    <i class="bi bi-arrow-return-left"></i>
+                                                    Return Order
+                                                </button>
+
                                             </div>
-                                            <button type="button" class="return-order-btn"
-                                                onclick="showReturnConfirmation({{ $order->id }})">
-                                                <i class="bi bi-arrow-return-left"></i>
-                                                Return Order
-                                            </button>
                                         </div>
-                                    </div>
+                                    @endif
 
                                     {{-- RETURN CONFIRMATION --}}
                                     <div class="return-confirmation" id="returnConfirmation{{ $order->id }}">
@@ -2204,6 +2249,13 @@
                                             {{ $order->items_count ?? ($order->items?->count() ?? 0) }}
                                         </strong>
                                     </div>
+
+                                    <div class="tracking-summary-item">
+                                        <span>Total Qty</span>
+                                        <strong>
+                                            {{ $order->items?->sum('quantity') ?? 0 }}
+                                        </strong>
+                                    </div>
                                     <div class="tracking-summary-item">
                                         <span>Total Amount</span>
                                         <strong>
@@ -2239,6 +2291,62 @@
                                         </div>
                                     @endif
                                 </div>
+
+                                @if($trackingStatus === 'delivered')
+                                    @if($item->rating)
+                                        {{-- ALREADY RATED --}}
+                                        <div class="order-rating-section">
+                                            <h5 class="tracking-section-title">
+                                                Your Rating for {{ $productName }}
+                                            </h5>
+
+                                            <div class="rating-stars saved-rating">
+                                                @for($star = 1; $star <= 5; $star++)
+                                                    <span class="star {{ $star <= $item->rating->rating ? 'active' : '' }}">
+                                                        ★
+                                                    </span>
+                                                @endfor
+                                            </div>
+
+                                            <p class="rating-text">
+                                                You rated this product {{ $item->rating->rating }} out of 5 stars.
+                                            </p>
+                                        </div>
+                                    @else
+                                        {{-- NOT RATED YET --}}
+                                        <div class="order-rating-section">
+                                            <h5 class="tracking-section-title">
+                                                Rate {{ $productName }}
+                                            </h5>
+
+                                            <form action="{{ route('customer.orders.rating') }}" method="POST" class="rating-form">
+
+                                                @csrf
+
+                                                <input type="hidden" name="product_id" value="{{ $product?->id }}">
+                                                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                                                <input type="hidden" name="order_item_id" value="{{ $item->id }}">
+                                                <input type="hidden" name="rating" class="rating-input">
+
+                                                <div class="rating-stars">
+                                                    @for($star = 1; $star <= 5; $star++)
+                                                        <span class="star" data-rating="{{ $star }}">★</span>
+                                                    @endfor
+                                                </div>
+
+                                                <p class="rating-text">
+                                                    Click on a star to rate this product
+                                                </p>
+
+                                                <button type="submit" class="btn btn-primary btn-sm mt-2 rating-submit-btn"
+                                                    style="display:none;">
+                                                    Submit Rating
+                                                </button>
+                                            </form>
+                                        </div>
+                                    @endif
+                                @endif
+
                             </div>
                             <div class="track-popup-footer">
                                 <button type="button" class="btn btn-light" onclick="closeTrackOrderModal({{ $order->id }})">
@@ -2527,33 +2635,33 @@
 
                         if (product.is_futured) {
                             action.innerHTML = `
-                                                    <button type="button"
-                                                        class="product-modal-notify notify-me-btn"
-                                                        data-product-id="${product.id}">
-                                                        <i class="bi bi-bell me-2"></i>
-                                                        Notify Me
-                                                    </button>
-                                                `;
+                                                                                <button type="button"
+                                                                                    class="product-modal-notify notify-me-btn"
+                                                                                    data-product-id="${product.id}">
+                                                                                    <i class="bi bi-bell me-2"></i>
+                                                                                    Notify Me
+                                                                                </button>
+                                                                            `;
                         } else if (product.is_out_of_stock) {
                             action.innerHTML = `
-                                                    <button type="button"
-                                                        class="product-modal-add-cart"
-                                                        disabled>
-                                                        <i class="bi bi-x-circle me-2"></i>
-                                                        Out of Stock
-                                                    </button>
-                                                `;
+                                                                                <button type="button"
+                                                                                    class="product-modal-add-cart"
+                                                                                    disabled>
+                                                                                    <i class="bi bi-x-circle me-2"></i>
+                                                                                    Out of Stock
+                                                                                </button>
+                                                                            `;
                         } else {
                             action.innerHTML = `
-                                                    <form class="add-to-cart-form" action="{{ route('cart.add', $product->id) }}" method="POST">
-                                                            @csrf
+                                                                                <form class="add-to-cart-form" action="{{ route('cart.add', $product->id) }}" method="POST">
+                                                                                        @csrf
 
-                                                            <button type="submit" class="rec-add-cart">
-                                                                <i class="bi bi-cart3 me-1"></i>
-                                                                Add to Cart
-                                                            </button>
-                                                        </form>
-                                                `;
+                                                                                        <button type="submit" class="rec-add-cart">
+                                                                                            <i class="bi bi-cart3 me-1"></i>
+                                                                                            Add to Cart
+                                                                                        </button>
+                                                                                    </form>
+                                                                            `;
                         }
 
                         loader.style.display = 'none';
@@ -2623,5 +2731,25 @@
             hideCancelConfirmation(orderId);
             hideReturnConfirmation(orderId);
         }
+    </script>
+    <script>
+        document.querySelectorAll('.rating-form').forEach(form => {
+            const stars = form.querySelectorAll('.star');
+            const ratingInput = form.querySelector('.rating-input');
+            const submitButton = form.querySelector('.rating-submit-btn');
+            stars.forEach(star => {
+                star.addEventListener('click', function () {
+                    const rating = parseInt(this.dataset.rating);
+                    ratingInput.value = rating;
+                    stars.forEach(item => {
+                        item.classList.toggle(
+                            'active',
+                            parseInt(item.dataset.rating) <= rating
+                        );
+                    });
+                    submitButton.style.display = 'inline-block';
+                });
+            });
+        });
     </script>
 @endsection

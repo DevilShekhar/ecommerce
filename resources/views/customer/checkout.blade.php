@@ -1520,355 +1520,1041 @@
         @endif
 
         @if(!empty($cart) && count($cart) > 0)
+
             <div class="row g-3">
                 <div class="col-lg-8">
-                    {{-- DELIVERY ADDRESS SECTION --}}
                     <div id="deliverySection">
+
                         <div class="checkout-card">
+
                             <div class="checkout-card-header">
                                 <div class="checkout-card-icon">
                                     <i class="bi bi-geo-alt-fill"></i>
                                 </div>
                                 <h5>Delivery Address</h5>
                             </div>
+
                             <div class="address-section">
+
                                 @if(!empty($addresses) && count($addresses) > 0)
+
                                     <div class="address-list">
+
                                         @foreach($addresses as $address)
+
                                             @php
                                                 $addressText = $address['address'] ?? '';
+
                                                 if (is_array($addressText)) {
-                                                    $addressText = implode(', ', array_filter($addressText));
+                                                    $addressText = implode(
+                                                        ', ',
+                                                        array_filter($addressText)
+                                                    );
                                                 }
                                             @endphp
+
                                             <div class="address-card {{ !empty($address['is_default']) ? 'selected' : '' }}"
                                                 data-address-id="{{ $address['id'] ?? '' }}">
+
                                                 <div class="radio-indicator"></div>
+
                                                 <div class="address-details">
+
                                                     <div class="name">
+
                                                         {{ $address['name'] ?? ($user->name ?? 'Customer') }}
+
                                                         @if(!empty($address['type']))
-                                                            <span class="badge">{{ $address['type'] }}</span>
+                                                            <span class="badge">
+                                                                {{ $address['type'] }}
+                                                            </span>
                                                         @endif
+
                                                         @if(!empty($address['is_default']))
-                                                            <span class="badge badge-default">Default</span>
+                                                            <span class="badge badge-default">
+                                                                Default
+                                                            </span>
                                                         @endif
+
                                                     </div>
+
                                                     @if(!empty($address['mobile']))
                                                         <div class="phone">
-                                                            <span class="label">Mobile:</span> {{ $address['mobile'] }}
+                                                            <span class="label">Mobile:</span>
+                                                            {{ $address['mobile'] }}
                                                         </div>
                                                     @endif
+
                                                     @if(!empty($addressText))
-                                                        <div class="address-line">{{ $addressText }}</div>
+                                                        <div class="address-line">
+                                                            {{ $addressText }}
+                                                        </div>
                                                     @endif
+
                                                     @if(!empty($address['city']) || !empty($address['state']))
                                                         <div class="address-line">
-                                                            {{ $address['city'] ?? '' }}@if(!empty($address['city']) && !empty($address['state'])),
-                                                            @endif{{ $address['state'] ?? '' }}
+
+                                                            {{ $address['city'] ?? '' }}
+
+                                                            @if(
+                                                                    !empty($address['city']) &&
+                                                                    !empty($address['state'])
+                                                                )
+                                                                ,
+                                                            @endif
+
+                                                            {{ $address['state'] ?? '' }}
+
                                                         </div>
                                                     @endif
-                                                    @if(!empty($address['country']) || !empty($address['pincode']))
+
+                                                    @if(
+                                                            !empty($address['country']) ||
+                                                            !empty($address['pincode'])
+                                                        )
+
                                                         <div class="address-line">
-                                                            {{ $address['country'] ?? '' }}@if(!empty($address['country']) && !empty($address['pincode']))
-                                                            - @endif{{ $address['pincode'] ?? '' }}
+
+                                                            {{ $address['country'] ?? '' }}
+
+                                                            @if(
+                                                                    !empty($address['country']) &&
+                                                                    !empty($address['pincode'])
+                                                                )
+                                                                -
+                                                            @endif
+
+                                                            {{ $address['pincode'] ?? '' }}
+
                                                         </div>
+
                                                     @endif
+
                                                 </div>
+
                                                 @if(!empty($address['is_default']))
-                                                    <div class="address-tag">Selected</div>
+                                                    <div class="address-tag">
+                                                        Selected
+                                                    </div>
                                                 @endif
+
                                                 <div class="address-actions">
+
                                                     <button type="button" class="select-address-btn"
                                                         data-address-id="{{ $address['id'] ?? '' }}">
-                                                        <i class="bi bi-check-circle"></i> Select
+                                                        <i class="bi bi-check-circle"></i>
+                                                        Select
                                                     </button>
+
                                                 </div>
+
                                             </div>
+
                                         @endforeach
+
                                     </div>
+
                                 @else
+
                                     <div class="no-address">
+
                                         <i class="bi bi-geo-alt"></i>
+
                                         <h6>No Saved Address</h6>
-                                        <p>Add a delivery address to continue with your order.</p>
+
+                                        <p>
+                                            Add a delivery address to continue with your order.
+                                        </p>
+
                                     </div>
+
                                 @endif
+
                             </div>
+
                             <button type="button" class="add-address-btn" id="addAddressBtn">
-                                <i class="bi bi-plus-lg"></i> Add Address
+                                <i class="bi bi-plus-lg"></i>
+                                Add Address
                             </button>
+
                         </div>
 
-                        {{-- CART ITEMS --}}
+
+                        {{-- =================================================
+                        CART ITEMS
+                        ================================================== --}}
                         <div class="checkout-card">
+
                             <div class="checkout-card-header">
+
                                 <div class="checkout-card-icon">
                                     <i class="bi bi-bag-fill"></i>
                                 </div>
-                                <h5>Items in Your Cart ({{ $cartCount ?? count($cart) }})</h5>
+
+                                <h5>
+                                    Items in Your Cart
+                                    ({{ $cartCount ?? count($cart) }})
+                                </h5>
+
                             </div>
+
+
                             <div id="cartItemsContainer">
+
                                 @php
                                     $hasOutOfStock = false;
                                     $hasLowStock = false;
                                 @endphp
+
+
                                 @foreach($cart as $key => $item)
+
                                     @php
-                                        // Get product from database to check stock
-                                        $product = \App\Models\Product::find($item['id'] ?? null);
-                                        $stock = $product ? $product->stock : 0;
-                                        $isLowStock = $stock > 0 && $stock <= 5;
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | PRODUCT
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $product = \App\Models\Product::find(
+                                            $item['id'] ?? null
+                                        );
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | STOCK
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $stock = $product
+                                            ? (int) $product->stock
+                                            : 0;
+
                                         $isOutOfStock = $stock <= 0;
-                                        $currentQty = $item['quantity'] ?? 1;
-                                        $canAddMore = $stock > $currentQty;
+                                        $isLowStock = $stock > 0 && $stock <= 5;
+
+                                        $currentQty = max(
+                                            1,
+                                            (int) ($item['quantity'] ?? 1)
+                                        );
+
 
                                         if ($isOutOfStock) {
                                             $hasOutOfStock = true;
                                         }
+
                                         if ($isLowStock) {
                                             $hasLowStock = true;
                                         }
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | ACTIVE OFFER
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $activeOffer =
+                                            $item['active_offer']
+                                            ?? $product?->activeOffer
+                                            ?? $product?->active_offer
+                                            ?? null;
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | ORIGINAL PRICE
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $originalPrice = (float) (
+                                            $item['original_price']
+                                            ?? $product?->price
+                                            ?? $item['price']
+                                            ?? 0
+                                        );
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | DISCOUNTED PRICE
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $discountedPrice = $originalPrice;
+
+                                        if ($activeOffer) {
+
+                                            $discountValue = (float)
+                                                $activeOffer->discount_value;
+
+                                            if (
+                                                $activeOffer->discount_type ===
+                                                'percentage'
+                                            ) {
+
+                                                $discountedPrice =
+                                                    $originalPrice -
+                                                    (
+                                                        $originalPrice *
+                                                        $discountValue /
+                                                        100
+                                                    );
+
+                                            } else {
+
+                                                $discountedPrice =
+                                                    $originalPrice -
+                                                    $discountValue;
+                                            }
+                                        }
+
+                                        $discountedPrice = max(
+                                            0,
+                                            $discountedPrice
+                                        );
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | ITEM TOTAL
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $itemTotal =
+                                            $discountedPrice *
+                                            $currentQty;
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | PRODUCT IMAGE
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        $imgUrl = null;
+
+                                        $imageValue =
+                                            $item['image']
+                                            ?? $product?->image
+                                            ?? null;
+
+                                        if ($imageValue) {
+
+                                            $images = is_array($imageValue)
+                                                ? $imageValue
+                                                : array_map(
+                                                    'trim',
+                                                    explode(',', $imageValue)
+                                                );
+
+                                            $firstImage =
+                                                $images[0] ?? null;
+
+                                            if ($firstImage) {
+
+                                                $firstImage =
+                                                    preg_replace(
+                                                        '#^storage/#',
+                                                        '',
+                                                        $firstImage
+                                                    );
+
+                                                $imgUrl =
+                                                    asset($firstImage);
+                                            }
+                                        }
+
+                                        $productName =
+                                            $item['name']
+                                            ?? $product?->name
+                                            ?? 'Product';
+
                                     @endphp
-                                    <div class="cart-item" data-cart-key="{{ $key }}" data-price="{{ $item['price'] ?? 0 }}"
-                                        data-stock="{{ $stock }}">
+                                    <div class="cart-item" data-cart-key="{{ $key }}" data-price="{{ $discountedPrice }}"
+                                        data-original-price="{{ $originalPrice }}" data-stock="{{ $stock }}">
+
+
+                                        {{-- PRODUCT IMAGE --}}
                                         <div class="cart-item-image">
-                                            @php
-                                                $imgUrl = null;
-                                                if (isset($item['image'])) {
-                                                    $images = is_array($item['image']) ? $item['image'] : array_map('trim', explode(',', $item['image']));
-                                                    $firstImage = $images[0] ?? null;
-                                                    if ($firstImage) {
-                                                        $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                                                        $imgUrl = asset($firstImage);
-                                                    }
-                                                }
-                                            @endphp
+
                                             @if($imgUrl)
-                                                <img src="{{ $imgUrl }}" alt="{{ $item['name'] ?? 'Product' }}"
+
+                                                <img src="{{ $imgUrl }}" alt="{{ $productName }}"
                                                     onerror="this.src='{{ asset('images/placeholder.png') }}'">
+
                                             @else
+
                                                 <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+
                                                     <i class="bi bi-image text-muted"></i>
+
                                                 </div>
+
                                             @endif
+
                                         </div>
-                                        <div class="cart-item-info">
-                                            <div class="cart-item-name">{{ $item['name'] ?? 'Product' }}</div>
-                                            <div class="cart-item-price">₹{{ number_format($item['price'] ?? 0, 0) }} per item</div>
 
-                                            {{-- Stock Status --}}
-                                            @if($isOutOfStock)
-                                                <div class="stock-status out-of-stock">
-                                                    <i class="bi bi-x-circle-fill"></i>
-                                                    <span style="color: #ef4444; font-size: 12px; font-weight: 600;">Out of Stock</span>
-                                                </div>
-                                            @elseif($isLowStock)
-                                                <div class="stock-status low-stock">
-                                                    <i class="bi bi-exclamation-triangle-fill"></i>
-                                                    <span style="color: #f59e0b; font-size: 12px; font-weight: 600;">
-                                                        Only {{ $stock }} {{ $stock == 1 ? 'item' : 'items' }} left in stock
+
+                                        {{-- PRODUCT INFORMATION --}}
+                                        <div class="cart-item-info">
+
+                                            {{-- NAME --}}
+                                            <div class="cart-item-name">
+                                                {{ $productName }}
+                                            </div>
+
+
+                                            {{-- PRICE --}}
+                                            <div class="cart-item-price">
+
+                                                @if($activeOffer)
+
+                                                    {{-- DISCOUNTED PRICE --}}
+                                                    <span style="
+                                                                    color:#ef4444;
+                                                                    font-weight:700;
+                                                                ">
+                                                        ₹{{ number_format($discountedPrice, 0) }}
                                                     </span>
+
+
+                                                    {{-- ORIGINAL PRICE --}}
+                                                    <span style="
+                                                                    color:#94a3b8;
+                                                                    text-decoration:line-through;
+                                                                    font-size:12px;
+                                                                    margin-left:5px;
+                                                                ">
+                                                        ₹{{ number_format($originalPrice, 0) }}
+                                                    </span>
+
+
+                                                    {{-- DISCOUNT --}}
+                                                    <span style="
+                                                                    color:#16a34a;
+                                                                    font-size:11px;
+                                                                    font-weight:600;
+                                                                    margin-left:5px;
+                                                                ">
+
+                                                        @if($activeOffer->discount_type === 'percentage')
+
+                                                                                {{
+                                                            rtrim(
+                                                                rtrim(
+                                                                    number_format(
+                                                                        $activeOffer->discount_value,
+                                                                        2
+                                                                    ),
+                                                                    '0'
+                                                                ),
+                                                                '.'
+                                                            )
+                                                                                            }}% OFF
+
+                                                        @else
+
+                                                                                    ₹{{ number_format(
+                                                                $activeOffer->discount_value,
+                                                                0
+                                                            ) }} OFF
+
+                                                        @endif
+
+                                                    </span>
+
+
+                                                    <div style="
+                                                                    font-size:11px;
+                                                                    color:#64748b;
+                                                                    margin-top:2px;
+                                                                ">
+                                                        per item
+                                                    </div>
+
+                                                @else
+
+                                                    <span>
+                                                        ₹{{ number_format($originalPrice, 0) }}
+                                                    </span>
+
+                                                    <span style="
+                                                                    font-size:11px;
+                                                                    color:#64748b;
+                                                                    margin-left:3px;
+                                                                ">
+                                                        per item
+                                                    </span>
+
+                                                @endif
+
+                                            </div>
+
+
+                                            {{-- OFFER APPLIED --}}
+                                            @if($activeOffer)
+
+                                                <div style="
+                                                                margin-top:5px;
+                                                                display:inline-flex;
+                                                                align-items:center;
+                                                                gap:4px;
+                                                                color:#16a34a;
+                                                                font-size:11px;
+                                                                font-weight:600;
+                                                            ">
+
+                                                    <i class="bi bi-tag-fill"></i>
+
+                                                    @if($activeOffer->discount_type === 'percentage')
+
+                                                                        {{
+                                                        rtrim(
+                                                            rtrim(
+                                                                number_format(
+                                                                    $activeOffer->discount_value,
+                                                                    2
+                                                                ),
+                                                                '0'
+                                                            ),
+                                                            '.'
+                                                        )
+                                                                                    }}% offer applied
+
+                                                    @else
+
+                                                                            ₹{{ number_format(
+                                                            $activeOffer->discount_value,
+                                                            0
+                                                        ) }} offer applied
+
+                                                    @endif
+
                                                 </div>
-                                            @else
-                                                <div class="stock-status in-stock">
-                                                    <i class="bi bi-check-circle-fill"></i>
-                                                    <span style="color: #16a34a; font-size: 12px; font-weight: 600;">In Stock</span>
-                                                </div>
+
                                             @endif
 
+
+                                            {{-- STOCK STATUS --}}
+                                            @if($isOutOfStock)
+
+                                                <div class="stock-status out-of-stock">
+
+                                                    <i class="bi bi-x-circle-fill"></i>
+
+                                                    <span style="
+                                                                    color:#ef4444;
+                                                                    font-size:12px;
+                                                                    font-weight:600;
+                                                                ">
+                                                        Out of Stock
+                                                    </span>
+
+                                                </div>
+
+                                            @elseif($isLowStock)
+
+                                                <div class="stock-status low-stock">
+
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+
+                                                    <span style="
+                                                                    color:#f59e0b;
+                                                                    font-size:12px;
+                                                                    font-weight:600;
+                                                                ">
+                                                        Only {{ $stock }}
+                                                        {{ $stock == 1 ? 'item' : 'items' }}
+                                                        left in stock
+                                                    </span>
+
+                                                </div>
+
+                                            @else
+
+                                                <div class="stock-status in-stock">
+
+                                                    <i class="bi bi-check-circle-fill"></i>
+
+                                                    <span style="
+                                                                    color:#16a34a;
+                                                                    font-size:12px;
+                                                                    font-weight:600;
+                                                                ">
+                                                        In Stock
+                                                    </span>
+
+                                                </div>
+
+                                            @endif
+
+
+                                            {{-- QUANTITY + REMOVE --}}
                                             <div class="cart-item-actions">
-                                                <select class="cart-item-qty-select" data-cart-key="{{ $key }}" {{ $isOutOfStock ? 'disabled' : '' }} data-max-stock="{{ $stock }}">
+
+                                                <select class="cart-item-qty-select" data-cart-key="{{ $key }}"
+                                                    data-max-stock="{{ $stock }}" {{ $isOutOfStock ? 'disabled' : '' }}>
+
                                                     @if($isOutOfStock)
-                                                        <option value="0" selected>Out of Stock</option>
+
+                                                        <option value="0" selected>
+                                                            Out of Stock
+                                                        </option>
+
                                                     @else
+
                                                         @php
                                                             $maxQty = min(5, $stock);
                                                         @endphp
+
                                                         @for($i = 1; $i <= $maxQty; $i++)
-                                                            <option value="{{ $i }}" {{ ($item['quantity'] ?? 1) == $i ? 'selected' : '' }}>
+
+                                                            <option value="{{ $i }}" {{ $currentQty == $i ? 'selected' : '' }}>
                                                                 {{ $i }}
                                                             </option>
+
                                                         @endfor
+
                                                         @if($stock > 5)
-                                                            <option value="more">More...</option>
+
+                                                            <option value="more">
+                                                                More...
+                                                            </option>
+
                                                         @endif
+
                                                     @endif
+
                                                 </select>
+
+
                                                 <button type="button" class="remove-cart-btn" data-cart-key="{{ $key }}"
                                                     title="Remove from cart">
                                                     <i class="bi bi-trash3"></i>
                                                 </button>
+
                                             </div>
+
                                         </div>
+
+
+                                        {{-- ITEM TOTAL --}}
                                         <div class="cart-item-total" id="itemTotal-{{ $key }}">
+
                                             @if($isOutOfStock)
-                                                <span style="color: #ef4444;">Unavailable</span>
+
+                                                <span style="color:#ef4444;">
+                                                    Unavailable
+                                                </span>
+
                                             @else
-                                                ₹{{ number_format(($item['price'] ?? 0) * ($item['quantity'] ?? 1), 0) }}
+
+                                                                    {{-- ORIGINAL TOTAL --}}
+                                                                    @if($activeOffer)
+
+                                                                                        <div>
+
+                                                                                            <span style="
+                                                                                                                color:#94a3b8;
+                                                                                                                text-decoration:line-through;
+                                                                                                                font-size:12px;
+                                                                                                            ">
+                                                                                                ₹{{ number_format(
+                                                                            $originalPrice * $currentQty,
+                                                                            0
+                                                                        ) }}
+                                                                                            </span>
+
+                                                                                        </div>
+
+                                                                    @endif
+
+
+                                                                    {{-- DISCOUNTED TOTAL --}}
+                                                                    <strong style="{{ $activeOffer ? 'color:#ef4444;' : '' }}">
+                                                                        ₹{{ number_format(
+                                                    $itemTotal,
+                                                    0
+                                                ) }}
+                                                                    </strong>
+
                                             @endif
+
                                         </div>
+
                                     </div>
+
                                 @endforeach
+
                             </div>
+
+
+                            {{-- FREE DELIVERY --}}
                             <div class="free-delivery-box">
+
                                 <i class="bi bi-truck"></i>
+
                                 <div>
-                                    <strong>Free Delivery on orders above ₹999</strong>
-                                    <span>Yay! You've unlocked FREE shipping.</span>
+                                    <span>
+                                        Yay! You've unlocked FREE shipping.
+                                    </span>
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    {{-- PAYMENT SECTION - Hidden, kept for compatibility --}}
-                    <div id="paymentSection" class="payment-section">
-                        <!-- Hidden payment section -->
-                    </div>
                 </div>
-
-                {{-- RIGHT COLUMN --}}
                 <div class="col-lg-4">
+
                     <div class="summary-card">
+
                         <div class="summary-header">
                             <h5>Price Details</h5>
                         </div>
+
+
+                        {{-- PRICE --}}
                         <div class="summary-row">
-                            <span>Price ({{ $cartCount ?? count($cart) }} items)</span>
-                            <strong id="subtotalDisplay">₹{{ number_format($subtotal ?? 0, 0) }}</strong>
+
+                            <span>
+                                Price ({{ $cartCount ?? count($cart) }} items)
+                            </span>
+
+                            <strong id="subtotalDisplay">
+                                ₹{{ number_format($subtotal ?? 0, 0) }}
+                            </strong>
+
                         </div>
+
+
                         @php
-                            $shippingAmount = $shipping ?? 0;
-                            $discountAmount = $discount ?? 0;
-                            $finalTotal = max(0, ($subtotal ?? 0) + $shippingAmount - $discountAmount);
+                            $shippingAmount = (float) ($shipping ?? 0);
+                            $discountAmount = (float) ($discount ?? 0);
+                            $finalTotal = max(0,($subtotal ?? 0) + $shippingAmount - $discountAmount);
                         @endphp
+                        {{-- DELIVERY --}}
                         <div class="summary-row">
                             <span>Delivery Charges</span>
                             @if($shippingAmount > 0)
-                                <strong>₹{{ number_format($shippingAmount, 0) }}</strong>
+                                <strong>
+                                    ₹{{ number_format($shippingAmount, 0) }}
+                                </strong>
                             @else
-                                <span class="free-shipping">FREE</span>
+                                <span class="free-shipping">
+                                    FREE
+                                </span>
                             @endif
+
                         </div>
+                        {{-- DISCOUNT --}}
                         @if($discountAmount > 0)
+
                             <div class="summary-row">
+
                                 <span>Discount</span>
-                                <span class="discount-value">-₹{{ number_format($discountAmount, 0) }}</span>
+
+                                <span class="discount-value">
+                                    -₹{{ number_format($discountAmount, 0) }}
+                                </span>
+
                             </div>
+
                         @endif
+                        {{-- COUPON --}}
                         <div class="coupon-wrapper">
+
                             <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code">
-                            <button type="button" class="btn btn-outline-primary" id="applyCouponBtn">Apply</button>
+
+                            <button type="button" class="btn btn-outline-primary" id="applyCouponBtn">
+                                Apply
+                            </button>
+
                         </div>
+
+
                         <div class="summary-divider"></div>
+
+
+                        {{-- SUBTOTAL --}}
                         <div class="summary-total">
+
                             <span>Subtotal</span>
-                            <strong id="subtotalDisplay2">₹{{ number_format($finalTotal, 0) }}</strong>
+
+                            <strong id="subtotalDisplay2">
+                                ₹{{ number_format($finalTotal, 0) }}
+                            </strong>
+
                         </div>
 
-                        <div class="summary-total coupon-discount-row" id="couponDiscountRow" style="display: none;">
+
+                        {{-- COUPON DISCOUNT --}}
+                        <div class="summary-total coupon-discount-row" id="couponDiscountRow" style="display:none;">
+
                             <span>
+
                                 Coupon Discount
+
                                 <small id="appliedCouponCode"></small>
+
                             </span>
-                            <strong class="text-success" id="discountDisplay">- ₹0</strong>
+
+                            <strong class="text-success" id="discountDisplay">
+                                - ₹0
+                            </strong>
+
                         </div>
 
+
+                        {{-- TOTAL --}}
                         <div class="summary-total">
+
                             <span>Total Amount</span>
+
                             <strong id="totalDisplay" data-original-total="{{ $finalTotal }}">
                                 ₹{{ number_format($finalTotal, 0) }}
                             </strong>
-                        </div>
-                        <div class="tax-note">Inclusive of applicable taxes</div>
 
-                        {{-- CONTINUE BUTTON --}}
+                        </div>
+
+
+                        <div class="tax-note">
+                            Inclusive of applicable taxes
+                        </div>
+
+
+                        {{-- =================================================
+                        STOCK CHECK
+                        ================================================== --}}
                         @php
+
                             $hasOutOfStock = false;
-                            foreach ($cart as $item) {
-                                $product = \App\Models\Product::find($item['id'] ?? null);
-                                if ($product && $product->stock <= 0) {
+
+                            foreach ($cart as $cartItem) {
+
+                                $cartProduct = \App\Models\Product::find(
+                                    $cartItem['id'] ?? null
+                                );
+
+                                if (
+                                    $cartProduct &&
+                                    $cartProduct->stock <= 0
+                                ) {
                                     $hasOutOfStock = true;
                                     break;
                                 }
                             }
+
                         @endphp
 
-                        <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' }}>
+
+                        {{-- CONTINUE BUTTON --}}
+                        <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock
+                ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
+                : ''
+                            }}>
+
                             <i class="bi bi-arrow-right me-2"></i>
+
                             @if($hasOutOfStock)
                                 Out of Stock Items in Cart
                             @else
                                 Continue
                             @endif
+
                         </button>
 
+
+                        {{-- STOCK WARNING --}}
                         @if($hasOutOfStock)
-                            <div
-                                style="padding: 8px 16px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px; margin-top: 10px; font-size: 12px; color: #dc2626;">
+
+                            <div style="
+                                        padding:8px 16px;
+                                        background:#fef2f2;
+                                        border:1px solid #fecaca;
+                                        border-radius:4px;
+                                        margin-top:10px;
+                                        font-size:12px;
+                                        color:#dc2626;
+                                    ">
+
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
+
                                 Please remove out of stock items to proceed with checkout.
+
                             </div>
+
                         @endif
 
-                        {{-- PLACE ORDER BUTTON --}}
+
+                        {{-- PLACE ORDER --}}
                         <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
-                            <i class="bi bi-lock-fill me-2"></i>Place Order
+
+                            <i class="bi bi-lock-fill me-2"></i>
+                            Place Order
+
                         </button>
 
+
                         <div class="secure-note text-center text-muted small mt-3">
-                            <i class="bi bi-shield-check me-1"></i>Safe and secure payments
+
+                            <i class="bi bi-shield-check me-1"></i>
+
+                            Safe and secure payments
+
                         </div>
+
                     </div>
+
+
+                    {{-- =====================================================
+                    SIDE BENEFITS
+                    ====================================================== --}}
                     <div class="side-benefits">
+
                         <div class="side-benefit">
-                            <div class="side-benefit-icon"><i class="bi bi-shield-check"></i></div>
-                            <div><strong>Secure Payments</strong><span>Your payment information is protected</span></div>
+
+                            <div class="side-benefit-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+
+                            <div>
+                                <strong>Secure Payments</strong>
+                                <span>
+                                    Your payment information is protected
+                                </span>
+                            </div>
+
                         </div>
+
+
                         <div class="side-benefit">
-                            <div class="side-benefit-icon"><i class="bi bi-arrow-counterclockwise"></i></div>
-                            <div><strong>Easy Returns</strong><span>Return options available as per product policy</span></div>
+
+                            <div class="side-benefit-icon">
+                                <i class="bi bi-arrow-counterclockwise"></i>
+                            </div>
+
+                            <div>
+                                <strong>Easy Returns</strong>
+                                <span>
+                                    Return options available as per product policy
+                                </span>
+                            </div>
+
                         </div>
+
+
                         <div class="side-benefit">
-                            <div class="side-benefit-icon"><i class="bi bi-headset"></i></div>
-                            <div><strong>Customer Support</strong><span>We're here to help with your order</span></div>
+
+                            <div class="side-benefit-icon">
+                                <i class="bi bi-headset"></i>
+                            </div>
+
+                            <div>
+                                <strong>Customer Support</strong>
+                                <span>
+                                    We're here to help with your order
+                                </span>
+                            </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+            </div>
+            <div class="checkout-benefits">
+
+                <div class="benefits-grid">
+
+                    <div class="benefit-item">
+
+                        <div class="benefit-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+
+                        <div>
+                            <strong>Free Shipping</strong>
+                            <span>On orders above ₹999</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="benefit-item">
+
+                        <div class="benefit-icon">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </div>
+
+                        <div>
+                            <strong>7 Days Return</strong>
+                            <span>Easy returns & refunds</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="benefit-item">
+
+                        <div class="benefit-icon">
+                            <i class="bi bi-lock"></i>
+                        </div>
+
+                        <div>
+                            <strong>Secure Checkout</strong>
+                            <span>100% protected payments</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="benefit-item">
+
+                        <div class="benefit-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+
+                        <div>
+                            <strong>Best Quality</strong>
+                            <span>Premium products only</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
             </div>
 
-            {{-- BOTTOM BENEFITS --}}
-            <div class="checkout-benefits">
-                <div class="benefits-grid">
-                    <div class="benefit-item">
-                        <div class="benefit-icon"><i class="bi bi-truck"></i></div>
-                        <div><strong>Free Shipping</strong><span>On orders above ₹999</span></div>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-icon"><i class="bi bi-arrow-repeat"></i></div>
-                        <div><strong>7 Days Return</strong><span>Easy returns & refunds</span></div>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-icon"><i class="bi bi-lock"></i></div>
-                        <div><strong>Secure Checkout</strong><span>100% protected payments</span></div>
-                    </div>
-                    <div class="benefit-item">
-                        <div class="benefit-icon"><i class="bi bi-award"></i></div>
-                        <div><strong>Best Quality</strong><span>Premium products only</span></div>
-                    </div>
-                </div>
-            </div>
+
         @else
             <div class="checkout-card">
+
                 <div class="empty-cart">
+
                     <i class="bi bi-cart-x"></i>
+
                     <h4>Your Cart is Empty</h4>
-                    <p>Looks like you haven't added any items to your cart yet.</p>
+
+                    <p>
+                        Looks like you haven't added any items to your cart yet.
+                    </p>
+
                     <a href="{{ route('customer.products') }}" class="btn btn-primary">
-                        <i class="bi bi-cart me-1"></i>Start Shopping
+                        <i class="bi bi-cart me-1"></i>
+                        Start Shopping
                     </a>
+
                 </div>
+
             </div>
+
         @endif
     </div>
 
@@ -1900,25 +2586,32 @@
             </div>
 
             <div style="background: #f8fafc; border-radius: 8px; padding: 12px 15px; margin-bottom: 15px;">
-                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
+                <div
+                    style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Items</span>
-                    <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmItems">{{ $cartCount ?? 0 }}</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
+                        id="confirmItems">{{ $cartCount ?? 0 }}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
+                <div
+                    style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Subtotal</span>
-                    <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmSubtotal">₹{{ number_format($subtotal ?? 0, 0) }}</span>
+                    <span style="font-weight: 600; color: #172033; font-size: 13px;"
+                        id="confirmSubtotal">₹{{ number_format($subtotal ?? 0, 0) }}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
+                <div
+                    style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Delivery Charges</span>
                     <span style="font-weight: 600; color: #172033; font-size: 13px;" id="confirmShipping">FREE</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
+                <div
+                    style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e5eaf1;">
                     <span style="color: #64748b; font-size: 13px;">Coupon Discount</span>
                     <span style="font-weight: 600; color: #16a34a; font-size: 13px;" id="confirmDiscount">- ₹0</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; padding: 8px 0;">
                     <span style="font-weight: 700; color: #172033; font-size: 15px;">Total Amount</span>
-                    <span style="font-weight: 700; color: #2878f0; font-size: 18px;" id="confirmTotal">₹{{ number_format($finalTotal ?? 0, 0) }}</span>
+                    <span style="font-weight: 700; color: #2878f0; font-size: 18px;"
+                        id="confirmTotal">₹{{ number_format($finalTotal ?? 0, 0) }}</span>
                 </div>
             </div>
             <div style="display: flex; gap: 10px;">

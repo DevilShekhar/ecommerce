@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
+use App\Models\Offer;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -96,89 +97,266 @@ class CheckoutController extends Controller
      * Checkout page
      */
     public function checkout()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $cart = session()->get('cart', []);
+    $cart = session()->get('cart', []);
 
-        if ($cart instanceof Collection) {
-            $cart = $cart->toArray();
-        }
-
-        if (! is_array($cart)) {
-            $cart = [];
-        }
-
-        $cartCount = count($cart);
-
-        $subtotal = 0;
-        $hasOutOfStock = false;
-
-        foreach ($cart as $key => $item) {
-            if (is_object($item)) {
-                $item = (array) $item;
-            }
-
-            if (! is_array($item)) {
-                continue;
-            }
-
-            $price = $item['price'] ?? 0;
-            $quantity = $item['quantity'] ?? 1;
-
-            if (is_array($price)) {
-                $price = 0;
-            }
-
-            if (is_array($quantity)) {
-                $quantity = 1;
-            }
-
-            $subtotal += (float) $price * (int) $quantity;
-
-            // Check stock
-            $product = Product::find($item['id'] ?? null);
-            if ($product && $product->stock <= 0) {
-                $hasOutOfStock = true;
-            }
-        }
-
-        $addresses = $user->address;
-
-        if (is_string($addresses)) {
-            $addresses = json_decode($addresses, true);
-        }
-
-        if (! is_array($addresses)) {
-            $addresses = [];
-        }
-
-        // Find default address
-        $defaultAddress = collect($addresses)
-            ->firstWhere('is_default', true);
-
-        $shipping = 0;
-        $discount = 0;
-        $total = $subtotal + $shipping - $discount;
-        $categories = ProductCategory::where('status', 1)
-            ->latest()
-            ->take(7)
-            ->get();
-
-        return view('customer.checkout', compact(
-            'cart',
-            'cartCount',
-            'subtotal',
-            'shipping',
-            'discount',
-            'total',
-            'user',
-            'addresses',
-            'defaultAddress',
-            'categories',
-            'hasOutOfStock'
-        ));
+    if ($cart instanceof Collection) {
+        $cart = $cart->toArray();
     }
+
+    if (!is_array($cart)) {
+        $cart = [];
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Active Offers
+    |--------------------------------------------------------------------------
+    */
+    $now = now()->toDateString();
+
+    $activeOffers = Offer::query()->where('status', 1)
+        ->whereDate('start_date', '<=', $now)
+        ->whereDate('end_date', '>=', $now)
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cart Calculations
+    |--------------------------------------------------------------------------
+    */
+    $cartCount = 0;
+    $subtotal = 0;
+    $hasOutOfStock = false;
+    $hasLowStock = false;
+
+    foreach ($cart as $key => &$item) {
+
+        if (is_object($item)) {
+            $item = (array) $item;
+        }
+
+        if (!is_array($item)) {
+            continue;
+        }
+
+        $product = Product::query()->find($item['id'] ?? null);
+
+        if (!$product) {
+            continue;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Quantity
+        |--------------------------------------------------------------------------
+        */
+        $quantity = isset($item['quantity']) && is_numeric($item['quantity'])
+            ? (int) $item['quantity']
+            : 1;
+
+        $quantity = max(1, $quantity);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Stock
+        |--------------------------------------------------------------------------
+        */
+        $stock = (int) ($product->stock ?? 0);
+
+        if ($stock <= 0) {
+            $hasOutOfStock = true;
+        }
+
+        if ($stock > 0 && $stock <= 5) {
+            $hasLowStock = true;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Original Price
+        |--------------------------------------------------------------------------
+        */
+        $originalPrice = (float) $product->price;
+
+        $discountedPrice = $originalPrice;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Find Active Offer
+        |--------------------------------------------------------------------------
+        */
+
+        // Product offer
+        $offer = $activeOffers->first(function ($o) use ($product) {
+            return $o->apply_to === 'product'
+                && $o->product_id == $product->id;
+        });
+
+
+        // Category offer
+        if (!$offer) {
+            $offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'category'
+                    && $o->product_category_id == $product->category_id;
+            });
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Calculate Discounted Price
+        |--------------------------------------------------------------------------
+        */
+        if ($offer) {
+
+            if ($offer->discount_type === 'percentage') {
+
+                $discountedPrice = $originalPrice -
+                    ($originalPrice * $offer->discount_value / 100);
+
+            } else {
+
+                $discountedPrice = max(
+                    0,
+                    $originalPrice - $offer->discount_value
+                );
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Attach Values To Cart Item
+        |--------------------------------------------------------------------------
+        |
+        | This makes the values available directly in Blade.
+        |
+        */
+        $item['price'] = $discountedPrice;
+        $item['original_price'] = $originalPrice;
+        $item['discounted_price'] = $discountedPrice;
+        $item['active_offer'] = $offer;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Item Total
+        |--------------------------------------------------------------------------
+        */
+        $itemTotal = $discountedPrice * $quantity;
+
+        $subtotal += $itemTotal;
+
+        $cartCount += $quantity;
+    }
+
+    unset($item);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Addresses
+    |--------------------------------------------------------------------------
+    */
+    $addresses = $user->address;
+
+    if (is_string($addresses)) {
+        $addresses = json_decode($addresses, true);
+    }
+
+    if (!is_array($addresses)) {
+        $addresses = [];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Address
+    |--------------------------------------------------------------------------
+    */
+    $defaultAddress = collect($addresses)
+        ->firstWhere('is_default', true);
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Totals
+    |--------------------------------------------------------------------------
+    */
+    $shipping = 0;
+    $discount = 0;
+
+    $total = $subtotal + $shipping - $discount;
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Categories
+    |--------------------------------------------------------------------------
+    */
+    $categories = ProductCategory::query()->where('status', 1)
+        ->latest()
+        ->take(7)
+        ->get();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Recommended Products
+    |--------------------------------------------------------------------------
+    */
+    $recommendedProducts = Product::query()
+        ->where('status', 1)
+        ->latest()
+        ->take(8)
+        ->get();
+
+
+    $recommendedProducts->each(function ($product) use ($activeOffers) {
+
+        // Product offer
+        $offer = $activeOffers->first(function ($o) use ($product) {
+            return $o->apply_to === 'product'
+                && $o->product_id == $product->id;
+        });
+
+
+        // Category offer
+        if (!$offer) {
+            $offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'category'
+                    && $o->product_category_id == $product->category_id;
+            });
+        }
+
+
+        $product->active_offer = $offer;
+    });
+
+
+    return view('customer.checkout', compact(
+        'cart',
+        'cartCount',
+        'subtotal',
+        'shipping',
+        'discount',
+        'total',
+        'user',
+        'addresses',
+        'defaultAddress',
+        'categories',
+        'hasOutOfStock',
+        'hasLowStock',
+        'recommendedProducts'
+    ));
+}
 
     public function removeFromCart($key)
     {
@@ -415,7 +593,7 @@ class CheckoutController extends Controller
                         'specification' => $product->specification,
                     ]);
 
-                    $product->decrement('stock', $item['quantity']);
+                    $product->query()->decrement('stock', $item['quantity']);
                 }
 
                 DB::commit();
@@ -626,92 +804,76 @@ class CheckoutController extends Controller
     }
 
     public function createRazorpayOrder(Request $request)
-    {
-        try {
-            $user = Auth::user();
+{
+    try {
+        $user = Auth::user();
 
-            if (! $user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please login to continue.',
-                ], 401);
-            }
-
-            $cart = session()->get('cart', []);
-
-            if (empty($cart)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your cart is empty.',
-                ], 400);
-            }
-
-            // Calculate total
-            $subtotal = 0;
-            foreach ($cart as $item) {
-                $subtotal += $item['price'] * $item['quantity'];
-            }
-
-            // Apply coupon if exists
-            $discount = 0;
-            $couponCode = session()->get('applied_coupon_code');
-            if ($couponCode) {
-                $coupon = Coupon::query()->where('code', $couponCode)->first();
-                if ($coupon) {
-                    if ($coupon->discount_type === 'percentage') {
-                        $discount = ($subtotal * $coupon->discount_value) / 100;
-                        if ($coupon->maximum_discount && $discount > $coupon->maximum_discount) {
-                            $discount = $coupon->maximum_discount;
-                        }
-                    } else {
-                        $discount = $coupon->discount_value;
-                    }
-                    $discount = min($discount, $subtotal);
-                }
-            }
-
-            $total = $subtotal - $discount;
-            $total = max($total, 0);
-
-            $api = new Api(
-                config('services.razorpay.key'),
-                config('services.razorpay.secret')
-            );
-
-            $razorpayOrder = $api->order->create([
-                'receipt' => 'order_'.time(),
-                'amount' => (int) round($total * 100),
-                'currency' => 'INR',
-                'payment_capture' => 1,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'key' => config('services.razorpay.key'),
-                'razorpay_order_id' => $razorpayOrder['id'],
-                'amount' => $razorpayOrder['amount'],
-                'currency' => 'INR',
-                'name' => config('app.name'),
-                'description' => 'Order Payment',
-                'prefill' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'contact' => $user->phone ?? '',
-                ],
-                'notes' => [
-                    'user_id' => $user->id,
-                ],
-            ]);
-
-        } catch (\Exception $e) {
-            Log::error('Razorpay order creation failed: '.$e->getMessage());
-
+        if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Unable to initialize payment. Please try again.',
-            ], 500);
+                'message' => 'Please login to continue.',
+            ], 401);
         }
+
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Your cart is empty.',
+            ], 400);
+        }
+
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $subtotal += ($item['price'] ?? 0) * ($item['quantity'] ?? 1);
+        }
+
+        $discount = (float) session()->get('applied_coupon_discount', 0);
+        $shipping = (float) session()->get('shipping', 0);
+
+        $total = $subtotal + $shipping - $discount;
+        $total = max($total, 0);
+
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
+
+        $razorpayOrder = $api->order->create([
+            'receipt' => 'order_'.time(),
+            'amount' => (int) round($total * 100),
+            'currency' => 'INR',
+            'payment_capture' => 1,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'key' => config('services.razorpay.key'),
+            'razorpay_order_id' => $razorpayOrder['id'],
+            'amount' => $razorpayOrder['amount'],
+            'currency' => 'INR',
+            'name' => config('app.name'),
+            'description' => 'Order Payment',
+            'prefill' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'contact' => $user->phone ?? '',
+            ],
+            'notes' => [
+                'user_id' => $user->id,
+            ],
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error('Razorpay order creation failed: '.$e->getMessage());
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Unable to initialize payment. Please try again.',
+        ], 500);
     }
+}
 
     public function verifyRazorpayPayment(Request $request)
     {

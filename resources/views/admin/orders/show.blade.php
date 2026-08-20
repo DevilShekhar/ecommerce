@@ -205,6 +205,7 @@
 
         .return-action-card .header {
             border-bottom: 1px solid #f1dfb5;
+            margin-left:10px;
         }
 
         .return-action-title {
@@ -532,7 +533,7 @@
             'cancelled', 'returned', 'refunded', 'failed' => 'status-cancelled',
             default => 'status-pending'
         };
-        $mainStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered'];
+        $mainStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered','return_requested','returned','refunded','return_rejected'];
         $currentIndex = array_search($currentStatus, $mainStatuses, true);
         if ($currentIndex === false) {
             $currentIndex = -1;
@@ -622,9 +623,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="info-row">
-                                        <div class="info-label">Quantity</div>
-                                        <div class="info-value">{{ $returnRequest->quantity ?? 0 }}</div>
+                                    <div class="info-label">Quantity</div>
+                                    <div class="info-value">
+                                        {{ $returnRequest->quantity ?? 0 }}
                                     </div>
+                                </div>
                                 </div>
                             </div>
                             @if($returnRequest->reason)
@@ -709,9 +712,9 @@
                                         <form action="{{ route('orders.returns.refund', $returnRequest->id) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="btn btn-primary btn-block"
-                                                onclick="return confirm('Are you sure you want to process this refund?')">
-                                                <i class="zmdi zmdi-money"></i> Process Refund
-                                            </button>
+                                                onclick="event.preventDefault();Swal.fire({title:'Process Refund?',text:'Are you sure?',icon:'warning',showCancelButton:true,confirmButtonText:'Yes, Refund'}).then(r=>{if(r.isConfirmed)this.form.submit()})">
+                                                <i class="zmdi zmdi-money"></i>
+                                            Process Refund</button>
                                         </form>
                                     </div>
                                 </div>
@@ -980,14 +983,48 @@
                                     $shippingAddress = collect($order->user->address ?? [])->firstWhere('is_default', true) ?? collect($order->user->address ?? [])->first();
                                 @endphp
                                 <div class="shipping-address">
-                                    <div class="address-main"><strong>Mobile:</strong>
-                                        {{ $shippingAddress['mobile'] ?? '-' }}</div>
-                                    <div class="address-main"><strong>Address:</strong>
-                                        {{ $order->shipping_address ?? 'Address not available' }}</div>
-                                    <div class="address-location">
-                                        {{ collect([$order->shipping_city, $order->shipping_state, $order->shipping_country, $order->shipping_pincode])->filter()->implode(', ') }}
-                                    </div>
-                                </div>
+
+    <div class="info-row">
+        <div class="info-label">Name</div>
+        <div class="info-value">
+            {{ $order->user->name ?? '-' }}
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">Email</div>
+        <div class="info-value">
+            {{ $order->user->email ?? '-' }}
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">Mobile</div>
+        <div class="info-value">
+            {{ $shippingAddress['mobile'] ?? ($order->user->mobile ?? '-') }}
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">Address</div>
+        <div class="info-value">
+            {{ $order->shipping_address ?? 'Address not available' }}
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="info-label">Location</div>
+        <div class="info-value">
+            {{ collect([
+                $order->shipping_city,
+                $order->shipping_state,
+                $order->shipping_country,
+                $order->shipping_pincode
+            ])->filter()->implode(', ') ?: '-' }}
+        </div>
+    </div>
+
+</div>
                             </div>
                         </div>
                         @if($order->notes)
@@ -1061,29 +1098,6 @@
                                             </div>
                                         @endif
                                     </div>
-                                </div>
-                            </div>
-                        @endif
-                        @if($order->user)
-                            <div class="card">
-                                <div class="header">
-                                    <h2><strong>Customer</strong> Details</h2>
-                                </div>
-                                <div class="body">
-                                    <div class="info-row">
-                                        <div class="info-label">Name</div>
-                                        <div class="info-value">{{ $order->user->name }}</div>
-                                    </div>
-                                    <div class="info-row">
-                                        <div class="info-label">Email</div>
-                                        <div class="info-value">{{ $order->user->email ?? '-' }}</div>
-                                    </div>
-                                    @if($order->user->mobile)
-                                        <div class="info-row">
-                                            <div class="info-label">Mobile</div>
-                                            <div class="info-value">{{ $order->user->mobile }}</div>
-                                        </div>
-                                    @endif
                                 </div>
                             </div>
                         @endif

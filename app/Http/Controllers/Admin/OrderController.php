@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\InventoryTransaction;
 use App\Models\Order;
 use App\Models\OrderReturn;
+use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductRating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -66,10 +69,9 @@ class OrderController extends Controller
         $categories = ProductCategory::query()->where('status', 1)
             ->orderBy('name')
             ->get();
-
         $orders = Order::with([
             'user',
-            'items.product',
+            'items.product', 'items.rating',
         ])
             ->withCount('items')
             ->latest()
@@ -193,7 +195,44 @@ class OrderController extends Controller
             $updateData['refunded_at'] = now();
         }
 
-        $order->update($updateData);
+        if ($newStatus === 'cancelled') {
+            DB::transaction(function () use ($order, $updateData) {
+                $order->load('items');
+
+                foreach ($order->items as $item) {
+                    $product = Product::lockForUpdate()->find($item->product_id);
+
+                    if ($product) {
+                        $stockBefore = (int) $product->stock;
+                        $quantity = (int) $item->quantity;
+                        $stockAfter = $stockBefore + $quantity;
+
+                        $product->update([
+                            'stock' => $stockAfter,
+                            'updated_by' => Auth::id(),
+                        ]);
+
+                        InventoryTransaction::create([
+                            'product_id' => $product->id,
+                            'type' => 'stock_in',
+                            'quantity' => $quantity,
+                            'stock_before' => $stockBefore,
+                            'stock_after' => $stockAfter,
+                            'reference_type' => 'order_cancelled',
+                            'reference_id' => $order->id,
+                            'supplier_name' => null,
+                            'invoice_number' => null,
+                            'notes' => 'Stock restored due to order cancellation.',
+                            'created_by' => Auth::id(),
+                        ]);
+                    }
+                }
+
+                $order->update($updateData);
+            });
+        } else {
+            $order->update($updateData);
+        }
 
         return redirect()
             ->route('orders.show', $order->id)
@@ -207,7 +246,6 @@ class OrderController extends Controller
 
     public function cancel(Request $request, $id)
     {
-        // dd($request->all());
         $request->validate([
             'cancellation_reason' => 'required|string|max:255',
         ]);
@@ -216,31 +254,126 @@ class OrderController extends Controller
             ->where('user_id', Auth::id())
             ->firstOrFail();
 
-        // Customer can cancel only while order is pending
         if (strtolower($order->order_status) !== 'pending') {
             return redirect()
                 ->route('customer.orders.index')
                 ->with('error', 'This order can no longer be cancelled.');
         }
 
-        $order->update([
-            'order_status' => 'cancelled',
-            'cancellation_reason' => $request->cancellation_reason,
-        ]);
+        DB::transaction(function () use ($order, $request) {
+            $order->load('items');
+
+            foreach ($order->items as $item) {
+                $product = Product::lockForUpdate()->find($item->product_id);
+
+                if ($product) {
+                    $stockBefore = (int) $product->stock;
+                    $quantity = (int) $item->quantity;
+                    $stockAfter = $stockBefore + $quantity;
+
+                    $product->update([
+                        'stock' => $stockAfter,
+                        'updated_by' => Auth::id(),
+                    ]);
+
+                    InventoryTransaction::create([
+                        'product_id' => $product->id,
+                        'type' => 'stock_in',
+                        'quantity' => $quantity,
+                        'stock_before' => $stockBefore,
+                        'stock_after' => $stockAfter,
+                        'reference_type' => 'order_cancelled',
+                        'reference_id' => $order->id,
+                        'supplier_name' => null,
+                        'invoice_number' => null,
+                        'notes' => 'Stock restored due to order cancellation.',
+                        'created_by' => Auth::id(),
+                    ]);
+                }
+            }
+
+            $order->update([
+                'order_status' => 'cancelled',
+                'cancellation_reason' => $request->cancellation_reason,
+            ]);
+        });
 
         return redirect()
             ->route('customer.orders.index')
-            ->with('success', 'Your order has been cancelled successfully.');
+            ->with('success', 'Your order has been cancelled successfully and stock has been restored.');
     }
+
+    // public function cancel(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'cancellation_reason' => 'required|string|max:255',
+    //     ]);
+    //     $order = Order::where('id', $id)
+    //         ->where('user_id', Auth::id())
+    //         ->firstOrFail();
+
+    //     if (strtolower($order->order_status) !== 'pending') {
+    //         return redirect()
+    //             ->route('customer.orders.index')
+    //             ->with('error', 'This order can no longer be cancelled.');
+    //     }
+
+    //     DB::transaction(function () use ($order, $request) {
+    //         $order->load('items');
+
+    //         foreach ($order->items as $item) {
+    //             $product = Product::lockForUpdate()->find($item->product_id);
+
+    //             if ($product) {
+    //                 $stockBefore = (int) $product->stock;
+    //                 $quantity = (int) $item->quantity;
+    //                 $stockAfter = $stockBefore + $quantity;
+
+    //                 $product->update([
+    //                     'stock' => $stockAfter,
+    //                     'updated_by' => Auth::id(),
+    //                 ]);
+
+    //                 InventoryTransaction::create([
+    //                     'product_id' => $product->id,
+    //                     'type' => 'stock_in',
+    //                     'quantity' => $quantity,
+    //                     'stock_before' => $stockBefore,
+    //                     'stock_after' => $stockAfter,
+    //                     'reference_type' => 'order_cancelled',
+    //                     'reference_id' => $order->id,
+    //                     'supplier_name' => null,
+    //                     'invoice_number' => null,
+    //                     'notes' => 'Stock restored due to order cancellation.',
+    //                     'created_by' => Auth::id(),
+    //                 ]);
+    //             }
+    //         }
+
+    //         $order->update([
+    //             'order_status' => 'cancelled',
+    //             'cancellation_reason' => $request->cancellation_reason,
+    //         ]);
+    //     });
+
+    //     return redirect()
+    //         ->route('customer.orders.index')
+    //         ->with('success', 'Your order has been cancelled successfully and stock has been restored.');
+    // }
 
     public function requestReturn(Request $request, Order $order)
     {
         if ($order->user_id !== Auth::id()) {
             return redirect()->back()->with('error', 'Unauthorized action.');
         }
+
         if (strtolower($order->order_status) !== 'delivered') {
-            return redirect()->back()->with('error', 'This order cannot be returned. Order must be delivered.');
+            return redirect()->back()->with(
+                'error',
+                'This order cannot be returned. Order must be delivered.'
+            );
         }
+
         $request->validate([
             'return_reason' => 'required|string|max:500',
             'return_notes' => 'nullable|string|max:1000',
@@ -248,14 +381,19 @@ class OrderController extends Controller
 
         try {
             DB::beginTransaction();
-            $firstItem = $order->items()->first();
+
+            $order->load('items');
+
+            // Total quantity of all products in this order
+            $totalQuantity = $order->items->sum('quantity');
+
             $orderReturn = OrderReturn::create([
                 'order_id' => $order->id,
                 'user_id' => Auth::id(),
-                'order_item_id' => $firstItem?->id ?? null,
+                'order_item_id' => $order->items->first()?->id ?? null,
                 'reason' => $request->return_reason,
                 'customer_note' => $request->return_notes,
-                'quantity' => $firstItem?->quantity ?? 1,
+                'quantity' => $totalQuantity,
                 'refund_amount' => $order->total,
                 'status' => 'return_requested',
             ]);
@@ -272,7 +410,10 @@ class OrderController extends Controller
 
             return redirect()
                 ->back()
-                ->with('success', 'Return request submitted successfully. We will review it shortly.');
+                ->with(
+                    'success',
+                    'Return request submitted successfully. We will review it shortly.'
+                );
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -283,7 +424,33 @@ class OrderController extends Controller
 
             return redirect()
                 ->back()
-                ->with('error', 'Failed to submit return request. Please try again.');
+                ->with(
+                    'error',
+                    'Failed to submit return request. Please try again.'
+                );
         }
+    }
+
+    public function submitRating(Request $request)
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'order_id' => 'required|exists:orders,id',
+            'order_item_id' => 'required',
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+        ProductRating::updateOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'order_item_id' => $request->order_item_id,
+            ],
+            [
+                'product_id' => $request->product_id,
+                'order_id' => $request->order_id,
+                'rating' => $request->rating,
+            ]
+        );
+
+        return back()->with('success', 'Rating submitted successfully.');
     }
 }

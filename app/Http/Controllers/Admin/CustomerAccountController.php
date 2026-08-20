@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\OrderReturn;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -97,12 +98,6 @@ class CustomerAccountController extends Controller
             'name' => $request->name,
             'email' => $request->email,
         ];
-
-        /*
-        |--------------------------------------------------------------------------
-        | Avatar Upload
-        |--------------------------------------------------------------------------
-        */
         if ($request->hasFile('avatar')) {
 
             // Delete old avatar
@@ -429,5 +424,45 @@ public function updatePassword(Request $request)
         'success',
         'Password created successfully. You can now log in using your email and this password.'
     );
+}
+public function returns()
+{
+    $userId = Auth::id();
+
+    $returns = OrderReturn::with([
+            'order',
+            'orderItem.product'
+        ])
+        ->where('user_id', $userId)
+        ->latest()
+        ->paginate(10);
+         $categories = ProductCategory::query()
+            ->where('status', 1)
+            ->get();
+
+    $returnCounts = [
+        'total' => OrderReturn::where('user_id', $userId)->count(),
+
+        'pending' => OrderReturn::where('user_id', $userId)
+            ->where('status', 'pending')
+            ->count(),
+
+        'approved' => OrderReturn::where('user_id', $userId)
+            ->where('status', 'approved')
+            ->count(),
+
+        'rejected' => OrderReturn::where('user_id', $userId)
+            ->where('status', 'rejected')
+            ->count(),
+
+        'refunded' => OrderReturn::where('user_id', $userId)
+            ->where('status', 'refunded')
+            ->count(),
+    ];
+
+    return view('customer.refund', compact(
+        'returns',
+        'returnCounts','categories'
+    ));
 }
 }
