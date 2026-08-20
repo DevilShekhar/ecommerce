@@ -56,7 +56,7 @@ class CustomerAccountController extends Controller
         }
 
         // Backward compatibility if old data is still JSON string.
-        if (is_string($addresses) && !empty($addresses)) {
+        if (is_string($addresses) && ! empty($addresses)) {
             $decoded = json_decode($addresses, true);
 
             return is_array($decoded) ? $decoded : [];
@@ -83,7 +83,7 @@ class CustomerAccountController extends Controller
                 'required',
                 'email',
                 'max:255',
-                'unique:users,email,' . $user->id,
+                'unique:users,email,'.$user->id,
             ],
 
             'avatar' => [
@@ -101,7 +101,7 @@ class CustomerAccountController extends Controller
         if ($request->hasFile('avatar')) {
 
             // Delete old avatar
-            if (!empty($user->avatar)) {
+            if (! empty($user->avatar)) {
                 $oldAvatar = $user->avatar;
 
                 if (Storage::disk('public')->exists($oldAvatar)) {
@@ -150,7 +150,7 @@ class CustomerAccountController extends Controller
             }
         }
 
-        $nextId = !empty($existingIds)
+        $nextId = ! empty($existingIds)
             ? max($existingIds) + 1
             : 1;
 
@@ -208,13 +208,13 @@ class CustomerAccountController extends Controller
                 (int) $address['id'] === (int) $addressId
             ) {
                 $addressFound = true;
-                $deletedWasDefault = !empty($address['is_default']);
+                $deletedWasDefault = ! empty($address['is_default']);
 
                 break;
             }
         }
 
-        if (!$addressFound) {
+        if (! $addressFound) {
             return back()->withErrors([
                 'address' => 'Address not found.',
             ]);
@@ -224,13 +224,13 @@ class CustomerAccountController extends Controller
                 $addresses,
                 function ($address) use ($addressId) {
 
-                    return !isset($address['id']) ||
+                    return ! isset($address['id']) ||
                         (int) $address['id'] !== (int) $addressId;
                 }
             )
         );
 
-        if ($deletedWasDefault && !empty($addresses)) {
+        if ($deletedWasDefault && ! empty($addresses)) {
 
             foreach ($addresses as &$address) {
                 $address['is_default'] = false;
@@ -274,7 +274,7 @@ class CustomerAccountController extends Controller
         }
 
         unset($address);
-        if (!$addressFound) {
+        if (! $addressFound) {
             return back()->withErrors([
                 'address' => 'Address not found.',
             ]);
@@ -358,7 +358,7 @@ class CustomerAccountController extends Controller
 
         unset($address);
 
-        if (!$addressFound) {
+        if (! $addressFound) {
             return back()->withErrors([
                 'address' => 'Address not found.',
             ]);
@@ -382,7 +382,7 @@ class CustomerAccountController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|email|max:255|unique:users,email,'.$user->id,
             'mobile' => 'nullable|string|max:20',
         ]);
 
@@ -401,68 +401,69 @@ class CustomerAccountController extends Controller
     /**
      * Update Password
      */
-   /**
- * Update Password
- */
-public function updatePassword(Request $request)
-{
-    $request->validate([
-        'password' => [
-            'required',
-            'string',
-            'confirmed',
-            'min:8',
-        ],
-    ]);
+    /**
+     * Update Password
+     */
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                'min:8',
+            ],
+        ]);
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    $user->password = Hash::make($request->password);
-    $user->save();
+        $user->password = Hash::make($request->password);
+        $user->save();
 
-    return back()->with(
-        'success',
-        'Password created successfully. You can now log in using your email and this password.'
-    );
-}
-public function returns()
-{
-    $userId = Auth::id();
+        return back()->with(
+            'success',
+            'Password created successfully. You can now log in using your email and this password.'
+        );
+    }
 
-    $returns = OrderReturn::with([
+    public function returns()
+    {
+        $userId = Auth::id();
+
+        $returns = OrderReturn::with([
             'order',
-            'orderItem.product'
+            'orderItem.product',
         ])
-        ->where('user_id', $userId)
-        ->latest()
-        ->paginate(10);
-         $categories = ProductCategory::query()
+            ->where('user_id', $userId)
+            ->latest()
+            ->paginate(10);
+        $categories = ProductCategory::query()
             ->where('status', 1)
             ->get();
 
-    $returnCounts = [
-        'total' => OrderReturn::where('user_id', $userId)->count(),
+        $returnCounts = [
+            'total' => OrderReturn::where('user_id', $userId)->count(),
 
-        'pending' => OrderReturn::where('user_id', $userId)
-            ->where('status', 'pending')
-            ->count(),
+            'pending' => OrderReturn::where('user_id', $userId)
+                ->where('status', 'pending')
+                ->count(),
 
-        'approved' => OrderReturn::where('user_id', $userId)
-            ->where('status', 'approved')
-            ->count(),
+            'approved' => OrderReturn::where('user_id', $userId)
+                ->where('status', 'approved')
+                ->count(),
 
-        'rejected' => OrderReturn::where('user_id', $userId)
-            ->where('status', 'rejected')
-            ->count(),
+            'rejected' => OrderReturn::where('user_id', $userId)
+                ->where('status', 'rejected')
+                ->count(),
 
-        'refunded' => OrderReturn::where('user_id', $userId)
-            ->where('status', 'refunded')
-            ->count(),
-    ];
+            'refunded' => OrderReturn::where('user_id', $userId)
+                ->where('status', 'refunded')
+                ->count(),
+        ];
 
-    return view('customer.refund', compact(
-        'returns',
-        'returnCounts','categories'
-    ));
-}
+        return view('customer.refund', compact(
+            'returns',
+            'returnCounts', 'categories'
+        ));
+    }
 }
