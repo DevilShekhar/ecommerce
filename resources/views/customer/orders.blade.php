@@ -2564,127 +2564,132 @@
 
             function loadProductDetails(productId) {
 
-                loader.style.display = 'flex';
-                content.style.display = 'none';
+    loader.style.display = 'flex';
+    content.style.display = 'none';
 
-                image.src = '';
-                image.alt = 'Product Image';
-                category.textContent = '';
-                categoryInfo.textContent = '';
-                name.textContent = '';
-                price.textContent = '';
-                description.innerHTML = '';
-                stock.textContent = '';
-                action.innerHTML = '';
+    image.src = '';
+    image.alt = 'Product Image';
+    category.textContent = '';
+    categoryInfo.textContent = '';
+    name.textContent = '';
+    price.textContent = '';
+    description.innerHTML = '';
+    stock.textContent = '';
+    action.innerHTML = '';
 
-                productModal.show();
+    productModal.show();
 
-                fetch(detailsUrl + '/' + encodeURIComponent(productId), {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                    .then(async response => {
-                        const contentType = response.headers.get('content-type') || '';
-                        if (!contentType.includes('application/json')) {
-                            throw new Error(
-                                'Server returned an invalid response. Please check the product details route.'
-                            );
-                        }
-                        const data = await response.json();
-                        if (!response.ok) {
-                            throw new Error(
-                                data.message || 'Failed to load product details.'
-                            );
-                        }
-                        return data;
-                    })
-                    .then(data => {
-                        if (!data.success || !data.product) {
-                            throw new Error('Product details not found.');
-                        }
-
-                        const product = data.product;
-
-                        if (product.image) {
-                            image.src = product.image;
-                            image.alt = product.name || 'Product Image';
-                            image.onerror = function () {
-                                this.src = "{{ asset('images/no-image.png') }}";
-                            };
-                        } else {
-                            image.src = "{{ asset('images/no-image.png') }}";
-                            image.alt = 'No Image';
-                        }
-
-                        category.textContent = product.category || 'Product';
-                        categoryInfo.textContent = product.category || 'N/A';
-                        name.textContent = product.name || 'Product';
-                        price.textContent = product.formatted_price || '₹0.00';
-                        description.innerHTML = product.description || '<p>No description available.</p>';
-
-                        if (product.is_out_of_stock) {
-                            stock.textContent = 'Out of Stock';
-                            stock.style.color = '#dc2626';
-                        } else {
-                            stock.textContent = 'In Stock';
-                            stock.style.color = '#16a34a';
-                        }
-
-                        if (product.is_futured) {
-                            action.innerHTML = `
-                                                                                <button type="button"
-                                                                                    class="product-modal-notify notify-me-btn"
-                                                                                    data-product-id="${product.id}">
-                                                                                    <i class="bi bi-bell me-2"></i>
-                                                                                    Notify Me
-                                                                                </button>
-                                                                            `;
-                        } else if (product.is_out_of_stock) {
-                            action.innerHTML = `
-                                                                                <button type="button"
-                                                                                    class="product-modal-add-cart"
-                                                                                    disabled>
-                                                                                    <i class="bi bi-x-circle me-2"></i>
-                                                                                    Out of Stock
-                                                                                </button>
-                                                                            `;
-                        } else {
-                            action.innerHTML = `
-                                                                                <form class="add-to-cart-form" action="{{ route('cart.add', $product->id) }}" method="POST">
-                                                                                        @csrf
-
-                                                                                        <button type="submit" class="rec-add-cart">
-                                                                                            <i class="bi bi-cart3 me-1"></i>
-                                                                                            Add to Cart
-                                                                                        </button>
-                                                                                    </form>
-                                                                            `;
-                        }
-
-                        loader.style.display = 'none';
-                        content.style.display = 'block';
-                    })
-                    .catch(error => {
-                        console.error('Product Details Error:', error);
-                        loader.style.display = 'none';
-                        content.style.display = 'none';
-                        productModal.hide();
-                        if (typeof showSidebarToast === 'function') {
-                            showSidebarToast(
-                                'error',
-                                'Error',
-                                error.message || 'Failed to load product details.'
-                            );
-                        } else {
-                            alert(
-                                error.message || 'Failed to load product details.'
-                            );
-                        }
-                    });
+    fetch(detailsUrl + '/' + encodeURIComponent(productId), {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+        .then(async response => {
+            const contentType = response.headers.get('content-type') || '';
+            if (!contentType.includes('application/json')) {
+                throw new Error(
+                    'Server returned an invalid response. Please check the product details route.'
+                );
             }
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(
+                    data.message || 'Failed to load product details.'
+                );
+            }
+            return data;
+        })
+        .then(data => {
+            if (!data.success || !data.product) {
+                throw new Error('Product details not found.');
+            }
+
+            const product = data.product;
+
+            if (product.image) {
+                image.src = product.image;
+                image.alt = product.name || 'Product Image';
+                image.onerror = function () {
+                    this.src = "{{ asset('images/no-image.png') }}";
+                };
+            } else {
+                image.src = "{{ asset('images/no-image.png') }}";
+                image.alt = 'No Image';
+            }
+
+            category.textContent = product.category || 'Product';
+            categoryInfo.textContent = product.category || 'N/A';
+            name.textContent = product.name || 'Product';
+            price.textContent = product.formatted_price || '₹0.00';
+            description.innerHTML = product.description || '<p>No description available.</p>';
+
+            if (product.is_out_of_stock) {
+                stock.textContent = 'Out of Stock';
+                stock.style.color = '#dc2626';
+            } else {
+                stock.textContent = 'In Stock';
+                stock.style.color = '#16a34a';
+            }
+
+            if (product.is_futured) {
+                action.innerHTML = `
+                    <button type="button"
+                        class="product-modal-notify notify-me-btn"
+                        data-product-id="${product.id}">
+                        <i class="bi bi-bell me-2"></i>
+                        Notify Me
+                    </button>
+                `;
+            } else if (product.is_out_of_stock) {
+                action.innerHTML = `
+                    <button type="button"
+                        class="product-modal-add-cart"
+                        disabled>
+                        <i class="bi bi-x-circle me-2"></i>
+                        Out of Stock
+                    </button>
+                `;
+            } else {
+                // FIXED: Use JavaScript variables instead of Blade syntax
+                // Get the CSRF token from the meta tag
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+                // Build the URL using JavaScript
+                const addToCartUrl = "{{ url('/cart/add') }}" + '/' + product.id;
+
+                action.innerHTML = `
+                    <form class="add-to-cart-form" action="${addToCartUrl}" method="POST">
+                        <input type="hidden" name="_token" value="${csrfToken}">
+                        <button type="submit" class="rec-add-cart">
+                            <i class="bi bi-cart3 me-1"></i>
+                            Add to Cart
+                        </button>
+                    </form>
+                `;
+            }
+
+            loader.style.display = 'none';
+            content.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Product Details Error:', error);
+            loader.style.display = 'none';
+            content.style.display = 'none';
+            productModal.hide();
+            if (typeof showSidebarToast === 'function') {
+                showSidebarToast(
+                    'error',
+                    'Error',
+                    error.message || 'Failed to load product details.'
+                );
+            } else {
+                alert(
+                    error.message || 'Failed to load product details.'
+                );
+            }
+        });
+}
         });
         function showReturnConfirmation(orderId) {
             const confirmation = document.getElementById('returnConfirmation' + orderId);
