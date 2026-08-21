@@ -26,7 +26,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
     {{-- Swal css Link --}}
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/dashboardnewcss.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/dashboard.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/swal.css') }}">
     <style>
         /* SweetAlert2 always creates an internal select element. It is not used by our alerts. */
