@@ -127,6 +127,8 @@ class CustomerAccountController extends Controller
      */
     public function storeAddress(Request $request)
     {
+        $user = Auth::user();
+
         $request->validate([
             'address_type' => 'required|string|max:50',
             'name' => 'required|string|max:255',
@@ -136,12 +138,13 @@ class CustomerAccountController extends Controller
             'state' => 'required|string|max:100',
             'country' => 'required|string|max:100',
             'pincode' => 'required|string|max:20',
-            'shipping_mobile' => $user->mobile,
+
+            // Only add this if shipping_mobile exists in your form
+            'shipping_mobile' => 'nullable|string|max:20',
         ]);
 
-        $user = Auth::user();
-
         $addresses = $this->getAddresses($user);
+
         $existingIds = [];
 
         foreach ($addresses as $address) {
@@ -156,6 +159,8 @@ class CustomerAccountController extends Controller
 
         $isFirstAddress = empty($addresses);
 
+        // If this is first address OR user selected default,
+        // remove default status from all old addresses
         if ($request->boolean('is_default') || $isFirstAddress) {
 
             foreach ($addresses as &$address) {
@@ -170,6 +175,7 @@ class CustomerAccountController extends Controller
             'type' => $request->address_type,
             'name' => $request->name,
             'mobile' => $request->mobile,
+            'shipping_mobile' => $request->shipping_mobile,
             'address' => $request->address,
             'city' => $request->city,
             'state' => $request->state,
