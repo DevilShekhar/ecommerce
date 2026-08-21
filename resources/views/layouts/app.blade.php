@@ -25,8 +25,8 @@
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/morrisjs/morris.min.css') }}">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ asset('assets/admin/css/style.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
     {{-- Swal css Link --}}
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/dashboardcss.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/admin/css/swal.css') }}">
     <style>
         /* SweetAlert2 always creates an internal select element. It is not used by our alerts. */
