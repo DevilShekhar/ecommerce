@@ -61,6 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('coupons', CouponController::class);
     Route::resource('blogs', BlogController::class);
     Route::resource('products', ProductController::class);
+    Route::get('/dashboard/download-report', [DashboardController::class, 'downloadReport'])
+        ->name('dashboard.download.report');
+        Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])
+    ->name('dashboard.download.excel');
 
     Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])
         ->name('products.get.subcategories');

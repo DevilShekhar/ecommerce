@@ -1,623 +1,1447 @@
-
-
 @extends('layouts.app')
 
 @section('title', 'Dashboard')
 
 @section('content')
 
-@php
-    $user = Auth::user();
-    $roleName = $user?->role?->name;
-@endphp
+    @php
+        $user = Auth::user();
+        $roleName = $user?->role?->name;
+    @endphp
 
-<section class="content">
-    <div class="body_scroll">
+    <section class="content">
+        <div class="body_scroll">
 
-        {{-- ============================
+            {{-- ============================
             BLOCK HEADER
-        ============================= --}}
-        <div class="block-header">
-            <div class="row">
+            ============================= --}}
+            <div class="block-header">
 
-                <div class="col-lg-7 col-md-6 col-sm-12">
-                    <h2>Welcome, {{ $user->name ?? 'User' }}!</h2>
+                <div class="row">
 
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">
-                                <i class="zmdi zmdi-home"></i>
-                                Aero
-                            </a>
-                        </li>
+                    <div class="col-lg-7 col-md-6 col-sm-12">
+                        <h2>Welcome, {{ $user->name ?? 'User' }}!</h2>
 
-                        <li class="breadcrumb-item active">
-                            Dashboard
-                        </li>
-                    </ul>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="zmdi zmdi-home"></i>
+                                    Dashboard
+                                </a>
+                            </li>
 
-                    <button class="btn btn-primary btn-icon mobile_menu"
-                            type="button">
-                        <i class="zmdi zmdi-sort-amount-desc"></i>
-                    </button>
+                            <li class="breadcrumb-item active">
+                                Overview
+                            </li>
+                        </ul>
+
+                        <button class="btn btn-primary btn-icon mobile_menu" type="button">
+                            <i class="zmdi zmdi-sort-amount-desc"></i>
+                        </button>
+                    </div>
+
+                    <div class="col-lg-5 col-md-6 col-sm-12">
+                        <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn" type="button">
+                            <i class="zmdi zmdi-arrow-right"></i>
+                        </button>
+                        {{-- @if($roleName === 'SuperAdmin')
+                            <div class="btn-group float-right mr-2">
+
+                                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <i class="zmdi zmdi-download"></i>
+                                    Download Report
+                                </button>
+
+                                <div class="dropdown-menu dropdown-menu-right">
+
+                                    <a class="dropdown-item" href="{{ route('dashboard.download.report') }}">
+                                        <i class="zmdi zmdi-file"></i>
+                                        Download PDF
+                                    </a>
+
+                                    <a class="dropdown-item" href="{{ route('dashboard.download.excel') }}">
+                                        <i class="zmdi zmdi-grid"></i>
+                                        Download Excel
+                                    </a>
+
+                                </div>
+
+                            </div>
+                        @endif --}}
+                    </div>
+
                 </div>
-
-                <div class="col-lg-5 col-md-6 col-sm-12">
-                    <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn"
-                            type="button">
-                        <i class="zmdi zmdi-arrow-right"></i>
-                    </button>
-                </div>
-
             </div>
-        </div>
 
 
-        <div class="container-fluid">
-            <div class="dashboard-wrapper">
-
-
-                {{-- ============================================
-                    SUPER ADMIN DASHBOARD
-                ============================================= --}}
-                @if($roleName === 'SuperAdmin')
-
-                    {{-- TOP STATISTICS --}}
-                    <div class="row clearfix">
-
-                        {{-- Total Customers --}}
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-blue-soft">
-                                        <i class="zmdi zmdi-accounts"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Total Customers
-                                    </p>
-
-                                    <h3 class="stat-value">
-                                        {{ $totalCustomers ?? 0 }}
-                                    </h3>
-
-                                    <small class="text-muted">
-                                        Registered Customers
-                                    </small>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        {{-- Total Products --}}
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-red-soft">
-                                        <i class="zmdi zmdi-shopping-cart"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Total Products
-                                    </p>
-
-                                    <h3 class="stat-value">
-                                        {{ $totalProducts ?? 0 }}
-                                    </h3>
-
-                                    <small class="text-muted">
-                                        Available Products
-                                    </small>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        {{-- Wishlist --}}
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-purple-soft">
-                                        <i class="zmdi zmdi-favorite"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Wishlist Items
-                                    </p>
-
-                                    <h3 class="stat-value">
-                                        {{ $totalWishlist ?? 0 }}
-                                    </h3>
-
-                                    <small class="text-muted">
-                                        All Customer Wishlist
-                                    </small>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                        {{-- Admin --}}
-                        <div class="col-lg-3 col-md-6 col-sm-6 col-6">
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-green-soft">
-                                        <i class="zmdi zmdi-account"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Logged In As
-                                    </p>
-
-                                    <h5 class="stat-value-name">
-                                        {{ $user->name }}
-                                    </h5>
-
-                                    <small class="text-muted">
-                                        Super Administrator
-                                    </small>
-
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    {{-- ADMIN OVERVIEW --}}
-                    <div class="row clearfix">
-
-                        <div class="col-lg-8 col-md-12">
-
-                            <div class="card">
-                                <div class="header">
-                                    <h2>
-                                        <strong>Dashboard</strong> Overview
-                                    </h2>
-                                </div>
-
-                                <div class="body">
-
-                                    <div class="row">
-
-                                        <div class="col-md-4 col-sm-4 text-center mb-4">
-                                            <div class="overview-item">
-                                                <div class="overview-icon">
-                                                    <i class="zmdi zmdi-accounts"></i>
-                                                </div>
-
-                                                <h3>
-                                                    {{ $totalCustomers ?? 0 }}
-                                                </h3>
-
-                                                <span>
-                                                    Customers
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-md-4 col-sm-4 text-center mb-4">
-                                            <div class="overview-item">
-                                                <div class="overview-icon">
-                                                    <i class="zmdi zmdi-shopping-basket"></i>
-                                                </div>
-
-                                                <h3>
-                                                    {{ $totalProducts ?? 0 }}
-                                                </h3>
-
-                                                <span>
-                                                    Products
-                                                </span>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-md-4 col-sm-4 text-center mb-4">
-                                            <div class="overview-item">
-                                                <div class="overview-icon">
-                                                    <i class="zmdi zmdi-favorite"></i>
-                                                </div>
-
-                                                <h3>
-                                                    {{ $totalWishlist ?? 0 }}
-                                                </h3>
-
-                                                <span>
-                                                    Wishlist Items
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        {{-- QUICK ACTIONS --}}
-                        <div class="col-lg-4 col-md-12">
-
-                            <div class="card">
-                                <div class="header">
-                                    <h2>
-                                        <strong>Quick</strong> Actions
-                                    </h2>
-                                </div>
-
-                                <div class="body">
-
-                                    @if(Route::has('users.index'))
-                                        <a href="{{ route('users.index') }}"
-                                           class="quick-action-btn">
-                                            <span>
+            <div class="container-fluid">
+                <div class="dashboard-wrapper">
+                    @if($roleName === 'SuperAdmin')
+                        <div class="row dashboard-stats-row">
+                            {{-- Total Customers --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-customers">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
                                                 <i class="zmdi zmdi-accounts"></i>
-                                                Manage Users
-                                            </span>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Customers</span>
+                                                <h2>{{ number_format($totalCustomers ?? 0) }}</h2>
+                                                <div class="stat-subtitle active-text">
+                                                    <i class="zmdi zmdi-trending-up"></i>
+                                                    {{ number_format($activeCustomers ?? 0) }} Active
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-accounts"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-blue">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                            <i class="zmdi zmdi-arrow-right"></i>
-                                        </a>
-                                    @endif
-
-
-                                    @if(Route::has('products.index'))
-                                        <a href="{{ route('products.index') }}"
-                                           class="quick-action-btn">
-                                            <span>
+                            {{-- Total Products --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-products">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
                                                 <i class="zmdi zmdi-shopping-cart"></i>
-                                                Manage Products
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Products</span>
+                                                <h2>{{ number_format($totalProducts ?? 0) }}</h2>
+                                                <div class="stat-subtitle active-text">
+                                                    <i class="zmdi zmdi-trending-up"></i>
+                                                    {{ number_format($activeProducts ?? 0) }} Active
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-shopping-cart"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-red">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Total Brands --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-brands">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-label"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Brands</span>
+                                                <h2>{{ number_format($totalBrands ?? 0) }}</h2>
+                                                <div class="stat-subtitle active-text">
+                                                    <i class="zmdi zmdi-trending-up"></i>
+                                                    {{ number_format($activeBrands ?? 0) }} Active
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-label"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-purple">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Categories --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-categories">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-view-module"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Categories</span>
+                                                <h2>{{ number_format($totalCategories ?? 0) }}</h2>
+                                                <div class="stat-subtitle">
+                                                    Product Categories
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-layers"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-green">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- ============================================
+                        SECOND STATISTICS ROW
+                        ============================================ --}}
+                        <div class="row dashboard-stats-row">
+
+                            {{-- Total Coupons --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-coupons">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-ticket-star"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Coupons</span>
+                                                <h2>{{ number_format($totalCoupons ?? 0) }}</h2>
+                                                <div class="stat-subtitle coupon-text">
+                                                    <i class="zmdi zmdi-verified"></i>
+                                                    {{ number_format($activeCoupons ?? 0) }} Active
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-ticket-star"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-orange">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Total Offers --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-offers">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-local-offer"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Offers</span>
+                                                <h2>{{ number_format($totalOffers ?? 0) }}</h2>
+                                                <div class="stat-subtitle active-text">
+                                                    <i class="zmdi zmdi-trending-up"></i>
+                                                    {{ number_format($activeOffers ?? 0) }} Active
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-gift"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-yellow">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Total Stock --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-stock">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-storage"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Total Stock</span>
+                                                <h2>{{ number_format($totalStock ?? 0) }}</h2>
+                                                <div class="stat-subtitle">
+                                                    Available Units
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-archive"></i>
+                                            </div>
+                                        </div>
+                                        <div class="stat-sparkline sparkline-cyan">
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                            <span></span><span></span><span></span><span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Average Rating --}}
+                            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 mb-4">
+                                <div class="card dashboard-stat-card stat-rating">
+                                    <div class="body">
+                                        <div class="stat-card-content">
+                                            <div class="stat-icon-box">
+                                                <i class="zmdi zmdi-star"></i>
+                                            </div>
+                                            <div class="stat-details">
+                                                <span class="stat-title">Average Rating</span>
+                                                <h2>
+                                                    {{ number_format($averageRating ?? 0, 1) }}
+                                                    <small>/ 5</small>
+                                                </h2>
+                                                <div class="stat-subtitle">
+                                                    {{ number_format($totalRatings ?? 0) }}
+                                                    {{ ($totalRatings ?? 0) == 1 ? 'Rating' : 'Ratings' }}
+                                                </div>
+                                            </div>
+                                            <div class="stat-bg-icon">
+                                                <i class="zmdi zmdi-star"></i>
+                                            </div>
+                                        </div>
+
+                                        @php
+                                            $rating = min(5, max(0, round($averageRating ?? 0)));
+                                            $decimal = ($averageRating ?? 0) - floor($averageRating ?? 0);
+                                        @endphp
+
+                                        <div class="rating-stars">
+
+                                            @for($i = 1; $i <= 5; $i++)
+                                                @if($i <= floor($averageRating ?? 0))
+                                                    <i class="zmdi zmdi-star"></i>
+                                                @elseif($i == ceil($averageRating ?? 0) && $decimal >= 0.3)
+                                                    <i class="zmdi zmdi-star-half"></i>
+                                                @else
+                                                    <i class="zmdi zmdi-star-outline"></i>
+                                                @endif
+                                            @endfor
+
+                                            <span class="rating-count">
+                                                ({{ number_format($totalRatings ?? 0) }})
                                             </span>
 
-                                            <i class="zmdi zmdi-arrow-right"></i>
-                                        </a>
-                                    @endif
-
-
-                                    @if(Route::has('product_categories.index'))
-                                        <a href="{{ route('product_categories.index') }}"
-                                           class="quick-action-btn">
-                                            <span>
-                                                <i class="zmdi zmdi-view-list"></i>
-                                                Categories
-                                            </span>
-
-                                            <i class="zmdi zmdi-arrow-right"></i>
-                                        </a>
-                                    @endif
-
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- ADMIN INFORMATION --}}
-                    <div class="row clearfix">
-
-                        <div class="col-lg-12">
-
-                            <div class="card">
-
-                                <div class="header">
-                                    <h2>
-                                        <strong>Administrator</strong> Information
-                                    </h2>
-                                </div>
-
-                                <div class="body">
-
-                                    <div class="row">
-
-                                        <div class="col-lg-4 col-md-4 mb-3">
-                                            <div class="info-box">
-                                                <small>Name</small>
-                                                <h6>{{ $user->name }}</h6>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-lg-4 col-md-4 mb-3">
-                                            <div class="info-box">
-                                                <small>Email</small>
-                                                <h6>{{ $user->email }}</h6>
-                                            </div>
-                                        </div>
-
-
-                                        <div class="col-lg-4 col-md-4 mb-3">
-                                            <div class="info-box">
-                                                <small>Role</small>
-                                                <h6>
-                                                    <span class="badge badge-danger">
-                                                        {{ $roleName }}
-                                                    </span>
-                                                </h6>
-                                            </div>
                                         </div>
 
                                     </div>
-
                                 </div>
                             </div>
 
                         </div>
 
-                    </div>
 
+                        {{-- ============================================
+                        INVENTORY OVERVIEW
+                        ============================================ --}}
+                        <div class="row clearfix">
 
+                            <div class="col-lg-8 col-md-12">
 
-                {{-- ============================================
-                    CUSTOMER DASHBOARD
-                ============================================= --}}
-                @elseif($roleName === 'customer')
-
-                    {{-- CUSTOMER WELCOME --}}
-                    <div class="row clearfix">
-
-                        <div class="col-lg-12">
-
-                            <div class="card customer-welcome-card">
-
-                                <div class="body">
-
-                                    <div class="row align-items-center">
-
-                                        <div class="col-lg-8 col-md-8">
-
-                                            <div class="customer-welcome-content">
-
-                                                <div class="customer-avatar">
-                                                    {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
-                                                </div>
-
-                                                <div>
-                                                    <h3>
-                                                        Hello, {{ $user->name }}! 👋
-                                                    </h3>
-
-                                                    <p class="mb-0">
-                                                        Welcome back! Explore your wishlist and discover more products.
-                                                    </p>
-                                                </div>
-
-                                            </div>
-
+                                <div class="card inventory-card">
+                                    <div class="header">
+                                        <h2>
+                                            <i class="zmdi zmdi-storage"></i>
+                                            <strong>Inventory</strong> Overview
+                                        </h2>
+                                        <div class="header-actions">
+                                            <span class="badge bg-soft-primary">Live</span>
                                         </div>
-
-
-                                        <div class="col-lg-4 col-md-4 text-md-right mt-3 mt-md-0">
-
-                                            @if(Route::has('shop'))
-                                                <a href="{{ route('shop') }}"
-                                                   class="btn btn-primary">
-                                                    <i class="zmdi zmdi-shopping-cart"></i>
-                                                    Shop Now
-                                                </a>
-                                            @endif
-
-                                        </div>
-
                                     </div>
 
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- CUSTOMER STATS --}}
-                    <div class="row clearfix">
-
-                        {{-- Wishlist Count --}}
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-red-soft">
-                                        <i class="zmdi zmdi-favorite"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Wishlist Items
-                                    </p>
-
-                                    <h3 class="stat-value">
-                                        {{ $wishlistCount ?? 0 }}
-                                    </h3>
-
-                                    <small class="text-muted">
-                                        Your saved products
-                                    </small>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        {{-- Member Since --}}
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-blue-soft">
-                                        <i class="zmdi zmdi-calendar"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Member Since
-                                    </p>
-
-                                    <h5 class="stat-value-name">
-                                        {{ optional($user->created_at)->format('d M Y') }}
-                                    </h5>
-
-                                    <small class="text-muted">
-                                        Account created date
-                                    </small>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-
-                        {{-- Account Status --}}
-                        <div class="col-lg-4 col-md-6 col-sm-6">
-
-                            <div class="card dashboard-stat-card">
-                                <div class="body text-center">
-
-                                    <div class="stat-icon bg-green-soft">
-                                        <i class="zmdi zmdi-check-circle"></i>
-                                    </div>
-
-                                    <p class="stat-title">
-                                        Account Status
-                                    </p>
-
-                                    <h5 class="stat-value-name">
-                                        Active
-                                    </h5>
-
-                                    <small class="text-muted">
-                                        Customer Account
-                                    </small>
-
-                                </div>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    {{-- WISHLIST PRODUCTS --}}
-                    <div class="row clearfix">
-
-                        <div class="col-lg-12">
-
-                            <div class="card">
-
-                                <div class="header">
-
-                                    <h2>
-                                        <strong>My</strong> Wishlist
-                                    </h2>
-
-                                    @if(Route::has('customer.wishlist'))
-                                        <ul class="header-dropdown">
-                                            <li>
-                                                <a href="{{ route('customer.wishlist') }}"
-                                                   class="btn btn-sm btn-primary">
-                                                    View All
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    @endif
-
-                                </div>
-
-
-                                <div class="body">
-
-                                    @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
+                                    <div class="body">
 
                                         <div class="row">
 
-                                            @foreach($wishlistProducts->take(8) as $item)
+                                            {{-- Stock In --}}
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <div class="inventory-stat-box inventory-in">
+                                                    <div class="inventory-stat-icon">
+                                                        <i class="zmdi zmdi-trending-up"></i>
+                                                    </div>
+                                                    <div class="inventory-stat-info">
+                                                        <span class="inventory-stat-label">Total Stock In</span>
+                                                        <h3 class="inventory-stat-value">{{ number_format($totalStockIn ?? 0) }}
+                                                        </h3>
+                                                        <span class="inventory-stat-sub">
+                                                            <i class="zmdi zmdi-trending-up"></i>
+                                                            Today: {{ number_format($todayStockIn ?? 0) }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="inventory-stat-progress">
+                                                        <div class="progress-bar" style="width: 75%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                @if($item->product)
+                                            {{-- Stock Out --}}
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <div class="inventory-stat-box inventory-out">
+                                                    <div class="inventory-stat-icon">
+                                                        <i class="zmdi zmdi-trending-down"></i>
+                                                    </div>
+                                                    <div class="inventory-stat-info">
+                                                        <span class="inventory-stat-label">Total Stock Out</span>
+                                                        <h3 class="inventory-stat-value">
+                                                            {{ number_format($totalStockOut ?? 0) }}
+                                                        </h3>
+                                                        <span class="inventory-stat-sub">
+                                                            <i class="zmdi zmdi-trending-down"></i>
+                                                            Today: {{ number_format($todayStockOut ?? 0) }}
+                                                        </span>
+                                                    </div>
+                                                    <div class="inventory-stat-progress">
+                                                        <div class="progress-bar" style="width: 25%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                    <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+                                            {{-- Low Stock --}}
+                                            <div class="col-md-4 col-sm-6 mb-3">
+                                                <div class="inventory-stat-box inventory-low">
+                                                    <div class="inventory-stat-icon">
+                                                        <i class="zmdi zmdi-alert-circle"></i>
+                                                    </div>
+                                                    <div class="inventory-stat-info">
+                                                        <span class="inventory-stat-label">Low Stock Alert</span>
+                                                        <h3 class="inventory-stat-value">
+                                                            {{ number_format($lowStockProducts ?? 0) }}
+                                                        </h3>
+                                                        <span class="inventory-stat-sub">
+                                                            <i class="zmdi zmdi-alert-triangle"></i>
+                                                            Needs attention
+                                                        </span>
+                                                    </div>
+                                                    <div class="inventory-stat-progress">
+                                                        <div class="progress-bar" style="width: 15%;"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
-                                                        <div class="wishlist-product-card">
+                                        </div>
 
-                                                            {{-- Product Image --}}
-                                                            <div class="wishlist-product-image">
 
-                                                                @if(!empty($item->product->image))
+                                        <div class="row mt-3">
 
-                                                                    <img src="{{ asset('storage/' . $item->product->image) }}"
-                                                                         alt="{{ $item->product->name }}">
+                                            {{-- Available Stock --}}
+                                            <div class="col-md-6">
+                                                <div class="stock-summary-item stock-available">
+                                                    <div class="stock-summary-icon">
+                                                        <i class="zmdi zmdi-check-circle"></i>
+                                                    </div>
+                                                    <div class="stock-summary-info">
+                                                        <span class="stock-summary-label">Available Stock</span>
+                                                        <strong
+                                                            class="stock-summary-value">{{ number_format($totalStock ?? 0) }}</strong>
+                                                    </div>
+                                                    <div class="stock-summary-trend">
+                                                        <span class="trend-up">
+                                                            <i class="zmdi zmdi-trending-up"></i> +12%
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {{-- Out of Stock --}}
+                                            <div class="col-md-6">
+                                                <div class="stock-summary-item stock-out">
+                                                    <div class="stock-summary-icon">
+                                                        <i class="zmdi zmdi-close-circle"></i>
+                                                    </div>
+                                                    <div class="stock-summary-info">
+                                                        <span class="stock-summary-label">Out of Stock</span>
+                                                        <strong
+                                                            class="stock-summary-value">{{ number_format($outOfStockProducts ?? 0) }}</strong>
+                                                    </div>
+                                                    <div class="stock-summary-trend">
+                                                        <span class="trend-down">
+                                                            <i class="zmdi zmdi-trending-down"></i> -3%
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {{-- QUICK ACTIONS --}}
+                            <div class="col-lg-4 col-md-12">
+
+                                <div class="card quick-actions-card">
+                                    <div class="header">
+                                        <h2>
+                                            <i class="zmdi zmdi-view-dashboard"></i>
+                                            <strong>Quick</strong> Actions
+                                        </h2>
+                                        <div class="header-actions">
+                                            <span class="badge bg-soft-success">Shortcuts</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="body">
+
+                                        @if(Route::has('products.index'))
+                                            <a href="{{ route('products.index') }}" class="quick-action-item">
+                                                <span class="quick-action-icon bg-soft-blue">
+                                                    <i class="zmdi zmdi-shopping-cart"></i>
+                                                </span>
+                                                <span class="quick-action-text">Manage Products</span>
+                                                <span class="quick-action-arrow">
+                                                    <i class="zmdi zmdi-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        @endif
+
+                                        @if(Route::has('brands.index'))
+                                            <a href="{{ route('brands.index') }}" class="quick-action-item">
+                                                <span class="quick-action-icon bg-soft-purple">
+                                                    <i class="zmdi zmdi-label"></i>
+                                                </span>
+                                                <span class="quick-action-text">Manage Brands</span>
+                                                <span class="quick-action-arrow">
+                                                    <i class="zmdi zmdi-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        @endif
+
+                                        @if(Route::has('coupons.index'))
+                                            <a href="{{ route('coupons.index') }}" class="quick-action-item">
+                                                <span class="quick-action-icon bg-soft-orange">
+                                                    <i class="zmdi zmdi-ticket-star"></i>
+                                                </span>
+                                                <span class="quick-action-text">Manage Coupons</span>
+                                                <span class="quick-action-arrow">
+                                                    <i class="zmdi zmdi-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        @endif
+
+                                        @if(Route::has('offers.index'))
+                                            <a href="{{ route('offers.index') }}" class="quick-action-item">
+                                                <span class="quick-action-icon bg-soft-yellow">
+                                                    <i class="zmdi zmdi-local-offer"></i>
+                                                </span>
+                                                <span class="quick-action-text">Manage Offers</span>
+                                                <span class="quick-action-arrow">
+                                                    <i class="zmdi zmdi-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        @endif
+
+                                        @if(Route::has('orders.index'))
+                                            <a href="{{ route('orders.index') }}" class="quick-action-item">
+                                                <span class="quick-action-icon bg-soft-green">
+                                                    <i class="zmdi zmdi-assignment"></i>
+                                                </span>
+                                                <span class="quick-action-text">Manage Orders</span>
+                                                <span class="quick-action-arrow">
+                                                    <i class="zmdi zmdi-arrow-right"></i>
+                                                </span>
+                                            </a>
+                                        @endif
+
+                                    </div>
+
+                                    <div class="quick-actions-footer">
+                                        <span class="footer-text">
+                                            <i class="zmdi zmdi-time"></i>
+                                            Quick access to most used features
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- ============================================
+                        CHARTS
+                        ============================================= --}}
+                        <div class="row clearfix">
+
+                            {{-- MONTHLY PRODUCTS --}}
+                            <div class="col-lg-7 col-md-12">
+
+                                <div class="card">
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Monthly Product</strong> Report
+                                        </h2>
+                                    </div>
+
+                                    <div class="body">
+                                        <div class="chart-container">
+                                            <canvas id="monthlyProductsChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {{-- CATEGORY WISE --}}
+                            <div class="col-lg-5 col-md-12">
+
+                                <div class="card">
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Category Wise</strong> Products
+                                        </h2>
+                                    </div>
+
+                                    <div class="body">
+                                        <div class="chart-container small-chart">
+                                            <canvas id="categoryProductsChart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- ============================================
+                        BRAND REPORT + TOP RATED PRODUCTS
+                        ============================================= --}}
+                        <div class="row clearfix">
+
+                            {{-- BRAND WISE PRODUCTS --}}
+                            <div class="col-lg-6 col-md-12">
+
+                                <div class="card">
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Brand Wise</strong> Products
+                                        </h2>
+                                    </div>
+
+                                    <div class="body p-0">
+
+                                        <div class="table-responsive">
+                                            <table class="table dashboard-table mb-0">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>SrNo.</th>
+                                                        <th>Brand</th>
+                                                        <th class="text-right">
+                                                            Products
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    @forelse($brandWiseProducts ?? [] as $index => $brand)
+
+                                                        <tr>
+                                                            <td>
+                                                                {{ $index + 1 }}
+                                                            </td>
+
+                                                            <td>
+                                                                <strong>
+                                                                    {{ $brand->name }}
+                                                                </strong>
+                                                            </td>
+
+                                                            <td class="text-right">
+                                                                <span class="count-badge">
+                                                                    {{ $brand->total_products }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+
+                                                    @empty
+
+                                                        <tr>
+                                                            <td colspan="3" class="text-center text-muted py-4">
+                                                                No brand data available.
+                                                            </td>
+                                                        </tr>
+
+                                                    @endforelse
+
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {{-- TOP RATED PRODUCTS --}}
+                            <div class="col-lg-6 col-md-12">
+
+                                <div class="card">
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Top Rated</strong> Products
+                                        </h2>
+                                    </div>
+
+                                    <div class="body p-0">
+
+                                        <div class="table-responsive">
+                                            <table class="table dashboard-table mb-0">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Rating</th>
+                                                        <th class="text-right">
+                                                            Reviews
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    @forelse($topRatedProducts ?? [] as $product)
+
+                                                        <tr>
+
+                                                            <td>
+                                                                <div class="product-table-info">
+
+                                                                    @php
+                                                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                                                        $firstImage = $images[0] ?? null;
+                                                                        if ($firstImage) {
+                                                                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                                                                            $imgUrl = asset($firstImage);
+                                                                        } else {
+                                                                            $imgUrl = null;
+                                                                        }
+                                                                    @endphp
+
+                                                                    @if($imgUrl)
+                                                                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
+                                                                            class="product-table-img"
+                                                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+                                                                        <div class="product-table-placeholder" style="display:none;">
+                                                                            <i class="zmdi zmdi-image"></i>
+                                                                        </div>
+                                                                    @else
+                                                                        <div class="product-table-placeholder">
+                                                                            <i class="zmdi zmdi-image"></i>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <div class="product-table-details">
+                                                                        <strong>
+                                                                            {{ \Illuminate\Support\Str::limit($product->name, 30) }}
+                                                                        </strong>
+
+                                                                        <small>
+                                                                            ₹{{ number_format($product->price ?? 0, 2) }}
+                                                                        </small>
+                                                                    </div>
+
+                                                                </div>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <span class="rating-badge">
+                                                                    <i class="zmdi zmdi-star"></i>
+                                                                    {{ number_format($product->average_rating ?? 0, 1) }}
+                                                                </span>
+                                                            </td>
+
+
+                                                            <td class="text-right">
+                                                                {{ $product->total_reviews ?? 0 }}
+                                                            </td>
+
+                                                        </tr>
+
+                                                    @empty
+
+                                                        <tr>
+                                                            <td colspan="3" class="text-center text-muted py-4">
+                                                                No ratings available.
+                                                            </td>
+                                                        </tr>
+
+                                                    @endforelse
+
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- ============================================
+                        RECENT PRODUCTS + LOW STOCK
+                        ============================================= --}}
+                        <div class="row clearfix">
+
+                            {{-- RECENT PRODUCTS --}}
+                            <div class="col-lg-7 col-md-12">
+
+                                <div class="card">
+
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Recent</strong> Products
+                                        </h2>
+                                    </div>
+
+                                    <div class="body p-0">
+
+                                        <div class="table-responsive">
+                                            <table class="table dashboard-table mb-0">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Category</th>
+                                                        <th>Price</th>
+                                                        <th>Stock</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    @forelse($recentProducts ?? [] as $product)
+
+                                                        <tr>
+
+                                                            <td>
+                                                                <div class="product-table-info">
+                                                                    @php
+                                                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                                                        $firstImage = $images[0] ?? null;
+                                                                        if ($firstImage) {
+                                                                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                                                                            $imgUrl = asset($firstImage);
+                                                                        } else {
+                                                                            $imgUrl = null;
+                                                                        }
+                                                                    @endphp
+
+                                                                    @if($imgUrl)
+                                                                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
+                                                                            class="product-table-img"
+                                                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+
+                                                                        <div class="product-table-placeholder" style="display:none;">
+                                                                            <i class="zmdi zmdi-image"></i>
+                                                                        </div>
+                                                                    @else
+                                                                        <div class="product-table-placeholder">
+                                                                            <i class="zmdi zmdi-image"></i>
+                                                                        </div>
+                                                                    @endif
+
+                                                                    <strong>
+                                                                        {{ \Illuminate\Support\Str::limit($product->name, 30) }}
+                                                                    </strong>
+
+                                                                </div>
+                                                            </td>
+
+
+                                                            <td>
+                                                                {{ $product->category->name ?? '-' }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                ₹{{ number_format($product->price ?? 0, 2) }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                {{ $product->stock ?? 0 }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                @if($product->status == 1)
+                                                                    <span class="badge badge-success">
+                                                                        Active
+                                                                    </span>
+                                                                @else
+                                                                    <span class="badge badge-danger">
+                                                                        Inactive
+                                                                    </span>
+                                                                @endif
+                                                            </td>
+
+                                                        </tr>
+
+                                                    @empty
+
+                                                        <tr>
+                                                            <td colspan="5" class="text-center text-muted py-4">
+                                                                No products available.
+                                                            </td>
+                                                        </tr>
+
+                                                    @endforelse
+
+                                                </tbody>
+
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- LOW STOCK --}}
+                            <div class="col-lg-5 col-md-12">
+
+                                <div class="card">
+
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Low Stock</strong> Alert
+                                        </h2>
+                                    </div>
+
+                                    <div class="body low-stock-list">
+
+                                        @forelse($lowStockProductList ?? [] as $product)
+
+                                            <div class="low-stock-item">
+
+                                                <div class="low-stock-product">
+
+                                                    <div class="low-stock-icon">
+                                                        <i class="zmdi zmdi-shopping-basket"></i>
+                                                    </div>
+
+                                                    <div>
+                                                        <strong>
+                                                            {{ \Illuminate\Support\Str::limit($product->name, 30) }}
+                                                        </strong>
+
+                                                        <small>
+                                                            {{ $product->category->name ?? 'No Category' }}
+                                                        </small>
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="stock-number">
+                                                    {{ $product->stock ?? 0 }}
+                                                    <small>Units</small>
+                                                </div>
+
+                                            </div>
+
+                                        @empty
+
+                                            <div class="dashboard-empty-message">
+                                                <i class="zmdi zmdi-check-circle"></i>
+                                                <h5>Stock is Looking Good!</h5>
+                                                <p>No low stock products found.</p>
+                                            </div>
+
+                                        @endforelse
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- ============================================
+                        RECENT INVENTORY TRANSACTIONS
+                        ============================================= --}}
+                        <div class="row clearfix">
+
+                            <div class="col-lg-12">
+
+                                <div class="card">
+
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Recent Inventory</strong> Transactions
+                                        </h2>
+                                    </div>
+
+                                    <div class="body p-0">
+
+                                        <div class="table-responsive">
+
+                                            <table class="table dashboard-table mb-0">
+
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product</th>
+                                                        <th>Type</th>
+                                                        <th>Quantity</th>
+                                                        <th>Before</th>
+                                                        <th>After</th>
+                                                        <th>Created By</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+
+                                                    @forelse($recentInventoryTransactions ?? [] as $transaction)
+
+                                                        <tr>
+
+                                                            <td>
+                                                                <strong>
+                                                                    {{ $transaction->product->name ?? 'Product Deleted' }}
+                                                                </strong>
+                                                            </td>
+
+
+                                                            <td>
+                                                                @if($transaction->type === 'stock_in')
+
+                                                                    <span class="badge badge-success">
+                                                                        <i class="zmdi zmdi-arrow-downward"></i>
+                                                                        Stock In
+                                                                    </span>
 
                                                                 @else
 
-                                                                    <div class="no-product-image">
-                                                                        <i class="zmdi zmdi-image"></i>
-                                                                    </div>
+                                                                    <span class="badge badge-danger">
+                                                                        <i class="zmdi zmdi-arrow-upward"></i>
+                                                                        Stock Out
+                                                                    </span>
 
                                                                 @endif
+                                                            </td>
 
-                                                            </div>
+
+                                                            <td>
+                                                                <strong>
+                                                                    {{ $transaction->quantity ?? 0 }}
+                                                                </strong>
+                                                            </td>
 
 
-                                                            {{-- Product Details --}}
-                                                            <div class="wishlist-product-body">
+                                                            <td>
+                                                                {{ $transaction->stock_before ?? 0 }}
+                                                            </td>
 
-                                                                <h6>
-                                                                    {{ $item->product->name }}
-                                                                </h6>
 
-                                                                <h5>
-                                                                    ₹{{ number_format($item->product->price ?? 0, 2) }}
-                                                                </h5>
+                                                            <td>
+                                                                {{ $transaction->stock_after ?? 0 }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                {{ $transaction->creator->name ?? '-' }}
+                                                            </td>
+
+
+                                                            <td>
+                                                                {{ optional($transaction->created_at)->format('d M Y, h:i A') }}
+                                                            </td>
+
+                                                        </tr>
+
+                                                    @empty
+
+                                                        <tr>
+                                                            <td colspan="7" class="text-center text-muted py-4">
+                                                                No inventory transactions available.
+                                                            </td>
+                                                        </tr>
+
+                                                    @endforelse
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row clearfix">
+
+                            <div class="col-lg-12">
+
+                                <div class="card">
+
+                                    <div class="header">
+                                        <h2>
+                                            <strong>Administrator</strong> Information
+                                        </h2>
+                                    </div>
+
+                                    <div class="body">
+
+                                        <div class="row">
+
+                                            <div class="col-lg-4 col-md-4 mb-3">
+                                                <div class="info-box">
+                                                    <small>Name</small>
+                                                    <h6>{{ $user->name ?? '-' }}</h6>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-lg-4 col-md-4 mb-3">
+                                                <div class="info-box">
+                                                    <small>Email</small>
+                                                    <h6>{{ $user->email ?? '-' }}</h6>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="col-lg-4 col-md-4 mb-3">
+                                                <div class="info-box">
+                                                    <small>Role</small>
+                                                    <h6>
+                                                        <span class="badge badge-danger">
+                                                            {{ $roleName ?? 'No Role' }}
+                                                        </span>
+                                                    </h6>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @elseif($roleName === 'customer')
+
+                        <div class="row clearfix">
+
+                            <div class="col-lg-12">
+
+                                <div class="card customer-welcome-card">
+
+                                    <div class="body">
+
+                                        <div class="row align-items-center">
+
+                                            <div class="col-lg-8 col-md-8">
+
+                                                <div class="customer-welcome-content">
+
+                                                    <div class="customer-avatar">
+                                                        {{ strtoupper(substr($user->name ?? 'U', 0, 1)) }}
+                                                    </div>
+
+                                                    <div>
+                                                        <h3>
+                                                            Hello, {{ $user->name ?? 'Customer' }}! 👋
+                                                        </h3>
+
+                                                        <p class="mb-0">
+                                                            Welcome back! Explore your wishlist and discover more products.
+                                                        </p>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-lg-4 col-md-4 text-md-right mt-3 mt-md-0">
+
+                                                @if(Route::has('shop'))
+                                                    <a href="{{ route('shop') }}" class="btn btn-primary">
+                                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                                        Shop Now
+                                                    </a>
+                                                @endif
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- CUSTOMER STATS --}}
+                        <div class="row clearfix">
+
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+
+                                <div class="card dashboard-stat-card">
+                                    <div class="body text-center">
+
+                                        <div class="stat-icon bg-red-soft">
+                                            <i class="zmdi zmdi-favorite"></i>
+                                        </div>
+
+                                        <p class="stat-title">
+                                            Wishlist Items
+                                        </p>
+
+                                        <h3 class="stat-value">
+                                            {{ $wishlistCount ?? 0 }}
+                                        </h3>
+
+                                        <small class="text-muted">
+                                            Your saved products
+                                        </small>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+
+                                <div class="card dashboard-stat-card">
+                                    <div class="body text-center">
+
+                                        <div class="stat-icon bg-blue-soft">
+                                            <i class="zmdi zmdi-calendar"></i>
+                                        </div>
+
+                                        <p class="stat-title">
+                                            Member Since
+                                        </p>
+
+                                        <h5 class="stat-value-name">
+                                            {{ optional($user->created_at)->format('d M Y') }}
+                                        </h5>
+
+                                        <small class="text-muted">
+                                            Account created date
+                                        </small>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-lg-4 col-md-6 col-sm-6">
+
+                                <div class="card dashboard-stat-card">
+                                    <div class="body text-center">
+
+                                        <div class="stat-icon bg-green-soft">
+                                            <i class="zmdi zmdi-check-circle"></i>
+                                        </div>
+
+                                        <p class="stat-title">
+                                            Account Status
+                                        </p>
+
+                                        <h5 class="stat-value-name">
+                                            {{ ($user->status ?? 1) == 1 ? 'Active' : 'Inactive' }}
+                                        </h5>
+
+                                        <small class="text-muted">
+                                            Customer Account
+                                        </small>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- WISHLIST PRODUCTS --}}
+                        <div class="row clearfix">
+
+                            <div class="col-lg-12">
+
+                                <div class="card">
+
+                                    <div class="header">
+
+                                        <h2>
+                                            <strong>My</strong> Wishlist
+                                        </h2>
+
+                                        @if(Route::has('customer.wishlist'))
+                                            <ul class="header-dropdown">
+                                                <li>
+                                                    <a href="{{ route('customer.wishlist') }}" class="btn btn-sm btn-primary">
+                                                        View All
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        @endif
+
+                                    </div>
+
+
+                                    <div class="body">
+
+                                        @if(isset($wishlistProducts) && $wishlistProducts->count() > 0)
+
+                                            <div class="row">
+
+                                                @foreach($wishlistProducts->take(8) as $item)
+
+                                                    @if($item->product)
+
+                                                        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+
+                                                            <div class="wishlist-product-card">
+
+                                                                <div class="wishlist-product-image">
+
+                                                                    @if(!empty($item->product->image))
+
+                                                                        <img src="{{ asset('storage/' . $item->product->image) }}"
+                                                                            alt="{{ $item->product->name }}">
+
+                                                                    @else
+
+                                                                        <div class="no-product-image">
+                                                                            <i class="zmdi zmdi-image"></i>
+                                                                        </div>
+
+                                                                    @endif
+
+                                                                </div>
+
+
+                                                                <div class="wishlist-product-body">
+
+                                                                    <h6>
+                                                                        {{ $item->product->name }}
+                                                                    </h6>
+
+                                                                    <h5>
+                                                                        ₹{{ number_format($item->product->price ?? 0, 2) }}
+                                                                    </h5>
+
+                                                                </div>
 
                                                             </div>
 
                                                         </div>
 
-                                                    </div>
+                                                    @endif
 
-                                                @endif
+                                                @endforeach
 
-                                            @endforeach
-
-                                        </div>
-
-
-                                    @else
-
-                                        {{-- EMPTY WISHLIST --}}
-                                        <div class="empty-wishlist">
-
-                                            <div class="empty-wishlist-icon">
-                                                <i class="zmdi zmdi-favorite-outline"></i>
                                             </div>
 
-                                            <h4>Your Wishlist is Empty</h4>
+                                        @else
 
-                                            <p>
-                                                Save your favorite products here and view them anytime.
-                                            </p>
+                                            <div class="empty-wishlist">
 
-                                            @if(Route::has('shop'))
-                                                <a href="{{ route('shop') }}"
-                                                   class="btn btn-primary">
-                                                    <i class="zmdi zmdi-shopping-cart"></i>
-                                                    Start Shopping
-                                                </a>
-                                            @endif
+                                                <div class="empty-wishlist-icon">
+                                                    <i class="zmdi zmdi-favorite-outline"></i>
+                                                </div>
 
-                                        </div>
+                                                <h4>Your Wishlist is Empty</h4>
 
+                                                <p>
+                                                    Save your favorite products here and view them anytime.
+                                                </p>
+
+                                                @if(Route::has('shop'))
+                                                    <a href="{{ route('shop') }}" class="btn btn-primary">
+                                                        <i class="zmdi zmdi-shopping-cart"></i>
+                                                        Start Shopping
+                                                    </a>
+                                                @endif
+
+                                            </div>
+
+                                        @endif
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        {{-- ============================================
+                        OTHER ROLES
+                        ============================================= --}}
+                    @else
+
+                        <div class="card dashboard-empty-card">
+
+                            <div class="body">
+
+                                <div class="empty-content">
+
+                                    <div class="empty-icon">
+                                        <i class="zmdi zmdi-info-outline"></i>
+                                    </div>
+
+                                    <h4>Dashboard Content Not Configured</h4>
+
+                                    <p class="text-muted">
+                                        Your current role is:
+                                        <strong>
+                                            {{ $roleName ?? 'No Role Assigned' }}
+                                        </strong>
+                                    </p>
+
+                                    @if(Route::has('home'))
+                                        <a href="{{ route('home') }}" class="btn btn-primary">
+                                            <i class="zmdi zmdi-home"></i>
+                                            Go to Home
+                                        </a>
                                     @endif
 
                                 </div>
@@ -626,465 +1450,174 @@
 
                         </div>
 
-                    </div>
+                    @endif
 
-
-
-                {{-- ============================================
-                    OTHER ROLES
-                ============================================= --}}
-                @else
-
-                    <div class="card dashboard-empty-card">
-
-                        <div class="body">
-                            <div class="empty-content">
-
-                                <div class="empty-icon">
-                                    <i class="zmdi zmdi-info-outline"></i>
-                                </div>
-
-                                <h4>Dashboard Content Not Configured</h4>
-
-                                <p class="text-muted">
-                                    Your current role is:
-                                    <strong>{{ $roleName ?? 'No Role Assigned' }}</strong>
-                                </p>
-
-                                @if(Route::has('home'))
-                                    <a href="{{ route('home') }}"
-                                       class="btn btn-primary">
-                                        <i class="zmdi zmdi-home"></i>
-                                        Go to Home
-                                    </a>
-                                @endif
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                @endif
-
-
+                </div>
             </div>
-        </div>
 
-    </div>
-</section>
+        </div>
+    </section>
 
 @endsection
 
 
-@push('css')
-<style>
-
-    /* ==========================================
-       MAIN BACKGROUND
-    ========================================== */
-
-    .content {
-        background:
-            radial-gradient(circle at top right, rgba(0, 173, 239, 0.10), transparent 35%),
-            radial-gradient(circle at bottom left, rgba(143, 120, 219, 0.08), transparent 40%),
-            linear-gradient(135deg, #f5f7fb 0%, #eef2f7 100%);
-        min-height: 100vh;
-    }
-
-    .body_scroll {
-        min-height: 100vh;
-        padding-bottom: 30px;
-    }
-
-
-    /* ==========================================
-       MAIN WRAPPER
-    ========================================== */
-
-    .dashboard-wrapper {
-        background: rgba(255, 255, 255, 0.65);
-        border: 1px solid rgba(255, 255, 255, 0.8);
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 8px 30px rgba(30, 50, 80, 0.06);
-    }
-
-
-    /* ==========================================
-       CARDS
-    ========================================== */
-
-    .dashboard-wrapper .card {
-        border: none;
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
-        transition: all 0.3s ease;
-    }
-
-    .dashboard-wrapper .card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
-    }
-
-
-    /* ==========================================
-       HEADER
-    ========================================== */
-
-    .block-header h2 {
-        font-weight: 700;
-        color: #2c3e50;
-    }
-
-
-    /* ==========================================
-       STATISTICS
-    ========================================== */
-
-    .dashboard-stat-card {
-        height: 100%;
-    }
-
-    .stat-icon {
-        width: 60px;
-        height: 60px;
-        margin: 0 auto 15px;
-        border-radius: 15px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        font-size: 26px;
-    }
-
-    .bg-blue-soft {
-        background: rgba(0, 173, 239, 0.12);
-        color: #00adef;
-    }
-
-    .bg-red-soft {
-        background: rgba(238, 37, 88, 0.12);
-        color: #ee2558;
-    }
-
-    .bg-purple-soft {
-        background: rgba(143, 120, 219, 0.12);
-        color: #8f78db;
-    }
-
-    .bg-green-soft {
-        background: rgba(40, 167, 69, 0.12);
-        color: #28a745;
-    }
-
-    .stat-title {
-        color: #7b8794;
-        margin-bottom: 5px;
-        font-size: 14px;
-    }
-
-    .stat-value {
-        font-size: 28px;
-        font-weight: 700;
-        color: #2c3e50;
-        margin-bottom: 5px;
-    }
-
-    .stat-value-name {
-        color: #2c3e50;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
-
-
-    /* ==========================================
-       OVERVIEW
-    ========================================== */
-
-    .overview-item {
-        padding: 20px 10px;
-        border-radius: 12px;
-        background: #f8faff;
-    }
-
-    .overview-icon {
-        font-size: 25px;
-        margin-bottom: 10px;
-        color: #00adef;
-    }
-
-    .overview-item h3 {
-        margin-bottom: 5px;
-        font-weight: 700;
-    }
-
-    .overview-item span {
-        color: #8a94a6;
-        font-size: 13px;
-    }
-
-
-    /* ==========================================
-       QUICK ACTIONS
-    ========================================== */
-
-    .quick-action-btn {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        padding: 13px 15px;
-        margin-bottom: 10px;
-
-        border-radius: 10px;
-        background: #f7f9fc;
-
-        color: #4b5563;
-        text-decoration: none;
-
-        transition: all 0.25s ease;
-    }
-
-    .quick-action-btn:hover {
-        background: #00adef;
-        color: #ffffff;
-        text-decoration: none;
-    }
-
-    .quick-action-btn span i {
-        margin-right: 8px;
-    }
-
-
-    /* ==========================================
-       ADMIN INFO
-    ========================================== */
-
-    .info-box {
-        padding: 15px;
-        background: #f8faff;
-        border-radius: 10px;
-        height: 100%;
-    }
-
-    .info-box small {
-        color: #8a94a6;
-        display: block;
-        margin-bottom: 5px;
-    }
-
-
-    /* ==========================================
-       CUSTOMER WELCOME
-    ========================================== */
-
-    .customer-welcome-card {
-        background:
-            linear-gradient(
-                135deg,
-                rgba(0, 173, 239, 0.08),
-                rgba(143, 120, 219, 0.08)
-            );
-    }
-
-    .customer-welcome-content {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .customer-avatar {
-        width: 65px;
-        height: 65px;
-        border-radius: 50%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: linear-gradient(135deg, #00adef, #4b7bec);
-
-        color: #ffffff;
-        font-size: 25px;
-        font-weight: 700;
-
-        flex-shrink: 0;
-    }
-
-    .customer-welcome-content h3 {
-        margin-bottom: 5px;
-        color: #2c3e50;
-        font-weight: 700;
-    }
-
-    .customer-welcome-content p {
-        color: #7b8794;
-    }
-
-
-    /* ==========================================
-       WISHLIST PRODUCT
-    ========================================== */
-
-    .wishlist-product-card {
-        height: 100%;
-        border-radius: 12px;
-        overflow: hidden;
-
-        background: #ffffff;
-        border: 1px solid #edf0f5;
-
-        transition: all 0.3s ease;
-    }
-
-    .wishlist-product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-    }
-
-    .wishlist-product-image {
-        height: 190px;
-        background: #f7f9fc;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        overflow: hidden;
-    }
-
-    .wishlist-product-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .no-product-image {
-        font-size: 45px;
-        color: #c4cbd4;
-    }
-
-    .wishlist-product-body {
-        padding: 15px;
-    }
-
-    .wishlist-product-body h6 {
-        color: #2c3e50;
-        font-weight: 600;
-        margin-bottom: 10px;
-
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .wishlist-product-body h5 {
-        color: #00adef;
-        font-weight: 700;
-        margin-bottom: 0;
-    }
-
-
-    /* ==========================================
-       EMPTY WISHLIST
-    ========================================== */
-
-    .empty-wishlist {
-        text-align: center;
-        padding: 45px 20px;
-    }
-
-    .empty-wishlist-icon {
-        width: 80px;
-        height: 80px;
-
-        margin: 0 auto 20px;
-        border-radius: 50%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: rgba(238, 37, 88, 0.08);
-        color: #ee2558;
-
-        font-size: 35px;
-    }
-
-    .empty-wishlist h4 {
-        color: #2c3e50;
-        font-weight: 700;
-    }
-
-    .empty-wishlist p {
-        color: #8a94a6;
-    }
-
-
-    /* ==========================================
-       EMPTY ROLE DASHBOARD
-    ========================================== */
-
-    .dashboard-empty-card {
-        min-height: 330px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: linear-gradient(
-            135deg,
-            #ffffff 0%,
-            #f8faff 100%
-        );
-    }
-
-    .dashboard-empty-card .empty-content {
-        text-align: center;
-    }
-
-    .dashboard-empty-card .empty-icon {
-        width: 75px;
-        height: 75px;
-
-        margin: 0 auto 20px;
-        border-radius: 50%;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background: linear-gradient(135deg, #eef5ff, #e5edff);
-        color: #4b7bec;
-
-        font-size: 32px;
-    }
-
-
-    /* ==========================================
-       RESPONSIVE
-    ========================================== */
-
-    @media (max-width: 767px) {
-
-        .dashboard-wrapper {
-            padding: 12px;
-        }
-
-        .customer-welcome-content {
-            align-items: flex-start;
-        }
-
-        .stat-value {
-            font-size: 22px;
-        }
-
-        .wishlist-product-image {
-            height: 160px;
-        }
-    }
-
-</style>
+
+
+@push('scripts')
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            /*
+            |--------------------------------------------------------------------------
+            | MONTHLY PRODUCT CHART
+            |--------------------------------------------------------------------------
+            */
+
+            const monthlyProductsChart = document.getElementById('monthlyProductsChart');
+
+            if (monthlyProductsChart) {
+
+                new Chart(monthlyProductsChart, {
+
+                    type: 'line',
+
+                    data: {
+                        labels: @json($monthlyProductLabels ?? []),
+
+                        datasets: [{
+                            label: 'Products Added',
+
+                            data: @json($monthlyProductData ?? []),
+
+                            borderColor: '#00adef',
+
+                            backgroundColor: 'rgba(0, 173, 239, 0.10)',
+
+                            borderWidth: 3,
+
+                            fill: true,
+
+                            tension: 0.4,
+
+                            pointRadius: 4,
+
+                            pointHoverRadius: 6
+                        }]
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+
+                        scales: {
+
+                            y: {
+                                beginAtZero: true,
+
+                                ticks: {
+                                    precision: 0
+                                },
+
+                                grid: {
+                                    color: 'rgba(0,0,0,0.05)'
+                                }
+                            },
+
+                            x: {
+                                grid: {
+                                    display: false
+                                }
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CATEGORY WISE PRODUCTS CHART
+            |--------------------------------------------------------------------------
+            */
+
+            const categoryProductsChart =
+                document.getElementById('categoryProductsChart');
+
+            if (categoryProductsChart) {
+
+                new Chart(categoryProductsChart, {
+
+                    type: 'doughnut',
+
+                    data: {
+
+                        labels: @json(($categoryWiseProducts ?? collect())->pluck('name')->values()),
+
+                        datasets: [{
+
+                            data: @json(($categoryWiseProducts ?? collect())->pluck('total_products')->values()),
+
+                            backgroundColor: [
+                                '#00adef',
+                                '#8f78db',
+                                '#28a745',
+                                '#ff8a00',
+                                '#dc3545',
+                                '#17a2b8',
+                                '#ffc107',
+                                '#4b7bec'
+                            ],
+
+                            borderWidth: 0
+                        }]
+
+                    },
+
+                    options: {
+
+                        responsive: true,
+
+                        maintainAspectRatio: false,
+
+                        cutout: '68%',
+
+                        plugins: {
+
+                            legend: {
+                                position: 'bottom',
+
+                                labels: {
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+        });
+
+    </script>
+
 @endpush
