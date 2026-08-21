@@ -7,7 +7,7 @@ use App\Http\Controllers\admin\CheckoutController;
 use App\Http\Controllers\admin\ContactSubmissionController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\CustomerAccountController;
-use App\Http\Controllers\admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
 use App\Http\Controllers\admin\OfferController;
