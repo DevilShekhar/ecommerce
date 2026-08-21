@@ -457,6 +457,25 @@
                         </ul>
 
                     </li>
+                    <li class="{{ request()->routeIs('banners.*') ? 'active open' : '' }}">
+
+                        <a href="javascript:void(0);" class="menu-toggle">
+                            <i class="zmdi zmdi-shopping-cart"></i>
+                            <span>Banners</span>
+                        </a>
+
+                        <ul class="ml-menu">
+
+                            <li class="{{ request()->routeIs('admin.banners.index') ? 'active' : '' }}">
+                                <a href="{{ route('admin.banners.index') }}">
+                                    <i class="zmdi zmdi-view-list"></i>
+                                   Banenrs
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
 
                 @endif
 
