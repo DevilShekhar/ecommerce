@@ -66,6 +66,61 @@
                     </div>
                 </div>
             </section>
+            {{-- Add this after the hero section and before banners --}}
+
+            {{-- =========================================================
+            CATEGORY SLIDER
+            ========================================================== --}}
+            @if(isset($categories) && $categories->count() > 0)
+                <section class="category-slider-section">
+                    <div class="container">
+                        <div class="category-slider-header">
+                            <h3 class="category-slider-title">
+                                <i class="bi bi-grid"></i>
+                                Shop by Category
+                            </h3>
+                            <a href="{{ route('shop') }}" class="category-view-all">
+                                View All <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="category-slider-wrapper">
+                            <div class="category-slider-container">
+                                @foreach($categories as $category)
+                                    <div class="category-slide">
+                                        <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-card">
+                                            <div class="category-card-image">
+                                                @if($category->image)
+                                                    <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}">
+                                                @else
+                                                    <div class="category-placeholder">
+                                                        <i class="bi bi-folder"></i>
+                                                    </div>
+                                                @endif
+                                                <span class="category-product-count">{{ $category->products_count }} Products</span>
+                                            </div>
+                                            <div class="category-card-body">
+                                                <h5 class="category-card-name">{{ $category->name }}</h5>
+                                                @if($category->description)
+                                                    <p class="category-card-desc">{{ Str::limit($category->description, 40) }}</p>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @if($categories->count() > 4)
+                                <button class="category-slider-arrow prev" type="button">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <button class="category-slider-arrow next" type="button">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                </section>
+            @endif
             {{-- =========================================================
             ALL BANNERS CAROUSEL
             ========================================================== --}}
@@ -1099,47 +1154,85 @@
         {{-- =========================================================
         DISCLAIMER SECTION
         ========================================================== --}}
-        @if($section->section_type === 'disclaimer')
+   @if($section->section_type === 'disclaimer')
 
-            <section class="website-section disclaimer-section"
-                style="background-image: url('{{ $section->image ? asset('storage/' . $section->image) : '' }}');">
-                <div class="disclaimer-overlay"></div>
-                <div class="container">
-                    <div class="row align-items-center">
-                        @if($section->image)
-                            <div class="col-lg-5">
-                                <div class="disclaimer-image-wrapper">
-                                    <img src="{{ asset('storage/' . $section->image) }}"
-                                        alt="{{ $section->disclaimer_title ?? 'Disclaimer' }}" class="disclaimer-image">
+<section class="website-section disclaimer-section-modern">
+    <div class="container">
+        <div class="disclaimer-wrapper-modern">
+            <div class="row align-items-center g-4 g-lg-5">
+
+                {{-- Image - Left Side --}}
+                @if($section->image)
+                    <div class="col-lg-5">
+                        <div class="disclaimer-image-modern">
+                            <div class="disclaimer-image-wrapper-modern">
+                                <img src="{{ asset('storage/' . $section->image) }}"
+                                    alt="{{ $section->disclaimer_title ?? 'Disclaimer' }}"
+                                    class="disclaimer-img-modern"
+                                    loading="lazy">
+
+                                {{-- Floating Badge --}}
+                                <div class="floating-badge">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Verified</span>
                                 </div>
-                            </div>
-                        @endif
-                        <div class="{{ $section->image ? 'col-lg-7' : 'col-lg-12' }}">
-                            <div class="disclaimer-content">
-                                @if($section->disclaimer_title)
-                                    <h2 class="disclaimer-title">{{ $section->disclaimer_title }}</h2>
-                                @endif
-                                @if($section->disclaimer_description)
-                                    <div class="disclaimer-description">
-                                        {!! $section->disclaimer_description !!}
-                                    </div>
-                                @endif
-                                @if($section->button_text && $section->button_url)
-                                    <div class="mt-4">
-                                        <a href="{{ url($section->button_url) }}" class="btn-main">
-                                            {{ $section->button_text }}
-                                            <i class="bi bi-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div>
+                @endif
+
+                {{-- Content - Right Side --}}
+                <div class="{{ $section->image ? 'col-lg-7' : 'col-lg-12' }}">
+                    <div class="disclaimer-content-modern">
+                        {{-- Badge --}}
+                        <span class="disclaimer-badge">
+                            <i class="bi bi-info-circle"></i>
+                            Important Notice
+                        </span>
+
+                        @if($section->disclaimer_title)
+                            <h2 class="disclaimer-title-modern">{{ $section->disclaimer_title }}</h2>
+                        @endif
+
+                        @if($section->disclaimer_description)
+                            <div class="disclaimer-description-modern">
+                                {!! $section->disclaimer_description !!}
+                            </div>
+                        @endif
+
+                        {{-- Small Features List --}}
+                        <ul class="disclaimer-features-small">
+                            <li>
+                                <i class="bi bi-shield-check"></i>
+                                <span>Trusted & Verified Information</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-file-text"></i>
+                                <span>Legal Compliance</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-clock-history"></i>
+                                <span>Updated: {{ now()->format('d M, Y') }}</span>
+                            </li>
+                        </ul>
+
+                        @if($section->button_text && $section->button_url)
+                            <div class="disclaimer-action">
+                                <a href="{{ url($section->button_url) }}" class="btn-disclaimer">
+                                    {{ $section->button_text }}
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
-            </section>
 
-        @endif
+            </div>
+        </div>
+    </div>
+</section>
 
+@endif
     @endforeach
 
 @endsection
@@ -1842,5 +1935,110 @@
                 });
 
         });
+        // =============================================
+// CATEGORY SLIDER - AUTO SLIDING
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.category-slider-container');
+    if (!container) return;
+
+    const slides = container.querySelectorAll('.category-slide');
+    if (slides.length <= 6) return;
+
+    const prevBtn = document.querySelector('.category-slider-arrow.prev');
+    const nextBtn = document.querySelector('.category-slider-arrow.next');
+
+    let autoPlayInterval = null;
+    let isPlaying = true;
+    const totalSlides = slides.length;
+    const slideWidth = 90 + 12; // min-width + gap
+
+    function getVisibleSlides() {
+        const containerWidth = container.offsetWidth;
+        return Math.floor(containerWidth / slideWidth);
+    }
+
+    function scrollToNext() {
+        const visibleSlides = getVisibleSlides();
+        const currentScroll = container.scrollLeft;
+        const maxScroll = container.scrollWidth - container.offsetWidth;
+
+        if (currentScroll >= maxScroll - 10) {
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            container.scrollBy({ left: slideWidth * visibleSlides, behavior: 'smooth' });
+        }
+    }
+
+    function startAutoplay() {
+        if (autoPlayInterval) clearInterval(autoPlayInterval);
+        autoPlayInterval = setInterval(scrollToNext, 3500);
+        isPlaying = true;
+    }
+
+    function stopAutoplay() {
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval);
+            autoPlayInterval = null;
+        }
+        isPlaying = false;
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stopAutoplay();
+            const visibleSlides = getVisibleSlides();
+            container.scrollBy({ left: slideWidth * visibleSlides, behavior: 'smooth' });
+            startAutoplay();
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            stopAutoplay();
+            const visibleSlides = getVisibleSlides();
+            container.scrollBy({ left: -(slideWidth * visibleSlides), behavior: 'smooth' });
+            startAutoplay();
+        });
+    }
+
+    container.addEventListener('mouseenter', stopAutoplay);
+    container.addEventListener('mouseleave', startAutoplay);
+
+    // Touch support
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let isSwiping = false;
+
+    container.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+        isSwiping = true;
+        stopAutoplay();
+    }, { passive: true });
+
+    container.addEventListener('touchmove', function(e) {
+        if (!isSwiping) return;
+        touchEndX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    container.addEventListener('touchend', function(e) {
+        if (!isSwiping) return;
+        isSwiping = false;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 30) {
+            const visibleSlides = getVisibleSlides();
+            if (diff > 0) {
+                container.scrollBy({ left: slideWidth * visibleSlides, behavior: 'smooth' });
+            } else {
+                container.scrollBy({ left: -(slideWidth * visibleSlides), behavior: 'smooth' });
+            }
+        }
+        startAutoplay();
+    }, { passive: true });
+
+    startAutoplay();
+});
     </script>
 @endpush
