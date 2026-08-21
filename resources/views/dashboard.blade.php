@@ -44,7 +44,7 @@
                         <button class="btn btn-primary btn-icon float-right right_icon_toggle_btn" type="button">
                             <i class="zmdi zmdi-arrow-right"></i>
                         </button>
-                        {{-- @if($roleName === 'SuperAdmin')
+                        @if($roleName === 'SuperAdmin')
                             <div class="btn-group float-right mr-2">
 
                                 <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
@@ -68,7 +68,7 @@
                                 </div>
 
                             </div>
-                        @endif --}}
+                        @endif
                     </div>
 
                 </div>
