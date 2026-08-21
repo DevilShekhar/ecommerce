@@ -15,6 +15,7 @@ return [
     */
 
     'default' => env('MAIL_MAILER', 'log'),
+    'super_admin_email' => env('SUPER_ADMIN_EMAIL'),
 
     /*
     |--------------------------------------------------------------------------
