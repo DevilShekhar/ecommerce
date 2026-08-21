@@ -2,43 +2,408 @@
 
 namespace App\Http\Controllers\admin;
 
+use App\Exports\DashboardReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
+use App\Models\Brand;
+use App\Models\Coupon;
+use App\Models\InventoryTransaction;
 use App\Models\Offer;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\ProductRating;
 use App\Models\User;
 use App\Models\Wishlist;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
     /**
      * SuperAdmin Dashboard
      */
+    // public function index()
+    // {
+    //     $user = Auth::user();
+
+    //     // Only SuperAdmin can access
+    //     if (! $user->hasRole('SuperAdmin')) {
+    //         return redirect()->route('customer.dashboard');
+    //     }
+
+    //     $totalCustomers = User::whereHas('roles', function ($query) {
+    //         $query->where('name', 'customer');
+    //     })->count();
+
+    //     $totalProducts = Product::count();
+    //     $totalWishlist = Wishlist::count();
+    //     $totalCoupons = Coupon::count();
+
+    //     return view('dashboard', compact(
+    //         'user',
+    //         'totalCustomers',
+    //         'totalProducts',
+    //         'totalWishlist','totalCoupons'
+    //     ));
+    // }
     public function index()
     {
         $user = Auth::user();
 
-        // Only SuperAdmin can access
         if (! $user->hasRole('SuperAdmin')) {
             return redirect()->route('customer.dashboard');
         }
+        $totalProducts = Product::count();
+        $activeProducts = Product::where('status', 1)->count();
+        $inactiveProducts = Product::where('status', 0)->count();
+        $featuredProducts = Product::where('is_futured', 1)->count();
 
         $totalCustomers = User::whereHas('roles', function ($query) {
+            $query->where('name', 'Customer');
+        })->count();
+
+        $activeCustomers = User::where('status', 1)
+            ->whereHas('roles', function ($query) {
+                $query->where('name', 'Customer');
+            })
+            ->count();
+
+        $totalBrands = Brand::count();
+
+        $activeBrands = Brand::where('status', 1)->count();
+
+        $totalCategories = ProductCategory::count();
+
+        $totalCoupons = Coupon::count();
+
+        $activeCoupons = Coupon::where('status', 1)
+            ->whereDate('start_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->count();
+
+        $expiredCoupons = Coupon::whereDate('end_date', '<', now())->count();
+
+        $totalOffers = Offer::count();
+
+        $activeOffers = Offer::where('status', 1)->count();
+
+        $totalStock = Product::sum('stock');
+
+        $lowStockProducts = Product::where('stock', '<=', 5)
+            ->where('stock', '>', 0)
+            ->count();
+
+        $outOfStockProducts = Product::where('stock', '<=', 0)->count();
+
+        $totalStockIn = InventoryTransaction::where('type', 'stock_in')
+            ->sum('quantity');
+
+        $totalStockOut = InventoryTransaction::where('type', 'stock_out')
+            ->sum('quantity');
+
+        $todayStockIn = InventoryTransaction::where('type', 'stock_in')
+            ->whereDate('created_at', today())
+            ->sum('quantity');
+
+        $todayStockOut = InventoryTransaction::where('type', 'stock_out')
+            ->whereDate('created_at', today())
+            ->sum('quantity');
+
+        $totalRatings = ProductRating::count();
+
+        $averageRating = ProductRating::avg('rating');
+
+        $averageRating = $averageRating
+            ? number_format($averageRating, 1)
+            : 0;
+
+        $recentProducts = Product::with([
+            'category',
+            'subCategory',
+            'brand',
+        ])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentInventoryTransactions = InventoryTransaction::with([
+            'product',
+            'creator',
+        ])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $lowStockProductList = Product::with([
+            'category',
+            'brand',
+        ])
+            ->where('stock', '<=', 5)
+            ->orderBy('stock', 'asc')
+            ->take(10)
+            ->get();
+
+        $topRatedProducts = Product::select(
+            'products.id',
+            'products.name',
+            'products.image',
+            'products.price',
+            'products.stock',
+            DB::raw('AVG(product_ratings.rating) as average_rating'),
+            DB::raw('COUNT(product_ratings.id) as total_reviews')
+        )
+            ->join(
+                'product_ratings',
+                'products.id',
+                '=',
+                'product_ratings.product_id'
+            )
+            ->groupBy(
+                'products.id',
+                'products.name',
+                'products.image',
+                'products.price',
+                'products.stock'
+            )
+            ->orderByDesc('average_rating')
+            ->orderByDesc('total_reviews')
+            ->take(5)
+            ->get();
+
+        $brandWiseProducts = Brand::select(
+            'brands.name',
+            DB::raw('COUNT(products.id) as total_products')
+        )
+            ->leftJoin(
+                'products',
+                'brands.id',
+                '=',
+                'products.brand_id'
+            )
+            ->groupBy('brands.id', 'brands.name')
+            ->orderByDesc('total_products')
+            ->take(10)
+            ->get();
+
+        $categoryWiseProducts = ProductCategory::select(
+            'product_categories.name',
+            DB::raw('COUNT(products.id) as total_products')
+        )
+            ->leftJoin(
+                'products',
+                'product_categories.id',
+                '=',
+                'products.category_id'
+            )
+            ->groupBy(
+                'product_categories.id',
+                'product_categories.name'
+            )
+            ->orderByDesc('total_products')
+            ->take(10)
+            ->get();
+
+        $monthlyProducts = Product::select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+            ->whereYear('created_at', now()->year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get()
+            ->keyBy('month');
+
+        $monthlyProductLabels = [];
+        $monthlyProductData = [];
+
+        for ($month = 1; $month <= 12; $month++) {
+
+            $monthlyProductLabels[] = Carbon::create()
+                ->month($month)
+                ->format('M');
+
+            $monthlyProductData[] =
+                $monthlyProducts[$month]->total ?? 0;
+        }
+
+        return view('dashboard', compact(
+
+            // Products
+            'totalProducts',
+            'activeProducts',
+            'inactiveProducts',
+            'featuredProducts',
+
+            // Customers
+            'totalCustomers',
+            'activeCustomers',
+
+            // Brands
+            'totalBrands',
+            'activeBrands',
+
+            // Categories
+            'totalCategories',
+
+            // Coupons
+            'totalCoupons',
+            'activeCoupons',
+            'expiredCoupons',
+
+            // Offers
+            'totalOffers',
+            'activeOffers',
+
+            // Inventory
+            'totalStock',
+            'lowStockProducts',
+            'outOfStockProducts',
+            'totalStockIn',
+            'totalStockOut',
+            'todayStockIn',
+            'todayStockOut',
+
+            // Ratings
+            'totalRatings',
+            'averageRating',
+
+            // Lists
+            'recentProducts',
+            'recentInventoryTransactions',
+            'lowStockProductList',
+            'topRatedProducts',
+
+            // Reports
+            'brandWiseProducts',
+            'categoryWiseProducts',
+            'monthlyProductLabels',
+            'monthlyProductData'
+        ));
+    }
+
+    public function downloadReport()
+    {
+        $user = Auth::user();
+
+        $totalCustomers = User::whereHas('role', function ($query) {
             $query->where('name', 'customer');
         })->count();
 
-        $totalProducts = Product::count();
-        $totalWishlist = Wishlist::count();
+        $activeCustomers = User::whereHas('role', function ($query) {
+            $query->where('name', 'customer');
+        })
+            ->where('status', 1)
+            ->count();
 
-        return view('dashboard', compact(
+        $totalProducts = Product::count();
+
+        $activeProducts = Product::query()->where('status', 1)->count();
+
+        $totalBrands = Brand::count();
+
+        $activeBrands = Brand::query()->where('status', 1)->count();
+
+        $totalCategories = ProductCategory::count();
+
+        $totalCoupons = Coupon::count();
+
+        $activeCoupons = Coupon::query()->where('status', 1)->count();
+
+        $totalOffers = Offer::count();
+
+        $activeOffers = Offer::query()->where('status', 1)->count();
+
+        $totalStock = Product::sum('stock');
+
+        $outOfStockProducts = Product::query()->where('stock', '<=', 0)->count();
+
+        $lowStockProducts = Product::query()->where('stock', '>', 0)
+            ->where('stock', '<=', 5)
+            ->count();
+
+        $totalRatings = ProductRating::count();
+
+        $averageRating = ProductRating::avg('rating') ?? 0;
+
+        $totalStockIn = InventoryTransaction::where('type', 'stock_in')
+            ->sum('quantity');
+
+        $totalStockOut = InventoryTransaction::where('type', 'stock_out')
+            ->sum('quantity');
+
+        $todayStockIn = InventoryTransaction::where('type', 'stock_in')
+            ->whereDate('created_at', today())
+            ->sum('quantity');
+
+        $todayStockOut = InventoryTransaction::where('type', 'stock_out')
+            ->whereDate('created_at', today())
+            ->sum('quantity');
+
+        $recentProducts = Product::with('category')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $lowStockProductList = Product::with('category')
+            ->where('stock', '>', 0)
+            ->where('stock', '<=', 5)
+            ->orderBy('stock')
+            ->take(10)
+            ->get();
+
+        $recentInventoryTransactions = InventoryTransaction::with([
+            'product',
+            'creator',
+        ])
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $data = compact(
             'user',
             'totalCustomers',
+            'activeCustomers',
             'totalProducts',
-            'totalWishlist'
-        ));
+            'activeProducts',
+            'totalBrands',
+            'activeBrands',
+            'totalCategories',
+            'totalCoupons',
+            'activeCoupons',
+            'totalOffers',
+            'activeOffers',
+            'totalStock',
+            'outOfStockProducts',
+            'lowStockProducts',
+            'totalRatings',
+            'averageRating',
+            'totalStockIn',
+            'totalStockOut',
+            'todayStockIn',
+            'todayStockOut',
+            'recentProducts',
+            'lowStockProductList',
+            'recentInventoryTransactions'
+        );
+
+        $pdf = Pdf::loadView('admin.dashboard-report', $data)
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download(
+            'dashboard-report-'.now()->format('d-m-Y-H-i').'.pdf'
+        );
+    }
+
+    public function downloadExcelReport()
+    {
+        return Excel::download(
+            new DashboardReportExport,
+            'dashboard-report-'.now()->format('d-m-Y-H-i').'.xlsx'
+        );
     }
 
     /**
