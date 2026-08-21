@@ -1,7 +1,158 @@
 @extends('frontend.layouts.customer-layout')
 
 @section('title', 'Account Settings - ShopEase')
+@section('styles')
+<style>
+    /* ================================
+       Address Modal Fix
+    ================================= */
 
+    .modal {
+        z-index: 1060 !important;
+    }
+
+    .modal-backdrop {
+        z-index: 1050 !important;
+        background-color: rgba(0, 0, 0, 0.55) !important;
+    }
+
+    .modal-backdrop.show {
+        opacity: 1 !important;
+    }
+
+    .modal-dialog {
+        margin: 1.75rem auto;
+    }
+
+    .modal-content {
+        background: #ffffff !important;
+        border: 0 !important;
+        border-radius: 16px !important;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18) !important;
+        overflow: hidden;
+    }
+
+    .modal-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #edf0f3;
+        background: #ffffff;
+    }
+
+    .modal-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .modal-title i {
+        color: #0d6efd;
+    }
+
+    .modal-body {
+        padding: 24px;
+        background: #ffffff;
+    }
+
+    .modal-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #edf0f3;
+        background: #ffffff;
+    }
+
+    .modal .form-label {
+        font-size: 14px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    .modal .form-control,
+    .modal .form-select {
+        min-height: 44px;
+        border: 1px solid #dfe3e8;
+        border-radius: 8px;
+        background: #fff;
+        color: #212529;
+        box-shadow: none;
+        transition: all 0.2s ease;
+    }
+
+    .modal textarea.form-control {
+        min-height: 90px;
+        resize: vertical;
+    }
+
+    .modal .form-control:focus,
+    .modal .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.10);
+    }
+
+    .modal .btn-primary {
+        min-height: 42px;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+    }
+
+    .modal .btn-light {
+        min-height: 42px;
+        padding: 9px 18px;
+        border-radius: 8px;
+        border: 1px solid #e1e5e9;
+        background: #f8f9fa;
+    }
+
+    .modal .btn-light:hover {
+        background: #eef0f2;
+    }
+
+    .modal .form-check {
+        padding: 12px 14px;
+        background: #f8fafc;
+        border: 1px solid #e9edf2;
+        border-radius: 8px;
+    }
+
+    .modal .form-check-input {
+        margin-top: 0.2em;
+    }
+
+    .modal .form-check-label {
+        font-size: 14px;
+        color: #4b5563;
+        cursor: pointer;
+    }
+
+    /* Prevent page from appearing completely black */
+    body.modal-open {
+        overflow: hidden;
+    }
+
+    /* Mobile */
+    @media (max-width: 767px) {
+        .modal-dialog {
+            margin: 12px;
+        }
+
+        .modal-header {
+            padding: 16px 18px;
+        }
+
+        .modal-body {
+            padding: 18px;
+        }
+
+        .modal-footer {
+            padding: 14px 18px;
+        }
+
+        .modal-title {
+            font-size: 16px;
+        }
+    }
+</style>
+@endsection
 @section('content')
     <div class="account-page">
         @if(session('success'))
