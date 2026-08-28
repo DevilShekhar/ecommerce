@@ -58,23 +58,54 @@
                                         @forelse($users as $key => $user)
                                             <tr>
                                                 <td>{{ $key + 1 }}</td>
-                                                <td>{{ $user->name }}</td>
-                                                <td>{{ $user->email }}</td>
-                                                <td>
-                                                    @php
-                                                        $address = $user->address;
 
-                                                        if (is_array($address)) {
-                                                            $address = collect($address)
-                                                                ->flatten()
-                                                                ->filter(fn ($value) => filled($value))
-                                                                ->implode(', ');
+                                                <td>{{ $user->name }}</td>
+
+                                                <td>{{ $user->email }}</td>
+
+                                                <td style="max-width: 250px;">
+                                                    @php
+                                                        $addresses = $user->address;
+
+                                                        // Handle old JSON string data
+                                                        if (is_string($addresses) && !empty($addresses)) {
+                                                            $addresses = json_decode($addresses, true);
                                                         }
+
+                                                        $addresses = is_array($addresses) ? $addresses : [];
                                                     @endphp
 
-                                                    {{ $address ?: '-' }}
+                                                    @if(count($addresses))
+                                                        <ul class="mb-0 pl-3" style="padding-left: 18px;">
+                                                            @foreach($addresses as $addr)
+                                                                @php
+                                                                    $fullAddress = collect([
+                                                                        $addr['address'] ?? null,
+                                                                        $addr['city'] ?? null,
+                                                                        $addr['state'] ?? null,
+                                                                        $addr['country'] ?? null,
+                                                                        $addr['pincode'] ?? null,
+                                                                    ])->filter(fn($value) => filled($value))->implode(', ');
+                                                                @endphp
+
+                                                                <li data-toggle="tooltip" data-placement="top" title="{{ $fullAddress }}"
+                                                                    style="cursor: pointer; margin-bottom: 5px;">
+                                                                    <strong>{{ $addr['type'] ?? 'Address' }}</strong> -
+                                                                    {{ \Illuminate\Support\Str::limit($fullAddress, 35) }}
+
+                                                                    @if(!empty($addr['is_default']))
+                                                                        <span class="badge badge-success ml-1">Default</span>
+                                                                    @endif
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <span class="text-muted">-</span>
+                                                    @endif
                                                 </td>
-                                                <td>{{ $user->role->name ?? '-' }}</td>
+                                                <td>
+                                                    {{ $user->role->name ?? '-' }}
+                                                </td>
 
                                                 <td>
                                                     @if($user->status)
@@ -83,27 +114,41 @@
                                                         <span class="badge badge-danger">Inactive</span>
                                                     @endif
                                                 </td>
+
                                                 <td>
-                                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning">
+                                                    {{-- Edit --}}
+                                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-warning"
+                                                        title="Edit User">
                                                         <i class="zmdi zmdi-edit"></i>
                                                     </a>
 
-                                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST"
-                                                        class="d-inline delete-form" data-user-name="{{ $user->name }}">
-                                                        @csrf
-                                                        @method('DELETE')
+                                                    {{-- Send Offer - Only for Customer Users --}}
+                                                    @if($user->role?->name === 'customer')
+                                                        <button type="button" class="btn btn-sm btn-info send-offer-btn"
+                                                            data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}"
+                                                            data-toggle="modal" data-target="#sendOfferModal" title="Send Offer">
+                                                            <i class="zmdi zmdi-local-offer"></i>
+                                                        </button>
+                                                    @endif
 
-                                                        @if($user->status == 1)
-                                                            <button type="button" class="btn btn-sm btn-danger delete-btn">
+                                                    {{-- Delete --}}
+                                                    @if($user->status == 1)
+                                                        <form action="{{ route('users.destroy', $user->id) }}" method="POST"
+                                                            class="d-inline delete-form" data-user-name="{{ $user->name }}">
+                                                            @csrf
+                                                            @method('DELETE')
+
+                                                            <button type="button" class="btn btn-sm btn-danger delete-btn"
+                                                                title="Delete User">
                                                                 <i class="zmdi zmdi-delete"></i>
                                                             </button>
-                                                        @endif
-                                                    </form>
+                                                        </form>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="5" class="text-center">
+                                                <td colspan="7" class="text-center">
                                                     No users found.
                                                 </td>
                                             </tr>
@@ -119,8 +164,115 @@
 
             </div>
         </section>
+        <div class="modal fade" id="sendOfferModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
 
+                    <form action="{{ route('users.send-offer') }}" method="POST">
+                        @csrf
+
+                        <input type="hidden" name="user_id" id="offer_user_id">
+
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="zmdi zmdi-local-offer"></i>
+                                Send Offer
+                            </h5>
+
+                            <button type="button" class="close" data-dismiss="modal">
+                                <span>&times;</span>
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+                            {{-- Offer --}}
+                            <div class="form-group">
+                                <label>
+                                    Select Offer
+                                </label>
+
+                                <select name="offer_id" class="form-control">
+                                    <option value="">-- Select Offer --</option>
+
+                                    @foreach($offers as $offer)
+                                        <option value="{{ $offer->id }}">
+                                            {{ $offer->title }}
+                                            @if($offer->discount_type === 'percentage')
+                                                - {{ $offer->discount_value }}% OFF
+                                            @else
+                                                - ₹{{ number_format($offer->discount_value, 2) }} OFF
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            {{-- Coupon Code --}}
+                            <div class="form-group">
+                                <label>
+                                    Coupon Code
+                                </label>
+
+                                <select name="coupon_code" class="form-control">
+                                    <option value="">-- No Coupon --</option>
+
+                                    @foreach($coupons as $coupon)
+                                        <option value="{{ $coupon->code }}">
+                                            {{ $coupon->code }}
+
+                                            @if($coupon->discount_type === 'percentage')
+                                                - {{ $coupon->discount_value }}% OFF
+                                            @else
+                                                - ₹{{ number_format($coupon->discount_value, 2) }} OFF
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
+
+                                <small class="form-text text-muted">
+                                    Leave blank if no coupon is required.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                Cancel
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="zmdi zmdi-mail-send"></i>
+                                Send Offer
+                            </button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
     @endsection
+    @push('scripts')
+        <script>
+            $(document).ready(function () {
+
+                $('.send-offer-btn').on('click', function () {
+
+                    let userId = $(this).data('user-id');
+                    let userName = $(this).data('user-name');
+
+                    $('#offer_user_id').val(userId);
+                    $('#offer_user_name').text(userName);
+
+                });
+
+            });
+            $(document).ready(function () {
+                $('[data-toggle="tooltip"]').tooltip();
+            });
+        </script>
+    @endpush
 @else
 @php
     abort(403);

@@ -632,6 +632,167 @@
         </div>
     @endif
 
+    {{-- =============================================
+        SENT OFFERS & COUPONS
+    ============================================= --}}
+    @if(isset($sentOffers) && $sentOffers->count() > 0)
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="section-card">
+
+                    <div class="section-header">
+                        <div>
+                            <h5>Offers & Coupons For You</h5>
+                            <small class="text-muted">
+                                Exclusive offers and coupons sent to you
+                            </small>
+                        </div>
+
+                        <span style="
+                            background:#f1f6ff;
+                            color:#2878f0;
+                            padding:5px 10px;
+                            border-radius:20px;
+                            font-size:12px;
+                            font-weight:600;
+                        ">
+                            {{ $sentOffers->count() }} Available
+                        </span>
+                    </div>
+
+                    <div class="row g-3">
+
+                        @foreach($sentOffers as $sentOffer)
+
+                            @php
+                                $offer = $sentOffer->offer;
+                            @endphp
+
+                            <div class="col-lg-4 col-md-6">
+
+                                <div style="
+                                    border:1px solid #e5eaf1;
+                                    border-radius:12px;
+                                    padding:18px;
+                                    height:100%;
+                                    background:#fff;
+                                    position:relative;
+                                    overflow:hidden;
+                                ">
+
+                                    {{-- Discount Badge --}}
+                                    @if($offer)
+                                        <div style="
+                                            position:absolute;
+                                            top:12px;
+                                            right:12px;
+                                            background:#ef4444;
+                                            color:#fff;
+                                            font-size:11px;
+                                            font-weight:700;
+                                            padding:4px 8px;
+                                            border-radius:5px;
+                                        ">
+                                            @if($offer->discount_type === 'percentage')
+                                                {{ rtrim(rtrim(number_format($offer->discount_value, 2), '0'), '.') }}% OFF
+                                            @else
+                                                ₹{{ number_format($offer->discount_value, 0) }} OFF
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    {{-- Offer --}}
+                                    @if($offer)
+                                        <div style="padding-right:75px;">
+                                            <h6 style="
+                                                margin:0 0 6px;
+                                                font-size:15px;
+                                                font-weight:700;
+                                                color:#172033;
+                                            ">
+                                                {{ $offer->title }}
+                                            </h6>
+
+                                            @if(!empty($offer->description))
+                                                <p style="
+                                                    margin:0;
+                                                    font-size:12px;
+                                                    color:#64748b;
+                                                ">
+                                                    {{ Str::limit($offer->description, 100) }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                    @endif
+
+                                    {{-- Coupon --}}
+                                    @if($sentOffer->coupon_code)
+                                        <div style="
+                                            margin-top:15px;
+                                            padding:10px 12px;
+                                            background:#f8fafc;
+                                            border:1px dashed #2878f0;
+                                            border-radius:8px;
+                                            display:flex;
+                                            justify-content:space-between;
+                                            align-items:center;
+                                        ">
+                                            <div>
+                                                <small style="
+                                                    display:block;
+                                                    font-size:10px;
+                                                    color:#64748b;
+                                                    margin-bottom:2px;
+                                                ">
+                                                    COUPON CODE
+                                                </small>
+
+                                                <strong style="
+                                                    font-size:15px;
+                                                    color:#2878f0;
+                                                    letter-spacing:1px;
+                                                ">
+                                                    {{ $sentOffer->coupon_code }}
+                                                </strong>
+                                            </div>
+
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-primary"
+                                                onclick="copyCoupon('{{ $sentOffer->coupon_code }}', this)"
+                                                style="font-size:11px;">
+                                                <i class="bi bi-copy"></i>
+                                                Copy
+                                            </button>
+                                        </div>
+                                    @endif
+
+                                    {{-- Sent Date --}}
+                                    <div style="
+                                        margin-top:12px;
+                                        font-size:11px;
+                                        color:#94a3b8;
+                                    ">
+                                        <i class="bi bi-calendar3"></i>
+
+                                        Sent
+                                        {{ $sentOffer->sent_at
+                                            ? $sentOffer->sent_at->format('d M Y')
+                                            : '-' }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        @endforeach
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Orders + Top Categories -->
     <div class="row g-4 mb-4">
         <div class="col-lg-7">

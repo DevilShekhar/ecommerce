@@ -111,24 +111,12 @@ class CheckoutController extends Controller
         if (! is_array($cart)) {
             $cart = [];
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Active Offers
-        |--------------------------------------------------------------------------
-        */
         $now = now()->toDateString();
 
         $activeOffers = Offer::query()->where('status', 1)
             ->whereDate('start_date', '<=', $now)
             ->whereDate('end_date', '>=', $now)
             ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Cart Calculations
-        |--------------------------------------------------------------------------
-        */
         $cartCount = 0;
         $subtotal = 0;
         $hasOutOfStock = false;
@@ -149,23 +137,11 @@ class CheckoutController extends Controller
             if (! $product) {
                 continue;
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Quantity
-            |--------------------------------------------------------------------------
-            */
             $quantity = isset($item['quantity']) && is_numeric($item['quantity'])
                 ? (int) $item['quantity']
                 : 1;
 
             $quantity = max(1, $quantity);
-
-            /*
-            |--------------------------------------------------------------------------
-            | Stock
-            |--------------------------------------------------------------------------
-            */
             $stock = (int) ($product->stock ?? 0);
 
             if ($stock <= 0) {
@@ -175,21 +151,9 @@ class CheckoutController extends Controller
             if ($stock > 0 && $stock <= 5) {
                 $hasLowStock = true;
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Original Price
-            |--------------------------------------------------------------------------
-            */
             $originalPrice = (float) $product->price;
 
             $discountedPrice = $originalPrice;
-
-            /*
-            |--------------------------------------------------------------------------
-            | Find Active Offer
-            |--------------------------------------------------------------------------
-            */
 
             // Product offer
             $offer = $activeOffers->first(function ($o) use ($product) {
@@ -204,12 +168,6 @@ class CheckoutController extends Controller
                         && $o->product_category_id == $product->category_id;
                 });
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Calculate Discounted Price
-            |--------------------------------------------------------------------------
-            */
             if ($offer) {
 
                 if ($offer->discount_type === 'percentage') {
@@ -225,39 +183,16 @@ class CheckoutController extends Controller
                     );
                 }
             }
-
-            /*
-            |--------------------------------------------------------------------------
-            | Attach Values To Cart Item
-            |--------------------------------------------------------------------------
-            |
-            | This makes the values available directly in Blade.
-            |
-            */
             $item['price'] = $discountedPrice;
             $item['original_price'] = $originalPrice;
             $item['discounted_price'] = $discountedPrice;
             $item['active_offer'] = $offer;
-
-            /*
-            |--------------------------------------------------------------------------
-            | Item Total
-            |--------------------------------------------------------------------------
-            */
             $itemTotal = $discountedPrice * $quantity;
-
             $subtotal += $itemTotal;
-
             $cartCount += $quantity;
         }
 
         unset($item);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Addresses
-        |--------------------------------------------------------------------------
-        */
         $addresses = $user->address;
 
         if (is_string($addresses)) {
@@ -267,40 +202,16 @@ class CheckoutController extends Controller
         if (! is_array($addresses)) {
             $addresses = [];
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | Default Address
-        |--------------------------------------------------------------------------
-        */
         $defaultAddress = collect($addresses)
             ->firstWhere('is_default', true);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Totals
-        |--------------------------------------------------------------------------
-        */
         $shipping = 0;
         $discount = 0;
 
         $total = $subtotal + $shipping - $discount;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Categories
-        |--------------------------------------------------------------------------
-        */
         $categories = ProductCategory::query()->where('status', 1)
             ->latest()
             ->take(7)
             ->get();
-
-        /*
-        |--------------------------------------------------------------------------
-        | Recommended Products
-        |--------------------------------------------------------------------------
-        */
         $recommendedProducts = Product::query()
             ->where('status', 1)
             ->latest()

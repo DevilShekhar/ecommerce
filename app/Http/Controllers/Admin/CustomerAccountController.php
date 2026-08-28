@@ -7,7 +7,6 @@ use App\Models\OrderReturn;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
 
@@ -416,20 +415,19 @@ class CustomerAccountController extends Controller
             'password' => [
                 'required',
                 'string',
-                'confirmed',
                 'min:8',
+                'confirmed',
             ],
         ]);
 
         $user = Auth::user();
 
-        $user->password = Hash::make($request->password);
+        $user->password = $request->password;
         $user->save();
 
-        return back()->with(
-            'success',
-            'Password created successfully. You can now log in using your email and this password.'
-        );
+        return redirect()
+            ->route('account.settings')
+            ->with('success', 'Password changed successfully.');
     }
 
     public function returns()

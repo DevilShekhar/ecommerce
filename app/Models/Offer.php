@@ -23,9 +23,9 @@ class Offer extends Model
 
     protected $casts = [
         'discount_value' => 'decimal:2',
-        'start_date'     => 'date',
-        'end_date'       => 'date',
-        'status'         => 'boolean',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'status' => 'boolean',
     ];
 
     public function category(): BelongsTo
@@ -41,5 +41,23 @@ class Offer extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    public function userOffers()
+    {
+        return $this->hasMany(UserOffer::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(
+            User::class,
+            'user_offers'
+        )->withPivot([
+            'status',
+            'sent_at',
+            'viewed_at',
+            'used_at',
+        ])->withTimestamps();
     }
 }

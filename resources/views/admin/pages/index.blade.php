@@ -160,12 +160,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            @if($pages->hasPages())
-                                <div class="mt-3">
-                                    {{ $pages->links() }}
-                                </div>
-                            @endif
                         </div>
                     </div>
                 </div>

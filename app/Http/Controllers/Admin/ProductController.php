@@ -256,4 +256,29 @@ class ProductController extends Controller
             $validated['quantity'].' stock added successfully for '.$product->name.'.'
         );
     }
+
+    // In app/Http/Controllers/Customer/ProductController.php
+    public function getDetail($id)
+    {
+        try {
+            $product = Product::with(['category', 'brand', 'subCategory'])->find($id);
+
+            if (! $product) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Product not found',
+                ], 404);
+            }
+
+            return response()->json([
+                'success' => true,
+                'product' => $product,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error: '.$e->getMessage(),
+            ], 500);
+        }
+    }
 }

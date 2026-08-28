@@ -70,4 +70,22 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public function userOffers()
+    {
+        return $this->hasMany(UserOffer::class);
+    }
+
+    public function offers()
+    {
+        return $this->belongsToMany(
+            Offer::class,
+            'user_offers'
+        )->withPivot([
+            'status',
+            'sent_at',
+            'viewed_at',
+            'used_at',
+        ])->withTimestamps();
+    }
 }
