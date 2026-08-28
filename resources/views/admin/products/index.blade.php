@@ -17,7 +17,7 @@
                         </ul>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('products.create') }}" class="btn btn-primary">
+                        <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
                             <i class="zmdi zmdi-plus"></i> Add Product
                         </a>
                     </div>
@@ -162,19 +162,18 @@
                                             </button>
 
                                             <!-- View -->
-                                            <a href="{{ route('products.show', $product->id) }}" class="btn btn-info btn-sm"
-                                                title="View Details">
+                                            <a href="{{ route('product.details', ['slug' => $product->slug]) }}"
+                                                class="btn btn-info btn-sm" title="View Details">
                                                 <i class="zmdi zmdi-eye"></i>
                                             </a>
 
                                             <!-- Edit -->
-                                            <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning btn-sm"
-                                                title="Edit">
+                                            <a href="{{ route('admin.products.edit', ['product' => $product->slug]) }}"
+                                                class="btn btn-warning btn-sm" title="Edit">
                                                 <i class="zmdi zmdi-edit"></i>
                                             </a>
-
                                             <!-- Delete -->
-                                            <form action="{{ route('products.destroy', $product->id) }}" method="POST"
+                                            <form action="{{ route('admin.products.destroy', $product->slug) }}" method="POST"
                                                 class="d-inline delete-form">
                                                 @csrf
                                                 @method('DELETE')
@@ -564,34 +563,34 @@
                         : 'System';
 
                     tbody.append(`
-                            <tr>
-                                <td>${index + 1}</td>
+                                                <tr>
+                                                    <td>${index + 1}</td>
 
-                                <td>${date}</td>
+                                                    <td>${date}</td>
 
-                                <td>${typeBadge}</td>
+                                                    <td>${typeBadge}</td>
 
-                                <td>
-                                    <strong class="${quantityClass}">
-                                        ${quantity}
-                                    </strong>
-                                </td>
+                                                    <td>
+                                                        <strong class="${quantityClass}">
+                                                            ${quantity}
+                                                        </strong>
+                                                    </td>
 
-                                <td>${item.stock_before}</td>
+                                                    <td>${item.stock_before}</td>
 
-                                <td>
-                                    <strong>
-                                        ${item.stock_after}
-                                    </strong>
-                                </td>
+                                                    <td>
+                                                        <strong>
+                                                            ${item.stock_after}
+                                                        </strong>
+                                                    </td>
 
-                                <td>${creator}</td>
+                                                    <td>${creator}</td>
 
-                                <td>
-                                    ${item.notes ?? '-'}
-                                </td>
-                            </tr>
-                        `);
+                                                    <td>
+                                                        ${item.notes ?? '-'}
+                                                    </td>
+                                                </tr>
+                                            `);
                 });
             });
 

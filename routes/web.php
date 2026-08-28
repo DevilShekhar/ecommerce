@@ -30,10 +30,9 @@ use App\Http\Controllers\Frontend\PrivacyPolicyController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SocialLoginController;
-use App\Models\Product;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SocialLoginController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -123,6 +122,8 @@ Route::get('/shop/{id}', [ShopController::class, 'show'])
 Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
     ->name('shop.subcategories');
 
+Route::get('/shops/filter', [ShopController::class, 'filter'])->name('shop.filter');
+
 // Admin Routes
 Route::middleware('auth')->group(function () {
     Route::resource('roles', RoleController::class);
@@ -140,7 +141,7 @@ Route::middleware('auth')->group(function () {
     Route::get('get-subcategories/{id}', [BrandController::class, 'getSubCategories']);
     Route::resource('coupons', CouponController::class);
     Route::resource('blogs', BlogController::class);
-    Route::resource('products', ProductController::class);
+    // Route::resource('products', ProductController::class);
     Route::get('/dashboard/download-report', [DashboardController::class, 'downloadReport'])
         ->name('dashboard.download.report');
     Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])
@@ -153,6 +154,30 @@ Route::middleware('auth')->group(function () {
         ->middleware(['auth'])
         ->name('admin.')
         ->group(function () {
+
+            Route::get('products', [ProductController::class, 'index'])
+                ->name('products.index');
+
+            Route::get('products/create', [ProductController::class, 'create'])
+                ->name('products.create');
+
+            Route::post('products', [ProductController::class, 'store'])
+                ->name('products.store');
+
+            Route::get('products/{product:slug}', [ProductController::class, 'show'])
+                ->name('products.show');
+
+            Route::get('products/{product:slug}/edit', [ProductController::class, 'edit'])
+                ->name('products.edit');
+
+            Route::put('products/{product:slug}', [ProductController::class, 'update'])
+                ->name('products.update');
+
+            Route::patch('products/{product:slug}', [ProductController::class, 'update'])
+                ->name('products.update');
+
+            Route::delete('products/{product:slug}', [ProductController::class, 'destroy'])
+                ->name('products.destroy');
             Route::resource('pages', PageController::class);
             Route::get('pages/{page}/sections', [PageSectionController::class, 'index'])->name('pages.sections.index');
             Route::get('pages/{page}/sections/create', [PageSectionController::class, 'create'])->name('pages.sections.create');
@@ -247,7 +272,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.details');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])
+        ->name('product.details');
+
     Route::get('/category/{category}', [ProductController::class, 'byCategory'])->name('product.category');
     Route::get('/search', [ProductController::class, 'search'])->name('product.search');
     // Account Settings
@@ -306,4 +333,4 @@ Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionContro
 Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetail'])
     ->name('customer.product.detail');
 
-Route::get('/sitemap.xml', [SitemapController::class, 'index']) ->name('sitemap');
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

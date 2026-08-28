@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -20,6 +21,7 @@ class Product extends Model
         'sub_category_id',
         'brand_id',
         'name',
+        'slug',
         'sku',
         'price',
         'stock',
@@ -110,5 +112,48 @@ class Product extends Model
     public function inventoryTransactions()
     {
         return $this->hasMany(InventoryTransaction::class);
+    }
+
+    public function getRouteKeyName()
+{
+    return 'slug';
+}
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->slug = static::generateUniqueSlug($product->name);
+        });
+
+        static::updating(function ($product) {
+            if ($product->isDirty('name')) {
+                $product->slug = static::generateUniqueSlug(
+                    $product->name,
+                    $product->id
+                );
+            }
+        });
+    }
+
+    protected static function generateUniqueSlug($name, $ignoreId = null)
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (
+            static::query()->where('slug', $slug)
+                ->when($ignoreId, function ($query) use ($ignoreId) {
+                    $query->where('id', '!=', $ignoreId);
+                })
+                ->exists()
+        ) {
+            $slug = $originalSlug.'-'.$counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }

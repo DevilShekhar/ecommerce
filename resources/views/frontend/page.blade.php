@@ -1502,7 +1502,6 @@
             }
             document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    e.preventDefault();
                     window.location.href = '/login';
                 });
             });

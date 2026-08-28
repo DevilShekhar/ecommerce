@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 
 class ProductController extends Controller
 {
@@ -54,7 +55,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:product_categories,id',
             'sub_category_id' => 'required|exists:sub_category,id',
             'brand_id' => 'nullable|exists:brands,id',
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:products,name',
             'sku' => 'required|string|max:100|unique:products,sku',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -85,7 +86,7 @@ class ProductController extends Controller
 
         Product::create($validated);
 
-        return redirect()->route('products.index')
+        return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
 
@@ -94,15 +95,25 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $categories = ProductCategory::query()->where('status', 1)->get();
-
-        $subcategories = SubCategory::query()->where('category_id', $product->category_id)
+        $categories = ProductCategory::query()
             ->where('status', 1)
             ->get();
 
-        $brands = Brand::query()->where('status', 1)->get();
+        $subcategories = SubCategory::query()
+            ->where('category_id', $product->category_id)
+            ->where('status', 1)
+            ->get();
 
-        return view('admin.products.edit', compact('product', 'categories', 'subcategories', 'brands'));
+        $brands = Brand::query()
+            ->where('status', 1)
+            ->get();
+
+        return view('admin.products.edit', compact(
+            'product',
+            'categories',
+            'subcategories',
+            'brands'
+        ));
     }
 
     /**
@@ -117,7 +128,12 @@ class ProductController extends Controller
             'category_id' => 'required|exists:product_categories,id',
             'sub_category_id' => 'required|exists:sub_category,id',
             'brand_id' => 'nullable|exists:brands,id',
-            'name' => 'required|string|max:255',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('products', 'name')->ignore($product->id),
+            ],
             'sku' => 'required|string|max:100|unique:products,sku,'.$product->id,
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
@@ -161,18 +177,42 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return redirect()->route('products.index', $product->id)
+        return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully.');
     }
 
     /**
      * Display the specified product details.
      */
-    public function show(Product $product)
+    public function show($slug)
     {
-        $product->load(['category', 'subCategory', 'brand', 'creator', 'updater']);
+        // Get product using slug
+        $product = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+            'creator',
+        ])
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
 
-        return view('admin.products.show', compact('product'));
+        // Get related products from same category
+        $relatedProducts = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+        ])
+            ->where('status', 1)
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->limit(4)
+            ->get();
+
+        return view('admin.products.show', compact(
+            'product',
+            'relatedProducts'
+        ));
     }
 
     public function destroy(Product $product)
@@ -191,7 +231,7 @@ class ProductController extends Controller
             'status' => 0,
         ]);
 
-        return redirect()->route('products.index')
+        return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
     }
 

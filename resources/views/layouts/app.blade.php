@@ -425,12 +425,12 @@
                         <ul class="ml-menu">
                             @can('product.index')
                                 <li class="{{ request()->routeIs('products.index') ? 'active' : '' }}">
-                                    <a href="{{ route('products.index') }}">Products List</a>
+                                    <a href="{{ route('admin.products.index') }}">Products List</a>
                                 </li>
                             @endcan
                             @can('product.create')
                                 <li class="{{ request()->routeIs('products.create') ? 'active' : '' }}">
-                                    <a href="{{ route('products.create') }}">Add Product</a>
+                                    <a href="{{ route('admin.products.create') }}">Add Product</a>
                                 </li>
                             @endcan
                         </ul>
