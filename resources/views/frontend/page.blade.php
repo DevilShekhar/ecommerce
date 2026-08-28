@@ -28,62 +28,6 @@
         </script>
     @endpush
 
-
-    <!-- =============================================
-        NAVBAR
-    ============================================= -->
-    <nav class="navbar-modern">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="/" class="navbar-logo">
-                <span class="navbar-logo-text">Aethelweave</span>
-                <span class="navbar-logo-badge">Artisan</span>
-            </a>
-
-            <!-- Nav Links - Desktop -->
-            <ul class="nav-links-desktop">
-                <li><a href="/">Home</a></li>
-                <li><a href={{ route('shop.index') }}>Shop</a></li>
-
-                <li><a href="{{ route('about-us') }}">About</a></li>
-                <li><a href="{{ route('contact-us') }}">Contact</a></li>
-            </ul>
-
-            <!-- Right Icons -->
-            <div class="navbar-icons">
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-search"></i>
-                </a>
-                <a href="{{ route('login') }}" class="navbar-icon">
-                    <i class="bi bi-person"></i>
-                </a>
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-bag"></i>
-                    <span class="navbar-cart-count">0</span>
-                </a>
-                <!-- Hamburger (Mobile) -->
-                <button class="hamburger-btn" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">Shop</a></li>
-
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
-
-
-
     {{-- =============================================
     HERO SECTION
     ============================================= --}}
