@@ -32,6 +32,7 @@ use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -316,3 +317,5 @@ require __DIR__.'/auth.php';
 //     ->where('slug', '.*')
 //     ->name('frontend.page');
 Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionController::class, 'store'])->name('frontend.contact.submit');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']) ->name('sitemap');
