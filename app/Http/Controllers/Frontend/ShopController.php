@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use App\Models\Brand;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 
 class ShopController extends Controller
@@ -16,11 +17,11 @@ class ShopController extends Controller
     public function index(Request $request)
     {
         // Get all active categories
-        $categories = ProductCategory::where('status', 1)->get();
+        $categories = ProductCategory::query()->where('status', 1)->get();
 
         // Get filter values for sidebar
-        $brands = Brand::where('status', 1)->get();
-        $materials = Product::where('status', 1)
+        $brands = Brand::query()->where('status', 1)->get();
+        $materials = Product::query()->where('status', 1)
             ->whereNotNull('variants')
             ->distinct()
             ->pluck('variants')
@@ -29,8 +30,8 @@ class ShopController extends Controller
 
         // Get price range
         $priceRange = [
-            'min' => Product::where('status', 1)->min('price') ?? 0,
-            'max' => Product::where('status', 1)->max('price') ?? 1000
+            'min' => Product::query()->where('status', 1)->min('price') ?? 0,
+            'max' => Product::query()->where('status', 1)->max('price') ?? 1000,
         ];
 
         // Build query
@@ -51,7 +52,7 @@ class ShopController extends Controller
         }
 
         if ($request->filled('material')) {
-            $query->where('variants', 'like', '%' . $request->material . '%');
+            $query->where('variants', 'like', '%'.$request->material.'%');
         }
 
         if ($request->filled('min_price')) {
@@ -64,10 +65,10 @@ class ShopController extends Controller
 
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('sku', 'like', '%' . $search . '%')
-                  ->orWhere('specification', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('sku', 'like', '%'.$search.'%')
+                    ->orWhere('specification', 'like', '%'.$search.'%');
             });
         }
 
@@ -123,20 +124,34 @@ class ShopController extends Controller
     /**
      * Show single product details
      */
-    public function show($id)
+    public function show($slug)
     {
-        $product = Product::with(['category', 'brand', 'subCategory', 'creator'])
+        $product = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+            'creator',
+        ])
             ->where('status', 1)
-            ->findOrFail($id);
+            ->where('slug', $slug)
+            ->firstOrFail();
 
         // Get related products from same category
-        $relatedProducts = Product::where('status', 1)
+        $relatedProducts = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+        ])
+            ->where('status', 1)
             ->where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->limit(4)
             ->get();
 
-        return view('frontend.shop.show', compact('product', 'relatedProducts'));
+        return view('frontend.shop.show', compact(
+            'product',
+            'relatedProducts'
+        ));
     }
 
     /**
@@ -144,10 +159,100 @@ class ShopController extends Controller
      */
     public function getSubCategories($categoryId)
     {
-        $subCategories = \App\Models\SubCategory::where('category_id', $categoryId)
+        $subCategories = SubCategory::query()->where('category_id', $categoryId)
             ->where('status', 1)
             ->get(['id', 'name']);
 
         return response()->json($subCategories);
+    }
+
+    public function filter(Request $request)
+    {
+        $query = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+        ])->where('status', 1);
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        if ($request->filled('sub_category')) {
+            $query->where('sub_category_id', $request->sub_category);
+        }
+        if ($request->filled('brand')) {
+            $query->where('brand_id', $request->brand);
+        }
+        if ($request->filled('material')) {
+            $query->where(
+                'variants',
+                'like',
+                '%'.$request->material.'%'
+            );
+        }
+        if ($request->filled('min_price')) {
+            $query->where(
+                'price',
+                '>=',
+                (float) $request->min_price
+            );
+        }
+        if ($request->filled('max_price')) {
+            $query->where(
+                'price',
+                '<=',
+                (float) $request->max_price
+            );
+        }
+        if ($request->filled('search')) {
+
+            $search = trim($request->search);
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('sku', 'like', '%'.$search.'%')
+                    ->orWhere(
+                        'specification',
+                        'like',
+                        '%'.$search.'%'
+                    );
+            });
+        }
+        switch ($request->get('sort', 'newest')) {
+
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+
+            case 'price_asc':
+                $query->orderBy('price', 'asc');
+                break;
+
+            case 'price_desc':
+                $query->orderBy('price', 'desc');
+                break;
+
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+
+            case 'newest':
+            default:
+                $query->orderBy('created_at', 'desc');
+                break;
+        }
+        $products = $query->paginate(12);
+
+        return response()->json([
+            'success' => true,
+            'products' => $products->items(),
+            'current_page' => $products->currentPage(),
+            'last_page' => $products->lastPage(),
+            'total' => $products->total(),
+        ]);
     }
 }

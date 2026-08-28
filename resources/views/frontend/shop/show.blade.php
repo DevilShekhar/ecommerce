@@ -1104,11 +1104,6 @@
                     @endforeach
                 </div>
             </div>
-        @else
-            <div class="empty-related">
-                <i class="bi bi-box" style="font-size:28px;display:block;margin-bottom:8px;color:#D5CFC5;"></i>
-                No recommended products available.
-            </div>
         @endif
     </div>
 

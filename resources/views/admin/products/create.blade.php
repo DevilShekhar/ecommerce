@@ -14,13 +14,13 @@
                                 <a href="{{ route('dashboard') }}"><i class="zmdi zmdi-home"></i> Dashboard</a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="{{ route('products.index') }}">Products</a>
+                                <a href="{{ route('admin.products.index') }}">Products</a>
                             </li>
                             <li class="breadcrumb-item active">Create Product</li>
                         </ul>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('products.index') }}" class="btn btn-danger">
+                        <a href="{{ route('admin.products.index') }}" class="btn btn-danger">
                             <i class="zmdi zmdi-arrow-left"></i> Back
                         </a>
                     </div>
@@ -38,7 +38,7 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('products.store') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row clearfix">
                         <div class="col-lg-12">
@@ -229,7 +229,7 @@
                         <div class="col-lg-12">
                             <div class="card">
                                 <div class="body text-right">
-                                    <a href="{{ route('products.index') }}" class="btn btn-secondary">Cancel</a>
+                                    <a href="{{ route('admin.products.index') }}" class="btn btn-secondary">Cancel</a>
                                     <button type="submit" class="btn btn-success">
                                         <i class="zmdi zmdi-save"></i> Save Product
                                     </button>

@@ -1,56 +1,504 @@
 @extends('frontend.layouts.app')
 
 @section('title', 'Shops · Aethelweave')
+
 @section('content')
-    <nav class="navbar-modern">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="/" class="navbar-logo">
-                <span class="navbar-logo-text">Aethelweave</span>
-                <span class="navbar-logo-badge">Artisan</span>
-            </a>
+    <style>
+        /* ========== SHOP STYLES ========== */
+        .shop-header {
+            background: linear-gradient(135deg, #faf7f2 0%, #f0e8dc 100%);
+            padding: 60px 40px 50px;
+            text-align: center;
+        }
 
-            <!-- Nav Links - Desktop -->
-            <ul class="nav-links-desktop">
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
+        .shop-header h1 {
+            font-size: 42px;
+            font-weight: 700;
+            color: #2c2416;
+            margin-bottom: 10px;
+        }
 
-                <li><a href={{ route('about-us') }}>About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
+        .shop-header h1 i {
+            color: #b18a45;
+            margin-right: 12px;
+        }
 
-            <!-- Right Icons -->
-            <div class="navbar-icons">
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-search"></i>
-                </a>
-               <a href="{{ route('login') }}" class="navbar-icon">
-                    <i class="bi bi-person"></i>
-                </a>
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-bag"></i>
-                    <span class="navbar-cart-count">0</span>
-                </a>
-                <!-- Hamburger (Mobile) -->
-                <button class="hamburger-btn" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
+        .shop-header p {
+            color: #6b5a4a;
+            font-size: 17px;
+        }
 
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
+        .shop-header .breadcrumb {
+            margin-top: 15px;
+            color: #8a7a6a;
+        }
 
-                <li><a href="#">About</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+        .shop-header .breadcrumb a {
+            color: #b18a45;
+            text-decoration: none;
+        }
+
+        .shop-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 30px 60px;
+        }
+
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 35px;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            align-self: start;
+        }
+
+        .filter-section {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 25px 22px;
+            border: 1px solid #e8d9c0;
+            margin-bottom: 20px;
+        }
+
+        .filter-section h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #6b5a4a;
+            margin-bottom: 18px;
+            font-weight: 600;
+            border-bottom: 1px solid #f0e8dc;
+            padding-bottom: 12px;
+        }
+
+        .filter-section h3 i {
+            color: #b18a45;
+            margin-right: 8px;
+        }
+
+        .filter-group {
+            margin-bottom: 18px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a4035;
+            margin-bottom: 6px;
+        }
+
+        .filter-group select,
+        .filter-group input[type="text"],
+        .filter-group input[type="number"] {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #e0d5c8;
+            border-radius: 8px;
+            background: #faf7f2;
+            font-family: inherit;
+            font-size: 14px;
+            color: #2c2416;
+            transition: border-color 0.2s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            outline: none;
+            border-color: #b18a45;
+        }
+
+        .price-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .btn-filter {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-filter-primary {
+            background: #b18a45;
+            color: white;
+        }
+
+        .btn-filter-primary:hover {
+            background: #9a7740;
+        }
+
+        .btn-filter-secondary {
+            background: #f0e8dc;
+            color: #2c2416;
+        }
+
+        .btn-filter-secondary:hover {
+            background: #e0d5c8;
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .products-count {
+            font-size: 15px;
+            color: #6b5a4a;
+        }
+
+        .products-count strong {
+            color: #2c2416;
+        }
+
+        .sort-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sort-control label {
+            font-size: 14px;
+            color: #6b5a4a;
+        }
+
+        .sort-control select {
+            padding: 8px 14px;
+            border: 1px solid #e0d5c8;
+            border-radius: 8px;
+            background: white;
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .product-card {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #f0e8dc;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(177, 138, 69, 0.12);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 280px;
+            overflow: hidden;
+            background: #f5f0e8;
+            position: relative;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.04);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #b18a45;
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .product-badge.sale {
+            background: #c0392b;
+        }
+
+        .product-badge.featured {
+            background: #2c3e50;
+        }
+
+        .product-info {
+            padding: 16px 18px 20px;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: #8a7a6a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2c2416;
+        }
+
+        .product-name a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .product-name a:hover {
+            color: #b18a45;
+        }
+
+        .product-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #6b5a4a;
+            margin-bottom: 8px;
+        }
+
+        .product-meta i {
+            margin-right: 4px;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-price .current {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c2416;
+        }
+
+        .product-price .original {
+            font-size: 15px;
+            color: #a08878;
+            text-decoration: line-through;
+        }
+
+        .product-stock {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .product-stock.in-stock {
+            color: #27ae60;
+        }
+
+        .product-stock.out-of-stock {
+            color: #c0392b;
+        }
+
+        .pagination {
+            margin-top: 45px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 8px 16px;
+            border: 1px solid #e0d5c8;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #2c2416;
+            transition: all 0.2s;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .pagination a:hover {
+            background: #b18a45;
+            color: white;
+            border-color: #b18a45;
+        }
+
+        .pagination .active {
+            background: #b18a45;
+            color: white;
+            border-color: #b18a45;
+        }
+
+        .pagination .disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .no-products i {
+            font-size: 60px;
+            color: #d5c8b8;
+            margin-bottom: 20px;
+        }
+
+        .no-products h3 {
+            font-size: 24px;
+            color: #2c2416;
+            margin-bottom: 10px;
+        }
+
+        .no-products p {
+            color: #6b5a4a;
+        }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-overlay .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f0e8dc;
+            border-top-color: #b18a45;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .shop-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .filter-section {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                gap: 15px;
+            }
+
+            .filter-section h3 {
+                grid-column: 1 / -1;
+            }
+
+            .filter-actions {
+                grid-column: 1 / -1;
+            }
+
+            .filter-group {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .shop-header {
+                padding: 40px 20px 35px;
+            }
+
+            .shop-header h1 {
+                font-size: 32px;
+            }
+
+            .shop-container {
+                padding: 25px 15px 40px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+                gap: 15px;
+            }
+
+            .product-image {
+                height: 200px;
+            }
+
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filter-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .product-image {
+                height: 180px;
+            }
+
+            .product-info {
+                padding: 12px 12px 16px;
+            }
+
+            .product-name {
+                font-size: 14px;
+            }
+
+            .product-price .current {
+                font-size: 16px;
+            }
+
+            .product-meta {
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 
     <!-- =============================================
         SHOP HEADER
@@ -60,9 +508,7 @@
         <p>Discover our curated collection of timeless pieces</p>
         <div class="breadcrumb">
             <a href="/">Home</a> / Shop
-            @if(request('category'))
-                / {{ $categories->where('id', request('category'))->first()->name ?? '' }}
-            @endif
+            <span id="breadcrumbCategory"></span>
         </div>
     </section>
 
@@ -74,16 +520,16 @@
 
             <!-- SIDEBAR FILTERS -->
             <aside class="sidebar">
-                <form method="GET" action="{{ route('shop.index') }}" id="filter-form">
+                <form id="filter-form" onsubmit="return false;">
 
                     <!-- CATEGORIES -->
                     <div class="filter-section">
                         <h3><i class="fas fa-tags"></i> Categories</h3>
                         <div class="filter-group">
-                            <select name="category">
+                            <select name="category" id="category">
                                 <option value="">All Categories</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}">
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -101,7 +547,7 @@
                                 <select name="brand" id="brand">
                                     <option value="">All Brands</option>
                                     @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                        <option value="{{ $brand->id }}">
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
@@ -115,7 +561,7 @@
                                 <select name="material" id="material">
                                     <option value="">All Materials</option>
                                     @foreach($materials as $material)
-                                        <option value="{{ $material }}" {{ request('material') == $material ? 'selected' : '' }}>
+                                        <option value="{{ $material }}">
                                             {{ $material }}
                                         </option>
                                     @endforeach
@@ -126,26 +572,23 @@
                         <div class="filter-group">
                             <label>Price Range</label>
                             <div class="price-range">
-                                <input type="number" name="min_price" placeholder="Min"
-                                    value="{{ request('min_price') }}" min="0" max="{{ $priceRange['max'] }}">
-                                <input type="number" name="max_price" placeholder="Max"
-                                    value="{{ request('max_price') }}" min="0" max="{{ $priceRange['max'] }}">
+                                <input type="number" name="min_price" id="min_price" placeholder="Min" min="0">
+                                <input type="number" name="max_price" id="max_price" placeholder="Max" min="0">
                             </div>
                         </div>
 
                         <div class="filter-group">
                             <label for="search">Search</label>
-                            <input type="text" name="search" id="search" placeholder="Search products..."
-                                value="{{ request('search') }}">
+                            <input type="text" name="search" id="search" placeholder="Search products...">
                         </div>
 
                         <div class="filter-actions">
-                            <button type="submit" class="btn-filter btn-filter-primary">
+                            <button type="button" class="btn-filter btn-filter-primary" onclick="applyFilters()">
                                 <i class="fas fa-search"></i> Apply
                             </button>
-                            <a href="{{ route('shop.index') }}" class="btn-filter btn-filter-secondary">
+                            <button type="button" class="btn-filter btn-filter-secondary" onclick="resetFilters()">
                                 <i class="fas fa-undo"></i> Reset
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -157,109 +600,37 @@
                 <!-- Products Header -->
                 <div class="products-header">
                     <div class="products-count">
-                        <strong>{{ $products->total() }}</strong> products found
+                        <strong id="productCount">0</strong> products found
                     </div>
 
                     <div class="sort-control">
                         <label for="sort">Sort by:</label>
-                        <select name="sort" id="sort">
-                            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
-                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to
-                                High</option>
-                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High
-                                to Low</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name: A to Z
-                            </option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name: Z to A
-                            </option>
+                        <select name="sort" id="sort" onchange="applyFilters()">
+                            <option value="newest">Newest</option>
+                            <option value="oldest">Oldest</option>
+                            <option value="price_asc">Price: Low to High</option>
+                            <option value="price_desc">Price: High to Low</option>
+                            <option value="name_asc">Name: A to Z</option>
+                            <option value="name_desc">Name: Z to A</option>
                         </select>
                     </div>
                 </div>
 
+                <!-- Loading Spinner -->
+                <div class="loading-overlay" id="loadingOverlay">
+                    <div class="spinner"></div>
+                    <p>Loading products...</p>
+                </div>
+
                 <!-- Products Grid -->
-                @if($products->isEmpty())
-                    <div class="no-products">
-                        <i class="fas fa-box-open"></i>
-                        <h3>No products found</h3>
-                        <p>Try adjusting your filters or search terms.</p>
-                    </div>
-                @else
-                    <div class="products-grid">
-                        @foreach($products as $product)
-                            <div class="product-card">
-                                <div class="product-image">
-                                    @php
-                                        $images = $product->image ? explode(',', $product->image) : [];
-                                        $firstImage = !empty($images) ? $images[0] : null;
-                                    @endphp
-                                    @if($firstImage)
-                                        <img src="{{ asset($firstImage) }}" alt="{{ $product->name }}" loading="lazy">
-                                    @else
-                                        <img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image"
-                                            loading="lazy">
-                                    @endif
+                <div id="productsContainer">
+                    <!-- Products will be rendered here by JavaScript -->
+                </div>
 
-                                    @if($product->is_featured == 2)
-                                        <span class="product-badge featured">Featured</span>
-                                    @elseif($product->is_featured == 1)
-                                        <span class="product-badge">Popular</span>
-                                    @endif
-                                </div>
-
-                                <div class="product-info">
-                                    <div class="product-category">
-                                        {{ $product->category->name ?? 'Uncategorized' }}
-                                    </div>
-                                    <div class="product-name">
-                                        <a href="{{ route('shop.show', $product->id) }}">{{ $product->name }}</a>
-                                    </div>
-                                    <div class="product-meta">
-                                        @if($product->brand)
-                                            <span><i class="fas fa-tag"></i> {{ $product->brand->name }}</span>
-                                        @endif
-                                        @if($product->variants)
-                                            <span><i class="fas fa-gem"></i> {{ $product->variants }}</span>
-                                        @endif
-                                    </div>
-                                    <div class="product-price">
-                                        <span class="current">₹{{ number_format($product->price, 2) }}</span>
-                                    </div>
-                                    <div class="product-stock {{ $product->stock > 0 ? 'in-stock' : 'out-of-stock' }}">
-                                        <i class="fas fa-{{ $product->stock > 0 ? 'check-circle' : 'times-circle' }}"></i>
-                                        {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                                        @if($product->stock > 0 && $product->stock < 10)
-                                            ({{ $product->stock }} left)
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-
-                    <!-- Pagination -->
-                    <div class="pagination">
-                        @if($products->onFirstPage())
-                            <span class="disabled"><i class="fas fa-chevron-left"></i></span>
-                        @else
-                            <a href="{{ $products->previousPageUrl() }}"><i class="fas fa-chevron-left"></i></a>
-                        @endif
-
-                        @foreach($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-                            @if($page == $products->currentPage())
-                                <span class="active">{{ $page }}</span>
-                            @else
-                                <a href="{{ $url }}">{{ $page }}</a>
-                            @endif
-                        @endforeach
-
-                        @if($products->hasMorePages())
-                            <a href="{{ $products->nextPageUrl() }}"><i class="fas fa-chevron-right"></i></a>
-                        @else
-                            <span class="disabled"><i class="fas fa-chevron-right"></i></span>
-                        @endif
-                    </div>
-                @endif
+                <!-- Pagination -->
+                <div id="paginationContainer">
+                    <!-- Pagination will be rendered here by JavaScript -->
+                </div>
 
             </main>
         </div>
@@ -269,6 +640,9 @@
         SCRIPTS
     ============================================= -->
     <script>
+        let currentPage = 1;
+        let isLoading = false;
+
         // Mobile menu toggle
         document.addEventListener('DOMContentLoaded', function () {
             const hamburger = document.querySelector('.hamburger-btn');
@@ -281,7 +655,6 @@
                 });
             }
 
-            // Navbar scroll effect
             const navbar = document.querySelector('.navbar-modern');
             if (navbar) {
                 window.addEventListener('scroll', function () {
@@ -292,69 +665,243 @@
                     }
                 });
             }
+
+            // Load initial products
+            applyFilters();
         });
 
-        // Auto-submit on filter change
-        document.querySelectorAll('#category, #brand, #material, #sort').forEach(select => {
-            select.addEventListener('change', function () {
-                if (this.id === 'sort') {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('sort', this.value);
-                    window.location.href = url.toString();
-                } else {
-                    document.getElementById('filter-form').submit();
+        function getFilters() {
+            return {
+                category: document.getElementById('category').value,
+                brand: document.getElementById('brand') ? document.getElementById('brand').value : '',
+                material: document.getElementById('material') ? document.getElementById('material').value : '',
+                min_price: document.getElementById('min_price').value,
+                max_price: document.getElementById('max_price').value,
+                search: document.getElementById('search').value,
+                sort: document.getElementById('sort').value,
+                page: currentPage
+            };
+        }
+
+        function applyFilters(page = 1) {
+            if (page) currentPage = page;
+
+            const filters = getFilters();
+            const loading = document.getElementById('loadingOverlay');
+            const container = document.getElementById('productsContainer');
+            const pagination = document.getElementById('paginationContainer');
+
+            // Show loading
+            loading.style.display = 'block';
+            container.innerHTML = '';
+            pagination.innerHTML = '';
+
+            // Build query string
+            const params = new URLSearchParams();
+            Object.keys(filters).forEach(key => {
+                if (filters[key] !== '' && filters[key] !== null && filters[key] !== undefined) {
+                    params.append(key, filters[key]);
                 }
             });
-        });
 
-        // Load subcategories when category changes
-        document.getElementById('category').addEventListener('change', function () {
-            const categoryId = this.value;
-            const subCategorySelect = document.getElementById('sub_category');
-            const subCategoryGroup = document.getElementById('subCategoryGroup');
+            // AJAX request
+            fetch(`/shops/filter?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loading.style.display = 'none';
 
-            if (!categoryId) {
-                subCategoryGroup.style.display = 'none';
-                subCategorySelect.innerHTML = '<option value="">All Sub Categories</option>';
+                    if (data.success) {
+                        renderProducts(data.products);
+                        renderPagination(data.current_page, data.last_page, data.total);
+                        document.getElementById('productCount').textContent = data.total || 0;
+                    } else {
+                        container.innerHTML = `
+                            <div class="no-products">
+                                <i class="fas fa-box-open"></i>
+                                <h3>No products found</h3>
+                                <p>Try adjusting your filters or search terms.</p>
+                            </div>
+                        `;
+                        document.getElementById('productCount').textContent = '0';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loading.style.display = 'none';
+                    container.innerHTML = `
+                        <div class="no-products">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <h3>Something went wrong</h3>
+                            <p>Please try again later.</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function renderProducts(products) {
+            const container = document.getElementById('productsContainer');
+
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No products found</h3>
+                        <p>Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
                 return;
             }
 
-            subCategoryGroup.style.display = 'block';
-            subCategorySelect.innerHTML = '<option value="">Loading...</option>';
+            let html = '<div class="products-grid">';
 
-            fetch('/get-subcategories/' + categoryId)
-                .then(response => response.json())
-                .then(data => {
-                    subCategorySelect.innerHTML = '<option value="">All Sub Categories</option>';
-                    data.forEach(sub => {
-                        const option = document.createElement('option');
-                        option.value = sub.id;
-                        option.textContent = sub.name;
-                        if (option.value == '{{ request('sub_category') }}') {
-                            option.selected = true;
-                        }
-                        subCategorySelect.appendChild(option);
-                    });
-                })
-                .catch(() => {
-                    subCategorySelect.innerHTML = '<option value="">Error loading</option>';
-                });
+            products.forEach(product => {
+                const images = product.image ? product.image.split(',').map(s => s.trim()) : [];
+                const firstImage = images.length > 0 ? images[0] : null;
+                const imageHtml = firstImage ?
+                    `<img src="${firstImage}" alt="${product.name}" loading="lazy">` :
+                    `<img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image" loading="lazy">`;
+
+                const badgeHtml = product.is_featured == 2 ?
+                    `<span class="product-badge featured">Featured</span>` :
+                    product.is_featured == 1 ?
+                        `<span class="product-badge">Popular</span>` :
+                        '';
+
+                const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
+                const stockIcon = product.stock > 0 ? 'check-circle' : 'times-circle';
+                const stockText = product.stock > 0 ? 'In Stock' : 'Out of Stock';
+                const stockExtra = product.stock > 0 && product.stock < 10 ? `(${product.stock} left)` : '';
+
+                html += `
+                    <div class="product-card" onclick="window.location.href='/shop/${product.id}'">
+                        <div class="product-image">
+                            ${imageHtml}
+                            ${badgeHtml}
+                        </div>
+                        <div class="product-info">
+                            <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
+                            <div class="product-name">
+                                <a href="/shop/${product.id}">${product.name}</a>
+                            </div>
+                            <div class="product-meta">
+                                ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
+                                ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
+                            </div>
+                            <div class="product-price">
+                                <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
+                            </div>
+                            <div class="product-stock ${stockClass}">
+                                <i class="fas fa-${stockIcon}"></i>
+                                ${stockText} ${stockExtra}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderPagination(current, last, total) {
+            const container = document.getElementById('paginationContainer');
+
+            if (last <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination">';
+
+            // Previous
+            if (current > 1) {
+                html += `<a onclick="applyFilters(${current - 1})"><i class="fas fa-chevron-left"></i></a>`;
+            } else {
+                html += `<span class="disabled"><i class="fas fa-chevron-left"></i></span>`;
+            }
+
+            // Pages
+            let start = Math.max(1, current - 2);
+            let end = Math.min(last, current + 2);
+
+            if (start > 1) {
+                html += `<a onclick="applyFilters(1)">1</a>`;
+                if (start > 2) html += `<span class="disabled">...</span>`;
+            }
+
+            for (let i = start; i <= end; i++) {
+                if (i === current) {
+                    html += `<span class="active">${i}</span>`;
+                } else {
+                    html += `<a onclick="applyFilters(${i})">${i}</a>`;
+                }
+            }
+
+            if (end < last) {
+                if (end < last - 1) html += `<span class="disabled">...</span>`;
+                html += `<a onclick="applyFilters(${last})">${last}</a>`;
+            }
+
+            // Next
+            if (current < last) {
+                html += `<a onclick="applyFilters(${current + 1})"><i class="fas fa-chevron-right"></i></a>`;
+            } else {
+                html += `<span class="disabled"><i class="fas fa-chevron-right"></i></span>`;
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function resetFilters() {
+            document.getElementById('category').value = '';
+            if (document.getElementById('brand')) document.getElementById('brand').value = '';
+            if (document.getElementById('material')) document.getElementById('material').value = '';
+            document.getElementById('min_price').value = '';
+            document.getElementById('max_price').value = '';
+            document.getElementById('search').value = '';
+            document.getElementById('sort').value = 'newest';
+            currentPage = 1;
+            applyFilters(1);
+        }
+
+        // Enter key triggers search
+        document.getElementById('search').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyFilters(1);
+            }
         });
 
-        // Trigger initial subcategory load if category is selected
-        @if(request('category'))
-            document.getElementById('category').dispatchEvent(new Event('change'));
-        @endif
+        // Auto-submit on filter change (except search and price)
+        document.querySelectorAll('#category, #brand, #material, #sort').forEach(select => {
+            if (select) {
+                select.addEventListener('change', function () {
+                    if (this.id === 'sort') {
+                        applyFilters(1);
+                    } else {
+                        applyFilters(1);
+                    }
+                });
+            }
+        });
 
-        // Price range - submit after user stops typing
+        // Price range - debounced
         let priceTimeout;
         document.querySelectorAll('.price-range input').forEach(input => {
-            input.addEventListener('input', function () {
-                clearTimeout(priceTimeout);
-                priceTimeout = setTimeout(() => {
-                    document.getElementById('filter-form').submit();
-                }, 500);
-            });
+            if (input) {
+                input.addEventListener('input', function () {
+                    clearTimeout(priceTimeout);
+                    priceTimeout = setTimeout(() => {
+                        applyFilters(1);
+                    }, 500);
+                });
+            }
         });
     </script>
 
