@@ -1,250 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('frontend.layouts.app')
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contact Us · Aethelweave</title>
-    <!-- Google Fonts: Cormorant Garamond & Plus Jakarta Sans -->
+@section('title', 'Contact Us · Aethelweave')
+
+@push('styles')
     <link
         href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
         rel="stylesheet" />
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <style>
-        /* =============================================
-            RESET & BASE STYLES
-        ============================================= */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #FDFBF7;
-            color: #2C2A29;
-            -webkit-font-smoothing: antialiased;
-            padding-top: 80px;
-        }
-
-        /* =============================================
-            NAVBAR - SAME AS ALL PAGES
-        ============================================= */
-        .navbar-modern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(253, 251, 247, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(232, 226, 210, 0.6);
-            padding: 12px 0;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-modern.scrolled {
-            background: rgba(253, 251, 247, 0.98);
-            box-shadow: 0 2px 24px rgba(44, 42, 41, 0.06);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .navbar-logo {
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .navbar-logo-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 500;
-            color: #A58B54;
-            letter-spacing: -0.5px;
-        }
-
-        .navbar-logo-badge {
-            font-size: 0.55rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: #8F753D;
-            background: rgba(165, 139, 84, 0.12);
-            padding: 2px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(165, 139, 84, 0.2);
-        }
-
-        .nav-links-desktop {
-            display: none;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            align-items: center;
-            gap: 28px;
-        }
-
-        .nav-links-desktop li a {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: #2C2A29;
-            text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            transition: color 0.3s ease;
-            position: relative;
-            padding-bottom: 4px;
-        }
-
-        .nav-links-desktop li a:hover {
-            color: #A58B54;
-        }
-
-        .nav-links-desktop li a.active {
-            color: #A58B54;
-        }
-
-        .nav-links-desktop li a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #A58B54;
-            border-radius: 2px;
-        }
-
-        .navbar-icons {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .navbar-icon {
-            color: #2C2A29;
-            text-decoration: none;
-            font-size: 1.1rem;
-            position: relative;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-icon:hover {
-            color: #A58B54;
-        }
-
-        .navbar-cart-count {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            background: #A58B54;
-            color: #FFFFFF;
-            font-size: 0.5rem;
-            font-weight: 700;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .hamburger-btn {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px;
-        }
-
-        .hamburger-btn span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: #2C2A29;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-menu {
-            display: none;
-            background: #FFFFFF;
-            border-top: 1px solid #E8E2D2;
-            padding: 16px 20px 20px;
-            margin-top: 12px;
-        }
-
-        .mobile-menu ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .mobile-menu ul li a {
-            display: block;
-            padding: 10px 0;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #2C2A29;
-            text-decoration: none;
-            border-bottom: 1px solid #F5F0E8;
-            transition: color 0.3s ease;
-        }
-
-        .mobile-menu ul li a:hover {
-            color: #A58B54;
-        }
-
-        .mobile-menu ul li a.active {
-            color: #A58B54;
-            font-weight: 600;
-        }
-
-        .mobile-menu ul li:last-child a {
-            border-bottom: none;
-        }
-
-        /* Desktop nav visible */
-        @media (min-width: 768px) {
-            .nav-links-desktop {
-                display: flex;
-            }
-            .hamburger-btn {
-                display: none;
-            }
-            .mobile-menu {
-                display: none !important;
-            }
-        }
-
-        /* Mobile nav hidden by default */
-        @media (max-width: 767px) {
-            .nav-links-desktop {
-                display: none;
-            }
-            .hamburger-btn {
-                display: flex;
-            }
-        }
-
         /* =============================================
             CONTACT PAGE STYLES
         ============================================= */
@@ -656,20 +418,12 @@
             RESPONSIVE
         ============================================= */
         @media (max-width: 991px) {
-            body {
-                padding-top: 70px;
-            }
-
             .contact-title {
                 font-size: 2.5rem;
             }
         }
 
         @media (max-width: 767px) {
-            body {
-                padding-top: 65px;
-            }
-
             .contact-wrapper {
                 padding: 30px 16px 40px;
             }
@@ -706,10 +460,6 @@
         }
 
         @media (max-width: 480px) {
-            body {
-                padding-top: 60px;
-            }
-
             .contact-title {
                 font-size: 1.7rem;
             }
@@ -748,62 +498,9 @@
             }
         }
     </style>
-</head>
+@endpush
 
-<body>
-
-    <!-- =============================================
-        NAVBAR - SAME AS ALL PAGES
-    ============================================= -->
-    <nav class="navbar-modern">
-        <div class="navbar-container">
-            <!-- Logo -->
-            <a href="/" class="navbar-logo">
-                <span class="navbar-logo-text">Aethelweave</span>
-                <span class="navbar-logo-badge">Artisan</span>
-            </a>
-
-            <!-- Nav Links - Desktop -->
-            <ul class="nav-links-desktop">
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}">Shop</a></li>
-                <li><a href="#">Collections</a></li>
-                <li><a href="{{ route('about-us') }}">About</a></li>
-                <li><a href="{{ route('contact-us') }}" class="active">Contact</a></li>
-            </ul>
-
-            <!-- Right Icons -->
-            <div class="navbar-icons">
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-search"></i>
-                </a>
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-person"></i>
-                </a>
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-bag"></i>
-                    <span class="navbar-cart-count">0</span>
-                </a>
-                <!-- Hamburger (Mobile) -->
-                <button class="hamburger-btn" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Mobile Menu -->
-        <div class="mobile-menu">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}">Shop</a></li>
-                <li><a href="#">Collections</a></li>
-                <li><a href="{{ route('about-us') }}">About</a></li>
-                <li><a href="{{ route('contact-us') }}" class="active">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
+@section('content')
 
     <!-- =============================================
         CONTACT PAGE CONTENT
@@ -950,36 +647,4 @@
 
     </div>
 
-    <!-- =============================================
-        SCRIPTS
-    ============================================= -->
-    <script>
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const hamburger = document.querySelector('.hamburger-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-
-            if (hamburger && mobileMenu) {
-                hamburger.addEventListener('click', function() {
-                    const isOpen = mobileMenu.style.display === 'block';
-                    mobileMenu.style.display = isOpen ? 'none' : 'block';
-                });
-            }
-
-            // Navbar scroll effect
-            const navbar = document.querySelector('.navbar-modern');
-            if (navbar) {
-                window.addEventListener('scroll', function() {
-                    if (window.scrollY > 50) {
-                        navbar.classList.add('scrolled');
-                    } else {
-                        navbar.classList.remove('scrolled');
-                    }
-                });
-            }
-        });
-    </script>
-
-</body>
-
-</html>
+@endsection

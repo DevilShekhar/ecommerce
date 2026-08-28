@@ -31,6 +31,7 @@ use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
+use App\Models\Product;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/server', function () {
@@ -254,7 +255,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/account-settings', [CustomerAccountController::class, 'updateAccountSettings'])
         ->name('account.settings.update');
-
+    Route::put('/account/password', [CustomerAccountController::class, 'updatePassword'])
+        ->name('account.password.update');
+    Route::post('/users/send-offer', [UserController::class, 'sendOffer'])
+        ->name('users.send-offer');
     // Addresses
     Route::post('/account-addresses', [CustomerAccountController::class, 'storeAddress'])
         ->name('account.addresses.store');
@@ -295,24 +299,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('admin.orders.status.update');
 
 });
-// Public Routes
-Route::get('/contact', function () {
-    return view('contact');
-})->name('contact');
-
-Route::get('/faq', function () {
-    return view('faq');
-})->name('faq');
-
-Route::get('/about', function () {
-    return view('about');
-})->name('about');
 
 require __DIR__.'/auth.php';
-
-// Frontend Pages
-// Route::get('/', [FrontendPageController::class, 'home'])->name('home');
-// Route::get('/{slug}', [FrontendPageController::class, 'show'])
-//     ->where('slug', '.*')
-//     ->name('frontend.page');
 Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionController::class, 'store'])->name('frontend.contact.submit');
+Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetail'])
+    ->name('customer.product.detail');

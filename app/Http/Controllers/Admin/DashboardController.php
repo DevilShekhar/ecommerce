@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductRating;
 use App\Models\User;
+use App\Models\UserOffer;
 use App\Models\Wishlist;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -23,33 +24,6 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
-    /**
-     * SuperAdmin Dashboard
-     */
-    // public function index()
-    // {
-    //     $user = Auth::user();
-
-    //     // Only SuperAdmin can access
-    //     if (! $user->hasRole('SuperAdmin')) {
-    //         return redirect()->route('customer.dashboard');
-    //     }
-
-    //     $totalCustomers = User::whereHas('roles', function ($query) {
-    //         $query->where('name', 'customer');
-    //     })->count();
-
-    //     $totalProducts = Product::count();
-    //     $totalWishlist = Wishlist::count();
-    //     $totalCoupons = Coupon::count();
-
-    //     return view('dashboard', compact(
-    //         'user',
-    //         'totalCustomers',
-    //         'totalProducts',
-    //         'totalWishlist','totalCoupons'
-    //     ));
-    // }
     public function index()
     {
         $user = Auth::user();
@@ -473,12 +447,24 @@ class DashboardController extends Controller
             $product->active_offer = $offer;
         });
 
+        $sentOffers = UserOffer::with('offer')
+            ->where('user_id', Auth::id())
+            ->where('status', 1)
+            ->latest('sent_at')
+            ->get();
+
+        $couponCount = $sentOffers->whereNotNull('coupon_code')->count();
+
         return view('customer.dashboard', compact(
             'user',
             'wishlistCount',
             'wishlistProducts',
             'categories',
-            'recommendedProducts', 'banners', 'orderStatusCounts'
+            'recommendedProducts',
+            'banners',
+            'orderStatusCounts',
+            'couponCount',
+            'sentOffers'
         ));
     }
 

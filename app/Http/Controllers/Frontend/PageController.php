@@ -6,9 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AboutUs;
 use App\Models\Banner;
 use App\Models\Page;
-use App\Models\ProductCategory;
 use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Models\ProductCategory;
 use Illuminate\Support\Facades\Log; // Add this for logging
 
 class PageController extends Controller
@@ -36,7 +35,7 @@ class PageController extends Controller
             ->withCount([
                 'products' => function ($query) {
                     $query->where('status', 1);
-                }
+                },
             ])
             ->orderBy('name', 'asc')
             ->get();
@@ -52,25 +51,23 @@ class PageController extends Controller
             ->with(['category', 'brand'])
             ->take(8)
             ->get();
+        $availableProducts = Product::where('stock', '>', 0)
+            ->latest()
+            ->get();
 
         $aboutUs = AboutUs::where('status', 1)->first();
 
-        // DEBUG: Check if aboutUs exists
         Log::info('About Us Data:', ['aboutUs' => $aboutUs ? 'Found' : 'Not Found']);
         if ($aboutUs) {
             Log::info('About Us Title:', ['title' => $aboutUs->about_title]);
         }
-
-        // Alternative debug - dump to see in browser
-        // dd($aboutUs); // Uncomment this line to see if data exists
-
         return view('frontend.page', compact(
             'page',
             'banners',
             'categories',
             'featuredProducts',
             'newProducts',
-            'aboutUs'
+            'aboutUs', 'availableProducts'
         ));
     }
 
@@ -99,7 +96,7 @@ class PageController extends Controller
             ->withCount([
                 'products' => function ($query) {
                     $query->where('status', 1);
-                }
+                },
             ])
             ->orderBy('name', 'asc')
             ->get();

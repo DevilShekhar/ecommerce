@@ -685,11 +685,6 @@
                     </div>
                 @endforelse
             </div>
-            @if($orders->hasPages())
-                <div class="mt-4">
-                    {{ $orders->links() }}
-                </div>
-            @endif
         </div>
     </div>
 @endsection

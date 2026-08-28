@@ -1,26 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('frontend.layouts.app')
 
-<head>
+@section('title', $disclaimer->title ?? 'Disclaimer')
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>
-        {{ $disclaimer->title ?? 'Disclaimer' }}
-    </title>
-
+@push('styles')
     <style>
-
         * {
             box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #ffffff;
         }
 
         .disclaimer-section {
@@ -208,12 +193,10 @@
             }
 
         }
-
     </style>
+@endpush
 
-</head>
-
-<body>
+@section('content')
 
     @if($disclaimer)
 
@@ -227,11 +210,9 @@
                     <div class="disclaimer-content">
 
                         @if($disclaimer->subtitle)
-
                             <span class="disclaimer-subtitle">
                                 {{ $disclaimer->subtitle }}
                             </span>
-
                         @endif
 
                         <h1 class="disclaimer-title">
@@ -246,30 +227,21 @@
 
                     </div>
 
-
                     {{-- Image --}}
                     <div class="disclaimer-image-wrapper">
 
                         @if($disclaimer->section_image)
-
-                            <img
-                                src="{{ asset($disclaimer->section_image) }}"
-                                alt="{{ $disclaimer->title }}"
-                                class="disclaimer-image"
-                            >
-
+                            <img src="{{ asset($disclaimer->section_image) }}" alt="{{ $disclaimer->title }}"
+                                class="disclaimer-image">
                         @else
-
                             <div class="disclaimer-image-placeholder">
                                 ⚖
                             </div>
-
                         @endif
 
                     </div>
 
                 </div>
-
 
                 {{-- Bottom Information --}}
                 <div class="disclaimer-bottom">
@@ -314,6 +286,4 @@
 
     @endif
 
-</body>
-
-</html>
+@endsection

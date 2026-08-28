@@ -47,7 +47,7 @@
                                                 <th>Title</th>
                                                 <th>Category</th>
                                                 <th>Applied To</th>
-                                                {{-- <th width="120">Offer Status</th> --}}
+                                                <th width="120">Offer Status</th>
                                                 <th width="120">Status</th>
                                                 <th width="160" class="text-center">Action</th>
                                             </tr>
@@ -67,13 +67,17 @@
                                                                 class="text-muted">{{ $offer->productCategory->name ?? '' }}</small>
                                                         @endif
                                                     </td>
-                                                    {{-- <td>
-                                                        @if($offer->status)
-                                                            <span class="badge badge-success">Active</span>
-                                                        @else
+                                                    <td>
+                                                        @if(!$offer->status)
                                                             <span class="badge badge-danger">Inactive</span>
+                                                        @elseif($offer->end_date && $offer->end_date->isPast())
+                                                            <span class="badge badge-danger">Expired</span>
+                                                        @elseif($offer->start_date && $offer->start_date->isFuture())
+                                                            <span class="badge badge-warning">Upcoming</span>
+                                                        @else
+                                                            <span class="badge badge-success">Available</span>
                                                         @endif
-                                                    </td> --}}
+                                                    </td>
                                                     <td>
                                                         @if($offer->status)
                                                             <span class="badge badge-success">Active</span>

@@ -3457,6 +3457,221 @@
                 display: flex;
             }
         }
+
+        .product-card-compact {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card-compact:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .modal-open {
+            overflow: hidden;
+        }
+
+        #productModal {
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        #productModal>div {
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .product-detail-grid .gallery-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #F8F5F0;
+            border: 1px solid #E8E2D2;
+        }
+
+        .product-detail-grid .info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 500;
+            color: #1A1A1A;
+            margin-bottom: 4px;
+        }
+
+        .product-detail-grid .info .cat {
+            font-size: 12px;
+            color: #B8944C;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+        }
+
+        .product-detail-grid .info .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1A1A1A;
+            margin: 8px 0 12px;
+        }
+
+        .product-detail-grid .info .price .original {
+            font-size: 16px;
+            color: #A08878;
+            text-decoration: line-through;
+            font-weight: 400;
+            margin-left: 10px;
+        }
+
+        .product-detail-grid .info .desc {
+            color: #6B6A69;
+            line-height: 1.8;
+            font-size: 14px;
+            border-top: 1px solid #F0E8DC;
+            padding-top: 16px;
+            margin-bottom: 16px;
+        }
+
+        .product-detail-grid .info .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .product-detail-grid .info .meta-item {
+            background: #F8F5F0;
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #E8E2D2;
+        }
+
+        .product-detail-grid .info .meta-item strong {
+            display: block;
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #A08878;
+            letter-spacing: .08em;
+        }
+
+        .product-detail-grid .info .meta-item span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .product-detail-grid .info .btn-add {
+            width: 100%;
+            padding: 14px;
+            background: #B8944C;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            cursor: pointer;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .product-detail-grid .info .btn-add:hover {
+            background: #A07D3E;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(184, 148, 76, 0.3);
+        }
+
+        .product-detail-grid .info .btn-add:disabled {
+            background: #D5CFC5;
+            cursor: not-allowed;
+            opacity: .7;
+        }
+
+        .product-detail-grid .info .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 14px;
+        }
+
+        .product-detail-grid .info .stock-status.in {
+            background: #E8F5E9;
+            color: #27AE60;
+        }
+
+        .product-detail-grid .info .stock-status.out {
+            background: #FDE8E8;
+            color: #C0392B;
+        }
+
+        @media(max-width:768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .product-detail-grid .gallery-img {
+                height: 300px;
+            }
+
+            #productModal>div {
+                padding: 20px;
+                max-height: 95vh;
+            }
+        }
+
+        @media(max-width:480px) {
+            .product-detail-grid .gallery-img {
+                height: 240px;
+            }
+
+            .product-detail-grid .info h2 {
+                font-size: 22px;
+            }
+
+            .product-detail-grid .info .price {
+                font-size: 20px;
+            }
+
+            .product-detail-grid .info .meta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #productModal>div {
+                padding: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -3477,7 +3692,7 @@
             <ul class="nav-links-desktop">
                 <li><a href="/">Home</a></li>
                 <li><a href={{ route('shop.index') }}>Shop</a></li>
-                <li><a href="#">Collections</a></li>
+
                 <li><a href="{{ route('about-us') }}">About</a></li>
                 <li><a href="{{ route('contact-us') }}">Contact</a></li>
             </ul>
@@ -3508,7 +3723,7 @@
             <ul>
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Shop</a></li>
-                <li><a href="#">Collections</a></li>
+
                 <li><a href="#">About</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
@@ -3747,81 +3962,55 @@
         </div>
     </section>
 
-    {{-- =============================================
-    NEW ARRIVALS — Compact Grid with 1:1 Images
-    ============================================= --}}
-    @if(isset($newProducts) && $newProducts->count() > 0)
-        <section class="products-section-compact py-4 bg-brand-bg" style="background:#FFFFFF;">
+    @if(isset($availableProducts) && $availableProducts->count() > 0)
+        <section class="products-section-compact py-4" style="background:#FFFFFF;">
             <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
                 <div class="section-header-compact text-center mb-3">
                     <span class="section-badge-compact"
-                        style="display:inline-block;padding:2px 12px;background:#F5EEDC;color:#A58B54;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">New</span>
+                        style="display:inline-block;padding:2px 12px;background:#F5EEDC;color:#A58B54;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Available</span>
                     <h2 class="section-title-compact"
                         style="font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:500;color:#2C2A29;margin-bottom:2px;">
-                        New Arrivals</h2>
-                    <p class="section-subtitle-compact" style="font-size:0.8rem;color:#6B6A69;margin-bottom:0;">Discover our
-                        newest creations</p>
+                        Available Products</h2>
+                    <p class="section-subtitle-compact" style="font-size:0.8rem;color:#6B6A69;margin-bottom:0;">Explore our
+                        available jewellery collection</p>
                 </div>
-
                 <div class="row" style="display:flex;flex-wrap:wrap;margin:0 -5px;">
-                    @foreach($newProducts as $product)
+                    @foreach($availableProducts as $product)
                         <div class="product-col-compact">
-                            <div class="product-card-compact">
+                            <div class="product-card-compact" onclick="openProductDetail({{ $product->id }})"
+                                style="cursor:pointer;">
                                 <div class="product-image-wrapper-compact">
                                     @php
                                         $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
                                         $primaryImage = !empty($images) ? $images[0] : null;
                                     @endphp
-
                                     @if($primaryImage)
                                         <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
                                             class="product-image-compact" loading="lazy">
                                     @else
-                                        <div class="product-image-placeholder-compact">
-                                            <i class="bi bi-image"></i>
-                                        </div>
+                                        <div class="product-image-placeholder-compact"><i class="bi bi-image"></i></div>
                                     @endif
-
-                                    <span class="product-badge-compact new-badge-compact">
-                                        <i class="bi bi-fire" style="font-size:8px;"></i>
-                                    </span>
-
-                                    @if($product->stock !== null && $product->stock <= 0)
-                                        <span class="stock-badge-compact out-of-stock-compact">Out</span>
-                                    @else
-                                        <span class="stock-badge-compact in-stock-compact">In</span>
-                                    @endif
+                                    <span class="product-badge-compact new-badge-compact"><i class="bi bi-fire"
+                                            style="font-size:8px;"></i></span>
+                                    <span class="stock-badge-compact in-stock-compact">In</span>
                                 </div>
-
                                 <div class="product-body-compact">
                                     @if($product->brand)
                                         <div class="product-brand-compact">{{ $product->brand->name }}</div>
                                     @endif
-
                                     <h5 class="product-title-compact">{{ Str::limit($product->name, 20) }}</h5>
-
-                                    <div class="product-price-compact">
-                                        ₹{{ number_format($product->price, 0) }}
-                                    </div>
-
+                                    <div class="product-price-compact">₹{{ number_format($product->price, 0) }}</div>
                                     <div class="product-action-compact">
-                                        @if($product->stock !== null && $product->stock <= 0)
-                                            <button type="button" class="btn-add-cart-compact" disabled>
-                                                <i class="bi bi-x-circle" style="font-size:12px;"></i>
-                                            </button>
-                                        @else
-                                            <button type="button" class="btn-add-cart-compact add-to-cart-btn"
-                                                data-product-id="{{ $product->id }}">
-                                                <i class="bi bi-cart-plus" style="font-size:12px;"></i>
-                                            </button>
-                                        @endif
+                                        <button type="button" class="btn-add-cart-compact add-to-cart-btn"
+                                            data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
+                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-
                 <div class="text-center mt-3">
                     <a href="{{ route('shop') }}" class="btn-view-all-compact">
                         View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
@@ -3830,6 +4019,139 @@
             </div>
         </section>
     @endif
+
+    <!-- ========== PRODUCT DETAIL MODAL ========== -->
+    <div id="productModal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;padding:20px;">
+        <div
+            style="background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:30px;position:relative;">
+            <button onclick="closeProductDetail()"
+                style="position:absolute;top:15px;right:20px;background:none;border:none;font-size:28px;cursor:pointer;color:#999;">&times;</button>
+            <div id="productDetailContent">
+                <div style="text-align:center;padding:40px 0;">
+                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;"></i>
+                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open product detail modal
+        function openProductDetail(productId) {
+            const modal = document.getElementById('productModal');
+            const content = document.getElementById('productDetailContent');
+
+            // Show loading
+            content.innerHTML = `
+            <div style="text-align:center;padding:40px 0;">
+                <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;animation:spin 1s linear infinite;"></i>
+                <p style="margin-top:10px;color:#888;">Loading product details...</p>
+            </div>
+            <style>
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            </style>
+        `;
+
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+
+            // Fetch product details
+            fetch(`/customer/product-detail/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const p = data.product;
+                        const images = p.image ? p.image.split(',').map(s => s.trim()) : [];
+                        const firstImage = images.length > 0 ? images[0] : null;
+
+                        const stockClass = p.stock > 0 ? 'in' : 'out';
+                        const stockText = p.stock > 0 ? 'In Stock' : 'Out of Stock';
+                        const stockIcon = p.stock > 0 ? 'check-circle-fill' : 'x-circle-fill';
+                        const btnDisabled = p.stock < 1 ? 'disabled' : '';
+                        const btnText = p.stock > 0 ? 'Add to Cart' : 'Out of Stock';
+                        const btnIcon = p.stock > 0 ? 'cart-plus' : 'x-circle';
+
+                        content.innerHTML = `
+                        <div class="product-detail-grid">
+                            <div>
+                                ${firstImage ?
+                                `<img src="${firstImage}" alt="${p.name}" class="gallery-img">` :
+                                `<div class="gallery-img" style="display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
+                                        <i class="bi bi-image" style="font-size:50px;"></i>
+                                    </div>`
+                            }
+                            </div>
+                            <div class="info">
+                                <div class="cat">${p.category ? p.category.name : 'Uncategorized'}</div>
+                                <h2>${p.name}</h2>
+                                <div class="price">
+                                    ₹${parseFloat(p.price).toFixed(2)}
+                                    ${p.compare_price && p.compare_price > p.price ?
+                                `<span class="original">₹${parseFloat(p.compare_price).toFixed(2)}</span>` : ''}
+                                </div>
+                                <div class="stock-status ${stockClass}">
+                                    <i class="bi bi-${stockIcon}"></i>
+                                    ${stockText}
+                                    ${p.stock > 0 && p.stock < 10 ? `(Only ${p.stock} left)` : ''}
+                                </div>
+                                <div class="desc">${p.specification || p.description || ''}</div>
+                                <div class="meta-grid">
+                                    ${p.sku ? `<div class="meta-item"><strong>SKU</strong><span>${p.sku}</span></div>` : ''}
+                                    ${p.brand ? `<div class="meta-item"><strong>Brand</strong><span>${p.brand.name}</span></div>` : ''}
+                                    ${p.sub_category ? `<div class="meta-item"><strong>Sub Category</strong><span>${p.sub_category.name}</span></div>` : ''}
+                                    ${p.variants ? `<div class="meta-item"><strong>Material</strong><span>${p.variants}</span></div>` : ''}
+                                </div>
+                                <button class="btn-add" ${btnDisabled}>
+                                    <i class="bi bi-${btnIcon}"></i>
+                                    ${btnText}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    } else {
+                        content.innerHTML = `
+                        <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                            <i class="bi bi-exclamation-circle" style="font-size:40px;"></i>
+                            <p style="margin-top:10px;">${data.message || 'Product not found'}</p>
+                        </div>
+                    `;
+                    }
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                    <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                        <i class="bi bi-exclamation-triangle" style="font-size:40px;"></i>
+                        <p style="margin-top:10px;">Error loading product details. Please try again.</p>
+                    </div>
+                `;
+                    console.error('Error:', error);
+                });
+        }
+
+        // Close product detail modal
+        function closeProductDetail() {
+            document.getElementById('productModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+
+        // Close on background click
+        document.getElementById('productModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeProductDetail();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeProductDetail();
+            }
+        });
+    </script>
 
     {{-- =============================================
     ABOUT SECTION — Home Page (Image Left, Content Right on all screens)
@@ -4893,10 +5215,6 @@
 
                 startAutoplay();
             }
-
-            // =============================================
-            // CATEGORY SLIDER
-            // =============================================
             function initCategorySlider() {
                 const container = document.querySelector('.category-slider-container');
                 if (!container) return;
@@ -4941,10 +5259,6 @@
                     }
                 }, { passive: true });
             }
-
-            // =============================================
-            // FAQ ACCORDION
-            // =============================================
             window.toggleFaq = function (element) {
                 const currentItem = element.closest('.faq-item-modern');
                 const isActive = currentItem.classList.contains('active');
@@ -4959,20 +5273,12 @@
                     currentItem.querySelector('.faq-answer-modern').classList.add('open');
                 }
             }
-
-            // =============================================
-            // ADD TO CART BUTTONS
-            // =============================================
             document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
                 btn.addEventListener('click', function () {
-                    const productId = this.dataset.productId;
-                    alert('Product ID ' + productId + ' added to cart! (Demo)');
+                    e.preventDefault();
+                    window.location.href = '/login';
                 });
             });
-
-            // =============================================
-            // NEWSLETTER FORM
-            // =============================================
             const newsletterForm = document.getElementById('newsletterForm');
             if (newsletterForm) {
                 newsletterForm.addEventListener('submit', function (e) {

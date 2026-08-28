@@ -23,52 +23,156 @@
 </head>
 
 <body>
-
-    <!-- ================= NAVBAR ================= -->
-    <header class="site-navbar" id="siteNavbar">
-        <div class="container">
-
+    <!-- =============================================
+        NAVBAR
+    ============================================= -->
+    <nav class="navbar-modern">
+        <div class="navbar-container">
             <!-- Logo -->
-            <a href="{{ url('/') }}" class="site-logo">
-                <div class="logo-wrapper">
-                    <span class="logo-text">
-                        My Website
-                    </span>
-                </div>
+            <a href="/" class="navbar-logo">
+                <span class="navbar-logo-text">Aethelweave</span>
+                <span class="navbar-logo-badge">Artisan</span>
             </a>
 
-            <!-- Navigation -->
-            <nav class="site-nav">
-                <div class="nav-links">
+            <!-- Nav Links - Desktop -->
+            <ul class="nav-links-desktop">
+                <li><a href="/">Home</a></li>
+                <li><a href={{ route('shop.index') }}>Shop</a></li>
 
-                    <a href="{{ url('/') }}">
-                        Home
-                    </a>
+                <li><a href="{{ route('about-us') }}">About</a></li>
+                <li><a href="{{ route('contact-us') }}">Contact</a></li>
+            </ul>
 
-                    <a href="{{ url('/about-us') }}">
-                        About Us
-                    </a>
-
-                    <a href="{{ url('/contact-us') }}">
-                        Contact
-                    </a>
-
-                    <a href="{{ url('/login') }}" class="login-btn">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        Login
-                    </a>
-
-                </div>
-            </nav>
-
+            <!-- Right Icons -->
+            <div class="navbar-icons">
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <a href="{{ route('login') }}" class="navbar-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-bag"></i>
+                    <span class="navbar-cart-count">0</span>
+                </a>
+                <!-- Hamburger (Mobile) -->
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
         </div>
-    </header>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Shop</a></li>
+
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
 
     <!-- ================= CONTENT ================= -->
     @yield('content')
+    {{-- =============================================
+    FOOTER
+    ============================================= --}}
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">Aethelweave</div>
+                    <p class="footer-tagline">Artisan Jewellery · Since 2010</p>
+                    <p class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance and
+                        exceptional quality.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest" class="social-link"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
 
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('about-us') }}">About Us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+
+                <!-- We Accept -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">We Accept</h4>
+                    <div class="footer-payment">
+                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
+                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
+                        <p class="payment-text">Secure payment options available</p>
+                    </div>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
+                        <li><i class="bi bi-geo-alt"></i> 123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001,
+                            India</li>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
+                    <a href={{ route('terms-conditions') }}>Terms of Use</a>
+                    <a href={{ route('disclaimer') }}>Disclaimer</a>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', function () {
+                    const isOpen = mobileMenu.style.display === 'block';
+                    mobileMenu.style.display = isOpen ? 'none' : 'block';
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar-modern');
+            if (navbar) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        });
+    </script>
 
     @stack('scripts')
 

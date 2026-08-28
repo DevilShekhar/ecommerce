@@ -213,12 +213,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {{-- Pagination --}}
-                                @if($orders->hasPages())
-                                    <div class="mt-3">
-                                        {{ $orders->links() }}
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div>
