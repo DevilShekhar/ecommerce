@@ -33,6 +33,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SitemapController;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -304,3 +305,5 @@ require __DIR__.'/auth.php';
 Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionController::class, 'store'])->name('frontend.contact.submit');
 Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetail'])
     ->name('customer.product.detail');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']) ->name('sitemap');
