@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductCategoryController extends Controller
 {
@@ -27,17 +28,25 @@ class ProductCategoryController extends Controller
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:product_categories,name',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'status' => 'nullable|boolean',
             'meta_title' => 'nullable|string|max:255',
             'meta_ads' => 'nullable|string',
             'meta_keyword' => 'nullable|string',
         ]);
 
+        // Upload category image
+        if ($request->hasFile('image')) {
+            $validatedData['image'] = $request->file('image')
+                ->store('categories', 'public');
+        }
+
         $validatedData['created_by'] = Auth::id();
 
         ProductCategory::create($validatedData);
 
-        return redirect()->route('product_categories.index')
+        return redirect()
+            ->route('product_categories.index')
             ->with('success', 'Product category created successfully.');
     }
 
@@ -48,19 +57,39 @@ class ProductCategoryController extends Controller
         return view('admin.product_categories.edit', compact('productCategory', 'categories'));
     }
 
-    public function update(Request $request, ProductCategory $productCategory)
+    public function update(Request $request, $id)
     {
-        $productCategory->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status,
-            'meta_title' => $request->meta_title,
-            'meta_ads' => $request->meta_ads,
-            'meta_keyword' => $request->meta_keyword,
-            'updated_by' => Auth::id(),
+        $productCategory = ProductCategory::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:product_categories,name,'.$id,
+            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'status' => 'nullable|boolean',
+            'description' => 'nullable|string',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_ads' => 'nullable|string',
+            'meta_keyword' => 'nullable|string',
         ]);
 
-        return redirect()->route('product_categories.index')
+        if ($request->hasFile('image')) {
+
+            // Delete old image
+            if (
+                $productCategory->image &&
+                Storage::disk('public')->exists($productCategory->image)
+            ) {
+                Storage::disk('public')->delete($productCategory->image);
+            }
+
+            // Store new image
+            $validatedData['image'] = $request->file('image')
+                ->store('categories', 'public');
+        }
+
+        $productCategory->update($validatedData);
+
+        return redirect()
+            ->route('product_categories.index')
             ->with('success', 'Product category updated successfully.');
     }
 

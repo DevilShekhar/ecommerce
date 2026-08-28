@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\AboutUs;
 use App\Models\Banner;
 use App\Models\Page;
 use App\Models\ProductCategory;
+use App\Models\Product;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log; // Add this for logging
 
 class PageController extends Controller
 {
     public function home()
     {
         $page = Page::query()
-            ->where('slug', '/')
             ->where('status', true)
             ->with([
                 'sections' => function ($query) {
@@ -22,14 +25,12 @@ class PageController extends Controller
             ])
             ->firstOrFail();
 
-        // Fetch all active banners
         $banners = Banner::query()
             ->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
             ->get();
 
-        // Fetch ALL active categories
         $categories = ProductCategory::query()
             ->where('status', 1)
             ->withCount([
@@ -40,10 +41,36 @@ class PageController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
+        $featuredProducts = Product::where('is_futured', 1)
+            ->where('status', 1)
+            ->with(['category', 'brand'])
+            ->take(8)
+            ->get();
+
+        $newProducts = Product::where('is_futured', 2)
+            ->where('status', 1)
+            ->with(['category', 'brand'])
+            ->take(8)
+            ->get();
+
+        $aboutUs = AboutUs::where('status', 1)->first();
+
+        // DEBUG: Check if aboutUs exists
+        Log::info('About Us Data:', ['aboutUs' => $aboutUs ? 'Found' : 'Not Found']);
+        if ($aboutUs) {
+            Log::info('About Us Title:', ['title' => $aboutUs->about_title]);
+        }
+
+        // Alternative debug - dump to see in browser
+        // dd($aboutUs); // Uncomment this line to see if data exists
+
         return view('frontend.page', compact(
             'page',
             'banners',
-            'categories'
+            'categories',
+            'featuredProducts',
+            'newProducts',
+            'aboutUs'
         ));
     }
 
@@ -61,14 +88,12 @@ class PageController extends Controller
             ])
             ->firstOrFail();
 
-        // Fetch all active banners
         $banners = Banner::query()
             ->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderBy('id', 'desc')
             ->get();
 
-        // Fetch ALL active categories
         $categories = ProductCategory::query()
             ->where('status', 1)
             ->withCount([
@@ -79,16 +104,38 @@ class PageController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        // Collect all section images
         $images = $page->sections
             ->pluck('image')
             ->filter();
+
+        $featuredProducts = Product::where('is_futured', 1)
+            ->where('status', 1)
+            ->with(['category', 'brand'])
+            ->take(8)
+            ->get();
+
+        $newProducts = Product::where('is_futured', 2)
+            ->where('status', 1)
+            ->with(['category', 'brand'])
+            ->take(8)
+            ->get();
+
+        $aboutUs = AboutUs::get();
+
+        // DEBUG: Check if aboutUs exists
+        Log::info('About Us Data (show method):', ['aboutUs' => $aboutUs ? 'Found' : 'Not Found']);
+        if ($aboutUs) {
+            Log::info('About Us Title:', ['title' => $aboutUs->about_title]);
+        }
 
         return view('frontend.page', compact(
             'page',
             'images',
             'banners',
-            'categories'
+            'categories',
+            'featuredProducts',
+            'newProducts',
+            'aboutUs'
         ));
     }
 }

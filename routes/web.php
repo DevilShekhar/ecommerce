@@ -22,7 +22,12 @@ use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\UserController;
 use App\Http\Controllers\admin\WarehouseController;
 use App\Http\Controllers\admin\WishlistController;
+use App\Http\Controllers\Frontend\AboutUsController;
+use App\Http\Controllers\Frontend\ContactUsController;
+use App\Http\Controllers\Frontend\DisclaimerController;
 use App\Http\Controllers\Frontend\PageController as FrontendPageController;
+use App\Http\Controllers\Frontend\ShopController;
+use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialLoginController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +35,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/server', function () {
     return view('errors.500');
 });
+// Route::get('/', function () {
+//     return view('frontend.layouts.app');
+// });
 
 // Social Login Routes
 Route::get('/auth/google', [SocialLoginController::class, 'redirectGoogle'])->name('google.login');
@@ -42,6 +50,77 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/about-us', [AboutUsController::class, 'index'])
+    ->name('about-us');
+Route::get('/terms-conditions', [TermsConditionsController::class, 'index'])
+    ->name('terms-conditions');
+Route::get('/contact-us', [ContactUsController::class, 'index'])
+    ->name('contact-us');
+Route::post('/contact-inquiry', [ContactUsController::class, 'storeEnquiry'])
+    ->name('contact-inquiry.store');
+Route::get('/disclaimer', [DisclaimerController::class, 'index'])
+    ->name('disclaimer');
+Route::get('/', [FrontendPageController::class, 'home'])
+    ->name('home');
+
+Route::prefix('admin')
+    ->middleware(['auth'])
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/about-us', [AboutUsController::class, 'adminIndex'])
+            ->name('about-us.index');
+        Route::get('/about-us/create', [AboutUsController::class, 'create'])
+            ->name('about-us.create');
+        Route::post('/about-us', [AboutUsController::class, 'store'])
+            ->name('about-us.store');
+        Route::get('/about-us/{aboutUs}/edit', [AboutUsController::class, 'edit'])
+            ->name('about-us.edit');
+        Route::put('/about-us/{aboutUs}', [AboutUsController::class, 'update'])
+            ->name('about-us.update');
+        Route::delete('/about-us/{aboutUs}', [AboutUsController::class, 'destroy'])
+            ->name('about-us.destroy');
+
+        Route::get('/terms-conditions', [TermsConditionsController::class, 'adminIndex'])->name('terms-conditions.index');
+        Route::get('/terms-conditions/create', [TermsConditionsController::class, 'create'])->name('terms-conditions.create');
+        Route::post('/terms-conditions', [TermsConditionsController::class, 'store'])->name('terms-conditions.store');
+        Route::get('/terms-conditions/{termsConditions}/edit', [TermsConditionsController::class, 'edit'])->name('terms-conditions.edit');
+        Route::put('/terms-conditions/{termsConditions}', [TermsConditionsController::class, 'update'])->name('terms-conditions.update');
+        Route::delete('/terms-conditions/{termsConditions}', [TermsConditionsController::class, 'destroy'])->name('terms-conditions.destroy');
+
+        Route::get('contact-us', [ContactUsController::class, 'adminIndex'])->name('contact-us.index');
+        Route::get('contact-us/create', [ContactUsController::class, 'create'])->name('contact-us.create');
+        Route::post('contact-us', [ContactUsController::class, 'store'])->name('contact-us.store');
+        Route::get('contact-us/{id}/edit', [ContactUsController::class, 'edit'])->name('contact-us.edit');
+        Route::put('contact-us/{id}', [ContactUsController::class, 'update'])->name('contact-us.update');
+        Route::delete('contact-us/{id}', [ContactUsController::class, 'destroy'])->name('contact-us.destroy');
+
+      Route::get('/disclaimers', [DisclaimerController::class, 'adminIndex'])
+    ->name('disclaimers.index');
+
+Route::get('/disclaimers/create', [DisclaimerController::class, 'create'])
+    ->name('disclaimers.create');
+
+Route::post('/disclaimers', [DisclaimerController::class, 'store'])
+    ->name('disclaimers.store');
+
+Route::get('/disclaimers/{disclaimer}/edit', [DisclaimerController::class, 'edit'])
+    ->name('disclaimers.edit');
+
+Route::put('/disclaimers/{disclaimer}', [DisclaimerController::class, 'update'])
+    ->name('disclaimers.update');
+
+Route::delete('/disclaimers/{disclaimer}', [DisclaimerController::class, 'destroy'])
+    ->name('disclaimers.destroy');
+    });
+
+// Add after your about-us route
+Route::get('/shops', [ShopController::class, 'index'])
+    ->name('shop.index');
+Route::get('/shop/{id}', [ShopController::class, 'show'])
+    ->name('shop.show');
+Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
+    ->name('shop.subcategories');
 
 // Admin Routes
 Route::middleware('auth')->group(function () {
@@ -63,8 +142,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
     Route::get('/dashboard/download-report', [DashboardController::class, 'downloadReport'])
         ->name('dashboard.download.report');
-        Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])
-    ->name('dashboard.download.excel');
+    Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])
+        ->name('dashboard.download.excel');
 
     Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])
         ->name('products.get.subcategories');
@@ -233,8 +312,8 @@ Route::get('/about', function () {
 require __DIR__.'/auth.php';
 
 // Frontend Pages
-Route::get('/', [FrontendPageController::class, 'home'])->name('home');
-Route::get('/{slug}', [FrontendPageController::class, 'show'])
-    ->where('slug', '.*')
-    ->name('frontend.page');
+// Route::get('/', [FrontendPageController::class, 'home'])->name('home');
+// Route::get('/{slug}', [FrontendPageController::class, 'show'])
+//     ->where('slug', '.*')
+//     ->name('frontend.page');
 Route::post('/pages/{page}/sections/{section}/contact', [ContactSubmissionController::class, 'store'])->name('frontend.contact.submit');
