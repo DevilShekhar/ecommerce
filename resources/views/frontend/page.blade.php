@@ -83,10 +83,13 @@
             <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
                 <div class="section-header text-center mb-4">
                     <span class="section-badge">Categories</span>
-                    <h2 class="section-title">Shop by Category</h2>
-                    <p class="section-subtitle">Find the perfect piece from our curated collections</p>
+                    <h2 class="section-title">
+                        Shop by Category
+                    </h2>
+                    <p class="section-subtitle">
+                        Find the perfect piece from our curated collections
+                    </p>
                 </div>
-
                 <div class="category-slider-wrapper position-relative">
                     <div class="category-slider-container">
                         @foreach($categories as $category)
@@ -544,7 +547,102 @@
             </div>
         </div>
     </section>
+    <section class="shipping-process-section">
+        <div class="shipping-process-container">
+            <div class="shipping-process-header">
+                <div class="shipping-process-badge">
+                    <span></span>
+                    HOW IT WORKS
+                    <span></span>
+                </div>
+                <h2 class="shipping-process-title">From Our Store to Your Door</h2>
+                <div class="shipping-process-decoration">
+                    <i class="bi bi-gem"></i>
+                </div>
+                <p class="shipping-process-subtitle">
+                    We make every step of your shopping experience simple, secure and special.
+                </p>
+            </div>
 
+            <div class="shipping-process-grid">
+                <div class="shipping-step">
+                    <div class="shipping-step-number">01</div>
+                    <div class="shipping-step-icon">
+                        <i class="bi bi-bag-check"></i>
+                    </div>
+                    <h3>Order Placed</h3>
+                    <p>Choose your favorite products and securely place your order online.</p>
+                </div>
+
+                <div class="shipping-connector">
+                    <span></span>
+                </div>
+
+                <div class="shipping-step">
+                    <div class="shipping-step-number">02</div>
+                    <div class="shipping-step-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                    <h3>Packed with Care</h3>
+                    <p>Your order is carefully checked and beautifully packed by our team.</p>
+                </div>
+
+                <div class="shipping-connector">
+                    <span></span>
+                </div>
+
+                <div class="shipping-step">
+                    <div class="shipping-step-number">03</div>
+                    <div class="shipping-step-icon">
+                        <i class="bi bi-truck"></i>
+                    </div>
+                    <h3>Shipped</h3>
+                    <p>Your package is handed over to our trusted delivery partner for safe transportation.</p>
+                </div>
+
+                <div class="shipping-connector">
+                    <span></span>
+                </div>
+
+                <div class="shipping-step">
+                    <div class="shipping-step-number">04</div>
+                    <div class="shipping-step-icon">
+                        <i class="bi bi-house-heart"></i>
+                    </div>
+                    <h3>Delivered</h3>
+                    <p>Sit back and enjoy your purchase when it arrives safely at your doorstep.</p>
+                </div>
+            </div>
+
+            <div class="shipping-process-info">
+                <div class="shipping-info-item">
+                    <i class="bi bi-shield-check"></i>
+                    <div>
+                        <strong>Secure Packaging</strong>
+                        <span>Your order is protected</span>
+                    </div>
+                </div>
+
+                <div class="shipping-info-item">
+                    <i class="bi bi-clock-history"></i>
+                    <div>
+                        <strong>Fast Delivery</strong>
+                        <span>Quick and reliable shipping</span>
+                    </div>
+                </div>
+
+                <div class="shipping-info-item">
+                    <i class="bi bi-geo-alt"></i>
+                    <div>
+                        <strong>Track Your Order</strong>
+                        <span>Stay updated every step</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ 
     {{-- =============================================
     WHY CHOOSE US
     ============================================= --}}
