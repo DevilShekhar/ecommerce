@@ -26,6 +26,7 @@ use App\Http\Controllers\Frontend\AboutUsController;
 use App\Http\Controllers\Frontend\ContactUsController;
 use App\Http\Controllers\Frontend\DisclaimerController;
 use App\Http\Controllers\Frontend\PageController as FrontendPageController;
+use App\Http\Controllers\Frontend\PrivacyPolicyController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
@@ -63,6 +64,8 @@ Route::get('/disclaimer', [DisclaimerController::class, 'index'])
     ->name('disclaimer');
 Route::get('/', [FrontendPageController::class, 'home'])
     ->name('home');
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])
+    ->name('privacy-policy.index');
 
 Route::prefix('admin')
     ->middleware(['auth'])
@@ -95,23 +98,19 @@ Route::prefix('admin')
         Route::put('contact-us/{id}', [ContactUsController::class, 'update'])->name('contact-us.update');
         Route::delete('contact-us/{id}', [ContactUsController::class, 'destroy'])->name('contact-us.destroy');
 
-      Route::get('/disclaimers', [DisclaimerController::class, 'adminIndex'])
-    ->name('disclaimers.index');
+        Route::get('/disclaimers', [DisclaimerController::class, 'adminIndex'])->name('disclaimers.index');
+        Route::get('/disclaimers/create', [DisclaimerController::class, 'create'])->name('disclaimers.create');
+        Route::post('/disclaimers', [DisclaimerController::class, 'store'])->name('disclaimers.store');
+        Route::get('/disclaimers/{disclaimer}/edit', [DisclaimerController::class, 'edit'])->name('disclaimers.edit');
+        Route::put('/disclaimers/{disclaimer}', [DisclaimerController::class, 'update'])->name('disclaimers.update');
+        Route::delete('/disclaimers/{disclaimer}', [DisclaimerController::class, 'destroy'])->name('disclaimers.destroy');
 
-Route::get('/disclaimers/create', [DisclaimerController::class, 'create'])
-    ->name('disclaimers.create');
-
-Route::post('/disclaimers', [DisclaimerController::class, 'store'])
-    ->name('disclaimers.store');
-
-Route::get('/disclaimers/{disclaimer}/edit', [DisclaimerController::class, 'edit'])
-    ->name('disclaimers.edit');
-
-Route::put('/disclaimers/{disclaimer}', [DisclaimerController::class, 'update'])
-    ->name('disclaimers.update');
-
-Route::delete('/disclaimers/{disclaimer}', [DisclaimerController::class, 'destroy'])
-    ->name('disclaimers.destroy');
+        Route::get('/privacy-policies', [PrivacyPolicyController::class, 'adminIndex'])->name('privacy-policies.index');
+        Route::get('/privacy-policies/create', [PrivacyPolicyController::class, 'create'])->name('privacy-policies.create');
+        Route::post('/privacy-policies', [PrivacyPolicyController::class, 'store'])->name('privacy-policies.store');
+        Route::get('/privacy-policies/{privacyPolicy}/edit', [PrivacyPolicyController::class, 'edit'])->name('privacy-policies.edit');
+        Route::put('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'update'])->name('privacy-policies.update');
+        Route::delete('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'destroy'])->name('privacy-policies.destroy');
     });
 
 // Add after your about-us route

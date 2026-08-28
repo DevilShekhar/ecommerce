@@ -7,566 +7,77 @@
     <title>Shop - All Jewellery</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap"
+        rel="stylesheet">
+    <!-- Google Fonts: Cormorant Garamond for navbar -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #faf7f2;
-            color: #2c2416;
-        }
-
-        /* HEADER / NAV */
-        .top-nav {
-            background: #ffffff;
-            padding: 18px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #e8d9c0;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2c2416;
-            text-decoration: none;
-        }
-
-        .logo span {
-            color: #b18a45;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #4a4035;
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: #b18a45;
-        }
-
-        /* SHOP HEADER */
-        .shop-header {
-            background: linear-gradient(135deg, #faf7f2 0%, #f0e8dc 100%);
-            padding: 60px 40px 50px;
-            text-align: center;
-        }
-
-        .shop-header h1 {
-            font-size: 42px;
-            font-weight: 700;
-            color: #2c2416;
-            margin-bottom: 10px;
-        }
-
-        .shop-header h1 i {
-            color: #b18a45;
-            margin-right: 12px;
-        }
-
-        .shop-header p {
-            color: #6b5a4a;
-            font-size: 17px;
-        }
-
-        .shop-header .breadcrumb {
-            margin-top: 15px;
-            color: #8a7a6a;
-        }
-
-        .shop-header .breadcrumb a {
-            color: #b18a45;
-            text-decoration: none;
-        }
-
-        /* SHOP LAYOUT */
-        .shop-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 30px 60px;
-        }
-
-        .shop-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 35px;
-        }
-
-        /* SIDEBAR FILTERS */
-        .sidebar {
-            position: sticky;
-            top: 30px;
-            align-self: start;
-        }
-
-        .filter-section {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 25px 22px;
-            border: 1px solid #e8d9c0;
-            margin-bottom: 20px;
-        }
-
-        .filter-section h3 {
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #6b5a4a;
-            margin-bottom: 18px;
-            font-weight: 600;
-            border-bottom: 1px solid #f0e8dc;
-            padding-bottom: 12px;
-        }
-
-        .filter-section h3 i {
-            color: #b18a45;
-            margin-right: 8px;
-        }
-
-        .filter-group {
-            margin-bottom: 18px;
-        }
-
-        .filter-group:last-child {
-            margin-bottom: 0;
-        }
-
-        .filter-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #4a4035;
-            margin-bottom: 6px;
-        }
-
-        .filter-group select,
-        .filter-group input[type="text"],
-        .filter-group input[type="number"] {
-            width: 100%;
-            padding: 9px 12px;
-            border: 1px solid #e0d5c8;
-            border-radius: 8px;
-            background: #faf7f2;
-            font-family: inherit;
-            font-size: 14px;
-            color: #2c2416;
-            transition: border-color 0.2s;
-        }
-
-        .filter-group select:focus,
-        .filter-group input:focus {
-            outline: none;
-            border-color: #b18a45;
-        }
-
-        .price-range {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .filter-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 18px;
-        }
-
-        .btn-filter {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-family: inherit;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex: 1;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .btn-filter-primary {
-            background: #b18a45;
-            color: white;
-        }
-
-        .btn-filter-primary:hover {
-            background: #9a7740;
-        }
-
-        .btn-filter-secondary {
-            background: #f0e8dc;
-            color: #2c2416;
-        }
-
-        .btn-filter-secondary:hover {
-            background: #e0d5c8;
-        }
-
-        /* PRODUCTS HEADER */
-        .products-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .products-count {
-            font-size: 15px;
-            color: #6b5a4a;
-        }
-
-        .products-count strong {
-            color: #2c2416;
-        }
-
-        .sort-control {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .sort-control label {
-            font-size: 14px;
-            color: #6b5a4a;
-        }
-
-        .sort-control select {
-            padding: 8px 14px;
-            border: 1px solid #e0d5c8;
-            border-radius: 8px;
-            background: white;
-            font-family: inherit;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        /* PRODUCTS GRID */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-        }
-
-        .product-card {
-            background: #ffffff;
-            border-radius: 16px;
-            overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 1px solid #f0e8dc;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 35px rgba(177, 138, 69, 0.12);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 280px;
-            overflow: hidden;
-            background: #f5f0e8;
-            position: relative;
-        }
-
-        .product-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .product-card:hover .product-image img {
-            transform: scale(1.04);
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: #b18a45;
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .product-badge.sale {
-            background: #c0392b;
-        }
-
-        .product-badge.featured {
-            background: #2c3e50;
-        }
-
-        .product-info {
-            padding: 16px 18px 20px;
-        }
-
-        .product-category {
-            font-size: 12px;
-            color: #8a7a6a;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
-        }
-
-        .product-name {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #2c2416;
-        }
-
-        .product-name a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .product-name a:hover {
-            color: #b18a45;
-        }
-
-        .product-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 13px;
-            color: #6b5a4a;
-            margin-bottom: 8px;
-        }
-
-        .product-meta i {
-            margin-right: 4px;
-        }
-
-        .product-price {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .product-price .current {
-            font-size: 20px;
-            font-weight: 700;
-            color: #2c2416;
-        }
-
-        .product-price .original {
-            font-size: 15px;
-            color: #a08878;
-            text-decoration: line-through;
-        }
-
-        .product-stock {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .product-stock.in-stock {
-            color: #27ae60;
-        }
-
-        .product-stock.out-of-stock {
-            color: #c0392b;
-        }
-
-        /* PAGINATION */
-        .pagination {
-            margin-top: 45px;
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .pagination a,
-        .pagination span {
-            padding: 8px 16px;
-            border: 1px solid #e0d5c8;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #2c2416;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-
-        .pagination a:hover {
-            background: #b18a45;
-            color: white;
-            border-color: #b18a45;
-        }
-
-        .pagination .active {
-            background: #b18a45;
-            color: white;
-            border-color: #b18a45;
-        }
-
-        .pagination .disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* NO PRODUCTS */
-        .no-products {
-            text-align: center;
-            padding: 80px 20px;
-        }
-
-        .no-products i {
-            font-size: 60px;
-            color: #d5c8b8;
-            margin-bottom: 20px;
-        }
-
-        .no-products h3 {
-            font-size: 24px;
-            color: #2c2416;
-            margin-bottom: 10px;
-        }
-
-        .no-products p {
-            color: #6b5a4a;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1024px) {
-            .shop-layout {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                position: static;
-            }
-
-            .filter-section {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                gap: 15px;
-            }
-
-            .filter-section h3 {
-                grid-column: 1 / -1;
-            }
-
-            .filter-actions {
-                grid-column: 1 / -1;
-            }
-
-            .filter-group {
-                margin-bottom: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .top-nav {
-                padding: 15px 20px;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .nav-links {
-                gap: 20px;
-                flex-wrap: wrap;
-            }
-
-            .shop-header {
-                padding: 40px 20px 35px;
-            }
-
-            .shop-header h1 {
-                font-size: 32px;
-            }
-
-            .shop-container {
-                padding: 25px 15px 40px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 15px;
-            }
-
-            .product-image {
-                height: 200px;
-            }
-
-            .products-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .filter-section {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
-            }
-
-            .product-image {
-                height: 180px;
-            }
-
-            .product-info {
-                padding: 12px 12px 16px;
-            }
-
-            .product-name {
-                font-size: 14px;
-            }
-
-            .product-price .current {
-                font-size: 16px;
-            }
-
-            .product-meta {
-                font-size: 11px;
-                flex-wrap: wrap;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/website.css') }}">
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav class="top-nav">
-        <a href="/" class="logo">Lumina<span>.</span></a>
-        <div class="nav-links">
-            <a href="/">Home</a>
-            <a href="/about-us">About</a>
-            <a href="/shop" class="active">Shop</a>
-            <a href="/contact">Contact</a>
+    <!-- =============================================
+        NAVBAR - SAME AS HOME PAGE
+    ============================================= -->
+    <nav class="navbar-modern">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <a href="/" class="navbar-logo">
+                <span class="navbar-logo-text">Aethelweave</span>
+                <span class="navbar-logo-badge">Artisan</span>
+            </a>
+
+            <!-- Nav Links - Desktop -->
+            <ul class="nav-links-desktop">
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href={{ route('about-us') }}>About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+
+            <!-- Right Icons -->
+            <div class="navbar-icons">
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-bag"></i>
+                    <span class="navbar-cart-count">0</span>
+                </a>
+                <!-- Hamburger (Mobile) -->
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
         </div>
     </nav>
 
-    <!-- SHOP HEADER -->
+    <!-- =============================================
+        SHOP HEADER
+    ============================================= -->
     <section class="shop-header">
         <h1><i class="fas fa-store"></i> All Jewellery</h1>
         <p>Discover our curated collection of timeless pieces</p>
@@ -578,7 +89,9 @@
         </div>
     </section>
 
-    <!-- SHOP CONTENT -->
+    <!-- =============================================
+        SHOP CONTENT
+    ============================================= -->
     <div class="shop-container">
         <div class="shop-layout">
 
@@ -590,21 +103,13 @@
                     <div class="filter-section">
                         <h3><i class="fas fa-tags"></i> Categories</h3>
                         <div class="filter-group">
-                            <select name="category" id="category">
+                            <select name="category">
                                 <option value="">All Categories</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}"
-                                        {{ request('category') == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
-                            </select>
-                        </div>
-
-                        <div class="filter-group" id="subCategoryGroup" style="{{ request('category') ? '' : 'display:none;' }}">
-                            <label for="sub_category">Sub Category</label>
-                            <select name="sub_category" id="sub_category">
-                                <option value="">All Sub Categories</option>
                             </select>
                         </div>
                     </div>
@@ -619,8 +124,7 @@
                                 <select name="brand" id="brand">
                                     <option value="">All Brands</option>
                                     @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}"
-                                            {{ request('brand') == $brand->id ? 'selected' : '' }}>
+                                        <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : '' }}>
                                             {{ $brand->name }}
                                         </option>
                                     @endforeach
@@ -634,8 +138,7 @@
                                 <select name="material" id="material">
                                     <option value="">All Materials</option>
                                     @foreach($materials as $material)
-                                        <option value="{{ $material }}"
-                                            {{ request('material') == $material ? 'selected' : '' }}>
+                                        <option value="{{ $material }}" {{ request('material') == $material ? 'selected' : '' }}>
                                             {{ $material }}
                                         </option>
                                     @endforeach
@@ -646,21 +149,16 @@
                         <div class="filter-group">
                             <label>Price Range</label>
                             <div class="price-range">
-                                <input type="number" name="min_price"
-                                    placeholder="Min"
-                                    value="{{ request('min_price') }}"
-                                    min="0" max="{{ $priceRange['max'] }}">
-                                <input type="number" name="max_price"
-                                    placeholder="Max"
-                                    value="{{ request('max_price') }}"
-                                    min="0" max="{{ $priceRange['max'] }}">
+                                <input type="number" name="min_price" placeholder="Min"
+                                    value="{{ request('min_price') }}" min="0" max="{{ $priceRange['max'] }}">
+                                <input type="number" name="max_price" placeholder="Max"
+                                    value="{{ request('max_price') }}" min="0" max="{{ $priceRange['max'] }}">
                             </div>
                         </div>
 
                         <div class="filter-group">
                             <label for="search">Search</label>
-                            <input type="text" name="search" id="search"
-                                placeholder="Search products..."
+                            <input type="text" name="search" id="search" placeholder="Search products..."
                                 value="{{ request('search') }}">
                         </div>
 
@@ -690,10 +188,14 @@
                         <select name="sort" id="sort">
                             <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest</option>
                             <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest</option>
-                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to High</option>
-                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High to Low</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name: A to Z</option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name: Z to A</option>
+                            <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Price: Low to
+                                High</option>
+                            <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Price: High
+                                to Low</option>
+                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Name: A to Z
+                            </option>
+                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Name: Z to A
+                            </option>
                         </select>
                     </div>
                 </div>
@@ -717,7 +219,8 @@
                                     @if($firstImage)
                                         <img src="{{ asset($firstImage) }}" alt="{{ $product->name }}" loading="lazy">
                                     @else
-                                        <img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image" loading="lazy">
+                                        <img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image"
+                                            loading="lazy">
                                     @endif
 
                                     @if($product->is_featured == 2)
@@ -784,13 +287,107 @@
             </main>
         </div>
     </div>
+    {{-- =============================================
+    FOOTER
+    ============================================= --}}
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">Aethelweave</div>
+                    <p class="footer-tagline">Artisan Jewellery · Since 2010</p>
+                    <p class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance and
+                        exceptional quality.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest" class="social-link"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
 
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('about-us') }}">About Us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+
+                <!-- We Accept -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">We Accept</h4>
+                    <div class="footer-payment">
+                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
+                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
+                        <p class="payment-text">Secure payment options available</p>
+                    </div>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
+                        <li><i class="bi bi-geo-alt"></i> 123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001,
+                            India</li>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
+                    <a href={{ route('terms-conditions') }}>Terms of Use</a>
+                    <a href={{ route('disclaimer') }}>Disclaimer</a>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =============================================
+        SCRIPTS
+    ============================================= -->
     <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', function () {
+                    const isOpen = mobileMenu.style.display === 'block';
+                    mobileMenu.style.display = isOpen ? 'none' : 'block';
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar-modern');
+            if (navbar) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        });
+
         // Auto-submit on filter change
         document.querySelectorAll('#category, #brand, #material, #sort').forEach(select => {
-            select.addEventListener('change', function() {
+            select.addEventListener('change', function () {
                 if (this.id === 'sort') {
-                    // Build URL with all current filters and new sort
                     const url = new URL(window.location.href);
                     url.searchParams.set('sort', this.value);
                     window.location.href = url.toString();
@@ -801,7 +398,7 @@
         });
 
         // Load subcategories when category changes
-        document.getElementById('category').addEventListener('change', function() {
+        document.getElementById('category').addEventListener('change', function () {
             const categoryId = this.value;
             const subCategorySelect = document.getElementById('sub_category');
             const subCategoryGroup = document.getElementById('subCategoryGroup');
@@ -842,7 +439,7 @@
         // Price range - submit after user stops typing
         let priceTimeout;
         document.querySelectorAll('.price-range input').forEach(input => {
-            input.addEventListener('input', function() {
+            input.addEventListener('input', function () {
                 clearTimeout(priceTimeout);
                 priceTimeout = setTimeout(() => {
                     document.getElementById('filter-form').submit();
