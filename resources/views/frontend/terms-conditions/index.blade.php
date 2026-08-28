@@ -4,6 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/website.css') }}">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <title>Terms & Conditions</title>
     <style>
         * {
@@ -18,7 +24,7 @@
         }
 
         .terms-section {
-            padding: 80px 0;
+            padding: 5px 0;
             background: #faf7f2
         }
 
@@ -369,6 +375,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -538,10 +545,259 @@
                 font-size: 11px;
             }
         }
+
+        /* =============================================
+    NAVBAR
+============================================= */
+        .navbar-modern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(253, 251, 247, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(232, 226, 210, 0.6);
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern.scrolled {
+            background: rgba(253, 251, 247, 0.98);
+            box-shadow: 0 2px 24px rgba(44, 42, 41, 0.06);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #A58B54;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-logo-badge {
+            font-size: 0.55rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #8F753D;
+            background: rgba(165, 139, 84, 0.12);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(165, 139, 84, 0.2);
+        }
+
+        .nav-links-desktop {
+            display: none;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links-desktop li a {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #2C2A29;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links-desktop li a:hover {
+            color: #A58B54;
+        }
+
+        .navbar-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-icon {
+            color: #2C2A29;
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-icon:hover {
+            color: #A58B54;
+        }
+
+        .navbar-cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #A58B54;
+            color: #FFFFFF;
+            font-size: 0.5rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hamburger-btn {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #2C2A29;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: #FFFFFF;
+            border-top: 1px solid #E8E2D2;
+            padding: 16px 20px 20px;
+            margin-top: 12px;
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mobile-menu ul li a {
+            display: block;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2C2A29;
+            text-decoration: none;
+            border-bottom: 1px solid #F5F0E8;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu ul li a:hover {
+            color: #A58B54;
+        }
+
+        .mobile-menu ul li:last-child a {
+            border-bottom: none;
+        }
+
+        /* Desktop nav visible */
+        @media (min-width: 768px) {
+            .nav-links-desktop {
+                display: flex;
+            }
+
+            .hamburger-btn {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: none !important;
+            }
+        }
+
+        /* Mobile nav hidden by default */
+        @media (max-width: 767px) {
+            .nav-links-desktop {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <!-- =============================================
+    NAVBAR
+============================================= -->
+    <nav class="navbar-modern">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <a href="/" class="navbar-logo">
+                <span class="navbar-logo-text">Aethelweave</span>
+                <span class="navbar-logo-badge">Artisan</span>
+            </a>
+
+            <!-- Nav Links - Desktop -->
+            <ul class="nav-links-desktop">
+                <li><a href="/">Home</a></li>
+                <li><a href={{ route('shop.index') }}>Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="{{ route('about-us') }}">About</a></li>
+                <li><a href="{{ route('contact-us') }}">Contact</a></li>
+            </ul>
+
+            <!-- Right Icons -->
+            <div class="navbar-icons">
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <a href="{{ route('login') }}" class="navbar-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-bag"></i>
+                    <span class="navbar-cart-count">0</span>
+                </a>
+                <!-- Hamburger (Mobile) -->
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
     <section class="terms-section">
         <div class="terms-container">
             @if($termsConditions && $termsConditions->count() > 0)
@@ -549,8 +805,7 @@
                     <!-- Category Navigation Tabs -->
                     <div class="terms-category-nav" id="categoryNav">
                         @foreach($termsConditions as $index => $item)
-                            <button class="cat-btn {{ $index === 0 ? 'active' : '' }}"
-                                    data-target="category-{{ $index }}">
+                            <button class="cat-btn {{ $index === 0 ? 'active' : '' }}" data-target="category-{{ $index }}">
                                 @if($item->terms_conditions_category)
                                     {{ $item->terms_conditions_category }}
                                 @else
@@ -563,8 +818,7 @@
 
                     <!-- Category Content -->
                     @foreach($termsConditions as $index => $item)
-                        <div class="terms-category-content {{ $index === 0 ? 'active' : '' }}"
-                             id="category-{{ $index }}">
+                        <div class="terms-category-content {{ $index === 0 ? 'active' : '' }}" id="category-{{ $index }}">
 
                             @if($item->terms_conditions_category)
                                 <div class="terms-category-wrapper">
@@ -588,7 +842,8 @@
                                         <div class="terms-content">{!! $item->terms_conditions_descripton !!}</div>
                                         <div class="terms-info-box">
                                             <h3 class="terms-info-title">Need Help?</h3>
-                                            <p class="terms-info-text">If you have any questions regarding this policy, please contact our customer support team. Our team is always happy to assist you.</p>
+                                            <p class="terms-info-text">If you have any questions regarding this policy, please
+                                                contact our customer support team. Our team is always happy to assist you.</p>
                                         </div>
                                     </div>
                                     <div class="terms-side-image-wrapper">
@@ -602,7 +857,8 @@
                                         <div class="terms-content">{!! $item->terms_conditions_descripton !!}</div>
                                         <div class="terms-info-box">
                                             <h3 class="terms-info-title">Need Help?</h3>
-                                            <p class="terms-info-text">If you have any questions regarding this policy, please contact our customer support team. Our team is always happy to assist you.</p>
+                                            <p class="terms-info-text">If you have any questions regarding this policy, please
+                                                contact our customer support team. Our team is always happy to assist you.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -621,16 +877,84 @@
             @endif
         </div>
     </section>
+    {{-- =============================================
+    FOOTER
+    ============================================= --}}
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">Aethelweave</div>
+                    <p class="footer-tagline">Artisan Jewellery · Since 2010</p>
+                    <p class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance and
+                        exceptional quality.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest" class="social-link"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('about-us') }}">About Us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                        <li><a href="#">Blogs</a></li>
+                        <li><a href="#">Courses</a></li>
+                    </ul>
+                </div>
+
+                <!-- We Accept -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">We Accept</h4>
+                    <div class="footer-payment">
+                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
+                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
+                        <p class="payment-text">Secure payment options available</p>
+                    </div>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
+                        <li><i class="bi bi-geo-alt"></i> 123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001,
+                            India</li>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
+                    <a href={{ route('terms-conditions') }}>Terms of Use</a>
+                    <a href={{ route('disclaimer') }}>Disclaimer</a>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const buttons = document.querySelectorAll('.cat-btn');
             const contents = document.querySelectorAll('.terms-category-content');
 
-            buttons.forEach(function(button) {
-                button.addEventListener('click', function() {
+            buttons.forEach(function (button) {
+                button.addEventListener('click', function () {
                     // Remove active class from all buttons
-                    buttons.forEach(function(btn) {
+                    buttons.forEach(function (btn) {
                         btn.classList.remove('active');
                     });
 
@@ -638,7 +962,7 @@
                     this.classList.add('active');
 
                     // Hide all content
-                    contents.forEach(function(content) {
+                    contents.forEach(function (content) {
                         content.classList.remove('active');
                     });
 

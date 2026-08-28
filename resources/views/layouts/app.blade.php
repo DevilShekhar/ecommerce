@@ -484,21 +484,36 @@
                     <li>
                         <a href="javascript:void(0);" class="menu-toggle">
                             <i class="zmdi zmdi-file-text"></i>
-                            <span>Website Pages</span>
+                            <span>Website Settings</span>
                         </a>
 
                         <ul class="ml-menu">
                             <li>
-                                <a href="{{ route('admin.pages.index') }}">
-                                    <i class="zmdi zmdi-view-list"></i>
-                                    Manage Your Site
-                                </a>
-                            </li>
-
-                            <li>
                                 <a href="{{ route('logos.index') }}">
                                     <i class="zmdi zmdi-image"></i>
                                     Logo & Favicon
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('admin.about-us.index') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    About Us
+                                </a>
+                                <a href="{{ route('shop') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    Shops
+                                </a>
+                                <a href="{{ route('admin.contact-us.index') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    Contact Us
+                                </a>
+                                <a href="{{ route('admin.terms-conditions.index') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    Terms Conditions
+                                </a>
+                                <a href="{{ route('admin.privacy-policies.index') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    Privacy&Policy
                                 </a>
                             </li>
                         </ul>

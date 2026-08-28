@@ -1,9 +1,3 @@
-{{-- =============================================
-MASTER LAYOUT: AETHELWEAVE HOMEPAGE
-All images now use a uniform aspect ratio (1:1)
-with object-fit: cover for perfect sizing.
-Fully responsive for all screen types.
-============================================= --}}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,8 +37,8 @@ Fully responsive for all screen types.
         }
     </script>
     <style>
-        /* ============================================= 
-    BASE STYLES 
+        /* =============================================
+    BASE STYLES
     ============================================= */
         * {
             margin: 0;
@@ -59,9 +53,9 @@ Fully responsive for all screen types.
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ============================================= 
-    UNIFORM IMAGE CONTAINER — FIXED ASPECT RATIO 1:1 
-    ALL images will be cropped to perfect squares. 
+        /* =============================================
+    UNIFORM IMAGE CONTAINER — FIXED ASPECT RATIO 1:1
+    ALL images will be cropped to perfect squares.
     ============================================= */
         .img-square {
             aspect-ratio: 1 / 1;
@@ -84,8 +78,8 @@ Fully responsive for all screen types.
             font-size: 2.5rem;
         }
 
-        /* ============================================= 
-    HERO SECTION 
+        /* =============================================
+    HERO SECTION
     ============================================= */
         .hero-section-modern {
             min-height: 80vh;
@@ -260,8 +254,8 @@ Fully responsive for all screen types.
             right: 20px;
         }
 
-        /* ============================================= 
-    SECTION HEADERS 
+        /* =============================================
+    SECTION HEADERS
     ============================================= */
         .section-header {
             max-width: 700px;
@@ -299,8 +293,8 @@ Fully responsive for all screen types.
             background: #FDFBF7;
         }
 
-        /* ============================================= 
-    CATEGORY SLIDER 
+        /* =============================================
+    CATEGORY SLIDER
     ============================================= */
         .category-slider-section {
             background: #FFFFFF;
@@ -436,8 +430,8 @@ Fully responsive for all screen types.
             right: 0;
         }
 
-        /* ============================================= 
-    PRODUCT CARDS — UNIFORM 1:1 IMAGES 
+        /* =============================================
+    PRODUCT CARDS — UNIFORM 1:1 IMAGES
     ============================================= */
         .product-card {
             background: #FFFFFF;
@@ -631,8 +625,8 @@ Fully responsive for all screen types.
             transform: translateX(4px);
         }
 
-        /* ============================================= 
-    COMPACT PRODUCT CARDS (for grids) 
+        /* =============================================
+    COMPACT PRODUCT CARDS (for grids)
     ============================================= */
         .product-card-compact {
             background: #FFFFFF;
@@ -866,8 +860,8 @@ Fully responsive for all screen types.
             box-shadow: 0 3px 12px rgba(165, 139, 84, 0.2);
         }
 
-        /* ============================================= 
-    BANNER CAROUSEL 
+        /* =============================================
+    BANNER CAROUSEL
     ============================================= */
         .banner-carousel-section {
             background: #FFFFFF;
@@ -1021,18 +1015,43 @@ Fully responsive for all screen types.
             right: 16px;
         }
 
-        /* ============================================= 
-    ABOUT SECTION 
-    ============================================= */
-        .about-section-modern {
+        /* =============================================
+    ABOUT SECTION - FULLY RESPONSIVE
+============================================= */
+
+        .about-section-home {
             background: #FFFFFF;
+            padding: 60px 0;
         }
 
+        .about-section-home .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        /* About Wrapper - Flex container */
+        .about-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* Image Column */
+        .about-image-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        /* Image Wrapper */
         .about-image-wrapper {
             position: relative;
             border-radius: 20px;
             overflow: hidden;
             aspect-ratio: 4 / 3;
+            width: 100%;
         }
 
         .about-image {
@@ -1042,6 +1061,7 @@ Fully responsive for all screen types.
             display: block;
         }
 
+        /* Image Badge */
         .about-image-badge {
             position: absolute;
             bottom: 20px;
@@ -1053,40 +1073,50 @@ Fully responsive for all screen types.
             font-size: 0.8rem;
             font-weight: 600;
             letter-spacing: 0.1em;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
         }
 
-        .about-content {
-            padding: 20px 0;
+        /* Content Column */
+        .about-content-col {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 10px 0;
         }
 
+        /* Subtitle */
+        .about-subtitle {
+            display: inline-block;
+            padding: 4px 16px;
+            background: #F5EEDC;
+            color: #A58B54;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            border-radius: 50px;
+            margin-bottom: 10px;
+        }
+
+        /* Title */
+        .about-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 500;
+            color: #2C2A29;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        /* Description */
         .about-description {
             font-size: 0.95rem;
             color: #6B6A69;
             line-height: 1.8;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
-        .about-features {
-            display: flex;
-            gap: 20px;
-            margin: 20px 0 24px;
-            flex-wrap: wrap;
-        }
-
-        .about-feature-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            color: #2C2A29;
-        }
-
-        .about-feature-item i {
-            color: #A58B54;
-            font-size: 20px;
-        }
-
+        /* About Button */
         .btn-about {
             display: inline-flex;
             align-items: center;
@@ -1101,6 +1131,8 @@ Fully responsive for all screen types.
             border-radius: 50px;
             text-decoration: none;
             transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
 
         .btn-about:hover {
@@ -1118,13 +1150,254 @@ Fully responsive for all screen types.
             transform: translateX(4px);
         }
 
-        /* ============================================= 
-    SERVICES 
-    ============================================= */
-        .services-section-modern {
-            background: #FDFBF7;
+        /* =============================================
+    ABOUT - RESPONSIVE BREAKPOINTS
+============================================= */
+
+        /* Tablet: Image left, content right */
+        @media (min-width: 768px) {
+            .about-wrapper {
+                gap: 30px;
+                flex-wrap: nowrap;
+            }
+
+            .about-image-col {
+                flex: 0 0 45%;
+                max-width: 45%;
+            }
+
+            .about-content-col {
+                flex: 1;
+                max-width: 55%;
+                padding: 20px 0;
+            }
+
+            .about-title {
+                font-size: 2.2rem;
+            }
         }
 
+        /* Desktop */
+        @media (min-width: 992px) {
+            .about-wrapper {
+                gap: 40px;
+            }
+
+            .about-image-col {
+                flex: 0 0 45%;
+                max-width: 45%;
+            }
+
+            .about-content-col {
+                flex: 1;
+                max-width: 55%;
+                padding: 20px 0 20px 20px;
+            }
+
+            .about-title {
+                font-size: 2.5rem;
+            }
+
+            .about-description {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Large Desktop */
+        @media (min-width: 1200px) {
+            .about-wrapper {
+                gap: 50px;
+            }
+
+            .about-image-col {
+                flex: 0 0 45%;
+                max-width: 45%;
+            }
+
+            .about-content-col {
+                flex: 1;
+                max-width: 55%;
+                padding: 30px 0 30px 30px;
+            }
+
+            .about-title {
+                font-size: 2.8rem;
+            }
+
+            .about-description {
+                font-size: 1rem;
+            }
+
+            .about-image-badge {
+                font-size: 0.9rem;
+                padding: 12px 24px;
+                bottom: 24px;
+                left: 24px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 767px) {
+            .about-section-home {
+                padding: 40px 0;
+            }
+
+            .about-wrapper {
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+
+            .about-image-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+
+            .about-content-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+                padding: 0;
+                text-align: center;
+            }
+
+            .about-title {
+                font-size: 1.8rem;
+            }
+
+            .about-description {
+                font-size: 0.9rem;
+                text-align: left;
+            }
+
+            .about-image-badge {
+                font-size: 0.7rem;
+                padding: 8px 16px;
+                bottom: 14px;
+                left: 14px;
+            }
+
+            .btn-about {
+                justify-content: center;
+                width: 100%;
+                max-width: 200px;
+                margin: 0 auto;
+                display: flex;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .about-section-home {
+                padding: 30px 0;
+            }
+
+            .about-wrapper {
+                gap: 16px;
+            }
+
+            .about-title {
+                font-size: 1.5rem;
+            }
+
+            .about-description {
+                font-size: 0.85rem;
+                line-height: 1.6;
+            }
+
+            .about-subtitle {
+                font-size: 0.6rem;
+                padding: 3px 12px;
+            }
+
+            .about-image-badge {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+                bottom: 10px;
+                left: 10px;
+                border-radius: 8px;
+            }
+
+            .btn-about {
+                font-size: 0.7rem;
+                padding: 8px 20px;
+                max-width: 170px;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .about-image-col {
+                flex: 0 0 45%;
+                max-width: 45%;
+            }
+
+            .about-content-col {
+                flex: 0 0 55%;
+                max-width: 55%;
+                text-align: left;
+            }
+
+            .about-wrapper {
+                flex-wrap: nowrap;
+                gap: 20px;
+            }
+
+            .about-title {
+                font-size: 1.6rem;
+            }
+
+            .btn-about {
+                margin: 0;
+            }
+        }
+
+        /* =============================================
+    SERVICES SECTION - FULLY RESPONSIVE
+============================================= */
+
+        .services-section-modern {
+            background: #FDFBF7;
+            padding: 60px 0;
+        }
+
+        .services-section-modern .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        /* Services Grid - Flexbox based */
+        .services-grid {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -12px;
+        }
+
+        /* Service Column - Responsive */
+        .service-col {
+            padding: 0 12px;
+            margin-bottom: 24px;
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+
+        /* Tablet: 2 columns */
+        @media (min-width: 768px) {
+            .service-col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        /* Desktop: 3 columns */
+        @media (min-width: 992px) {
+            .service-col {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+        }
+
+        /* Service Card */
         .service-card-modern {
             background: #FFFFFF;
             padding: 30px 24px;
@@ -1133,6 +1406,9 @@ Fully responsive for all screen types.
             text-align: center;
             transition: all 0.3s ease;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .service-card-modern:hover {
@@ -1152,6 +1428,7 @@ Fully responsive for all screen types.
             justify-content: center;
             font-size: 28px;
             color: #A58B54;
+            flex-shrink: 0;
         }
 
         .service-title-modern {
@@ -1169,8 +1446,103 @@ Fully responsive for all screen types.
             margin-bottom: 0;
         }
 
-        /* ============================================= 
-    FEATURES 
+        /* =============================================
+    SERVICES - RESPONSIVE BREAKPOINTS
+============================================= */
+
+        /* Small tablets & large phones */
+        @media (max-width: 767px) {
+            .services-section-modern {
+                padding: 40px 0;
+            }
+
+            .service-card-modern {
+                padding: 24px 18px;
+            }
+
+            .service-icon-modern {
+                width: 54px;
+                height: 54px;
+                font-size: 24px;
+            }
+
+            .service-title-modern {
+                font-size: 1.1rem;
+            }
+
+            .service-description-modern {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 480px) {
+            .services-section-modern {
+                padding: 30px 0;
+            }
+
+            .service-col {
+                padding: 0 8px;
+                margin-bottom: 16px;
+            }
+
+            .service-card-modern {
+                padding: 20px 14px;
+                border-radius: 12px;
+            }
+
+            .service-icon-modern {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+                margin-bottom: 12px;
+            }
+
+            .service-title-modern {
+                font-size: 1rem;
+            }
+
+            .service-description-modern {
+                font-size: 0.8rem;
+                line-height: 1.5;
+            }
+
+            .services-grid {
+                margin: 0 -8px;
+            }
+        }
+
+        /* Landscape phones */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .service-col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+
+        /* Large desktops */
+        @media (min-width: 1400px) {
+            .service-card-modern {
+                padding: 36px 32px;
+            }
+
+            .service-icon-modern {
+                width: 74px;
+                height: 74px;
+                font-size: 32px;
+            }
+
+            .service-title-modern {
+                font-size: 1.5rem;
+            }
+
+            .service-description-modern {
+                font-size: 1rem;
+            }
+        }
+
+        /* =============================================
+    FEATURES
     ============================================= */
         .features-section-modern {
             background: #FFFFFF;
@@ -1445,8 +1817,8 @@ Fully responsive for all screen types.
             opacity: 0.65;
         }
 
-        /* ============================================= 
-    CTA 
+        /* =============================================
+    CTA
     ============================================= */
         .cta-section-modern {
             background: #2C2A29;
@@ -1559,154 +1931,8 @@ Fully responsive for all screen types.
             margin-top: 12px;
         }
 
-        /* ============================================= 
-    FAQ SECTION - FIXED 
-    ============================================= */
-        /* .faq-section-modern {
-        background: #FFFFFF;
-        padding: 60px 0;
-    }
-
-    .faq-image-wrapper-modern {
-        position: relative;
-        border-radius: 16px;
-        overflow: hidden;
-        aspect-ratio: 4 / 3;
-        height: 100%;
-        min-height: 400px;
-    }
-
-    .faq-image-modern {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-    }
-
-    .faq-image-overlay-modern {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(44, 42, 41, 0.7) 0%, rgba(44, 42, 41, 0.3) 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 30px;
-        text-align: center;
-        color: #FFFFFF;
-        flex-direction: column;
-    }
-
-    .faq-image-overlay-modern i {
-        font-size: 48px;
-        color: #A58B54;
-        margin-bottom: 12px;
-        display: block;
-    }
-
-    .faq-image-overlay-modern h4 {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.5rem;
-        font-weight: 500;
-        margin-bottom: 6px;
-        color: #FFFFFF;
-    }
-
-    .faq-image-overlay-modern p {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        margin-bottom: 0;
-        color: rgba(255, 255, 255, 0.9);
-    }
-
-    .faq-wrapper-modern {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding: 0 10px;
-    }
-
-    .faq-container-modern {
-        width: 100%;
-    }
-
-    .faq-item-modern {
-        border-bottom: 1px solid #E8E2D2;
-        padding: 0;
-    }
-
-    .faq-item-modern:last-child {
-        border-bottom: none;
-    }
-
-    .faq-question-modern {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 18px 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 1.1rem;
-        font-weight: 500;
-        color: #2C2A29;
-        user-select: none;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    .faq-question-modern:hover {
-        color: #A58B54;
-    }
-
-    .faq-question-modern span {
-        flex: 1;
-        padding-right: 15px;
-    }
-
-    .faq-icon-modern {
-        transition: transform 0.3s ease;
-        font-size: 20px;
-        color: #A58B54;
-        background: #F5EEDC;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid #E8E2D2;
-        flex-shrink: 0;
-        transition: all 0.3s ease;
-    }
-
-    .faq-item-modern.active .faq-icon-modern {
-        transform: rotate(180deg);
-        background: #A58B54;
-        color: #FFFFFF;
-        border-color: #A58B54;
-    }
-
-    .faq-answer-modern {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
-        opacity: 0;
-    }
-
-    .faq-answer-modern.open {
-        max-height: 500px;
-        padding-bottom: 20px;
-        opacity: 1;
-    }
-
-    .faq-answer-modern p {
-        font-size: 0.95rem;
-        color: #6B6A69;
-        line-height: 1.7;
-        margin-bottom: 0;
-    } */
-
         /* =========================================================
-   FAQ SECTION
+   FAQ SECTION - CENTERED
 ========================================================= */
 
         .faq-section-modern {
@@ -1717,9 +1943,7 @@ Fully responsive for all screen types.
             padding-bottom: 90px !important;
         }
 
-
         /* Decorative Background */
-
         .faq-section-modern::before {
             content: "";
             position: absolute;
@@ -1744,14 +1968,21 @@ Fully responsive for all screen types.
             pointer-events: none;
         }
 
+        /* Container - centers everything */
+        .faq-section-modern .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
 
         /* Header */
-
         .faq-header {
             position: relative;
             z-index: 2;
             max-width: 720px;
             margin: 0 auto 45px;
+            text-align: center;
         }
 
         .faq-eyebrow {
@@ -1791,9 +2022,14 @@ Fully responsive for all screen types.
             line-height: 1.8;
         }
 
+        /* FAQ Wrapper - centers the card */
+        .faq-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
 
         /* FAQ Card */
-
         .faq-card {
             position: relative;
             z-index: 2;
@@ -1802,11 +2038,11 @@ Fully responsive for all screen types.
             border: 1px solid #e8e2d8;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(44, 42, 41, 0.07);
+            max-width: 900px;
+            width: 100%;
         }
 
-
         /* FAQ Item */
-
         .faq-item {
             position: relative;
             border-bottom: 1px solid #eee9e1;
@@ -1825,9 +2061,7 @@ Fully responsive for all screen types.
             background: #fdfbf7;
         }
 
-
         /* Question Button */
-
         .faq-question {
             width: 100%;
             display: flex;
@@ -1855,9 +2089,7 @@ Fully responsive for all screen types.
             min-width: 0;
         }
 
-
         /* Number */
-
         .faq-number {
             display: flex;
             align-items: center;
@@ -1882,9 +2114,7 @@ Fully responsive for all screen types.
             transform: scale(1.05);
         }
 
-
         /* Question Text */
-
         .faq-question-text {
             font-family: "Cormorant Garamond", serif;
             font-size: 21px;
@@ -1898,9 +2128,7 @@ Fully responsive for all screen types.
             color: #a58b54;
         }
 
-
         /* Toggle */
-
         .faq-toggle {
             display: flex;
             align-items: center;
@@ -1929,9 +2157,7 @@ Fully responsive for all screen types.
             transform: rotate(180deg);
         }
 
-
         /* Answer */
-
         .faq-answer {
             display: grid;
             grid-template-rows: 0fr;
@@ -1946,10 +2172,7 @@ Fully responsive for all screen types.
             line-height: 1.8;
             opacity: 0;
             transform: translateY(-8px);
-            transition:
-                opacity 0.35s ease,
-                transform 0.4s ease,
-                padding 0.45s ease;
+            transition: opacity 0.35s ease, transform 0.4s ease, padding 0.45s ease;
         }
 
         .faq-item.active .faq-answer {
@@ -1962,9 +2185,7 @@ Fully responsive for all screen types.
             transform: translateY(0);
         }
 
-
         /* Hover line */
-
         .faq-item::before {
             content: "";
             position: absolute;
@@ -1981,13 +2202,11 @@ Fully responsive for all screen types.
             height: 100%;
         }
 
-
         /* =========================================================
-   RESPONSIVE
+   FAQ RESPONSIVE
 ========================================================= */
 
         @media (max-width: 767px) {
-
             .faq-section-modern {
                 padding-top: 65px !important;
                 padding-bottom: 65px !important;
@@ -2051,42 +2270,112 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    FOOTER 
-    ============================================= */
+        @media (max-width: 480px) {
+            .faq-question-text {
+                font-size: 16px;
+            }
+
+            .faq-number {
+                flex: 0 0 28px;
+                width: 28px;
+                height: 28px;
+                font-size: 11px;
+            }
+
+            .faq-answer-inner {
+                padding-left: 50px;
+                font-size: 12px;
+            }
+        }
+
+        /* =============================================
+    FOOTER - GOLDEN & BLACK THEME
+============================================= */
+
         .footer-modern {
             background: #2C2A29;
-            padding: 40px 0 20px;
+            padding: 50px 0 20px;
             color: #FFFFFF;
         }
 
+        .footer-modern .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        /* Grid Layout */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding-bottom: 30px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr 1.5fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* Footer Columns */
+        .footer-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-brand-col {
+            gap: 6px;
+        }
+
+        /* Brand */
         .footer-brand {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 500;
             color: #A58B54;
-            margin-bottom: 4px;
+            letter-spacing: -0.5px;
         }
 
         .footer-tagline {
-            font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
             letter-spacing: 0.2em;
             text-transform: uppercase;
+            margin-bottom: 6px;
         }
 
-        .footer-divider {
-            border-color: rgba(255, 255, 255, 0.08);
-            margin: 16px 0;
+        .footer-desc {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.6;
+            max-width: 280px;
+            margin-bottom: 12px;
         }
 
-        .footer-copy {
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 0.05em;
+        /* Social Icons */
+        .footer-social {
+            display: flex;
+            gap: 10px;
         }
 
-        .footer-social a {
+        .social-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -2100,14 +2389,172 @@ Fully responsive for all screen types.
             font-size: 16px;
         }
 
-        .footer-social a:hover {
+        .social-link:hover {
             background: #A58B54;
             color: #FFFFFF;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
         }
 
-        /* ============================================= 
-    WHY CHOOSE US - PREMIUM JEWELLERY DESIGN 
+        /* Footer Headings */
+        .footer-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #A58B54;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Footer Links */
+        .footer-links {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .footer-links li a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links li a:hover {
+            color: #A58B54;
+        }
+
+        /* Payment Icons */
+        .footer-payment {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .payment-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .payment-icon:hover {
+            background: #A58B54;
+            color: #FFFFFF;
+        }
+
+        .payment-text {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        /* Contact Info */
+        .footer-contact {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-contact li {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .footer-contact li i {
+            color: #A58B54;
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Footer Divider */
+        .footer-divider {
+            border: none;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin: 16px 0;
+        }
+
+        /* Footer Bottom */
+        .footer-bottom {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding-top: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-copy {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 0.05em;
+            margin: 0;
+        }
+
+        .footer-bottom-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-bottom-links a {
+            color: rgb(255, 255, 255);
+            text-decoration: none;
+            font-size: 0.65rem;
+            letter-spacing: 0.05em;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom-links a:hover {
+            color: #A58B54;
+        }
+
+        @media (max-width: 480px) {
+            .footer-bottom-links {
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .footer-bottom-links a {
+                font-size: 0.6rem;
+            }
+
+            .footer-contact li {
+                font-size: 0.75rem;
+            }
+
+            .footer-desc {
+                font-size: 0.75rem;
+                max-width: 100%;
+            }
+        }
+
+        /* =============================================
+    WHY CHOOSE US - PREMIUM JEWELLERY DESIGN
     ============================================= */
         .why-section {
             width: 100%;
@@ -2300,8 +2747,8 @@ Fully responsive for all screen types.
             transform: translateY(0);
         }
 
-        /* ============================================= 
-    RESPONSIVE GRID — PRODUCT COLUMNS 
+        /* =============================================
+    RESPONSIVE GRID — PRODUCT COLUMNS
     ============================================= */
         .product-col-compact {
             padding: 0 5px;
@@ -2366,8 +2813,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — TABLET 
+        /* =============================================
+    RESPONSIVE — TABLET
     ============================================= */
         @media (max-width: 991px) {
             .hero-title {
@@ -2428,8 +2875,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — MOBILE 
+        /* =============================================
+    RESPONSIVE — MOBILE
     ============================================= */
         @media (max-width: 767px) {
             .hero-title {
@@ -2563,8 +3010,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — SMALL MOBILE 
+        /* =============================================
+    RESPONSIVE — SMALL MOBILE
     ============================================= */
         @media (max-width: 480px) {
             .hero-title {
@@ -2695,8 +3142,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — TABLET (FAQ) 
+        /* =============================================
+    RESPONSIVE — TABLET (FAQ)
     ============================================= */
         @media (max-width: 991px) {
 
@@ -2720,8 +3167,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — MOBILE (FAQ) 
+        /* =============================================
+    RESPONSIVE — MOBILE (FAQ)
     ============================================= */
         @media (max-width: 576px) {
             .faq-container-modern {
@@ -2746,8 +3193,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — CATEGORY SLIDER 
+        /* =============================================
+    RESPONSIVE — CATEGORY SLIDER
     ============================================= */
         @media (max-width: 768px) {
             .category-slide {
@@ -2763,8 +3210,8 @@ Fully responsive for all screen types.
             }
         }
 
-        /* ============================================= 
-    RESPONSIVE — WHY CHOOSE US 
+        /* =============================================
+    RESPONSIVE — WHY CHOOSE US
     ============================================= */
         @media (max-width: 1100px) {
             .why-grid {
@@ -2813,10 +3260,262 @@ Fully responsive for all screen types.
                 font-size: 12.5px;
             }
         }
+
+        /* =============================================
+    NAVBAR
+============================================= */
+        .navbar-modern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(253, 251, 247, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(232, 226, 210, 0.6);
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-modern.scrolled {
+            background: rgba(253, 251, 247, 0.98);
+            box-shadow: 0 2px 24px rgba(44, 42, 41, 0.06);
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-logo {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .navbar-logo-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            font-weight: 500;
+            color: #A58B54;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-logo-badge {
+            font-size: 0.55rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: #8F753D;
+            background: rgba(165, 139, 84, 0.12);
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(165, 139, 84, 0.2);
+        }
+
+        .nav-links-desktop {
+            display: none;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .nav-links-desktop li a {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #2C2A29;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links-desktop li a:hover {
+            color: #A58B54;
+        }
+
+        .navbar-icons {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-icon {
+            color: #2C2A29;
+            text-decoration: none;
+            font-size: 1.1rem;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-icon:hover {
+            color: #A58B54;
+        }
+
+        .navbar-cart-count {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #A58B54;
+            color: #FFFFFF;
+            font-size: 0.5rem;
+            font-weight: 700;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hamburger-btn {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .hamburger-btn span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #2C2A29;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: #FFFFFF;
+            border-top: 1px solid #E8E2D2;
+            padding: 16px 20px 20px;
+            margin-top: 12px;
+        }
+
+        .mobile-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .mobile-menu ul li a {
+            display: block;
+            padding: 10px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2C2A29;
+            text-decoration: none;
+            border-bottom: 1px solid #F5F0E8;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu ul li a:hover {
+            color: #A58B54;
+        }
+
+        .mobile-menu ul li:last-child a {
+            border-bottom: none;
+        }
+
+        /* Desktop nav visible */
+        @media (min-width: 768px) {
+            .nav-links-desktop {
+                display: flex;
+            }
+
+            .hamburger-btn {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: none !important;
+            }
+        }
+
+        /* Mobile nav hidden by default */
+        @media (max-width: 767px) {
+            .nav-links-desktop {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: flex;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <!-- =============================================
+        NAVBAR
+    ============================================= -->
+    <nav class="navbar-modern">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <a href="/" class="navbar-logo">
+                <span class="navbar-logo-text">Aethelweave</span>
+                <span class="navbar-logo-badge">Artisan</span>
+            </a>
+
+            <!-- Nav Links - Desktop -->
+            <ul class="nav-links-desktop">
+                <li><a href="/">Home</a></li>
+                <li><a href={{ route('shop.index') }}>Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="{{ route('about-us') }}">About</a></li>
+                <li><a href="{{ route('contact-us') }}">Contact</a></li>
+            </ul>
+
+            <!-- Right Icons -->
+            <div class="navbar-icons">
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <a href="{{ route('login') }}" class="navbar-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-bag"></i>
+                    <span class="navbar-cart-count">0</span>
+                </a>
+                <!-- Hamburger (Mobile) -->
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
 
     {{-- =============================================
     HERO SECTION
@@ -3136,46 +3835,39 @@ Fully responsive for all screen types.
     ABOUT SECTION — Home Page (Image Left, Content Right on all screens)
     ============================================= --}}
     @if(isset($aboutUs) && $aboutUs)
-        <section class="about-section-home py-4" style="background:#FFFFFF;">
-            <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-                <div style="display:flex;flex-wrap:nowrap;align-items:center;gap:30px;">
+        <section class="about-section-home py-4">
+            <div class="container">
+                <div class="about-wrapper">
                     @if($aboutUs->about_image)
-                        {{-- IMAGE - ALWAYS LEFT --}}
-                        <div style="flex:0 0 45%;max-width:45%;">
-                            <div style="position:relative;border-radius:20px;overflow:hidden;aspect-ratio:4/3;">
+                        {{-- IMAGE - LEFT on desktop, TOP on mobile --}}
+                        <div class="about-image-col">
+                            <div class="about-image-wrapper">
                                 <img src="{{ asset('storage/' . $aboutUs->about_image) }}"
-                                    alt="{{ $aboutUs->about_title ?? 'About Us' }}"
-                                    style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">
-                                <div
-                                    style="position:absolute;bottom:20px;left:20px;background:rgba(165,139,84,0.95);color:#FFFFFF;padding:10px 20px;border-radius:12px;font-size:0.8rem;font-weight:600;letter-spacing:0.1em;">
+                                    alt="{{ $aboutUs->about_title ?? 'About Us' }}" class="about-image" loading="lazy">
+                                <div class="about-image-badge">
                                     <span>Since 2010</span>
                                 </div>
                             </div>
                         </div>
                     @endif
 
-                    {{-- CONTENT - ALWAYS RIGHT --}}
-                    <div style="flex:1;padding:20px 0;">
+                    {{-- CONTENT - RIGHT on desktop, BOTTOM on mobile --}}
+                    <div class="about-content-col">
                         @if($aboutUs->about_sub_title)
-                            <span
-                                style="display:inline-block;padding:4px 16px;background:#F5EEDC;color:#A58B54;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;border-radius:50px;margin-bottom:8px;">{{ $aboutUs->about_sub_title }}</span>
+                            <span class="about-subtitle">{{ $aboutUs->about_sub_title }}</span>
                         @endif
 
                         @if($aboutUs->about_title)
-                            <h2
-                                style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:500;color:#2C2A29;margin-bottom:8px;">
-                                {{ $aboutUs->about_title }}
-                            </h2>
+                            <h2 class="about-title">{{ $aboutUs->about_title }}</h2>
                         @endif
 
                         @if($aboutUs->about_description)
-                            <div style="font-size:0.95rem;color:#6B6A69;line-height:1.8;margin-bottom:16px;">
+                            <div class="about-description">
                                 {{ Str::limit(strip_tags($aboutUs->about_description), 200) }}
                             </div>
                         @endif
 
-                        <a href="{{ route('about-us') }}"
-                            style="display:inline-flex;align-items:center;gap:8px;padding:10px 28px;background:#A58B54;color:#FFFFFF;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
+                        <a href="{{ route('about-us') }}" class="btn-about">
                             Learn More <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
@@ -3187,119 +3879,52 @@ Fully responsive for all screen types.
     {{-- =============================================
     SERVICES SECTION
     ============================================= --}}
-
     <section class="services-section-modern py-5">
-
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-
+        <div class="container">
             <div class="section-header text-center mb-4">
-
-                <span class="section-badge">
-                    Services
-                </span>
-
-                <h2 class="section-title">
-                    Our Services
-                </h2>
-
-                <p class="section-subtitle">
-                    Experience the finest jewellery services tailored just for you
-                </p>
-
+                <span class="section-badge">Services</span>
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle">Experience the finest jewellery services tailored just for you</p>
             </div>
 
-
-            <div class="row" style="display:flex;flex-wrap:wrap;margin:0 -12px;">
-
-
+            <div class="services-grid">
                 <!-- Custom Design -->
-                <div class="col-lg-4 col-md-6 col-sm-12" style="
-                    padding:0 12px;
-                    margin-bottom:24px;
-                    flex:0 0 33.333333%;
-                    max-width:33.333333%;
-                 ">
-
+                <div class="service-col">
                     <div class="service-card-modern">
-
                         <div class="service-icon-modern">
                             <i class="bi bi-gem"></i>
                         </div>
-
-                        <h4 class="service-title-modern">
-                            Custom Design
-                        </h4>
-
-                        <p class="service-description-modern">
-                            Create your dream jewellery piece with our expert
-                            designers who bring your vision to life.
-                        </p>
-
+                        <h4 class="service-title-modern">Custom Design</h4>
+                        <p class="service-description-modern">Create your dream jewellery piece with our expert
+                            designers who bring your vision to life.</p>
                     </div>
-
                 </div>
 
-
                 <!-- Repair & Restoration -->
-                <div class="col-lg-4 col-md-6 col-sm-12" style="
-                    padding:0 12px;
-                    margin-bottom:24px;
-                    flex:0 0 33.333333%;
-                    max-width:33.333333%;
-                 ">
-
+                <div class="service-col">
                     <div class="service-card-modern">
-
                         <div class="service-icon-modern">
                             <i class="bi bi-tools"></i>
                         </div>
-
-                        <h4 class="service-title-modern">
-                            Repair & Restoration
-                        </h4>
-
-                        <p class="service-description-modern">
-                            Restore your cherished jewellery pieces with our
-                            expert repair and restoration services.
-                        </p>
-
+                        <h4 class="service-title-modern">Repair & Restoration</h4>
+                        <p class="service-description-modern">Restore your cherished jewellery pieces with our expert
+                            repair and restoration services.</p>
                     </div>
-
                 </div>
 
-
                 <!-- Certification -->
-                <div class="col-lg-4 col-md-6 col-sm-12" style="
-                    padding:0 12px;
-                    margin-bottom:24px;
-                    flex:0 0 33.333333%;
-                    max-width:33.333333%;
-                 ">
-
+                <div class="service-col">
                     <div class="service-card-modern">
-
                         <div class="service-icon-modern">
                             <i class="bi bi-shield-check"></i>
                         </div>
-
-                        <h4 class="service-title-modern">
-                            Certification
-                        </h4>
-
-                        <p class="service-description-modern">
-                            Get your jewellery certified with our authentic
-                            certification services for peace of mind.
-                        </p>
-
+                        <h4 class="service-title-modern">Certification</h4>
+                        <p class="service-description-modern">Get your jewellery certified with our authentic
+                            certification services for peace of mind.</p>
                     </div>
-
                 </div>
-
-
             </div>
-
         </div>
-
     </section>
 
     {{-- =============================================
@@ -3696,162 +4321,114 @@ Fully responsive for all screen types.
             {{-- Section Header --}}
             <div class="faq-header text-center">
                 <span class="faq-eyebrow">FAQ</span>
-
-                <h2 class="faq-title">
-                    Frequently Asked Questions
-                </h2>
-
-                <p class="faq-subtitle">
-                    Find answers to common questions about our products,
-                    jewellery care, shipping and services.
-                </p>
+                <h2 class="faq-title">Frequently Asked Questions</h2>
+                <p class="faq-subtitle">Find answers to common questions about our products, jewellery care, shipping
+                    and services.</p>
             </div>
 
             {{-- FAQ Content --}}
-            <div class="row justify-content-center">
-                <div class="col-lg-9">
+            <div class="faq-wrapper">
+                <div class="faq-card">
 
-                    <div class="faq-card">
-
-                        {{-- FAQ 1 --}}
-                        <div class="faq-item active">
-                            <button type="button" class="faq-question" aria-expanded="true">
-                                <span class="faq-question-left">
-                                    <span class="faq-number">01</span>
-
-                                    <span class="faq-question-text">
-                                        What is your return policy?
-                                    </span>
-                                </span>
-
-                                <span class="faq-toggle">
-                                    <i class="bi bi-chevron-down"></i>
-                                </span>
-                            </button>
-
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    We offer a 30-day return policy on all items.
-                                    If you're not completely satisfied with your
-                                    purchase, you can return it within 30 days of
-                                    delivery for a full refund or exchange.
-                                    Items must be in their original condition
-                                    with all packaging and documentation.
-                                </div>
+                    {{-- FAQ 1 --}}
+                    <div class="faq-item active">
+                        <button type="button" class="faq-question" aria-expanded="true">
+                            <span class="faq-question-left">
+                                <span class="faq-number">01</span>
+                                <span class="faq-question-text">What is your return policy?</span>
+                            </span>
+                            <span class="faq-toggle">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                We offer a 30-day return policy on all items. If you're not completely satisfied with
+                                your purchase, you can return it within 30 days of delivery for a full refund or
+                                exchange. Items must be in their original condition with all packaging and
+                                documentation.
                             </div>
                         </div>
+                    </div>
 
-
-                        {{-- FAQ 2 --}}
-                        <div class="faq-item">
-                            <button type="button" class="faq-question" aria-expanded="false">
-                                <span class="faq-question-left">
-                                    <span class="faq-number">02</span>
-
-                                    <span class="faq-question-text">
-                                        Do you offer custom design services?
-                                    </span>
-                                </span>
-
-                                <span class="faq-toggle">
-                                    <i class="bi bi-chevron-down"></i>
-                                </span>
-                            </button>
-
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    Yes, we specialize in custom jewellery design.
-                                    Our expert designers work closely with you to
-                                    create a unique piece that reflects your
-                                    personal style. From concept to creation,
-                                    we'll guide you through every step.
-                                </div>
+                    {{-- FAQ 2 --}}
+                    <div class="faq-item">
+                        <button type="button" class="faq-question" aria-expanded="false">
+                            <span class="faq-question-left">
+                                <span class="faq-number">02</span>
+                                <span class="faq-question-text">Do you offer custom design services?</span>
+                            </span>
+                            <span class="faq-toggle">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Yes, we specialize in custom jewellery design. Our expert designers work closely with
+                                you to create a unique piece that reflects your personal style. From concept to
+                                creation, we'll guide you through every step.
                             </div>
                         </div>
+                    </div>
 
-
-                        {{-- FAQ 3 --}}
-                        <div class="faq-item">
-                            <button type="button" class="faq-question" aria-expanded="false">
-                                <span class="faq-question-left">
-                                    <span class="faq-number">03</span>
-
-                                    <span class="faq-question-text">
-                                        How do I care for my jewellery?
-                                    </span>
-                                </span>
-
-                                <span class="faq-toggle">
-                                    <i class="bi bi-chevron-down"></i>
-                                </span>
-                            </button>
-
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    To keep your jewellery looking its best,
-                                    clean it regularly with a soft cloth and mild
-                                    soap solution. Avoid exposing it to harsh
-                                    chemicals, perfumes or lotions. Store each
-                                    piece separately in a soft pouch or jewellery
-                                    box to prevent scratches.
-                                </div>
+                    {{-- FAQ 3 --}}
+                    <div class="faq-item">
+                        <button type="button" class="faq-question" aria-expanded="false">
+                            <span class="faq-question-left">
+                                <span class="faq-number">03</span>
+                                <span class="faq-question-text">How do I care for my jewellery?</span>
+                            </span>
+                            <span class="faq-toggle">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                To keep your jewellery looking its best, clean it regularly with a soft cloth and mild
+                                soap solution. Avoid exposing it to harsh chemicals, perfumes or lotions. Store each
+                                piece separately in a soft pouch or jewellery box to prevent scratches.
                             </div>
                         </div>
+                    </div>
 
-
-                        {{-- FAQ 4 --}}
-                        <div class="faq-item">
-                            <button type="button" class="faq-question" aria-expanded="false">
-                                <span class="faq-question-left">
-                                    <span class="faq-number">04</span>
-
-                                    <span class="faq-question-text">
-                                        How long does shipping take?
-                                    </span>
-                                </span>
-
-                                <span class="faq-toggle">
-                                    <i class="bi bi-chevron-down"></i>
-                                </span>
-                            </button>
-
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    Standard shipping within India typically
-                                    takes 5–7 business days. International shipping
-                                    generally takes 10–14 business days. All orders
-                                    are shipped with tracking for your peace of mind.
-                                </div>
+                    {{-- FAQ 4 --}}
+                    <div class="faq-item">
+                        <button type="button" class="faq-question" aria-expanded="false">
+                            <span class="faq-question-left">
+                                <span class="faq-number">04</span>
+                                <span class="faq-question-text">How long does shipping take?</span>
+                            </span>
+                            <span class="faq-toggle">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Standard shipping within India typically takes 5–7 business days. International shipping
+                                generally takes 10–14 business days. All orders are shipped with tracking for your peace
+                                of mind.
                             </div>
                         </div>
+                    </div>
 
-
-                        {{-- FAQ 5 --}}
-                        <div class="faq-item">
-                            <button type="button" class="faq-question" aria-expanded="false">
-                                <span class="faq-question-left">
-                                    <span class="faq-number">05</span>
-
-                                    <span class="faq-question-text">
-                                        Are your jewellery pieces certified?
-                                    </span>
-                                </span>
-
-                                <span class="faq-toggle">
-                                    <i class="bi bi-chevron-down"></i>
-                                </span>
-                            </button>
-
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    Selected jewellery pieces come with applicable
-                                    authenticity and certification documentation.
-                                    Product-specific certification details are
-                                    provided on the respective product page.
-                                </div>
+                    {{-- FAQ 5 --}}
+                    <div class="faq-item">
+                        <button type="button" class="faq-question" aria-expanded="false">
+                            <span class="faq-question-left">
+                                <span class="faq-number">05</span>
+                                <span class="faq-question-text">Are your jewellery pieces certified?</span>
+                            </span>
+                            <span class="faq-toggle">
+                                <i class="bi bi-chevron-down"></i>
+                            </span>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-inner">
+                                Selected jewellery pieces come with applicable authenticity and certification
+                                documentation. Product-specific certification details are provided on the respective
+                                product page.
                             </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -3860,33 +4437,195 @@ Fully responsive for all screen types.
         </div>
     </section>
 
-
     {{-- =============================================
     CTA SECTION
     ============================================= --}}
     <section class="cta-section-modern py-5">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-            <div class="cta-box text-center" style="max-width:600px;margin:0 auto;padding:20px 0;">
-                <span class="cta-badge"
-                    style="display:inline-block;padding:4px 16px;background:rgba(165,139,84,0.2);color:#A58B54;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.15em;border-radius:50px;margin-bottom:12px;border:1px solid rgba(165,139,84,0.2);">Exclusive
-                    Offer</span>
-                <h2 class="cta-title"
-                    style="font-family:'Cormorant Garamond',serif;font-size:2.5rem;font-weight:500;color:#FFFFFF;margin-bottom:8px;">
-                    Subscribe to Our Newsletter</h2>
-                <p class="cta-description" style="font-size:1rem;color:rgba(255,255,255,0.7);margin-bottom:24px;">Be the
-                    first to know about new arrivals, exclusive collections, and special
-                    offers.</p>
-                <form class="cta-form" id="newsletterForm" style="display:flex;justify-content:center;">
-                    <div class="cta-form-group" style="display:flex;max-width:480px;width:100%;gap:8px;">
-                        <input type="email" class="cta-input" placeholder="Enter your email address" required
-                            style="flex:1;padding:12px 18px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:50px;color:#FFFFFF;font-size:0.9rem;transition:all 0.3s ease;font-family:'Plus Jakarta Sans',sans-serif;">
-                        <button type="submit" class="cta-btn"
-                            style="padding:12px 24px;background:#A58B54;color:#FFFFFF;font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;border:none;border-radius:50px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all 0.3s ease;white-space:nowrap;font-family:'Plus Jakarta Sans',sans-serif;">Subscribe
-                            <i class="bi bi-arrow-right"></i></button>
+        <div class="max-w-7xl mx-auto">
+
+            <!-- HEADER SECTION – refined -->
+            <div class="text-center max-w-2xl mx-auto mb-14">
+                <p class="text-[11px] uppercase tracking-[0.3em] text-brand-gold font-semibold mb-2">We’re Here To Help
+                </p>
+                <h1 class="font-serif text-4xl sm:text-5xl font-medium tracking-wide mb-4 text-white">Let’s Connect With
+                    Us</h1>
+                <div class="flex items-center justify-center space-x-3 mb-5">
+                    <span class="h-[1px] w-12 bg-brand-gold/40"></span>
+                    <span class="w-1.5 h-1.5 rounded-full bg-brand-gold/60"></span>
+                    <span class="h-[1px] w-12 bg-brand-gold/40"></span>
+                </div>
+                <p class="text-sm sm:text-base text-brand-gold font-light leading-relaxed max-w-xl mx-auto">
+                    Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always
+                    happy to assist. Reach out, and we’ll be delighted to help you find the perfect piece or resolve
+                    your query.
+                </p>
+            </div>
+
+            <!-- MAIN GRID CONTAINER -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+                <!-- LEFT COLUMN: Support Channels & Map Section -->
+                <div class="lg:col-span-7 space-y-6">
+
+                    <!-- Support Channels Row – professional cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+                        <!-- WhatsApp Support -->
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">
+                                WhatsApp</h3>
+                            <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
+                        </div>
+
+                        <!-- Call Support -->
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Call Us
+                            </h3>
+                            <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
+                        </div>
+
+                        <!-- Email Support -->
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Email
+                            </h3>
+                            <p class="text-xs font-medium text-brand-dark truncate max-w-full">support@aethelweave.com
+                            </p>
+                        </div>
+
                     </div>
-                </form>
-                <p class="cta-note" style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:12px;">We respect
-                    your privacy. Unsubscribe at any time.</p>
+
+                    <!-- Map & Boutique Location – polished -->
+                    <div
+                        class="bg-brand-card p-6 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3
+                                class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-gold bg-brand-bg px-3 py-1 rounded border border-brand-border/60">
+                                Find Us On Map</h3>
+                            <a href="https://maps.google.com" target="_blank"
+                                class="text-xs text-brand-gold underline hover:text-brand-dark transition">Open in
+                                Maps</a>
+                        </div>
+
+                        <!-- Google Map Embedded iframe – refined container -->
+                        <div
+                            class="map-container w-full h-56 bg-gray-100 rounded-lg mb-4 border border-brand-border/60">
+                            <iframe width="100%" height="100%" frameborder="0" style="border:0" loading="lazy"
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.5936087570146!2d73.8870!3d18.5362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDMyJzEwLjQiTiA3M8KwNTMnMTMuMiJF!5e0!3m2!1sen!2sin!4v1620000000000"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">Visit Our
+                                Boutique</p>
+                            <p class="text-xs text-brand-dark font-medium">123, Jewelry Lane, Koregaon Park, Pune,
+                                Maharashtra 411001, India</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: Contact Form – elevated design -->
+                <div
+                    class="lg:col-span-5 bg-brand-card p-8 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                    <h2 class="text-xl font-serif font-medium text-brand-dark mb-1">Get In Touch</h2>
+                    <p class="text-xs text-gray-500 mb-6">Speak with our jewellery consultant</p>
+
+                    @if(session('success'))
+                        <div class="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 text-xs rounded">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <form action="{{ route('contact-inquiry.store') }}" method="POST" class="space-y-5">
+                        @csrf
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">First
+                                    Name *</label>
+                                <input type="text" name="first_name" required placeholder="Enter your first name"
+                                    class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Last
+                                    Name *</label>
+                                <input type="text" name="last_name" required placeholder="Enter your last name"
+                                    class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Email
+                                Address *</label>
+                            <input type="email" name="email" required placeholder="Enter your email"
+                                class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
+                        </div>
+
+                        <div>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">I
+                                am Interested In... *</label>
+                            <select name="interest" required
+                                class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold text-gray-600 transition">
+                                <option value="" disabled selected>I am Interested In...</option>
+                                <option value="Rings">Rings & Bands</option>
+                                <option value="Necklaces">Necklaces & Chains</option>
+                                <option value="Bracelets">Bracelets & Bangles</option>
+                                <option value="Custom">Custom Design Consultation</option>
+                                <option value="Other">General Inquiry</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label
+                                class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Tell
+                                us your enquiry *</label>
+                            <textarea name="message" rows="3" required placeholder="Enter your message"
+                                class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold resize-none input-focus-ring transition"></textarea>
+                        </div>
+
+                        <button type="submit"
+                            class="w-full py-3.5 bg-brand-gold hover:bg-brand-goldDark text-white font-medium text-xs uppercase tracking-[0.2em] rounded-lg transition shadow-sm hover:shadow-md">
+                            Submit Your Enquiry
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+            <!-- tiny footer note (clean) -->
+            <div
+                class="text-center mt-12 text-[10px] text-white tracking-widest uppercase border-t border-brand-border/40 pt-6">
+                <span class="text-brand-gold/60">✦</span> Aethelweave · artisan jewellery
             </div>
         </div>
     </section>
@@ -3894,39 +4633,67 @@ Fully responsive for all screen types.
     {{-- =============================================
     FOOTER
     ============================================= --}}
-    <footer class="footer-modern" style="background:#2C2A29;padding:40px 0 20px;color:#FFFFFF;">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-            <div class="row" style="display:flex;flex-wrap:wrap;margin:0 -15px;align-items:center;">
-                <div class="col-md-6"
-                    style="padding:0 15px;flex:0 0 100%;max-width:100%;text-align:center;margin-bottom:16px;">
-                    <div class="footer-brand"
-                        style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:500;color:#A58B54;margin-bottom:4px;">
-                        Aethelweave</div>
-                    <p class="footer-tagline"
-                        style="font-size:0.75rem;color:rgba(255,255,255,0.5);letter-spacing:0.2em;text-transform:uppercase;">
-                        Artisan Jewellery · Since 2010</p>
-                </div>
-                <div class="col-md-6" style="padding:0 15px;flex:0 0 100%;max-width:100%;text-align:center;">
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">Aethelweave</div>
+                    <p class="footer-tagline">Artisan Jewellery · Since 2010</p>
+                    <p class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance and
+                        exceptional quality.</p>
                     <div class="footer-social">
-                        <a href="#" aria-label="Facebook"
-                            style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);transition:all 0.3s ease;text-decoration:none;font-size:16px;"><i
-                                class="bi bi-facebook"></i></a>
-                        <a href="#" aria-label="Instagram"
-                            style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);transition:all 0.3s ease;text-decoration:none;font-size:16px;"><i
-                                class="bi bi-instagram"></i></a>
-                        <a href="#" aria-label="YouTube"
-                            style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);transition:all 0.3s ease;text-decoration:none;font-size:16px;"><i
-                                class="bi bi-youtube"></i></a>
-                        <a href="#" aria-label="Pinterest"
-                            style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.5);transition:all 0.3s ease;text-decoration:none;font-size:16px;"><i
-                                class="bi bi-pinterest"></i></a>
+                        <a href="#" aria-label="Facebook" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest" class="social-link"><i class="bi bi-pinterest"></i></a>
                     </div>
                 </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('about-us') }}">About Us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+
+                <!-- We Accept -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">We Accept</h4>
+                    <div class="footer-payment">
+                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
+                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
+                        <p class="payment-text">Secure payment options available</p>
+                    </div>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
+                        <li><i class="bi bi-geo-alt"></i> 123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001,
+                            India</li>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
             </div>
-            <hr class="footer-divider" style="border-color:rgba(255,255,255,0.08);margin:16px 0;">
-            <div class="text-center">
-                <p class="footer-copy" style="font-size:0.7rem;color:rgba(255,255,255,0.3);letter-spacing:0.05em;">
-                    &copy; 2026 Aethelweave. All rights reserved.</p>
+
+            <!-- Footer Bottom -->
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
+                    <a href={{ route('terms-conditions') }}>Terms of Use</a>
+                    <a href={{ route('disclaimer') }}>Disclaimer</a>
+                    <a href="#">Sitemap</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -4260,6 +5027,53 @@ Fully responsive for all screen types.
 
             });
 
+        });
+    </script>
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', function () {
+                    const isOpen = mobileMenu.style.display === 'block';
+                    mobileMenu.style.display = isOpen ? 'none' : 'block';
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar-modern');
+            if (navbar) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 50) {
+                        navbar.style.background = 'rgba(253, 251, 247, 0.98)';
+                        navbar.style.boxShadow = '0 2px 24px rgba(44, 42, 41, 0.06)';
+                    } else {
+                        navbar.style.background = 'rgba(253, 251, 247, 0.92)';
+                        navbar.style.boxShadow = 'none';
+                    }
+                });
+            }
+
+            // Show desktop nav links on larger screens
+            const mediaQuery = window.matchMedia('(min-width: 768px)');
+            const navLinks = document.querySelector('.nav-links-desktop');
+            const hamburgerBtn = document.querySelector('.hamburger-btn');
+
+            function handleScreenChange(e) {
+                if (e.matches) {
+                    if (navLinks) navLinks.style.display = 'flex';
+                    if (hamburgerBtn) hamburgerBtn.style.display = 'none';
+                    if (mobileMenu) mobileMenu.style.display = 'none';
+                } else {
+                    if (navLinks) navLinks.style.display = 'none';
+                    if (hamburgerBtn) hamburgerBtn.style.display = 'flex';
+                }
+            }
+
+            mediaQuery.addEventListener('change', handleScreenChange);
+            handleScreenChange(mediaQuery);
         });
     </script>
 

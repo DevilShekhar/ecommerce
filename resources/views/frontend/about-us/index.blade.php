@@ -5,555 +5,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Us</title>
-    <style>
-        * {
-            box-sizing: border-box
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif
-        }
-
-        .about-section {
-            padding: 80px 0;
-            background: #faf7f2
-        }
-
-        .about-container {
-            max-width: 1250px;
-            margin: 0 auto;
-            padding: 0 30px
-        }
-
-        .about-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 60px;
-            align-items: center
-        }
-
-        .about-content {
-            padding: 10px 0
-        }
-
-        .about-subtitle {
-            display: inline-block;
-            margin-bottom: 12px;
-            color: #b18a45;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px
-        }
-
-        .about-title {
-            margin: 0;
-            color: #2c2416;
-            font-size: 42px;
-            font-weight: 700;
-            line-height: 1.25;
-            max-width: 650px
-        }
-
-        .about-divider {
-            width: 55px;
-            height: 3px;
-            background: #b18a45;
-            margin: 22px 0 20px
-        }
-
-        .about-description {
-            color: #4a4035;
-            font-size: 16px;
-            line-height: 1.8;
-            max-width: 650px
-        }
-
-        .about-image-wrapper {
-            width: 100%
-        }
-
-        .about-image {
-            width: 100%;
-            height: 430px;
-            object-fit: cover;
-            display: block;
-            border-radius: 0
-        }
-
-        .about-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            margin-top: 42px
-        }
-
-        .about-stat {
-            text-align: center;
-            padding: 0 18px;
-            border-right: 1px solid #e8d9c0
-        }
-
-        .about-stat:first-child {
-            padding-left: 0
-        }
-
-        .about-stat:last-child {
-            border-right: none;
-            padding-right: 0
-        }
-
-        .stat-icon {
-            width: 55px;
-            height: 55px;
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8efe0;
-            border-radius: 50%;
-            color: #b18a45;
-            font-size: 25px
-        }
-
-        .stat-number {
-            display: block;
-            color: #b18a45;
-            font-size: 25px;
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 7px
-        }
-
-        .stat-label {
-            display: block;
-            color: #2c2416;
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap
-        }
-
-        .content-section {
-            padding: 90px 0;
-            background: #ffffff
-        }
-
-        .mission-section {
-            background: #f8f5ef
-        }
-
-        .content-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px
-        }
-
-        .content-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 70px;
-            align-items: center
-        }
-
-        .content-text {
-            padding: 10px
-        }
-
-        .content-subtitle {
-            display: inline-block;
-            margin-bottom: 12px;
-            color: #b18a45;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px
-        }
-
-        .content-title {
-            margin: 0;
-            color: #2c2416;
-            font-size: 42px;
-            font-weight: 700;
-            line-height: 1.3
-        }
-
-        .content-divider {
-            width: 55px;
-            height: 2px;
-            background: #b18a45;
-            margin: 22px 0 25px
-        }
-
-        .content-description {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.9
-        }
-
-        .content-image {
-            width: 100%;
-            height: 500px;
-            display: block;
-            object-fit: cover;
-            border-radius: 6px
-        }
-
-        /* WHY CHOOSE US */
-        .why-section {
-            padding: 90px 0;
-            background: #ffffff
-        }
-
-        .why-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px
-        }
-
-        .why-header {
-            text-align: center;
-            margin-bottom: 55px
-        }
-
-        .why-subtitle {
-            display: inline-block;
-            margin-bottom: 12px;
-            color: #b18a45;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px
-        }
-
-        .why-title {
-            margin: 0;
-            color: #2c2416;
-            font-size: 38px;
-            font-weight: 700;
-            line-height: 1.3
-        }
-
-        .why-divider {
-            width: 55px;
-            height: 3px;
-            background: #b18a45;
-            margin: 18px auto 0
-        }
-
-        .why-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 30px
-        }
-
-        .why-card {
-            background: #faf7f2;
-            border-radius: 12px;
-            padding: 35px 25px;
-            text-align: center;
-            transition: transform .3s ease, box-shadow .3s ease
-        }
-
-        .why-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 12px 30px rgba(177, 138, 69, 0.12)
-        }
-
-        .why-icon {
-            width: 70px;
-            height: 70px;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f8efe0;
-            border-radius: 50%;
-            font-size: 30px;
-            color: #b18a45
-        }
-
-        .why-card-title {
-            margin: 0 0 12px;
-            color: #2c2416;
-            font-size: 18px;
-            font-weight: 700
-        }
-
-        .why-card-text {
-            margin: 0;
-            color: #666;
-            font-size: 14px;
-            line-height: 1.7
-        }
-
-        /* TESTIMONIALS */
-        .testimonials-section {
-            padding: 90px 0;
-            background: #faf7f2
-        }
-
-        .testimonials-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px
-        }
-
-        .testimonials-header {
-            text-align: center;
-            margin-bottom: 55px
-        }
-
-        .testimonials-subtitle {
-            display: inline-block;
-            margin-bottom: 12px;
-            color: #b18a45;
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 2px
-        }
-
-        .testimonials-title {
-            margin: 0;
-            color: #2c2416;
-            font-size: 38px;
-            font-weight: 700;
-            line-height: 1.3
-        }
-
-        .testimonials-divider {
-            width: 55px;
-            height: 3px;
-            background: #b18a45;
-            margin: 18px auto 0
-        }
-
-        .testimonials-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 30px
-        }
-
-        .testimonial-card {
-            background: #ffffff;
-            border-radius: 12px;
-            padding: 35px 28px;
-            box-shadow: 0 8px 25px rgba(177, 138, 69, 0.08);
-            position: relative
-        }
-
-        .testimonial-card::before {
-            content: '“';
-            position: absolute;
-            top: 20px;
-            left: 25px;
-            font-size: 60px;
-            color: #f0e0c0;
-            font-family: Georgia, serif;
-            line-height: 1
-        }
-
-        .testimonial-text {
-            color: #555;
-            font-size: 15px;
-            line-height: 1.8;
-            margin: 25px 0 25px;
-            position: relative;
-            z-index: 1
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 14px
-        }
-
-        .author-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #f8efe0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #b18a45;
-            flex-shrink: 0
-        }
-
-        .author-info h4 {
-            margin: 0 0 3px;
-            color: #2c2416;
-            font-size: 16px;
-            font-weight: 700
-        }
-
-        .author-info span {
-            color: #b18a45;
-            font-size: 13px
-        }
-
-        @media (max-width:991px) {
-            .about-row {
-                grid-template-columns: 1fr;
-                gap: 40px
-            }
-
-            .about-image {
-                height: 400px
-            }
-
-            .about-title {
-                font-size: 36px
-            }
-
-            .about-stats {
-                grid-template-columns: repeat(4, 1fr)
-            }
-
-            .about-stat {
-                padding: 0 10px
-            }
-
-            .stat-number {
-                font-size: 22px
-            }
-
-            .stat-label {
-                font-size: 11px
-            }
-
-            .content-row {
-                grid-template-columns: 1fr;
-                gap: 40px
-            }
-
-            .content-title {
-                font-size: 34px
-            }
-
-            .content-image {
-                height: 400px
-            }
-
-            .why-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 25px
-            }
-
-            .why-title {
-                font-size: 32px
-            }
-
-            .testimonials-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 25px
-            }
-
-            .testimonials-title {
-                font-size: 32px
-            }
-        }
-
-        @media (max-width:575px) {
-            .about-section {
-                padding: 55px 0
-            }
-
-            .about-container {
-                padding: 0 18px
-            }
-
-            .about-title {
-                font-size: 30px
-            }
-
-            .about-description {
-                font-size: 15px
-            }
-
-            .about-image {
-                height: 300px
-            }
-
-            .about-stats {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 25px 0
-            }
-
-            .about-stat {
-                border-right: 1px solid #e8d9c0
-            }
-
-            .about-stat:nth-child(2) {
-                border-right: none
-            }
-
-            .about-stat:nth-child(3),
-            .about-stat:nth-child(4) {
-                border-top: 1px solid #e8d9c0;
-                padding-top: 25px
-            }
-
-            .about-stat:nth-child(4) {
-                border-right: none
-            }
-
-            .stat-number {
-                font-size: 22px
-            }
-
-            .stat-label {
-                font-size: 12px
-            }
-
-            .content-section {
-                padding: 60px 0
-            }
-
-            .content-title {
-                font-size: 30px
-            }
-
-            .content-description {
-                font-size: 15px
-            }
-
-            .content-image {
-                height: 300px
-            }
-
-            .why-section {
-                padding: 60px 0
-            }
-
-            .why-grid {
-                grid-template-columns: 1fr;
-                gap: 20px
-            }
-
-            .why-title {
-                font-size: 28px
-            }
-
-            .testimonials-section {
-                padding: 60px 0
-            }
-
-            .testimonials-grid {
-                grid-template-columns: 1fr;
-                gap: 20px
-            }
-
-            .testimonials-title {
-                font-size: 28px
-            }
-        }
-    </style>
+    <!-- Google Fonts: Cormorant Garamond for navbar -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/website.css') }}">
 </head>
 
 <body>
-    {{-- ABOUT US + STATS --}}
+
+    <!-- =============================================
+        NAVBAR
+    ============================================= -->
+    <nav class="navbar-modern">
+        <div class="navbar-container">
+            <!-- Logo -->
+            <a href="/" class="navbar-logo">
+                <span class="navbar-logo-text">Aethelweave</span>
+                <span class="navbar-logo-badge">Artisan</span>
+            </a>
+
+            <!-- Nav Links - Desktop -->
+            <ul class="nav-links-desktop">
+                <li><a href="/">Home</a></li>
+                <li><a href={{ route('shop.index') }}>Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="{{ route('about-us') }}">About</a></li>
+                <li><a href="{{ route('contact-us') }}">Contact</a></li>
+            </ul>
+
+            <!-- Right Icons -->
+            <div class="navbar-icons">
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-search"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-person"></i>
+                </a>
+                <a href="#" class="navbar-icon">
+                    <i class="bi bi-bag"></i>
+                    <span class="navbar-cart-count">0</span>
+                </a>
+                <!-- Hamburger (Mobile) -->
+                <button class="hamburger-btn" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Shop</a></li>
+                <li><a href="#">Collections</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- =============================================
+        SHOP HEADER
+    ============================================= -->
+    <section class="shop-header">
+        <h1><i class="fas fa-info-circle"></i> About Us</h1>
+        <p>Discover the story, passion, and craftsmanship behind our jewellery</p>
+        <div class="breadcrumb">
+            <a href="/">Home</a> / About Us
+            @if(request('category'))
+                / {{ $categories->where('id', request('category'))->first()->name ?? '' }}
+            @endif
+        </div>
+    </section>
+
+    {{-- =============================================
+    ABOUT US + STATS
+    ============================================= --}}
     <section class="about-section">
         <div class="about-container">
             <div class="about-row">
@@ -593,12 +125,17 @@
                     @if($aboutUs && $aboutUs->about_image)
                         <img src="{{ asset('storage/' . $aboutUs->about_image) }}" alt="{{ $aboutUs->about_title }}"
                             class="about-image">
+                    @else
+                        <img src="{{ asset('assets/admin/images/about-default.jpg') }}" alt="About Us" class="about-image">
                     @endif
                 </div>
             </div>
         </div>
     </section>
-    {{-- OUR MISSION --}}
+
+    {{-- =============================================
+    OUR MISSION
+    ============================================= --}}
     <section class="content-section mission-section">
         <div class="content-container">
             <div class="content-row">
@@ -616,18 +153,27 @@
                     @if($aboutUs && $aboutUs->mission_image)
                         <img src="{{ asset('storage/' . $aboutUs->mission_image) }}" alt="{{ $aboutUs->mission_title }}"
                             class="content-image">
+                    @else
+                        <img src="{{ asset('assets/admin/images/mission-default.jpg') }}" alt="Our Mission"
+                            class="content-image">
                     @endif
                 </div>
             </div>
         </div>
     </section>
-    {{-- OUR VISION --}}
+
+    {{-- =============================================
+    OUR VISION
+    ============================================= --}}
     <section class="content-section">
         <div class="content-container">
             <div class="content-row">
                 <div>
                     @if($aboutUs && $aboutUs->vision_image)
                         <img src="{{ asset('storage/' . $aboutUs->vision_image) }}" alt="{{ $aboutUs->vision_title }}"
+                            class="content-image">
+                    @else
+                        <img src="{{ asset('assets/admin/images/vision-default.jpg') }}" alt="Our Vision"
                             class="content-image">
                     @endif
                 </div>
@@ -644,7 +190,10 @@
             </div>
         </div>
     </section>
-    {{-- WHY CHOOSE US --}}
+
+    {{-- =============================================
+    WHY CHOOSE US
+    ============================================= --}}
     <section class="why-section">
         <div class="why-container">
             <div class="why-header">
@@ -679,7 +228,10 @@
             </div>
         </div>
     </section>
-    {{-- TESTIMONIALS --}}
+
+    {{-- =============================================
+    TESTIMONIALS - WITH IMAGES
+    ============================================= --}}
     <section class="testimonials-section">
         <div class="testimonials-container">
             <div class="testimonials-header">
@@ -688,33 +240,44 @@
                 <div class="testimonials-divider"></div>
             </div>
             <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
                 <div class="testimonial-card">
                     <p class="testimonial-text">The craftsmanship is exceptional. I bought a diamond necklace for my
                         anniversary and it exceeded all expectations. Truly premium quality!</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">👩</div>
+                        <div class="author-avatar">
+                            <img src="assets/admin/images/per1.jpg" alt="Priya Sharma">
+                        </div>
                         <div class="author-info">
                             <h4>Priya Sharma</h4>
                             <span>Mumbai</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Testimonial 2 -->
                 <div class="testimonial-card">
-                    <p class="testimonial-text">I’ve been a loyal customer for over 8 years. Their designs are timeless
+                    <p class="testimonial-text">I've been a loyal customer for over 8 years. Their designs are timeless
                         and the purity of gold is always guaranteed. Highly recommended!</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">👨</div>
+                        <div class="author-avatar">
+                            <img src="assets/admin/images/per2.jpg" alt="Rahul Mehta">
+                        </div>
                         <div class="author-info">
                             <h4>Rahul Mehta</h4>
                             <span>Delhi</span>
                         </div>
                     </div>
                 </div>
+
+                <!-- Testimonial 3 -->
                 <div class="testimonial-card">
                     <p class="testimonial-text">Bought my bridal set from here. The attention to detail and personalized
                         service made the experience truly special. Thank you!</p>
                     <div class="testimonial-author">
-                        <div class="author-avatar">👰</div>
+                        <div class="author-avatar">
+                            <img src="assets/admin/images/per3.jpg" alt="Ananya Patel">
+                        </div>
                         <div class="author-info">
                             <h4>Ananya Patel</h4>
                             <span>Ahmedabad</span>
@@ -724,6 +287,105 @@
             </div>
         </div>
     </section>
+
+    {{-- =============================================
+    FOOTER
+    ============================================= --}}
+    <footer class="footer-modern">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand Column -->
+                <div class="footer-col footer-brand-col">
+                    <div class="footer-brand">Aethelweave</div>
+                    <p class="footer-tagline">Artisan Jewellery · Since 2010</p>
+                    <p class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance and
+                        exceptional quality.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook" class="social-link"><i class="bi bi-facebook"></i></a>
+                        <a href="#" aria-label="Instagram" class="social-link"><i class="bi bi-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" class="social-link"><i class="bi bi-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest" class="social-link"><i class="bi bi-pinterest"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ route('about-us') }}">About Us</a></li>
+                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
+                        <li><a href="#">Blogs</a></li>
+                    </ul>
+                </div>
+
+                <!-- We Accept -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">We Accept</h4>
+                    <div class="footer-payment">
+                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
+                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
+                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
+                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
+                        <p class="payment-text">Secure payment options available</p>
+                    </div>
+                </div>
+
+                <!-- Contact Us -->
+                <div class="footer-col">
+                    <h4 class="footer-heading">Contact Us</h4>
+                    <ul class="footer-contact">
+                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
+                        <li><i class="bi bi-geo-alt"></i> 123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001,
+                            India</li>
+                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <hr class="footer-divider">
+            <div class="footer-bottom">
+                <p class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</p>
+                <div class="footer-bottom-links">
+                    <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
+                    <a href={{ route('terms-conditions') }}>Terms of Use</a>
+                    <a href={{ route('disclaimer') }}>Disclaimer</a>
+                    <a href="#">Sitemap</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =============================================
+        SCRIPTS
+    ============================================= -->
+    <script>
+        // Mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function () {
+            const hamburger = document.querySelector('.hamburger-btn');
+            const mobileMenu = document.querySelector('.mobile-menu');
+
+            if (hamburger && mobileMenu) {
+                hamburger.addEventListener('click', function () {
+                    const isOpen = mobileMenu.style.display === 'block';
+                    mobileMenu.style.display = isOpen ? 'none' : 'block';
+                });
+            }
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar-modern');
+            if (navbar) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        });
+    </script>
+
 </body>
 
 </html>
