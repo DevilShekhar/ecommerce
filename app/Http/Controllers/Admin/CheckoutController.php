@@ -491,6 +491,23 @@ class CheckoutController extends Controller
 
                     $product->query()->decrement('stock', $item['quantity']);
                 }
+                // Mark applied coupon as used
+                $appliedCouponId = session()->get('applied_coupon_id');
+
+                if ($appliedCouponId) {
+                    $coupon = Coupon::query()
+                        ->lockForUpdate()
+                        ->find($appliedCouponId);
+
+                    if ($coupon) {
+                        $coupon->increment('used_count');
+
+                        // Disable coupon after successful order
+                        $coupon->update([
+                            'status' => 0,
+                        ]);
+                    }
+                }
                 $order->load([
                     'user',
                     'items.product',
@@ -519,6 +536,12 @@ class CheckoutController extends Controller
                 }
 
                 session()->forget('cart');
+
+                session()->forget([
+                    'applied_coupon_id',
+                    'applied_coupon_code',
+                    'applied_coupon_discount',
+                ]);
 
                 return response()->json([
                     'success' => true,
@@ -707,6 +730,11 @@ class CheckoutController extends Controller
 
         $discountAmount = min($discountAmount, $orderAmount);
         $finalAmount = max($orderAmount - $discountAmount, 0);
+
+        // Store applied coupon in session
+        session()->put('applied_coupon_id', $coupon->id);
+        session()->put('applied_coupon_code', $coupon->code);
+        session()->put('applied_coupon_discount', round($discountAmount, 2));
 
         return response()->json([
             'success' => true,

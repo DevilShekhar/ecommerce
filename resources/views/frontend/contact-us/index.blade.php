@@ -8,8 +8,8 @@
         rel="stylesheet" />
     <style>
         /* =============================================
-            CONTACT PAGE STYLES
-        ============================================= */
+                    CONTACT PAGE STYLES
+                ============================================= */
 
         /* Container */
         .contact-wrapper {
@@ -88,8 +88,8 @@
         }
 
         /* =============================================
-            SUPPORT CARDS
-        ============================================= */
+                    SUPPORT CARDS
+                ============================================= */
         .support-cards {
             display: grid;
             grid-template-columns: 1fr;
@@ -155,8 +155,8 @@
         }
 
         /* =============================================
-            MAP SECTION
-        ============================================= */
+                    MAP SECTION
+                ============================================= */
         .map-section {
             background: #FFFFFF;
             padding: 20px;
@@ -240,8 +240,8 @@
         }
 
         /* =============================================
-            CONTACT FORM
-        ============================================= */
+                    CONTACT FORM
+                ============================================= */
         .contact-form-card {
             background: #FFFFFF;
             padding: 32px 28px;
@@ -396,8 +396,8 @@
         }
 
         /* =============================================
-            FOOTER NOTE
-        ============================================= */
+                    FOOTER NOTE
+                ============================================= */
         .contact-footer-note {
             text-align: center;
             margin-top: 50px;
@@ -415,8 +415,8 @@
         }
 
         /* =============================================
-            RESPONSIVE
-        ============================================= */
+                    RESPONSIVE
+                ============================================= */
         @media (max-width: 991px) {
             .contact-title {
                 font-size: 2.5rem;
@@ -503,25 +503,30 @@
 @section('content')
 
     <!-- =============================================
-        CONTACT PAGE CONTENT
-    ============================================= -->
+                CONTACT PAGE CONTENT
+            ============================================= -->
     <div class="contact-wrapper">
 
         <!-- HEADER -->
-        <div class="contact-header">
+        <div class="contact-header"
+            style="background-image: url('assets/admin/images/contact-bg.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+
             <span class="contact-eyebrow">We're Here To Help</span>
+
             <h1 class="contact-title">Let's Connect With Us</h1>
+
             <div class="contact-divider">
                 <span class="contact-divider-line"></span>
                 <span class="contact-divider-dot"></span>
                 <span class="contact-divider-line"></span>
             </div>
+
             <p class="contact-subtitle">
                 Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always happy
                 to assist. Reach out, and we'll be delighted to help you find the perfect piece or resolve your query.
             </p>
-        </div>
 
+        </div>
         <!-- GRID -->
         <div class="contact-grid">
 
@@ -572,8 +577,7 @@
                     <div class="map-container">
                         <iframe
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.5936087570146!2d73.8870!3d18.5362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDMyJzEwLjQiTiA3M8KwNTMnMTMuMiJF!5e0!3m2!1sen!2sin!4v1620000000000"
-                            loading="lazy"
-                            allowfullscreen>
+                            loading="lazy" allowfullscreen>
                         </iframe>
                     </div>
 
@@ -602,11 +606,13 @@
                     <div class="form-group-row">
                         <div class="form-group">
                             <label class="form-label">First Name *</label>
-                            <input type="text" name="first_name" required placeholder="Enter your first name" class="form-control" />
+                            <input type="text" name="first_name" required placeholder="Enter your first name"
+                                class="form-control" />
                         </div>
                         <div class="form-group">
                             <label class="form-label">Last Name *</label>
-                            <input type="text" name="last_name" required placeholder="Enter your last name" class="form-control" />
+                            <input type="text" name="last_name" required placeholder="Enter your last name"
+                                class="form-control" />
                         </div>
                     </div>
 
@@ -629,7 +635,8 @@
 
                     <div class="form-group">
                         <label class="form-label">Tell us your enquiry *</label>
-                        <textarea name="message" rows="4" required placeholder="Enter your message" class="form-textarea"></textarea>
+                        <textarea name="message" rows="4" required placeholder="Enter your message"
+                            class="form-textarea"></textarea>
                     </div>
 
                     <button type="submit" class="btn-submit">
@@ -639,12 +646,6 @@
             </div>
 
         </div>
-
-        <!-- Footer Note -->
-        <div class="contact-footer-note">
-            <span>✦</span> Aethelweave · artisan jewellery
-        </div>
-
     </div>
 
 @endsection

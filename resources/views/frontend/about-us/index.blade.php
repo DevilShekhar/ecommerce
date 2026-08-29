@@ -11,8 +11,8 @@
 @section('content')
 
     <!-- =============================================
-        SHOP HEADER
-    ============================================= -->
+            SHOP HEADER
+        ============================================= -->
     <section class="shop-header">
         <h1><i class="fas fa-info-circle"></i> About Us</h1>
         <p>Discover the story, passion, and craftsmanship behind our jewellery</p>
@@ -114,8 +114,7 @@
                         <img src="{{ asset('storage/' . $aboutUs->vision_image) }}" alt="{{ $aboutUs->vision_title }}"
                             class="content-image">
                     @else
-                        <img src="{{ asset('assets/admin/images/vision-default.jpg') }}" alt="Our Vision"
-                            class="content-image">
+                        <img src="{{ asset('assets/admin/images/vision-default.jpg') }}" alt="Our Vision" class="content-image">
                     @endif
                 </div>
                 <div class="content-text">
@@ -136,37 +135,174 @@
     WHY CHOOSE US
     ============================================= --}}
     <section class="why-section">
-        <div class="why-container">
-            <div class="why-header">
-                <span class="why-subtitle">Why Choose Us</span>
-                <h2 class="why-title">The Reasons Behind Our Sparkle</h2>
-                <div class="why-divider"></div>
+        <!-- Why Choose Us Grid -->
+        <div class="why-grid">
+
+
+            {{-- 01 - Certified Purity --}}
+            <div class="why-card">
+
+                <img src="assets/admin/images/why-1.jpg" alt="Certified Jewellery Purity" class="why-card-image"
+                    loading="lazy">
+
+                <div class="why-card-overlay"></div>
+
+                <div class="why-card-content">
+
+                    <div class="why-card-top">
+
+                        <div class="why-icon">
+                            <i class="bi bi-award"></i>
+                        </div>
+
+                        <div class="why-card-number">
+                            01
+                        </div>
+
+                    </div>
+
+                    <div class="why-card-details">
+
+                        <h3 class="why-card-title">
+                            Certified Purity
+                        </h3>
+
+                        <p class="why-card-text">
+                            Every piece is hallmarked and certified for
+                            purity, quality and authenticity, giving you
+                            complete confidence in every purchase.
+                        </p>
+
+                    </div>
+
+                </div>
+
             </div>
-            <div class="why-grid">
-                <div class="why-card">
-                    <div class="why-icon">🏆</div>
-                    <h3 class="why-card-title">Certified Purity</h3>
-                    <p class="why-card-text">Every piece is hallmarked and certified for 100% purity and authenticity.
-                    </p>
+
+
+            {{-- 02 - Expert Craftsmanship --}}
+            <div class="why-card">
+
+                <img src="assets/admin/images/why-2.jpg" alt="Expert Jewellery Craftsmanship" class="why-card-image"
+                    loading="lazy">
+
+                <div class="why-card-overlay"></div>
+
+                <div class="why-card-content">
+
+                    <div class="why-card-top">
+
+                        <div class="why-icon">
+                            <i class="bi bi-tools"></i>
+                        </div>
+
+                        <div class="why-card-number">
+                            02
+                        </div>
+
+                    </div>
+
+                    <div class="why-card-details">
+
+                        <h3 class="why-card-title">
+                            Expert Craftsmanship
+                        </h3>
+
+                        <p class="why-card-text">
+                            Handcrafted by skilled master artisans who
+                            combine traditional techniques with modern
+                            jewellery craftsmanship.
+                        </p>
+
+                    </div>
+
                 </div>
-                <div class="why-card">
-                    <div class="why-icon">🛠️</div>
-                    <h3 class="why-card-title">Expert Craftsmanship</h3>
-                    <p class="why-card-text">Handcrafted by master artisans with decades of traditional expertise.</p>
-                </div>
-                <div class="why-card">
-                    <div class="why-icon">💎</div>
-                    <h3 class="why-card-title">Timeless Designs</h3>
-                    <p class="why-card-text">From classic heritage to modern elegance – designs that never go out of
-                        style.</p>
-                </div>
-                <div class="why-card">
-                    <div class="why-icon">🤝</div>
-                    <h3 class="why-card-title">Trusted Legacy</h3>
-                    <p class="why-card-text">Serving generations of families with honesty, quality and unmatched
-                        service.</p>
-                </div>
+
             </div>
+
+
+            {{-- 03 - Timeless Designs --}}
+            <div class="why-card">
+
+                <img src="assets/admin/images/why-3.jpg" alt="Timeless Jewellery Designs" class="why-card-image"
+                    loading="lazy">
+
+                <div class="why-card-overlay"></div>
+
+                <div class="why-card-content">
+
+                    <div class="why-card-top">
+
+                        <div class="why-icon">
+                            <i class="bi bi-gem"></i>
+                        </div>
+
+                        <div class="why-card-number">
+                            03
+                        </div>
+
+                    </div>
+
+                    <div class="why-card-details">
+
+                        <h3 class="why-card-title">
+                            Timeless Designs
+                        </h3>
+
+                        <p class="why-card-text">
+                            Discover elegant designs ranging from classic
+                            heritage pieces to contemporary styles made
+                            to remain beautiful for generations.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- 04 - Trusted Legacy --}}
+            <div class="why-card">
+
+                <img src="assets/admin/images/why-4.jpg" alt="Trusted Jewellery Legacy" class="why-card-image"
+                    loading="lazy">
+
+                <div class="why-card-overlay"></div>
+
+                <div class="why-card-content">
+
+                    <div class="why-card-top">
+
+                        <div class="why-icon">
+                            <i class="bi bi-hand-thumbs-up"></i>
+                        </div>
+
+                        <div class="why-card-number">
+                            04
+                        </div>
+
+                    </div>
+
+                    <div class="why-card-details">
+
+                        <h3 class="why-card-title">
+                            Trusted Legacy
+                        </h3>
+
+                        <p class="why-card-text">
+                            Built on trust, transparency and exceptional
+                            service, we proudly serve customers and families
+                            with jewellery they can cherish.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
         </div>
     </section>
 

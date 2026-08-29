@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\InventoryTransaction;
 use App\Models\Order;
 use App\Models\OrderReturn;
+use App\Models\OrderStatusHistory;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductRating;
@@ -94,13 +95,28 @@ class OrderController extends Controller
         $returnRequest = $order->returns()->latest()->first();
 
         $isSuperAdmin = Auth::check() && Auth::user()->role?->name === 'SuperAdmin';
+        $statusHistory = $order->statusHistories()
+            ->orderBy('changed_at', 'asc')
+            ->get();
+
+        // Create a mapping of status to its timestamp
+        $statusTimestamps = [];
+        foreach ($statusHistory as $history) {
+            $statusTimestamps[$history->new_status] = $history->changed_at;
+        }
+
+        // Also include the initial status (when order was created)
+        if ($order->created_at) {
+            $statusTimestamps['pending'] = $order->created_at;
+        }
 
         return view('admin.orders.show', compact(
             'order',
             'categories',
             'orders',
             'returnRequest',
-            'isSuperAdmin'
+            'isSuperAdmin', 'statusHistory',
+        'statusTimestamps',
         ));
     }
 
@@ -111,61 +127,29 @@ class OrderController extends Controller
                 'required',
                 'in:pending,confirmed,processing,packed,shipped,out_for_delivery,delivered,return_requested,returned,refunded,cancelled',
             ],
+            'notes' => 'nullable|string|max:500',
         ]);
 
         $currentStatus = strtolower($order->order_status ?? 'pending');
         $newStatus = strtolower($request->status);
 
+        // Status transition rules
         $allowedTransitions = [
-            'pending' => [
-                'confirmed',
-                'cancelled',
-            ],
-
-            'confirmed' => [
-                'processing',
-                'cancelled',
-            ],
-
-            'processing' => [
-                'packed',
-                'cancelled',
-            ],
-
-            'packed' => [
-                'shipped',
-                'cancelled',
-            ],
-
-            'shipped' => [
-                'out_for_delivery',
-            ],
-
-            'out_for_delivery' => [
-                'delivered',
-            ],
-
-            'delivered' => [
-                'return_requested',
-            ],
-
-            'return_requested' => [
-                'returned',
-            ],
-
-            'returned' => [
-                'refunded',
-            ],
-
+            'pending' => ['confirmed', 'cancelled'],
+            'confirmed' => ['processing', 'cancelled'],
+            'processing' => ['packed', 'cancelled'],
+            'packed' => ['shipped', 'cancelled'],
+            'shipped' => ['out_for_delivery'],
+            'out_for_delivery' => ['delivered'],
+            'delivered' => ['return_requested'],
+            'return_requested' => ['returned'],
+            'returned' => ['refunded'],
             'cancelled' => [],
-
             'refunded' => [],
         ];
 
-        if (
-            ! isset($allowedTransitions[$currentStatus]) ||
-            ! in_array($newStatus, $allowedTransitions[$currentStatus])
-        ) {
+        if (! isset($allowedTransitions[$currentStatus]) ||
+            ! in_array($newStatus, $allowedTransitions[$currentStatus])) {
             return redirect()
                 ->back()
                 ->with(
@@ -183,20 +167,20 @@ class OrderController extends Controller
             'status_updated_at' => now(),
         ];
 
+        // Set specific timestamps for certain statuses
         if ($newStatus === 'return_requested') {
             $updateData['return_requested_at'] = now();
         }
-
         if ($newStatus === 'returned') {
             $updateData['returned_at'] = now();
         }
-
         if ($newStatus === 'refunded') {
             $updateData['refunded_at'] = now();
         }
 
+        // Handle cancellation with stock restoration
         if ($newStatus === 'cancelled') {
-            DB::transaction(function () use ($order, $updateData) {
+            DB::transaction(function () use ($order, $updateData, $request) {
                 $order->load('items');
 
                 foreach ($order->items as $item) {
@@ -229,9 +213,15 @@ class OrderController extends Controller
                 }
 
                 $order->update($updateData);
+
+                // Create status history for cancellation
+                $this->createStatusHistory($order, $currentStatus, $newStatus, $request->notes);
             });
         } else {
             $order->update($updateData);
+
+            // Create status history
+            $this->createStatusHistory($order, $currentStatus, $newStatus, $request->notes);
         }
 
         return redirect()
@@ -242,6 +232,21 @@ class OrderController extends Controller
                 ucwords(str_replace('_', ' ', $newStatus)).
                 ' successfully.'
             );
+    }
+
+    /**
+     * Create status history entry
+     */
+    private function createStatusHistory(Order $order, $oldStatus, $newStatus, $notes = null)
+    {
+        OrderStatusHistory::create([
+            'order_id' => $order->id,
+            'old_status' => $oldStatus,
+            'new_status' => $newStatus,
+            'notes' => $notes,
+            'changed_by' => Auth::id(),
+            'changed_at' => now(),
+        ]);
     }
 
     public function cancel(Request $request, $id)
@@ -302,65 +307,6 @@ class OrderController extends Controller
             ->route('customer.orders.index')
             ->with('success', 'Your order has been cancelled successfully and stock has been restored.');
     }
-
-    // public function cancel(Request $request, $id)
-    // {
-    //     $request->validate([
-    //         'cancellation_reason' => 'required|string|max:255',
-    //     ]);
-    //     $order = Order::where('id', $id)
-    //         ->where('user_id', Auth::id())
-    //         ->firstOrFail();
-
-    //     if (strtolower($order->order_status) !== 'pending') {
-    //         return redirect()
-    //             ->route('customer.orders.index')
-    //             ->with('error', 'This order can no longer be cancelled.');
-    //     }
-
-    //     DB::transaction(function () use ($order, $request) {
-    //         $order->load('items');
-
-    //         foreach ($order->items as $item) {
-    //             $product = Product::lockForUpdate()->find($item->product_id);
-
-    //             if ($product) {
-    //                 $stockBefore = (int) $product->stock;
-    //                 $quantity = (int) $item->quantity;
-    //                 $stockAfter = $stockBefore + $quantity;
-
-    //                 $product->update([
-    //                     'stock' => $stockAfter,
-    //                     'updated_by' => Auth::id(),
-    //                 ]);
-
-    //                 InventoryTransaction::create([
-    //                     'product_id' => $product->id,
-    //                     'type' => 'stock_in',
-    //                     'quantity' => $quantity,
-    //                     'stock_before' => $stockBefore,
-    //                     'stock_after' => $stockAfter,
-    //                     'reference_type' => 'order_cancelled',
-    //                     'reference_id' => $order->id,
-    //                     'supplier_name' => null,
-    //                     'invoice_number' => null,
-    //                     'notes' => 'Stock restored due to order cancellation.',
-    //                     'created_by' => Auth::id(),
-    //                 ]);
-    //             }
-    //         }
-
-    //         $order->update([
-    //             'order_status' => 'cancelled',
-    //             'cancellation_reason' => $request->cancellation_reason,
-    //         ]);
-    //     });
-
-    //     return redirect()
-    //         ->route('customer.orders.index')
-    //         ->with('success', 'Your order has been cancelled successfully and stock has been restored.');
-    // }
-
     public function requestReturn(Request $request, Order $order)
     {
         if ($order->user_id !== Auth::id()) {
