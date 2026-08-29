@@ -408,15 +408,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if(
-                                        !in_array($trackingStatus, [
-                                            'cancelled',
-                                            'failed',
-                                            'return_requested',
-                                            'returned',
-                                            'refunded'
-                                        ])
-                                    )
+                                @if(!in_array($trackingStatus, ['cancelled','failed','return_requested','returned','refunded']))
                                     <h5 class="tracking-section-title">Order Status</h5>
                                     <div class="tracking-timeline-horizontal">
                                         @foreach($steps as $key => $step)
@@ -424,9 +416,14 @@
                                                 $stepNumber = $statusOrder[$key];
                                                 $isCompleted = $stepNumber <= $currentStep;
                                                 $isCurrent = $stepNumber === $currentStep;
+
+                                                // Get timestamp for this status
+                                                $statusTimestamp = null;
+                                                if (isset($order->statusTimestamps[$key])) {
+                                                    $statusTimestamp = $order->statusTimestamps[$key];
+                                                }
                                             @endphp
-                                            <div
-                                                class="tracking-horizontal-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
+                                            <div class="tracking-horizontal-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
                                                 <div class="tracking-horizontal-icon-wrapper">
                                                     <div class="tracking-horizontal-icon">
                                                         <i class="bi {{ $step['icon'] }}"></i>
@@ -443,6 +440,15 @@
                                                         @endif
                                                     </h5>
                                                     <p>{{ $step['description'] }}</p>
+
+                                                    {{-- Show timestamp if completed --}}
+                                                    @if($isCompleted && $statusTimestamp)
+                                                        <div class="tracking-timestamp">
+                                                            <i class="bi bi-clock-history"></i>
+                                                            <span>{{ $statusTimestamp->format('d M Y, h:i A') }}</span>
+                                                        </div>
+                                                    @endif
+
                                                     @if($isCompleted)
                                                         <small><i class="bi bi-check-circle"></i>
                                                             {{ $isCurrent ? 'Current Status' : 'Completed' }}</small>

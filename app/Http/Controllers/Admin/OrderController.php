@@ -20,17 +20,25 @@ class OrderController extends Controller
     public function index()
     {
         $user = Auth::user();
-        if ($user->role?->name === 'SuperAdmin') {
 
+        // Check if user is SuperAdmin
+        if ($user->role?->name === 'SuperAdmin') {
             $orders = Order::with([
                 'user',
                 'items.product',
+                'statusHistories', // Load status histories
             ])
                 ->withCount('items')
                 ->latest()
                 ->paginate(10);
 
-            $categories = ProductCategory::query()->where('status', 1)
+            // Add status timestamps to each order
+            $orders->each(function ($order) {
+                $order->statusTimestamps = $this->getOrderStatusTimestamps($order);
+            });
+
+            $categories = ProductCategory::query()
+                ->where('status', 1)
                 ->orderBy('name')
                 ->get();
 
@@ -39,15 +47,24 @@ class OrderController extends Controller
                 'categories'
             ));
         }
+
+        // Regular customer orders
         $orders = Order::where('user_id', $user->id)
             ->with([
                 'items.product',
+                'statusHistories', // Load status histories
             ])
             ->withCount('items')
             ->latest()
             ->paginate(10);
 
-        $categories = ProductCategory::query()->where('status', 1)
+        // Add status timestamps to each order
+        $orders->each(function ($order) {
+            $order->statusTimestamps = $this->getOrderStatusTimestamps($order);
+        });
+
+        $categories = ProductCategory::query()
+            ->where('status', 1)
             ->orderBy('name')
             ->get();
 
@@ -58,8 +75,35 @@ class OrderController extends Controller
     }
 
     /**
-     * Show a single order.
+     * Get status timestamps for an order from history
      */
+    private function getOrderStatusTimestamps($order)
+    {
+        $statusTimestamps = [];
+
+        // Get all status histories ordered by changed_at
+        $histories = $order->statusHistories()
+            ->orderBy('changed_at', 'asc')
+            ->get();
+
+        foreach ($histories as $history) {
+            $statusTimestamps[$history->new_status] = $history->changed_at;
+        }
+
+        // Add initial pending status from created_at if not in history
+        if (! isset($statusTimestamps['pending']) && $order->created_at) {
+            $statusTimestamps['pending'] = $order->created_at;
+        }
+
+        // Add current status timestamp if not in history
+        $currentStatus = strtolower($order->order_status ?? 'pending');
+        if (! isset($statusTimestamps[$currentStatus]) && $order->status_updated_at) {
+            $statusTimestamps[$currentStatus] = $order->status_updated_at;
+        }
+
+        return $statusTimestamps;
+    }
+
     /**
      * Show a single order.
      */
@@ -99,13 +143,11 @@ class OrderController extends Controller
             ->orderBy('changed_at', 'asc')
             ->get();
 
-        // Create a mapping of status to its timestamp
         $statusTimestamps = [];
         foreach ($statusHistory as $history) {
             $statusTimestamps[$history->new_status] = $history->changed_at;
         }
 
-        // Also include the initial status (when order was created)
         if ($order->created_at) {
             $statusTimestamps['pending'] = $order->created_at;
         }
@@ -116,7 +158,7 @@ class OrderController extends Controller
             'orders',
             'returnRequest',
             'isSuperAdmin', 'statusHistory',
-        'statusTimestamps',
+            'statusTimestamps',
         ));
     }
 
@@ -307,6 +349,7 @@ class OrderController extends Controller
             ->route('customer.orders.index')
             ->with('success', 'Your order has been cancelled successfully and stock has been restored.');
     }
+
     public function requestReturn(Request $request, Order $order)
     {
         if ($order->user_id !== Auth::id()) {

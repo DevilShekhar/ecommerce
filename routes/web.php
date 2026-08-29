@@ -59,8 +59,10 @@ Route::get('/terms-conditions', [TermsConditionsController::class, 'index'])
     ->name('terms-conditions');
 Route::get('/contact-us', [ContactUsController::class, 'index'])
     ->name('contact-us');
-Route::post('/contact-inquiry', [ContactUsController::class, 'storeEnquiry'])
+
+Route::post('/contact-inquiry', [ContactSubmissionController::class, 'storeInquiry'])
     ->name('contact-inquiry.store');
+
 Route::get('/disclaimer', [DisclaimerController::class, 'index'])
     ->name('disclaimer');
 Route::get('/', [FrontendPageController::class, 'home'])
@@ -72,18 +74,12 @@ Route::prefix('admin')
     ->middleware(['auth'])
     ->name('admin.')
     ->group(function () {
-        Route::get('/about-us', [AboutUsController::class, 'adminIndex'])
-            ->name('about-us.index');
-        Route::get('/about-us/create', [AboutUsController::class, 'create'])
-            ->name('about-us.create');
-        Route::post('/about-us', [AboutUsController::class, 'store'])
-            ->name('about-us.store');
-        Route::get('/about-us/{aboutUs}/edit', [AboutUsController::class, 'edit'])
-            ->name('about-us.edit');
-        Route::put('/about-us/{aboutUs}', [AboutUsController::class, 'update'])
-            ->name('about-us.update');
-        Route::delete('/about-us/{aboutUs}', [AboutUsController::class, 'destroy'])
-            ->name('about-us.destroy');
+        Route::get('/about-us', [AboutUsController::class, 'adminIndex'])->name('about-us.index');
+        Route::get('/about-us/create', [AboutUsController::class, 'create'])->name('about-us.create');
+        Route::post('/about-us', [AboutUsController::class, 'store'])->name('about-us.store');
+        Route::get('/about-us/{aboutUs}/edit', [AboutUsController::class, 'edit'])->name('about-us.edit');
+        Route::put('/about-us/{aboutUs}', [AboutUsController::class, 'update'])->name('about-us.update');
+        Route::delete('/about-us/{aboutUs}', [AboutUsController::class, 'destroy'])->name('about-us.destroy');
 
         Route::get('/terms-conditions', [TermsConditionsController::class, 'adminIndex'])->name('terms-conditions.index');
         Route::get('/terms-conditions/create', [TermsConditionsController::class, 'create'])->name('terms-conditions.create');
@@ -141,43 +137,25 @@ Route::middleware('auth')->group(function () {
     Route::get('get-subcategories/{id}', [BrandController::class, 'getSubCategories']);
     Route::resource('coupons', CouponController::class);
     Route::resource('blogs', BlogController::class);
-    // Route::resource('products', ProductController::class);
-    Route::get('/dashboard/download-report', [DashboardController::class, 'downloadReport'])
-        ->name('dashboard.download.report');
-    Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])
-        ->name('dashboard.download.excel');
 
-    Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])
-        ->name('products.get.subcategories');
+    Route::get('/dashboard/download-report', [DashboardController::class, 'downloadReport'])->name('dashboard.download.report');
+    Route::get('/dashboard/download-excel-report', [DashboardController::class, 'downloadExcelReport'])->name('dashboard.download.excel');
+    Route::get('products/get-subcategories/{category_id}', [ProductController::class, 'getSubCategories'])->name('products.get.subcategories');
 
     Route::prefix('admin')
         ->middleware(['auth'])
         ->name('admin.')
         ->group(function () {
 
-            Route::get('products', [ProductController::class, 'index'])
-                ->name('products.index');
+            Route::get('products', [ProductController::class, 'index'])->name('products.index');
+            Route::get('products/create', [ProductController::class, 'create'])->name('products.create');
+            Route::post('products', [ProductController::class, 'store'])->name('products.store');
+            Route::get('products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
+            Route::get('products/{product:slug}/edit', [ProductController::class, 'edit'])->name('products.edit');
+            Route::put('products/{product:slug}', [ProductController::class, 'update'])->name('products.update');
+            Route::patch('products/{product:slug}', [ProductController::class, 'update'])->name('products.update');
+            Route::delete('products/{product:slug}', [ProductController::class, 'destroy'])->name('products.destroy');
 
-            Route::get('products/create', [ProductController::class, 'create'])
-                ->name('products.create');
-
-            Route::post('products', [ProductController::class, 'store'])
-                ->name('products.store');
-
-            Route::get('products/{product:slug}', [ProductController::class, 'show'])
-                ->name('products.show');
-
-            Route::get('products/{product:slug}/edit', [ProductController::class, 'edit'])
-                ->name('products.edit');
-
-            Route::put('products/{product:slug}', [ProductController::class, 'update'])
-                ->name('products.update');
-
-            Route::patch('products/{product:slug}', [ProductController::class, 'update'])
-                ->name('products.update');
-
-            Route::delete('products/{product:slug}', [ProductController::class, 'destroy'])
-                ->name('products.destroy');
             Route::resource('pages', PageController::class);
             Route::get('pages/{page}/sections', [PageSectionController::class, 'index'])->name('pages.sections.index');
             Route::get('pages/{page}/sections/create', [PageSectionController::class, 'create'])->name('pages.sections.create');
@@ -185,6 +163,7 @@ Route::middleware('auth')->group(function () {
             Route::get('pages/{page}/sections/{section}/edit', [PageSectionController::class, 'edit'])->name('pages.sections.edit');
             Route::put('pages/{page}/sections/{section}', [PageSectionController::class, 'update'])->name('pages.sections.update');
             Route::delete('pages/{page}/sections/{section}', [PageSectionController::class, 'destroy'])->name('pages.sections.destroy');
+
             Route::resource('offer-category', OfferCategoryController::class);
             Route::resource('offer', OfferController::class);
             Route::resource('banners', BannerController::class);
@@ -194,138 +173,91 @@ Route::middleware('auth')->group(function () {
     Route::post('/logos/update', [LogoController::class, 'update'])->name('logos.update');
     Route::get('contact-submissions', [ContactSubmissionController::class, 'index'])->name('admin.contact-submissions.index');
     Route::get('contact-submissions/{submission}', [ContactSubmissionController::class, 'show'])->name('admin.contact-submissions.show');
-    Route::get('offer/products-by-category', [OfferController::class, 'getProductsByCategory'])
-        ->name('admin.offer.products-by-category');
-    Route::resource('offer', OfferController::class)
-        ->except(['show'])
-        ->names('admin.offer');
+    Route::get('offer/products-by-category', [OfferController::class, 'getProductsByCategory'])->name('admin.offer.products-by-category');
+    Route::resource('offer', OfferController::class)->except(['show'])->names('admin.offer');
 });
 
 // Wishlist Routes (Old)
-Route::middleware(['auth'])->group(function () {
-    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-    Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
-    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
-});
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+//     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+//     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
+// });
 // =============================================
 Route::middleware(['auth'])->group(function () {
 
-    // Dashboard - SINGLE ROUTE
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/customer-dashboard', [DashboardController::class, 'customerDashboard'])
-        ->name('customer.dashboard');
+    Route::get('/customer-dashboard', [DashboardController::class, 'customerDashboard'])->name('customer.dashboard');
 
-    // Profile - Add missing routes
+    // Profile
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/password', [ProfileController::class, 'changePassword'])->name('profile.password');
     Route::put('/profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
     // Customer Wishlist
-    Route::get('/customer/wishlist', [WishlistController::class, 'index'])
-        ->name('customer.wishlist');
+    Route::get('/customer/wishlist', [WishlistController::class, 'index'])->name('customer.wishlist');
+    Route::post('/customer/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'])->name('customer.wishlist.toggle');
+    Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])->name('customer.wishlist.remove');
+    Route::get('/customer/products', [DashboardController::class, 'customerProducts'])->name('customer.products');
 
-    Route::post('/customer/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'])
-        ->name('customer.wishlist.toggle');
-
-    Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])
-        ->name('customer.wishlist.remove');
-
-    Route::get('/customer/products', [DashboardController::class, 'customerProducts'])
-        ->name('customer.products');
-    Route::get('/checkout', [CheckoutController::class, 'checkout'])
-        ->name('checkout');
-
-    Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])
-        ->name('cart.add');
+    Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
+    Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])->name('cart.add');
     Route::post('/customer/notify-me', [CheckoutController::class, 'store'])->name('customer.notify-me');
-
     Route::get('/customer/product-details/{id}', [DashboardController::class, 'getProductDetails'])->name('customer.product.details');
 
     Route::post('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
-
-    Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])
-        ->name('cart.remove');
+    Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])->name('cart.remove');
     Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
     Route::post('/cart/update/{key}', [CheckoutController::class, 'updateCart'])->name('cart.update');
     Route::get('/checkout/addresses', [CheckoutController::class, 'getAddresses'])->name('checkout.addresses');
-    Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])
-        ->name('checkout.applyCoupon');
-    Route::post(
-        '/orders/{order}/update-status',
-        [OrderController::class, 'updateStatus']
-    )->name('orders.update-status');
-    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])
-        ->name('customer.orders.cancel');
+    Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.applyCoupon');
+
+    Route::post('/orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::patch('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('customer.orders.cancel');
     Route::patch('/orders/{order}/return', [OrderController::class, 'requestReturn'])->name('customer.orders.return');
-
     Route::get('/orders/returns/{return}', [OrderReturnController::class, 'show'])->name('orders.returns.show');
-
     Route::post('/orders/returns/{return}/approve', [OrderReturnController::class, 'approve'])->name('orders.returns.approve');
-
     Route::post('/orders/returns/{return}/reject', [OrderReturnController::class, 'reject'])->name('orders.returns.reject');
-
     Route::post('/orders/returns/{return}/refund', [OrderReturnController::class, 'refund'])->name('orders.returns.refund');
-
     Route::post('/orders/rating', [OrderController::class, 'submitRating'])->name('customer.orders.rating');
 
     // Products / Shop
     Route::get('/shop', [ProductController::class, 'index'])->name('shop');
-    Route::get('/products/{slug}', [ProductController::class, 'show'])
-        ->name('product.details');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('product.details');
 
     Route::get('/category/{category}', [ProductController::class, 'byCategory'])->name('product.category');
     Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+
     // Account Settings
-    Route::get('/account-settings', [CustomerAccountController::class, 'accountSettings'])
-        ->name('account.settings');
+    Route::get('/account-settings', [CustomerAccountController::class, 'accountSettings'])->name('account.settings');
 
-    Route::put('/account-settings', [CustomerAccountController::class, 'updateAccountSettings'])
-        ->name('account.settings.update');
-    Route::put('/account/password', [CustomerAccountController::class, 'updatePassword'])
-        ->name('account.password.update');
-    Route::post('/users/send-offer', [UserController::class, 'sendOffer'])
-        ->name('users.send-offer');
+    Route::put('/account-settings', [CustomerAccountController::class, 'updateAccountSettings'])->name('account.settings.update');
+    Route::put('/account/password', [CustomerAccountController::class, 'updatePassword'])->name('account.password.update');
+    Route::post('/users/send-offer', [UserController::class, 'sendOffer'])->name('users.send-offer');
+
     // Addresses
-    Route::post('/account-addresses', [CustomerAccountController::class, 'storeAddress'])
-        ->name('account.addresses.store');
-
-    Route::put('/account-addresses/{addressId}/default', [CustomerAccountController::class, 'setDefaultAddress'])
-        ->name('account.addresses.default');
-
-    Route::delete('/account-addresses/{addressId}', [CustomerAccountController::class, 'deleteAddress'])
-        ->name('account.addresses.delete');
-
-    Route::put('/account-addresses/{addressId}', [CustomerAccountController::class, 'updateAddress'])
-        ->name('account.addresses.update');
+    Route::post('/account-addresses', [CustomerAccountController::class, 'storeAddress'])->name('account.addresses.store');
+    Route::put('/account-addresses/{addressId}/default', [CustomerAccountController::class, 'setDefaultAddress'])->name('account.addresses.default');
+    Route::delete('/account-addresses/{addressId}', [CustomerAccountController::class, 'deleteAddress'])->name('account.addresses.delete');
+    Route::put('/account-addresses/{addressId}', [CustomerAccountController::class, 'updateAddress'])->name('account.addresses.update');
 
     // Password
-    Route::put('/account-password', [CustomerAccountController::class, 'updatePassword'])
-        ->name('account.password.update');
+    Route::put('/account-password', [CustomerAccountController::class, 'updatePassword'])->name('account.password.update');
 });
 Route::middleware(['auth'])->group(function () {
-    Route::post('/checkout/create-razorpay-order', [CheckoutController::class, 'createRazorpayOrder'])
-        ->name('checkout.create.razorpay.order')
+    Route::post('/checkout/create-razorpay-order', [CheckoutController::class, 'createRazorpayOrder'])->name('checkout.create.razorpay.order')
         ->middleware('auth');
-
-    Route::post('/checkout/verify-razorpay-payment', [CheckoutController::class, 'verifyRazorpayPayment'])
-        ->name('checkout.verify.razorpay')
+    Route::post('/checkout/verify-razorpay-payment', [CheckoutController::class, 'verifyRazorpayPayment'])->name('checkout.verify.razorpay')
         ->middleware('auth');
-    Route::get('/my-orders', [OrderController::class, 'index'])
-        ->name('customer.orders.index');
-    Route::get('/customer/returns-refunds', [CustomerAccountController::class, 'returns'])
-        ->name('customer.returns.index');
-
-    Route::get('/my-orders/{order}', [OrderController::class, 'show'])
-        ->name('customer.orders.show');
-    Route::get('/orders', [OrderController::class, 'index'])
-        ->name('orders.index');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])
-        ->name('orders.show');
-    Route::patch('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])
-        ->name('admin.orders.status.update');
-
+    Route::get('/my-orders', [OrderController::class, 'index'])->name('customer.orders.index');
+    Route::get('/customer/returns-refunds', [CustomerAccountController::class, 'returns'])->name('customer.returns.index');
+    Route::get('/my-orders/{order}', [OrderController::class, 'show'])->name('customer.orders.show');
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/admin/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('admin.orders.status.update');
 });
 
 require __DIR__.'/auth.php';

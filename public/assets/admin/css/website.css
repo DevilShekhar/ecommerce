@@ -7234,3 +7234,18 @@
 .btn-add i {
     font-size: 18px;
 }
+
+.navbar-logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.navbar-logo-image {
+    max-height: 55px;
+    max-width: 180px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}

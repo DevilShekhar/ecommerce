@@ -8,15 +8,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ContactSubmission extends Model
 {
     protected $fillable = [
-        'page_id',
-        'page_section_id',
-        'data',
+        'first_name',
+        'last_name',
+        'email',
+        'interest',
+        'message',
         'ip_address',
         'user_agent',
-    ];
-
-    protected $casts = [
-        'data' => 'array',
     ];
 
     public function page(): BelongsTo
@@ -26,6 +24,6 @@ class ContactSubmission extends Model
 
     public function section(): BelongsTo
     {
-        return $this->belongsTo(PageSection::class,'page_section_id');
+        return $this->belongsTo(PageSection::class, 'page_section_id');
     }
 }
