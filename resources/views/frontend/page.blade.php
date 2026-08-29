@@ -273,51 +273,82 @@
                     <p class="section-subtitle-compact" style="font-size:0.8rem;color:#6B6A69;margin-bottom:0;">Explore our
                         available jewellery collection</p>
                 </div>
-                <div class="row" style="display:flex;flex-wrap:wrap;margin:0 -5px;">
-                    @foreach($availableProducts as $product)
-                        <div class="product-col-compact">
-                            <div class="product-card-compact" onclick="openProductDetail({{ $product->id }})"
-                                style="cursor:pointer;">
-                                <div class="product-image-wrapper-compact">
-                                    @php
-                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                                        $primaryImage = !empty($images) ? $images[0] : null;
-                                    @endphp
-                                    @if($primaryImage)
-                                        <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
-                                            class="product-image-compact" loading="lazy">
-                                    @else
-                                        <div class="product-image-placeholder-compact"><i class="bi bi-image"></i></div>
-                                    @endif
-                                    <span class="product-badge-compact new-badge-compact"><i class="bi bi-fire"
-                                            style="font-size:8px;"></i></span>
-                                    <span class="stock-badge-compact in-stock-compact">In</span>
-                                </div>
-                                <div class="product-body-compact">
-                                    @if($product->brand)
-                                        <div class="product-brand-compact">{{ $product->brand->name }}</div>
-                                    @endif
-                                    <h5 class="product-title-compact">{{ Str::limit($product->name, 20) }}</h5>
-                                    <div class="product-price-compact">₹{{ number_format($product->price, 0) }}</div>
-                                    <div class="product-action-compact">
-                                        <button type="button" class="btn-add-cart-compact add-to-cart-btn"
-                                            data-product-id="{{ $product->id }}" onclick="event.stopPropagation();">
-                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i>
-                                        </button>
+
+                <!-- Slider Container -->
+                <div class="slider-container" style="position:relative;overflow:hidden;">
+                    <div class="slider-track" id="availableSliderTrack"
+                        style="display:flex;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);gap:15px;">
+                        @foreach($availableProducts as $product)
+                            <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
+                                <div class="product-card-compact" onclick="openProductDetail({{ $product->id }})"
+                                    style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E2D2;transition:all 0.3s ease;height:100%;">
+                                    <div class="product-image-wrapper-compact" style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FDFBF7;">
+                                        @php
+                                            $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                            $primaryImage = !empty($images) ? $images[0] : null;
+                                        @endphp
+                                        @if($primaryImage)
+                                            <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
+                                                class="product-image-compact" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;"
+                                                loading="lazy">
+                                        @else
+                                            <div class="product-image-placeholder-compact" style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
+                                                <i class="bi bi-image" style="font-size:40px;"></i>
+                                            </div>
+                                        @endif
+                                        <span class="product-badge-compact" style="position:absolute;top:10px;left:10px;background:#2C2A29;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;">
+                                            <i class="bi bi-fire" style="font-size:8px;"></i>
+                                        </span>
+                                        <span class="stock-badge-compact" style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;">In</span>
+                                    </div>
+                                    <div class="product-body-compact" style="padding:12px 14px 16px;">
+                                        @if($product->brand)
+                                            <div class="product-brand-compact" style="font-size:10px;font-weight:600;color:#A58B54;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">{{ $product->brand->name }}</div>
+                                        @endif
+                                        <h5 class="product-title-compact" style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#2C2A29;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ Str::limit($product->name, 20) }}</h5>
+                                        <div class="product-price-compact" style="font-size:16px;font-weight:700;color:#2C2A29;margin-bottom:8px;">₹{{ number_format($product->price, 0) }}</div>
+                                        <div class="product-action-compact">
+                                            <button type="button" class="add-to-cart-btn"
+                                                data-product-id="{{ $product->id }}" onclick="event.stopPropagation();"
+                                                style="width:100%;padding:6px 12px;background:#A58B54;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                                <i class="bi bi-cart-plus" style="font-size:12px;"></i> Add
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforeach
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button class="slider-nav prev" onclick="slideProducts(-1)" style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-left" style="font-size:18px;color:#2C2A29;"></i>
+                    </button>
+                    <button class="slider-nav next" onclick="slideProducts(1)" style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-right" style="font-size:18px;color:#2C2A29;"></i>
+                    </button>
                 </div>
+
+                <!-- Dots -->
+                <div class="slider-dots" style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+                    @php
+                        $totalSlides = ceil($availableProducts->count() / 5);
+                    @endphp
+                    @for($i = 0; $i < $totalSlides; $i++)
+                        <span class="dot" data-index="{{ $i }}" onclick="goToSlide({{ $i }})"
+                            style="width:10px;height:10px;border-radius:50%;background:#D5CFC5;cursor:pointer;transition:all 0.3s ease;{{ $i === 0 ? 'background:#A58B54;transform:scale(1.2);' : '' }}"></span>
+                    @endfor
+                </div>
+
                 <div class="text-center mt-3">
-                    <a href="{{ route('shop') }}" class="btn-view-all-compact">
+                    <a href="{{ route('shop') }}" class="btn-view-all" style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#A58B54;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #A58B54;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
                         View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
                     </a>
                 </div>
             </div>
         </section>
     @endif
+
 
     <!-- ========== PRODUCT DETAIL MODAL ========== -->
     <div id="productModal"
@@ -1706,5 +1737,159 @@
             handleScreenChange(mediaQuery);
         });
     </script>
+    <script>
+
+    let currentIndex = 0;
+    let totalProducts = {{ $availableProducts->count() }};
+    let visibleSlides = 5;
+    let totalSlides = Math.ceil(totalProducts / visibleSlides);
+    let autoSlideInterval = null;
+    let isTransitioning = false;
+
+    // Get visible slides based on screen width
+    function getVisibleSlides() {
+        const width = window.innerWidth;
+        if (width <= 480) return 2;
+        if (width <= 768) return 3;
+        if (width <= 1024) return 4;
+        return 5;
+    }
+
+    // Update total slides
+    function updateTotalSlides() {
+        visibleSlides = getVisibleSlides();
+        totalSlides = Math.ceil(totalProducts / visibleSlides);
+        if (currentIndex >= totalSlides) {
+            currentIndex = 0;
+        }
+    }
+
+    // Update slider position
+    function updateSlider() {
+        const track = document.getElementById('availableSliderTrack');
+        if (!track) return;
+
+        visibleSlides = getVisibleSlides();
+        totalSlides = Math.ceil(totalProducts / visibleSlides);
+
+        if (currentIndex >= totalSlides) {
+            currentIndex = 0;
+        }
+
+        const slideWidth = 100 / visibleSlides;
+        const offset = currentIndex * slideWidth * (visibleSlides > 0 ? 1 : 0);
+        track.style.transform = `translateX(-${offset}%)`;
+
+        // Update dots
+        document.querySelectorAll('.dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Slide to next/prev
+    function slideProducts(direction) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        visibleSlides = getVisibleSlides();
+        totalSlides = Math.ceil(totalProducts / visibleSlides);
+
+        currentIndex = (currentIndex + direction + totalSlides) % totalSlides;
+        updateSlider();
+
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 600);
+
+        resetAutoSlide();
+    }
+
+    // Go to specific slide
+    function goToSlide(index) {
+        if (isTransitioning || index === currentIndex) return;
+        isTransitioning = true;
+
+        currentIndex = index;
+        updateSlider();
+
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 600);
+
+        resetAutoSlide();
+    }
+
+    // Auto slide
+    function startAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+        }
+        autoSlideInterval = setInterval(() => {
+            if (!isTransitioning) {
+                visibleSlides = getVisibleSlides();
+                totalSlides = Math.ceil(totalProducts / visibleSlides);
+                currentIndex = (currentIndex + 1) % totalSlides;
+                updateSlider();
+            }
+        }, 4000);
+    }
+
+    function resetAutoSlide() {
+        if (autoSlideInterval) {
+            clearInterval(autoSlideInterval);
+        }
+        startAutoSlide();
+    }
+
+    // Stop auto slide on hover
+    function setupHoverPause() {
+        const container = document.querySelector('.slider-container');
+        if (!container) return;
+
+        container.addEventListener('mouseenter', function() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = null;
+            }
+        });
+
+        container.addEventListener('mouseleave', function() {
+            startAutoSlide();
+        });
+    }
+
+    function openProductDetail(productId) {
+        // Redirect to product detail page
+        window.location.href = '/shop/' + productId;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize slider
+        updateTotalSlides();
+        updateSlider();
+        startAutoSlide();
+        setupHoverPause();
+
+        // Handle resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                updateTotalSlides();
+                updateSlider();
+                resetAutoSlide();
+            }, 300);
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const productId = this.dataset.productId;
+            });
+        });
+    });
+</script>
 
 @endsection

@@ -125,34 +125,33 @@ class ShopController extends Controller
      * Show single product details
      */
     public function show($slug)
-    {
-        $product = Product::with([
-            'category',
-            'brand',
-            'subCategory',
-            'creator',
-        ])
-            ->where('status', 1)
-            ->where('slug', $slug)
-            ->firstOrFail();
+{
+    $product = Product::with([
+        'category',
+        'brand',
+        'subCategory',
+        'creator'
+    ])
+    ->where('slug', $slug)
+    ->where('status', 1)
+    ->firstOrFail();
 
-        // Get related products from same category
-        $relatedProducts = Product::with([
-            'category',
-            'brand',
-            'subCategory',
-        ])
-            ->where('status', 1)
-            ->where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->limit(4)
-            ->get();
+    $relatedProducts = Product::with([
+        'category',
+        'brand',
+        'subCategory'
+    ])
+    ->where('status', 1)
+    ->where('category_id', $product->category_id)
+    ->where('id', '!=', $product->id)
+    ->limit(4)
+    ->get();
 
-        return view('frontend.shop.show', compact(
-            'product',
-            'relatedProducts'
-        ));
-    }
+    return view('frontend.shop.show', compact(
+        'product',
+        'relatedProducts'
+    ));
+}
 
     /**
      * Get subcategories for a category (AJAX)

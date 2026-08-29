@@ -27,6 +27,7 @@ class Product extends Model
         'stock',
         'variants',
         'specification',
+        'description',
         'image',
         'is_futured',
         'status',

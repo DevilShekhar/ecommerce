@@ -501,8 +501,8 @@
     </style>
 
     <!-- =============================================
-        SHOP HEADER
-    ============================================= -->
+            SHOP HEADER
+        ============================================= -->
     <section class="shop-header">
         <h1><i class="fas fa-store"></i> All Jewellery</h1>
         <p>Discover our curated collection of timeless pieces</p>
@@ -513,8 +513,8 @@
     </section>
 
     <!-- =============================================
-        SHOP CONTENT
-    ============================================= -->
+            SHOP CONTENT
+        ============================================= -->
     <div class="shop-container">
         <div class="shop-layout">
 
@@ -637,8 +637,8 @@
     </div>
 
     <!-- =============================================
-        SCRIPTS
-    ============================================= -->
+            SCRIPTS
+        ============================================= -->
     <script>
         let currentPage = 1;
         let isLoading = false;
@@ -721,12 +721,12 @@
                         document.getElementById('productCount').textContent = data.total || 0;
                     } else {
                         container.innerHTML = `
-                            <div class="no-products">
-                                <i class="fas fa-box-open"></i>
-                                <h3>No products found</h3>
-                                <p>Try adjusting your filters or search terms.</p>
-                            </div>
-                        `;
+                                <div class="no-products">
+                                    <i class="fas fa-box-open"></i>
+                                    <h3>No products found</h3>
+                                    <p>Try adjusting your filters or search terms.</p>
+                                </div>
+                            `;
                         document.getElementById('productCount').textContent = '0';
                     }
                 })
@@ -734,12 +734,12 @@
                     console.error('Error:', error);
                     loading.style.display = 'none';
                     container.innerHTML = `
-                        <div class="no-products">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Something went wrong</h3>
-                            <p>Please try again later.</p>
-                        </div>
-                    `;
+                            <div class="no-products">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <h3>Something went wrong</h3>
+                                <p>Please try again later.</p>
+                            </div>
+                        `;
                 });
         }
 
@@ -748,12 +748,12 @@
 
             if (!products || products.length === 0) {
                 container.innerHTML = `
-                    <div class="no-products">
-                        <i class="fas fa-box-open"></i>
-                        <h3>No products found</h3>
-                        <p>Try adjusting your filters or search terms.</p>
-                    </div>
-                `;
+                        <div class="no-products">
+                            <i class="fas fa-box-open"></i>
+                            <h3>No products found</h3>
+                            <p>Try adjusting your filters or search terms.</p>
+                        </div>
+                    `;
                 return;
             }
 
@@ -778,30 +778,30 @@
                 const stockExtra = product.stock > 0 && product.stock < 10 ? `(${product.stock} left)` : '';
 
                 html += `
-                    <div class="product-card" onclick="window.location.href='/shop/${product.id}'">
-                        <div class="product-image">
-                            ${imageHtml}
-                            ${badgeHtml}
+                        <div class="product-card" onclick="window.location.href='/shop/${product.id}'">
+                            <div class="product-image">
+                                ${imageHtml}
+                                ${badgeHtml}
+                            </div>
+                            <div class="product-info">
+                                <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
+                              <div class="product-name">
+    <a href="/shop/${product.slug}">${product.name}</a>
+</div>
+                                <div class="product-meta">
+                                    ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
+                                    ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
+                                </div>
+                                <div class="product-price">
+                                    <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
+                                </div>
+                                <div class="product-stock ${stockClass}">
+                                    <i class="fas fa-${stockIcon}"></i>
+                                    ${stockText} ${stockExtra}
+                                </div>
+                            </div>
                         </div>
-                        <div class="product-info">
-                            <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
-                            <div class="product-name">
-                                <a href="/shop/${product.id}">${product.name}</a>
-                            </div>
-                            <div class="product-meta">
-                                ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
-                                ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
-                            </div>
-                            <div class="product-price">
-                                <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
-                            </div>
-                            <div class="product-stock ${stockClass}">
-                                <i class="fas fa-${stockIcon}"></i>
-                                ${stockText} ${stockExtra}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                    `;
             });
 
             html += '</div>';

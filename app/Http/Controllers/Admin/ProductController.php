@@ -61,6 +61,7 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
             'variants' => 'nullable|string',
             'specification' => 'nullable|string',
+            'description' => 'nullable|string',
             'is_futured' => 'required|in:0,1,2',
             'images.*' => 'nullable|image|max:2048',
             'meta_title' => 'nullable|string|max:255',
@@ -128,56 +129,92 @@ class ProductController extends Controller
             'category_id' => 'required|exists:product_categories,id',
             'sub_category_id' => 'required|exists:sub_category,id',
             'brand_id' => 'nullable|exists:brands,id',
+
             'name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('products', 'name')->ignore($product->id),
             ],
-            'sku' => 'required|string|max:100|unique:products,sku,'.$product->id,
+
+            'sku' => [
+                'required',
+                'string',
+                'max:100',
+                Rule::unique('products', 'sku')->ignore($product->id),
+            ],
+
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
+
             'variants' => 'nullable|string',
+
             'specification' => 'nullable|string',
+            'description' => 'nullable|string',
+
             'is_featured' => 'required|in:0,1,2',
             'status' => 'required|in:0,1',
+
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
         ]);
 
-        // 1. Get kept existing images submitted from form
+        // Existing images kept from edit form
         $keptImages = $request->input('existing_images', []);
 
-        // 2. Identify and physically delete removed images from storage
-        $oldImages = $product->image ? array_filter(explode(',', $product->image)) : [];
+        // Old images
+        $oldImages = $product->image
+            ? array_filter(explode(',', $product->image))
+            : [];
+
+        // Find removed images
         $removedImages = array_diff($oldImages, $keptImages);
 
+        // Delete removed images physically
         foreach ($removedImages as $removedImg) {
             if (File::exists(public_path($removedImg))) {
                 File::delete(public_path($removedImg));
             }
         }
 
-        // 3. Upload and save new additional images
+        // Upload new images
         $newImagePaths = [];
+
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $file) {
+
                 $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
-                $file->move(public_path('uploads/products'), $filename);
+
+                $file->move(
+                    public_path('uploads/products'),
+                    $filename
+                );
+
                 $newImagePaths[] = 'uploads/products/'.$filename;
             }
         }
 
-        // 4. Merge remaining existing images with newly uploaded images
-        $finalImages = array_merge($keptImages, $newImagePaths);
-        $validated['image'] = ! empty($finalImages) ? implode(',', $finalImages) : null;
+        // Merge existing + new images
+        $finalImages = array_merge(
+            $keptImages,
+            $newImagePaths
+        );
+
+        $validated['image'] = ! empty($finalImages)
+            ? implode(',', $finalImages)
+            : null;
+
+        // Updated by
         $validated['updated_by'] = Auth::id();
 
+        // Update product
         $product->update($validated);
 
-        return redirect()->route('admin.products.index')
+        return redirect()
+            ->route('admin.products.index')
             ->with('success', 'Product updated successfully.');
     }
 
