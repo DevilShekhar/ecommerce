@@ -450,6 +450,11 @@ class DashboardController extends Controller
         $sentOffers = UserOffer::with('offer')
             ->where('user_id', Auth::id())
             ->where('status', 1)
+            ->whereIn('coupon_code', function ($query) {
+                $query->select('code')
+                    ->from('coupons')
+                    ->where('status', 1);
+            })
             ->latest('sent_at')
             ->get();
 

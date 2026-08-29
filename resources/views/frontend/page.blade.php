@@ -2,7 +2,7 @@
 
 @section('title', 'Shops · Aethelweave')
 @section('content')
-   @push('styles')
+    @push('styles')
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -205,8 +205,8 @@
                                 @endphp
 
                                 @if($primaryImage)
-                                    <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
-                                        class="product-image-compact" loading="lazy">
+                                    <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}" class="product-image-compact"
+                                        loading="lazy">
                                 @else
                                     <div class="product-image-placeholder-compact">
                                         <i class="bi bi-image"></i>
@@ -261,6 +261,9 @@
         </div>
     </section>
 
+    {{-- =============================================
+    AVAILABLE PRODUCTS SLIDER
+    ============================================= --}}
     @if(isset($availableProducts) && $availableProducts->count() > 0)
         <section class="products-section-compact py-4" style="background:#FFFFFF;">
             <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
@@ -282,34 +285,58 @@
                             <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
                                 <div class="product-card-compact" onclick="openProductDetail({{ $product->id }})"
                                     style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E2D2;transition:all 0.3s ease;height:100%;">
-                                    <div class="product-image-wrapper-compact" style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FDFBF7;">
+                                    <div class="product-image-wrapper-compact"
+                                        style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FDFBF7;">
                                         @php
                                             $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
                                             $primaryImage = !empty($images) ? $images[0] : null;
+                                            $hasMultipleImages = count($images) > 1;
                                         @endphp
+
+                                        <!-- Main Image -->
                                         @if($primaryImage)
                                             <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
-                                                class="product-image-compact" style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;"
+                                                class="product-image-compact main-image"
+                                                style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;position:absolute;top:0;left:0;"
                                                 loading="lazy">
                                         @else
-                                            <div class="product-image-placeholder-compact" style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
+                                            <div class="product-image-placeholder-compact"
+                                                style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
                                                 <i class="bi bi-image" style="font-size:40px;"></i>
                                             </div>
                                         @endif
-                                        <span class="product-badge-compact" style="position:absolute;top:10px;left:10px;background:#2C2A29;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;">
+
+                                        <!-- Hover Image (Second Image) -->
+                                        @if($hasMultipleImages && isset($images[1]))
+                                            <img src="{{ asset($images[1]) }}" alt="{{ $product->name }} - view 2"
+                                                class="product-image-compact hover-image"
+                                                style="width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;position:absolute;top:0;left:0;opacity:0;"
+                                                loading="lazy">
+                                        @endif
+
+                                        <span class="product-badge-compact"
+                                            style="position:absolute;top:10px;left:10px;background:#2C2A29;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;z-index:2;">
                                             <i class="bi bi-fire" style="font-size:8px;"></i>
                                         </span>
-                                        <span class="stock-badge-compact" style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;">In</span>
+                                        <span class="stock-badge-compact"
+                                            style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
+
                                     </div>
                                     <div class="product-body-compact" style="padding:12px 14px 16px;">
                                         @if($product->brand)
-                                            <div class="product-brand-compact" style="font-size:10px;font-weight:600;color:#A58B54;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">{{ $product->brand->name }}</div>
+                                            <div class="product-brand-compact"
+                                                style="font-size:10px;font-weight:600;color:#A58B54;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">
+                                                {{ $product->brand->name }}</div>
                                         @endif
-                                        <h5 class="product-title-compact" style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#2C2A29;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ Str::limit($product->name, 20) }}</h5>
-                                        <div class="product-price-compact" style="font-size:16px;font-weight:700;color:#2C2A29;margin-bottom:8px;">₹{{ number_format($product->price, 0) }}</div>
+                                        <h5 class="product-title-compact"
+                                            style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#2C2A29;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            {{ Str::limit($product->name, 20) }}</h5>
+                                        <div class="product-price-compact"
+                                            style="font-size:16px;font-weight:700;color:#2C2A29;margin-bottom:8px;">
+                                            ₹{{ number_format($product->price, 0) }}</div>
                                         <div class="product-action-compact">
-                                            <button type="button" class="add-to-cart-btn"
-                                                data-product-id="{{ $product->id }}" onclick="event.stopPropagation();"
+                                            <button type="button" class="add-to-cart-btn" data-product-id="{{ $product->id }}"
+                                                onclick="event.stopPropagation();"
                                                 style="width:100%;padding:6px 12px;background:#A58B54;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
                                                 <i class="bi bi-cart-plus" style="font-size:12px;"></i> Add
                                             </button>
@@ -321,10 +348,12 @@
                     </div>
 
                     <!-- Navigation Buttons -->
-                    <button class="slider-nav prev" onclick="slideProducts(-1)" style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                    <button class="slider-nav prev" onclick="slideProducts(-1)"
+                        style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
                         <i class="bi bi-chevron-left" style="font-size:18px;color:#2C2A29;"></i>
                     </button>
-                    <button class="slider-nav next" onclick="slideProducts(1)" style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                    <button class="slider-nav next" onclick="slideProducts(1)"
+                        style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
                         <i class="bi bi-chevron-right" style="font-size:18px;color:#2C2A29;"></i>
                     </button>
                 </div>
@@ -341,7 +370,8 @@
                 </div>
 
                 <div class="text-center mt-3">
-                    <a href="{{ route('shop') }}" class="btn-view-all" style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#A58B54;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #A58B54;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
+                    <a href="{{ route('shop') }}" class="btn-view-all"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#A58B54;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #A58B54;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
                         View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
                     </a>
                 </div>
@@ -349,149 +379,14 @@
         </section>
     @endif
 
-
-    <!-- ========== PRODUCT DETAIL MODAL ========== -->
-    <div id="productModal"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;padding:20px;">
-        <div
-            style="background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:30px;position:relative;">
-            <button onclick="closeProductDetail()"
-                style="position:absolute;top:15px;right:20px;background:none;border:none;font-size:28px;cursor:pointer;color:#999;">&times;</button>
-            <div id="productDetailContent">
-                <div style="text-align:center;padding:40px 0;">
-                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;"></i>
-                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Open product detail modal
-        function openProductDetail(productId) {
-            const modal = document.getElementById('productModal');
-            const content = document.getElementById('productDetailContent');
-
-            // Show loading
-            content.innerHTML = `
-            <div style="text-align:center;padding:40px 0;">
-                <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;animation:spin 1s linear infinite;"></i>
-                <p style="margin-top:10px;color:#888;">Loading product details...</p>
-            </div>
-            <style>
-                @keyframes spin {
-                    from { transform: rotate(0deg); }
-                    to { transform: rotate(360deg); }
-                }
-            </style>
-        `;
-
-            modal.style.display = 'flex';
-            document.body.classList.add('modal-open');
-
-            // Fetch product details
-            fetch(`/customer/product-detail/${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        const p = data.product;
-                        const images = p.image ? p.image.split(',').map(s => s.trim()) : [];
-                        const firstImage = images.length > 0 ? images[0] : null;
-
-                        const stockClass = p.stock > 0 ? 'in' : 'out';
-                        const stockText = p.stock > 0 ? 'In Stock' : 'Out of Stock';
-                        const stockIcon = p.stock > 0 ? 'check-circle-fill' : 'x-circle-fill';
-                        const btnDisabled = p.stock < 1 ? 'disabled' : '';
-                        const btnText = p.stock > 0 ? 'Add to Cart' : 'Out of Stock';
-                        const btnIcon = p.stock > 0 ? 'cart-plus' : 'x-circle';
-
-                        content.innerHTML = `
-                        <div class="product-detail-grid">
-                            <div>
-                                ${firstImage ?
-                                `<img src="${firstImage}" alt="${p.name}" class="gallery-img">` :
-                                `<div class="gallery-img" style="display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
-                                        <i class="bi bi-image" style="font-size:50px;"></i>
-                                    </div>`
-                            }
-                            </div>
-                            <div class="info">
-                                <div class="cat">${p.category ? p.category.name : 'Uncategorized'}</div>
-                                <h2>${p.name}</h2>
-                                <div class="price">
-                                    ₹${parseFloat(p.price).toFixed(2)}
-                                    ${p.compare_price && p.compare_price > p.price ?
-                                `<span class="original">₹${parseFloat(p.compare_price).toFixed(2)}</span>` : ''}
-                                </div>
-                                <div class="stock-status ${stockClass}">
-                                    <i class="bi bi-${stockIcon}"></i>
-                                    ${stockText}
-                                    ${p.stock > 0 && p.stock < 10 ? `(Only ${p.stock} left)` : ''}
-                                </div>
-                                <div class="desc">${p.specification || p.description || ''}</div>
-                                <div class="meta-grid">
-                                    ${p.sku ? `<div class="meta-item"><strong>SKU</strong><span>${p.sku}</span></div>` : ''}
-                                    ${p.brand ? `<div class="meta-item"><strong>Brand</strong><span>${p.brand.name}</span></div>` : ''}
-                                    ${p.sub_category ? `<div class="meta-item"><strong>Sub Category</strong><span>${p.sub_category.name}</span></div>` : ''}
-                                    ${p.variants ? `<div class="meta-item"><strong>Material</strong><span>${p.variants}</span></div>` : ''}
-                                </div>
-                                <button class="btn-add" ${btnDisabled}>
-                                    <i class="bi bi-${btnIcon}"></i>
-                                    ${btnText}
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    } else {
-                        content.innerHTML = `
-                        <div style="text-align:center;padding:40px 0;color:#C0392B;">
-                            <i class="bi bi-exclamation-circle" style="font-size:40px;"></i>
-                            <p style="margin-top:10px;">${data.message || 'Product not found'}</p>
-                        </div>
-                    `;
-                    }
-                })
-                .catch(error => {
-                    content.innerHTML = `
-                    <div style="text-align:center;padding:40px 0;color:#C0392B;">
-                        <i class="bi bi-exclamation-triangle" style="font-size:40px;"></i>
-                        <p style="margin-top:10px;">Error loading product details. Please try again.</p>
-                    </div>
-                `;
-                    console.error('Error:', error);
-                });
-        }
-
-        // Close product detail modal
-        function closeProductDetail() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.classList.remove('modal-open');
-        }
-
-        // Close on background click
-        document.getElementById('productModal').addEventListener('click', function (e) {
-            if (e.target === this) {
-                closeProductDetail();
-            }
-        });
-
-        // Close on Escape key
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') {
-                closeProductDetail();
-            }
-        });
-    </script>
-
     {{-- =============================================
-    ABOUT SECTION — Home Page (Image Left, Content Right on all screens)
+    ABOUT SECTION
     ============================================= --}}
     @if(isset($aboutUs) && $aboutUs)
-        <section class="about-section-home py-4">
+        <section class="about-section-home py-4" style="background: #FCF8ED;">
             <div class="container">
                 <div class="about-wrapper">
                     @if($aboutUs->about_image)
-                        {{-- IMAGE - LEFT on desktop, TOP on mobile --}}
                         <div class="about-image-col">
                             <div class="about-image-wrapper">
                                 <img src="{{ asset('storage/' . $aboutUs->about_image) }}"
@@ -503,7 +398,6 @@
                         </div>
                     @endif
 
-                    {{-- CONTENT - RIGHT on desktop, BOTTOM on mobile --}}
                     <div class="about-content-col">
                         @if($aboutUs->about_sub_title)
                             <span class="about-subtitle">{{ $aboutUs->about_sub_title }}</span>
@@ -540,7 +434,6 @@
             </div>
 
             <div class="services-grid">
-                <!-- Custom Design -->
                 <div class="service-col">
                     <div class="service-card-modern">
                         <div class="service-icon-modern">
@@ -552,7 +445,6 @@
                     </div>
                 </div>
 
-                <!-- Repair & Restoration -->
                 <div class="service-col">
                     <div class="service-card-modern">
                         <div class="service-icon-modern">
@@ -564,7 +456,6 @@
                     </div>
                 </div>
 
-                <!-- Certification -->
                 <div class="service-col">
                     <div class="service-card-modern">
                         <div class="service-icon-modern">
@@ -578,7 +469,11 @@
             </div>
         </div>
     </section>
-    <section class="shipping-process-section">
+
+    {{-- =============================================
+    SHIPPING PROCESS
+    ============================================= --}}
+    <section class="shipping-process-section" style="background: #FCF8ED;">
         <div class="shipping-process-container">
             <div class="shipping-process-header">
                 <div class="shipping-process-badge">
@@ -673,248 +568,108 @@
         </div>
     </section>
 
- 
     {{-- =============================================
     WHY CHOOSE US
     ============================================= --}}
-
     <section class="why-section">
-
         <div class="why-container">
-
-            <!-- Section Header -->
             <div class="why-header">
-
-                <span class="why-subtitle">
-                    Why Choose Us
-                </span>
-
-                <h2 class="why-title">
-                    The Reasons Behind Our Sparkle
-                </h2>
-
+                <span class="why-subtitle">Why Choose Us</span>
+                <h2 class="why-title">The Reasons Behind Our Sparkle</h2>
                 <div class="why-divider"></div>
-
             </div>
 
-
-            <!-- Why Choose Us Grid -->
             <div class="why-grid">
-
-
-                {{-- 01 - Certified Purity --}}
                 <div class="why-card">
-
-                    <img src="assets/admin/images/why-1.jpg" alt="Certified Jewellery Purity" class="why-card-image"
-                        loading="lazy">
-
+                    <img src="assets/admin/images/why-1.jpg" alt="Certified Jewellery Purity" class="why-card-image" loading="lazy">
                     <div class="why-card-overlay"></div>
-
                     <div class="why-card-content">
-
                         <div class="why-card-top">
-
                             <div class="why-icon">
                                 <i class="bi bi-award"></i>
                             </div>
-
-                            <div class="why-card-number">
-                                01
-                            </div>
-
+                            <div class="why-card-number">01</div>
                         </div>
-
                         <div class="why-card-details">
-
-                            <h3 class="why-card-title">
-                                Certified Purity
-                            </h3>
-
-                            <p class="why-card-text">
-                                Every piece is hallmarked and certified for
-                                purity, quality and authenticity, giving you
-                                complete confidence in every purchase.
-                            </p>
-
+                            <h3 class="why-card-title">Certified Purity</h3>
+                            <p class="why-card-text">Every piece is hallmarked and certified for purity, quality and authenticity.</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                {{-- 02 - Expert Craftsmanship --}}
                 <div class="why-card">
-
-                    <img src="assets/admin/images/why-2.jpg" alt="Expert Jewellery Craftsmanship" class="why-card-image"
-                        loading="lazy">
-
+                    <img src="assets/admin/images/why-2.jpg" alt="Expert Jewellery Craftsmanship" class="why-card-image" loading="lazy">
                     <div class="why-card-overlay"></div>
-
                     <div class="why-card-content">
-
                         <div class="why-card-top">
-
                             <div class="why-icon">
                                 <i class="bi bi-tools"></i>
                             </div>
-
-                            <div class="why-card-number">
-                                02
-                            </div>
-
+                            <div class="why-card-number">02</div>
                         </div>
-
                         <div class="why-card-details">
-
-                            <h3 class="why-card-title">
-                                Expert Craftsmanship
-                            </h3>
-
-                            <p class="why-card-text">
-                                Handcrafted by skilled master artisans who
-                                combine traditional techniques with modern
-                                jewellery craftsmanship.
-                            </p>
-
+                            <h3 class="why-card-title">Expert Craftsmanship</h3>
+                            <p class="why-card-text">Handcrafted by skilled master artisans who combine traditional techniques with modern craftsmanship.</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                {{-- 03 - Timeless Designs --}}
                 <div class="why-card">
-
-                    <img src="assets/admin/images/why-3.jpg" alt="Timeless Jewellery Designs" class="why-card-image"
-                        loading="lazy">
-
+                    <img src="assets/admin/images/why-3.jpg" alt="Timeless Jewellery Designs" class="why-card-image" loading="lazy">
                     <div class="why-card-overlay"></div>
-
                     <div class="why-card-content">
-
                         <div class="why-card-top">
-
                             <div class="why-icon">
                                 <i class="bi bi-gem"></i>
                             </div>
-
-                            <div class="why-card-number">
-                                03
-                            </div>
-
+                            <div class="why-card-number">03</div>
                         </div>
-
                         <div class="why-card-details">
-
-                            <h3 class="why-card-title">
-                                Timeless Designs
-                            </h3>
-
-                            <p class="why-card-text">
-                                Discover elegant designs ranging from classic
-                                heritage pieces to contemporary styles made
-                                to remain beautiful for generations.
-                            </p>
-
+                            <h3 class="why-card-title">Timeless Designs</h3>
+                            <p class="why-card-text">Discover elegant designs ranging from classic heritage pieces to contemporary styles.</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                {{-- 04 - Trusted Legacy --}}
                 <div class="why-card">
-
-                    <img src="assets/admin/images/why-4.jpg" alt="Trusted Jewellery Legacy" class="why-card-image"
-                        loading="lazy">
-
+                    <img src="assets/admin/images/why-4.jpg" alt="Trusted Jewellery Legacy" class="why-card-image" loading="lazy">
                     <div class="why-card-overlay"></div>
-
                     <div class="why-card-content">
-
                         <div class="why-card-top">
-
                             <div class="why-icon">
                                 <i class="bi bi-hand-thumbs-up"></i>
                             </div>
-
-                            <div class="why-card-number">
-                                04
-                            </div>
-
+                            <div class="why-card-number">04</div>
                         </div>
-
                         <div class="why-card-details">
-
-                            <h3 class="why-card-title">
-                                Trusted Legacy
-                            </h3>
-
-                            <p class="why-card-text">
-                                Built on trust, transparency and exceptional
-                                service, we proudly serve customers and families
-                                with jewellery they can cherish.
-                            </p>
-
+                            <h3 class="why-card-title">Trusted Legacy</h3>
+                            <p class="why-card-text">Built on trust, transparency and exceptional service, we proudly serve customers with jewellery they can cherish.</p>
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
-
         </div>
-
     </section>
 
     {{-- =============================================
     TESTIMONIALS SECTION
     ============================================= --}}
-
     <section class="testimonials-section">
-
         <div class="testimonials-container">
-
-            <!-- Header -->
             <div class="testimonials-header">
-
-                <span class="testimonials-subtitle">
-                    Testimonials
-                </span>
-
-                <h2 class="testimonials-title">
-                    What Our Customers Say
-                </h2>
-
+                <span class="testimonials-subtitle">Testimonials</span>
+                <h2 class="testimonials-title">What Our Customers Say</h2>
                 <div class="testimonials-divider"></div>
-
             </div>
 
-
-            <!-- Testimonials Grid -->
             <div class="testimonials-grid">
-
-
-                {{-- TESTIMONIAL 1 --}}
                 <div class="testimonial-card testimonial-image-card">
-
                     <img src="assets/admin/images/per1.jpg" alt="Priya Sharma" class="testimonial-person-image">
-
-                    <!-- Dark Overlay -->
                     <div class="testimonial-overlay"></div>
-
-                    <!-- Content shown on hover -->
                     <div class="testimonial-hover-content">
-
                         <div class="testimonial-quote">
                             <i class="bi bi-quote"></i>
                         </div>
-
                         <div class="testimonial-stars">
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
@@ -922,50 +677,23 @@
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
                         </div>
-
-                        <p class="testimonial-text">
-                            The craftsmanship is exceptional. I bought a
-                            diamond necklace for my anniversary and it exceeded
-                            all expectations. Truly premium quality!
-                        </p>
-
+                        <p class="testimonial-text">The craftsmanship is exceptional. I bought a diamond necklace for my anniversary and it exceeded all expectations.</p>
                     </div>
-
-                    <!-- Author -->
                     <div class="testimonial-author">
-
                         <div class="author-info">
-
-                            <h4>
-                                Priya Sharma
-                            </h4>
-
-                            <span>
-                                Mumbai
-                            </span>
-
+                            <h4>Priya Sharma</h4>
+                            <span>Mumbai</span>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                {{-- TESTIMONIAL 2 --}}
                 <div class="testimonial-card testimonial-image-card">
-
                     <img src="assets/admin/images/per2.jpg" alt="Ananya Patel" class="testimonial-person-image">
-
-                    <!-- Dark Overlay -->
                     <div class="testimonial-overlay"></div>
-
-                    <!-- Content shown on hover -->
                     <div class="testimonial-hover-content">
-
                         <div class="testimonial-quote">
                             <i class="bi bi-quote"></i>
                         </div>
-
                         <div class="testimonial-stars">
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
@@ -973,50 +701,23 @@
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
                         </div>
-
-                        <p class="testimonial-text">
-                            Bought my bridal set from here. The attention
-                            to detail and personalized service made the
-                            experience truly special. Thank you!
-                        </p>
-
+                        <p class="testimonial-text">Bought my bridal set from here. The attention to detail and personalized service made the experience truly special.</p>
                     </div>
-
-                    <!-- Author -->
                     <div class="testimonial-author">
-
                         <div class="author-info">
-
-                            <h4>
-                                Ananya Patel
-                            </h4>
-
-                            <span>
-                                Ahmedabad
-                            </span>
-
+                            <h4>Ananya Patel</h4>
+                            <span>Ahmedabad</span>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                {{-- TESTIMONIAL 3 --}}
                 <div class="testimonial-card testimonial-image-card">
-
                     <img src="assets/admin/images/per3.jpg" alt="Rahul Mehta" class="testimonial-person-image">
-
-                    <!-- Dark Overlay -->
                     <div class="testimonial-overlay"></div>
-
-                    <!-- Content shown on hover -->
                     <div class="testimonial-hover-content">
-
                         <div class="testimonial-quote">
                             <i class="bi bi-quote"></i>
                         </div>
-
                         <div class="testimonial-stars">
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
@@ -1024,39 +725,17 @@
                             <i class="bi bi-star-fill"></i>
                             <i class="bi bi-star-fill"></i>
                         </div>
-
-                        <p class="testimonial-text">
-                            I've been a loyal customer for over 8 years.
-                            Their designs are timeless and the purity of gold
-                            is always guaranteed. Highly recommended!
-                        </p>
-
+                        <p class="testimonial-text">I've been a loyal customer for over 8 years. Their designs are timeless and the purity of gold is always guaranteed.</p>
                     </div>
-
-                    <!-- Author -->
                     <div class="testimonial-author">
-
                         <div class="author-info">
-
-                            <h4>
-                                Rahul Mehta
-                            </h4>
-
-                            <span>
-                                Delhi
-                            </span>
-
+                            <h4>Rahul Mehta</h4>
+                            <span>Delhi</span>
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
-
         </div>
-
     </section>
 
     {{-- =============================================
@@ -1064,20 +743,14 @@
     ============================================= --}}
     <section class="faq-section-modern py-5">
         <div class="container">
-
-            {{-- Section Header --}}
             <div class="faq-header text-center">
                 <span class="faq-eyebrow">FAQ</span>
                 <h2 class="faq-title">Frequently Asked Questions</h2>
-                <p class="faq-subtitle">Find answers to common questions about our products, jewellery care, shipping
-                    and services.</p>
+                <p class="faq-subtitle">Find answers to common questions about our products, jewellery care, shipping and services.</p>
             </div>
 
-            {{-- FAQ Content --}}
             <div class="faq-wrapper">
                 <div class="faq-card">
-
-                    {{-- FAQ 1 --}}
                     <div class="faq-item active">
                         <button type="button" class="faq-question" aria-expanded="true">
                             <span class="faq-question-left">
@@ -1090,15 +763,11 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                We offer a 30-day return policy on all items. If you're not completely satisfied with
-                                your purchase, you can return it within 30 days of delivery for a full refund or
-                                exchange. Items must be in their original condition with all packaging and
-                                documentation.
+                                We offer a 30-day return policy on all items. If you're not completely satisfied with your purchase, you can return it within 30 days of delivery for a full refund or exchange.
                             </div>
                         </div>
                     </div>
 
-                    {{-- FAQ 2 --}}
                     <div class="faq-item">
                         <button type="button" class="faq-question" aria-expanded="false">
                             <span class="faq-question-left">
@@ -1111,14 +780,11 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Yes, we specialize in custom jewellery design. Our expert designers work closely with
-                                you to create a unique piece that reflects your personal style. From concept to
-                                creation, we'll guide you through every step.
+                                Yes, we specialize in custom jewellery design. Our expert designers work closely with you to create a unique piece that reflects your personal style.
                             </div>
                         </div>
                     </div>
 
-                    {{-- FAQ 3 --}}
                     <div class="faq-item">
                         <button type="button" class="faq-question" aria-expanded="false">
                             <span class="faq-question-left">
@@ -1131,14 +797,11 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                To keep your jewellery looking its best, clean it regularly with a soft cloth and mild
-                                soap solution. Avoid exposing it to harsh chemicals, perfumes or lotions. Store each
-                                piece separately in a soft pouch or jewellery box to prevent scratches.
+                                To keep your jewellery looking its best, clean it regularly with a soft cloth and mild soap solution. Avoid exposing it to harsh chemicals, perfumes or lotions.
                             </div>
                         </div>
                     </div>
 
-                    {{-- FAQ 4 --}}
                     <div class="faq-item">
                         <button type="button" class="faq-question" aria-expanded="false">
                             <span class="faq-question-left">
@@ -1151,14 +814,11 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Standard shipping within India typically takes 5–7 business days. International shipping
-                                generally takes 10–14 business days. All orders are shipped with tracking for your peace
-                                of mind.
+                                Standard shipping within India typically takes 5–7 business days. International shipping generally takes 10–14 business days.
                             </div>
                         </div>
                     </div>
 
-                    {{-- FAQ 5 --}}
                     <div class="faq-item">
                         <button type="button" class="faq-question" aria-expanded="false">
                             <span class="faq-question-left">
@@ -1171,16 +831,12 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Selected jewellery pieces come with applicable authenticity and certification
-                                documentation. Product-specific certification details are provided on the respective
-                                product page.
+                                Selected jewellery pieces come with applicable authenticity and certification documentation. Product-specific certification details are provided on the respective product page.
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </section>
 
@@ -1189,118 +845,72 @@
     ============================================= --}}
     <section class="cta-section-modern py-5">
         <div class="max-w-7xl mx-auto">
-
-            <!-- HEADER SECTION – refined -->
             <div class="text-center max-w-2xl mx-auto mb-14">
-                <p class="text-[11px] uppercase tracking-[0.3em] text-brand-gold font-semibold mb-2">We’re Here To Help
-                </p>
-                <h1 class="font-serif text-4xl sm:text-5xl font-medium tracking-wide mb-4 text-white">Let’s Connect With
-                    Us</h1>
+                <p class="text-[11px] uppercase tracking-[0.3em] text-brand-gold font-semibold mb-2">We're Here To Help</p>
+                <h1 class="font-serif text-4xl sm:text-5xl font-medium tracking-wide mb-4 text-white">Let's Connect With Us</h1>
                 <div class="flex items-center justify-center space-x-3 mb-5">
                     <span class="h-[1px] w-12 bg-brand-gold/40"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-gold/60"></span>
                     <span class="h-[1px] w-12 bg-brand-gold/40"></span>
                 </div>
                 <p class="text-sm sm:text-base text-brand-gold font-light leading-relaxed max-w-xl mx-auto">
-                    Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always
-                    happy to assist. Reach out, and we’ll be delighted to help you find the perfect piece or resolve
-                    your query.
+                    Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always happy to assist.
                 </p>
             </div>
 
-            <!-- MAIN GRID CONTAINER -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-
-                <!-- LEFT COLUMN: Support Channels & Map Section -->
                 <div class="lg:col-span-7 space-y-6">
-
-                    <!-- Support Channels Row – professional cards -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-
-                        <!-- WhatsApp Support -->
-                        <div
-                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div
-                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path
-                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+                                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">
-                                WhatsApp</h3>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">WhatsApp</h3>
                             <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
                         </div>
 
-                        <!-- Call Support -->
-                        <div
-                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div
-                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Call Us
-                            </h3>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Call Us</h3>
                             <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
                         </div>
 
-                        <!-- Email Support -->
-                        <div
-                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div
-                                class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
                             </div>
-                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Email
-                            </h3>
-                            <p class="text-xs font-medium text-brand-dark truncate max-w-full">support@aethelweave.com
-                            </p>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Email</h3>
+                            <p class="text-xs font-medium text-brand-dark truncate max-w-full">support@aethelweave.com</p>
                         </div>
-
                     </div>
 
-                    <!-- Map & Boutique Location – polished -->
-                    <div
-                        class="bg-brand-card p-6 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
                         <div class="flex items-center justify-between mb-4">
-                            <h3
-                                class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-gold bg-brand-bg px-3 py-1 rounded border border-brand-border/60">
-                                Find Us On Map</h3>
-                            <a href="https://maps.google.com" target="_blank"
-                                class="text-xs text-brand-gold underline hover:text-brand-dark transition">Open in
-                                Maps</a>
+                            <h3 class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-gold bg-brand-bg px-3 py-1 rounded border border-brand-border/60">Find Us On Map</h3>
+                            <a href="https://maps.google.com" target="_blank" class="text-xs text-brand-gold underline hover:text-brand-dark transition">Open in Maps</a>
                         </div>
-
-                        <!-- Google Map Embedded iframe – refined container -->
-                        <div
-                            class="map-container w-full h-56 bg-gray-100 rounded-lg mb-4 border border-brand-border/60">
+                        <div class="map-container w-full h-56 bg-gray-100 rounded-lg mb-4 border border-brand-border/60">
                             <iframe width="100%" height="100%" frameborder="0" style="border:0" loading="lazy"
                                 src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.5936087570146!2d73.8870!3d18.5362!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTjCsDMyJzEwLjQiTiA3M8KwNTMnMTMuMiJF!5e0!3m2!1sen!2sin!4v1620000000000"
                                 allowfullscreen>
                             </iframe>
                         </div>
-
                         <div class="text-center">
-                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">Visit Our
-                                Boutique</p>
-                            <p class="text-xs text-brand-dark font-medium">123, Jewelry Lane, Koregaon Park, Pune,
-                                Maharashtra 411001, India</p>
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">Visit Our Boutique</p>
+                            <p class="text-xs text-brand-dark font-medium">123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001, India</p>
                         </div>
                     </div>
-
                 </div>
 
-                <!-- RIGHT COLUMN: Contact Form – elevated design -->
-                <div
-                    class="lg:col-span-5 bg-brand-card p-8 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                <div class="lg:col-span-5 bg-brand-card p-8 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
                     <h2 class="text-xl font-serif font-medium text-brand-dark mb-1">Get In Touch</h2>
                     <p class="text-xs text-gray-500 mb-6">Speak with our jewellery consultant</p>
 
@@ -1315,32 +925,25 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label
-                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">First
-                                    Name *</label>
+                                <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">First Name *</label>
                                 <input type="text" name="first_name" required placeholder="Enter your first name"
                                     class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                             </div>
                             <div>
-                                <label
-                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Last
-                                    Name *</label>
+                                <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Last Name *</label>
                                 <input type="text" name="last_name" required placeholder="Enter your last name"
                                     class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                             </div>
                         </div>
 
                         <div>
-                            <label
-                                class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Email
-                                Address *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Email Address *</label>
                             <input type="email" name="email" required placeholder="Enter your email"
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">I
-                                am Interested In... *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">I am Interested In... *</label>
                             <select name="interest" required
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold text-gray-600 transition">
                                 <option value="" disabled selected>I am Interested In...</option>
@@ -1353,9 +956,7 @@
                         </div>
 
                         <div>
-                            <label
-                                class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Tell
-                                us your enquiry *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Tell us your enquiry *</label>
                             <textarea name="message" rows="3" required placeholder="Enter your message"
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold resize-none input-focus-ring transition"></textarea>
                         </div>
@@ -1366,530 +967,655 @@
                         </button>
                     </form>
                 </div>
-
             </div>
 
-            <!-- tiny footer note (clean) -->
-            <div
-                class="text-center mt-12 text-[10px] text-white tracking-widest uppercase border-t border-brand-border/40 pt-6">
+            <div class="text-center mt-12 text-[10px] text-white tracking-widest uppercase border-t border-brand-border/40 pt-6">
                 <span class="text-brand-gold/60">✦</span> Aethelweave · artisan jewellery
             </div>
         </div>
     </section>
+
+    {{-- =============================================
+    PRODUCT DETAIL MODAL
+    ============================================= --}}
+    <div id="productModal"
+        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;padding:20px;">
+        <div
+            style="background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:30px;position:relative;">
+            <button onclick="closeProductDetail()"
+                style="position:absolute;top:15px;right:20px;background:none;border:none;font-size:28px;cursor:pointer;color:#999;z-index:10;">&times;</button>
+            <div id="productDetailContent">
+                <div style="text-align:center;padding:40px 0;">
+                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;"></i>
+                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- =============================================
+    STYLES
+    ============================================= --}}
+    <style>
+        /* Product Card Hover Effects */
+        .product-card-compact:hover .hover-image {
+            opacity: 1 !important;
+        }
+
+        .product-card-compact:hover .main-image {
+            opacity: 0;
+        }
+
+        .product-card-compact {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card-compact:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image-wrapper-compact img {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Product Detail Gallery Styles */
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 20px 0;
+        }
+
+        .gallery-section {
+            position: relative;
+        }
+
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #FDFBF7;
+            aspect-ratio: 1/1;
+        }
+
+        .main-display-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #E8E2D2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .main-image-container:hover .gallery-nav {
+            opacity: 1;
+        }
+
+        .gallery-nav:hover {
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        .gallery-nav.prev {
+            left: 10px;
+        }
+
+        .gallery-nav.next {
+            right: 10px;
+        }
+
+        .gallery-nav i {
+            font-size: 18px;
+            color: #2C2A29;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 5;
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        .thumbnail-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .thumbnail-img:hover {
+            border-color: #D5CFC5;
+            transform: scale(1.05);
+        }
+
+        .thumbnail-img.active {
+            border-color: #A58B54;
+            box-shadow: 0 0 0 3px rgba(165, 139, 84, 0.2);
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cat {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 500;
+            color: #2C2A29;
+            margin: 0;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2C2A29;
+        }
+
+        .price .original {
+            font-size: 18px;
+            font-weight: 400;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .stock-status.in {
+            background: #E8F5E9;
+            color: #27AE60;
+        }
+
+        .stock-status.out {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #6B6A69;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+            background: #F8F6F1;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-item strong {
+            font-size: 11px;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .meta-item span {
+            font-size: 14px;
+            color: #2C2A29;
+        }
+
+        .btn-add {
+            padding: 14px 32px;
+            background: #A58B54;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+        }
+
+        .btn-add:hover:not(:disabled) {
+            background: #8A7344;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(165, 139, 84, 0.3);
+        }
+
+        .btn-add:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-add i {
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .thumbnail-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .gallery-nav {
+                width: 32px;
+                height: 32px;
+                opacity: 1;
+            }
+
+            .gallery-nav i {
+                font-size: 14px;
+            }
+        }
+
+        /* Modal styles */
+        .modal-open {
+            overflow: hidden;
+        }
+
+        #productModal {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Image counter on product cards */
+        .image-counter {
+            font-weight: 500;
+        }
+
+        /* Dot active state */
+        .dot.active {
+            background: #A58B54 !important;
+            transform: scale(1.2);
+        }
+    </style>
+
     {{-- =============================================
     SCRIPTS
     ============================================= --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        // =============================================
+        // SLIDER FUNCTIONS
+        // =============================================
+        let currentSlide = 0;
+        let totalSlides = {{ ceil(($availableProducts->count() ?? 0) / 5) }};
+        const slidesToShow = 5;
 
-            // =============================================
-            // HERO SLIDER
-            // =============================================
-            function initHeroSlider() {
-                const container = document.querySelector('.hero-slider-container');
-                if (!container) return;
+        function slideProducts(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+            updateSlider();
+        }
 
-                const slides = container.querySelectorAll('.hero-slide');
-                const dots = document.querySelectorAll('.hero-dot');
-                const prevBtn = document.querySelector('.hero-slider-arrow.prev');
-                const nextBtn = document.querySelector('.hero-slider-arrow.next');
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+        }
 
-                if (slides.length <= 1) return;
+        function updateSlider() {
+            const track = document.getElementById('availableSliderTrack');
+            if (!track) return;
 
-                let currentSlide = 0;
-                let autoplayInterval = null;
+            const slideWidth = document.querySelector('.slider-slide')?.offsetWidth || 200;
+            const gap = 15;
+            const offset = currentSlide * (slideWidth + gap) * slidesToShow;
+            track.style.transform = `translateX(-${offset}px)`;
 
-                function goToSlide(index) {
-                    slides.forEach(s => s.classList.remove('active'));
-                    dots.forEach(d => d.classList.remove('active'));
-                    slides[index].classList.add('active');
-                    dots[index].classList.add('active');
-                    currentSlide = index;
-                }
-
-                function nextSlide() {
-                    goToSlide((currentSlide + 1) % slides.length);
-                }
-
-                function prevSlide() {
-                    goToSlide((currentSlide - 1 + slides.length) % slides.length);
-                }
-
-                function startAutoplay() {
-                    if (autoplayInterval) clearInterval(autoplayInterval);
-                    autoplayInterval = setInterval(nextSlide, 5000);
-                }
-
-                function stopAutoplay() {
-                    if (autoplayInterval) {
-                        clearInterval(autoplayInterval);
-                        autoplayInterval = null;
-                    }
-                }
-
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', function () {
-                        stopAutoplay();
-                        goToSlide(index);
-                        startAutoplay();
-                    });
-                });
-
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        stopAutoplay();
-                        nextSlide();
-                        startAutoplay();
-                    });
-                }
-
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        stopAutoplay();
-                        prevSlide();
-                        startAutoplay();
-                    });
-                }
-
-                container.addEventListener('mouseenter', stopAutoplay);
-                container.addEventListener('mouseleave', startAutoplay);
-
-                let touchStartX = 0;
-                container.addEventListener('touchstart', function (e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                container.addEventListener('touchend', function (e) {
-                    const diff = touchStartX - e.changedTouches[0].screenX;
-                    if (Math.abs(diff) > 50) {
-                        stopAutoplay();
-                        if (diff > 0) {
-                            nextSlide();
-                        } else {
-                            prevSlide();
-                        }
-                        startAutoplay();
-                    }
-                }, { passive: true });
-
-                startAutoplay();
-            }
-
-            // =============================================
-            // BANNER CAROUSEL
-            // =============================================
-            function initBannerCarousel() {
-                const container = document.querySelector('.banner-carousel-container');
-                if (!container) return;
-
-                const slides = container.querySelectorAll('.banner-carousel-slide');
-                const dots = container.querySelectorAll('.banner-carousel-dot');
-                const prevBtn = container.querySelector('.banner-carousel-arrow.prev');
-                const nextBtn = container.querySelector('.banner-carousel-arrow.next');
-
-                if (slides.length <= 1) return;
-
-                let currentSlide = 0;
-                let autoplayInterval = null;
-
-                function goToSlide(index) {
-                    slides.forEach(s => s.classList.remove('active'));
-                    dots.forEach(d => d.classList.remove('active'));
-                    slides[index].classList.add('active');
-                    dots[index].classList.add('active');
-                    currentSlide = index;
-                }
-
-                function nextSlide() {
-                    goToSlide((currentSlide + 1) % slides.length);
-                }
-
-                function prevSlide() {
-                    goToSlide((currentSlide - 1 + slides.length) % slides.length);
-                }
-
-                function startAutoplay() {
-                    if (autoplayInterval) clearInterval(autoplayInterval);
-                    autoplayInterval = setInterval(nextSlide, 4000);
-                }
-
-                function stopAutoplay() {
-                    if (autoplayInterval) {
-                        clearInterval(autoplayInterval);
-                        autoplayInterval = null;
-                    }
-                }
-
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', function () {
-                        stopAutoplay();
-                        goToSlide(index);
-                        startAutoplay();
-                    });
-                });
-
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        stopAutoplay();
-                        nextSlide();
-                        startAutoplay();
-                    });
-                }
-
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        stopAutoplay();
-                        prevSlide();
-                        startAutoplay();
-                    });
-                }
-
-                container.addEventListener('mouseenter', stopAutoplay);
-                container.addEventListener('mouseleave', startAutoplay);
-
-                let touchStartX = 0;
-                container.addEventListener('touchstart', function (e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                container.addEventListener('touchend', function (e) {
-                    const diff = touchStartX - e.changedTouches[0].screenX;
-                    if (Math.abs(diff) > 30) {
-                        stopAutoplay();
-                        if (diff > 0) {
-                            nextSlide();
-                        } else {
-                            prevSlide();
-                        }
-                        startAutoplay();
-                    }
-                }, { passive: true });
-
-                startAutoplay();
-            }
-            function initCategorySlider() {
-                const container = document.querySelector('.category-slider-container');
-                if (!container) return;
-
-                const slides = container.querySelectorAll('.category-slide');
-                if (slides.length <= 4) {
-                    const arrows = document.querySelectorAll('.category-slider-arrow');
-                    arrows.forEach(a => a.style.display = 'none');
-                    return;
-                }
-
-                const prevBtn = document.querySelector('.category-slider-arrow.prev');
-                const nextBtn = document.querySelector('.category-slider-arrow.next');
-
-                if (nextBtn) {
-                    nextBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        container.scrollBy({ left: 200, behavior: 'smooth' });
-                    });
-                }
-
-                if (prevBtn) {
-                    prevBtn.addEventListener('click', function (e) {
-                        e.stopPropagation();
-                        container.scrollBy({ left: -200, behavior: 'smooth' });
-                    });
-                }
-
-                let touchStartX = 0;
-                container.addEventListener('touchstart', function (e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, { passive: true });
-
-                container.addEventListener('touchend', function (e) {
-                    const diff = touchStartX - e.changedTouches[0].screenX;
-                    if (Math.abs(diff) > 30) {
-                        if (diff > 0) {
-                            container.scrollBy({ left: 200, behavior: 'smooth' });
-                        } else {
-                            container.scrollBy({ left: -200, behavior: 'smooth' });
-                        }
-                    }
-                }, { passive: true });
-            }
-            window.toggleFaq = function (element) {
-                const currentItem = element.closest('.faq-item-modern');
-                const isActive = currentItem.classList.contains('active');
-
-                document.querySelectorAll('.faq-item-modern').forEach(item => {
-                    item.classList.remove('active');
-                    item.querySelector('.faq-answer-modern').classList.remove('open');
-                });
-
-                if (!isActive) {
-                    currentItem.classList.add('active');
-                    currentItem.querySelector('.faq-answer-modern').classList.add('open');
-                }
-            }
-            document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    window.location.href = '/login';
-                });
+            document.querySelectorAll('.dot').forEach((dot, index) => {
+                dot.style.background = index === currentSlide ? '#A58B54' : '#D5CFC5';
+                dot.style.transform = index === currentSlide ? 'scale(1.2)' : 'scale(1)';
             });
-            const newsletterForm = document.getElementById('newsletterForm');
-            if (newsletterForm) {
-                newsletterForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    const input = this.querySelector('.cta-input');
-                    const email = input.value.trim();
+        }
 
-                    if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                        alert('Thank you for subscribing to our newsletter!');
-                        input.value = '';
-                    } else {
-                        alert('Please enter a valid email address.');
-                    }
-                });
+        let autoSlideInterval;
+
+        function startAutoSlide() {
+            if (autoSlideInterval) clearInterval(autoSlideInterval);
+            autoSlideInterval = setInterval(() => {
+                if (currentSlide < totalSlides - 1) {
+                    slideProducts(1);
+                } else {
+                    goToSlide(0);
+                }
+            }, 5000);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+        }
+
+        // =============================================
+        // PRODUCT DETAIL MODAL FUNCTIONS
+        // =============================================
+        let productImages = [];
+        let currentImageIndex = 0;
+
+        function changeMainImage(index) {
+            const images = productImages || [];
+            if (!images.length || index < 0 || index >= images.length) return;
+
+            currentImageIndex = index;
+            const mainImage = document.getElementById('mainDisplayImage');
+            const counter = document.querySelector('.image-counter');
+            const thumbnails = document.querySelectorAll('.thumbnail-img');
+
+            if (mainImage) {
+                mainImage.src = images[index];
             }
 
-            // Initialize all sliders
-            initHeroSlider();
-            initBannerCarousel();
-            initCategorySlider();
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+            if (counter) {
+                counter.textContent = `${index + 1} / ${images.length}`;
+            }
 
-            const faqItems = document.querySelectorAll('.faq-item');
+            thumbnails.forEach((thumb, i) => {
+                thumb.classList.toggle('active', i === index);
+            });
+        }
 
-            faqItems.forEach(function (item) {
+        function changeImage(direction) {
+            const images = productImages || [];
+            if (!images.length) return;
 
-                const button = item.querySelector('.faq-question');
+            let newIndex = currentImageIndex + direction;
+            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex >= images.length) newIndex = 0;
 
-                button.addEventListener('click', function () {
+            changeMainImage(newIndex);
+        }
 
+        function openProductDetail(productId) {
+            const modal = document.getElementById('productModal');
+            const content = document.getElementById('productDetailContent');
+
+            content.innerHTML = `
+                <div style="text-align:center;padding:40px 0;">
+                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;animation:spin 1s linear infinite;"></i>
+                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+
+            fetch(`/customer/product-detail/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const p = data.product;
+                        const images = p.image ? p.image.split(',').map(s => s.trim()) : [];
+                        const firstImage = images.length > 0 ? images[0] : null;
+                        const hasMultipleImages = images.length > 1;
+
+                        productImages = images;
+                        currentImageIndex = 0;
+
+                        const stockClass = p.stock > 0 ? 'in' : 'out';
+                        const stockText = p.stock > 0 ? 'In Stock' : 'Out of Stock';
+                        const stockIcon = p.stock > 0 ? 'check-circle-fill' : 'x-circle-fill';
+
+                        let thumbnailsHTML = '';
+                        if (hasMultipleImages) {
+                            thumbnailsHTML = `
+                                <div class="thumbnail-container">
+                                    ${images.map((img, index) => `
+                                        <img src="${img}" alt="${p.name} - view ${index + 1}"
+                                             class="thumbnail-img ${index === 0 ? 'active' : ''}"
+                                             data-index="${index}">
+                                    `).join('')}
+                                </div>
+                            `;
+                        }
+
+                        let mainImageHTML = '';
+                        if (firstImage) {
+                            mainImageHTML = `
+                                <div class="main-image-container">
+                                    <img src="${firstImage}" alt="${p.name}" class="gallery-img main-display-image" id="mainDisplayImage">
+                                    ${hasMultipleImages ? `
+                                        <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </button>
+                                        <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                        <div class="image-counter">1 / ${images.length}</div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        } else {
+                            mainImageHTML = `
+                                <div class="gallery-img" style="display:flex;align-items:center;justify-content:center;color:#D5CFC5;min-height:300px;">
+                                    <i class="bi bi-image" style="font-size:50px;"></i>
+                                </div>
+                            `;
+                        }
+
+                        content.innerHTML = `
+                            <div class="product-detail-grid">
+                                <div class="gallery-section">
+                                    ${mainImageHTML}
+                                    ${thumbnailsHTML}
+                                </div>
+                                <div class="info">
+                                    <div class="cat">${p.category ? p.category.name : 'Uncategorized'}</div>
+                                    <h2>${p.name}</h2>
+                                    <div class="price">
+                                        ₹${parseFloat(p.price).toFixed(2)}
+                                        ${p.compare_price && p.compare_price > p.price ?
+                                            `<span class="original">₹${parseFloat(p.compare_price).toFixed(2)}</span>` : ''}
+                                    </div>
+                                    <div class="stock-status ${stockClass}">
+                                        <i class="bi bi-${stockIcon}"></i>
+                                        ${stockText}
+                                        ${p.stock > 0 && p.stock < 10 ? `(Only ${p.stock} left)` : ''}
+                                    </div>
+                                    <div class="desc">${p.specification || p.description || ''}</div>
+                                    <div class="meta-grid">
+                                        ${p.sku ? `<div class="meta-item"><strong>SKU</strong><span>${p.sku}</span></div>` : ''}
+                                        ${p.brand ? `<div class="meta-item"><strong>Brand</strong><span>${p.brand.name}</span></div>` : ''}
+                                        ${p.sub_category ? `<div class="meta-item"><strong>Sub Category</strong><span>${p.sub_category.name}</span></div>` : ''}
+                                        ${p.variants ? `<div class="meta-item"><strong>Material</strong><span>${p.variants}</span></div>` : ''}
+                                    </div>
+                                    ${p.stock > 0 ? `
+                                        <button class="btn-add" onclick="event.stopPropagation(); addToCart(${p.id})">
+                                            <i class="bi bi-cart-plus"></i>
+                                            Add to Cart
+                                        </button>
+                                    ` : `
+                                        <button class="btn-add" disabled>
+                                            <i class="bi bi-x-circle"></i>
+                                            Out of Stock
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        `;
+
+                    } else {
+                        content.innerHTML = `
+                            <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                                <i class="bi bi-exclamation-circle" style="font-size:40px;"></i>
+                                <p style="margin-top:10px;">${data.message || 'Product not found'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                            <i class="bi bi-exclamation-triangle" style="font-size:40px;"></i>
+                            <p style="margin-top:10px;">Error loading product details. Please try again.</p>
+                        </div>
+                    `;
+                    console.error('Error:', error);
+                });
+        }
+
+        function closeProductDetail() {
+            document.getElementById('productModal').style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+
+        function addToCart(productId) {
+            alert('Product ' + productId + ' added to cart!');
+            // You can replace this with your actual add to cart logic
+        }
+
+        // =============================================
+        // EVENT LISTENERS
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-slide
+            startAutoSlide();
+
+            // Stop auto-slide on hover
+            const sliderContainer = document.querySelector('.slider-container');
+            if (sliderContainer) {
+                sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+                sliderContainer.addEventListener('mouseleave', startAutoSlide);
+            }
+
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                updateSlider();
+            });
+
+            // Modal close on background click
+            document.getElementById('productModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeProductDetail();
+                }
+            });
+
+            // Modal close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeProductDetail();
+                }
+            });
+
+            // Thumbnail click delegation
+            document.addEventListener('click', function(e) {
+                const thumbnail = e.target.closest('.thumbnail-img');
+                if (thumbnail) {
+                    const index = parseInt(thumbnail.dataset.index);
+                    if (!isNaN(index)) {
+                        changeMainImage(index);
+                    }
+                }
+
+                // Navigation button clicks
+                const navBtn = e.target.closest('.gallery-nav');
+                if (navBtn) {
+                    if (navBtn.classList.contains('prev')) {
+                        changeImage(-1);
+                    } else if (navBtn.classList.contains('next')) {
+                        changeImage(1);
+                    }
+                }
+            });
+
+            // FAQ toggle
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function() {
+                    const item = this.closest('.faq-item');
                     const isActive = item.classList.contains('active');
 
-                    faqItems.forEach(function (faqItem) {
+                    document.querySelectorAll('.faq-item').forEach(faqItem => {
                         faqItem.classList.remove('active');
-
-                        const faqButton = faqItem.querySelector('.faq-question');
-
-                        if (faqButton) {
-                            faqButton.setAttribute('aria-expanded', 'false');
-                        }
+                        const btn = faqItem.querySelector('.faq-question');
+                        if (btn) btn.setAttribute('aria-expanded', 'false');
                     });
 
                     if (!isActive) {
                         item.classList.add('active');
-                        button.setAttribute('aria-expanded', 'true');
-                    }
-
-                });
-
-            });
-
-        });
-    </script>
-    <script>
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function () {
-            const hamburger = document.querySelector('.hamburger-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-
-            if (hamburger && mobileMenu) {
-                hamburger.addEventListener('click', function () {
-                    const isOpen = mobileMenu.style.display === 'block';
-                    mobileMenu.style.display = isOpen ? 'none' : 'block';
-                });
-            }
-
-            // Navbar scroll effect
-            const navbar = document.querySelector('.navbar-modern');
-            if (navbar) {
-                window.addEventListener('scroll', function () {
-                    if (window.scrollY > 50) {
-                        navbar.style.background = 'rgba(253, 251, 247, 0.98)';
-                        navbar.style.boxShadow = '0 2px 24px rgba(44, 42, 41, 0.06)';
-                    } else {
-                        navbar.style.background = 'rgba(253, 251, 247, 0.92)';
-                        navbar.style.boxShadow = 'none';
+                        this.setAttribute('aria-expanded', 'true');
                     }
                 });
-            }
-
-            // Show desktop nav links on larger screens
-            const mediaQuery = window.matchMedia('(min-width: 768px)');
-            const navLinks = document.querySelector('.nav-links-desktop');
-            const hamburgerBtn = document.querySelector('.hamburger-btn');
-
-            function handleScreenChange(e) {
-                if (e.matches) {
-                    if (navLinks) navLinks.style.display = 'flex';
-                    if (hamburgerBtn) hamburgerBtn.style.display = 'none';
-                    if (mobileMenu) mobileMenu.style.display = 'none';
-                } else {
-                    if (navLinks) navLinks.style.display = 'none';
-                    if (hamburgerBtn) hamburgerBtn.style.display = 'flex';
-                }
-            }
-
-            mediaQuery.addEventListener('change', handleScreenChange);
-            handleScreenChange(mediaQuery);
-        });
-    </script>
-    <script>
-
-    let currentIndex = 0;
-    let totalProducts = {{ $availableProducts->count() }};
-    let visibleSlides = 5;
-    let totalSlides = Math.ceil(totalProducts / visibleSlides);
-    let autoSlideInterval = null;
-    let isTransitioning = false;
-
-    // Get visible slides based on screen width
-    function getVisibleSlides() {
-        const width = window.innerWidth;
-        if (width <= 480) return 2;
-        if (width <= 768) return 3;
-        if (width <= 1024) return 4;
-        return 5;
-    }
-
-    // Update total slides
-    function updateTotalSlides() {
-        visibleSlides = getVisibleSlides();
-        totalSlides = Math.ceil(totalProducts / visibleSlides);
-        if (currentIndex >= totalSlides) {
-            currentIndex = 0;
-        }
-    }
-
-    // Update slider position
-    function updateSlider() {
-        const track = document.getElementById('availableSliderTrack');
-        if (!track) return;
-
-        visibleSlides = getVisibleSlides();
-        totalSlides = Math.ceil(totalProducts / visibleSlides);
-
-        if (currentIndex >= totalSlides) {
-            currentIndex = 0;
-        }
-
-        const slideWidth = 100 / visibleSlides;
-        const offset = currentIndex * slideWidth * (visibleSlides > 0 ? 1 : 0);
-        track.style.transform = `translateX(-${offset}%)`;
-
-        // Update dots
-        document.querySelectorAll('.dot').forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
-        });
-    }
-
-    // Slide to next/prev
-    function slideProducts(direction) {
-        if (isTransitioning) return;
-        isTransitioning = true;
-
-        visibleSlides = getVisibleSlides();
-        totalSlides = Math.ceil(totalProducts / visibleSlides);
-
-        currentIndex = (currentIndex + direction + totalSlides) % totalSlides;
-        updateSlider();
-
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 600);
-
-        resetAutoSlide();
-    }
-
-    // Go to specific slide
-    function goToSlide(index) {
-        if (isTransitioning || index === currentIndex) return;
-        isTransitioning = true;
-
-        currentIndex = index;
-        updateSlider();
-
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 600);
-
-        resetAutoSlide();
-    }
-
-    // Auto slide
-    function startAutoSlide() {
-        if (autoSlideInterval) {
-            clearInterval(autoSlideInterval);
-        }
-        autoSlideInterval = setInterval(() => {
-            if (!isTransitioning) {
-                visibleSlides = getVisibleSlides();
-                totalSlides = Math.ceil(totalProducts / visibleSlides);
-                currentIndex = (currentIndex + 1) % totalSlides;
-                updateSlider();
-            }
-        }, 4000);
-    }
-
-    function resetAutoSlide() {
-        if (autoSlideInterval) {
-            clearInterval(autoSlideInterval);
-        }
-        startAutoSlide();
-    }
-
-    // Stop auto slide on hover
-    function setupHoverPause() {
-        const container = document.querySelector('.slider-container');
-        if (!container) return;
-
-        container.addEventListener('mouseenter', function() {
-            if (autoSlideInterval) {
-                clearInterval(autoSlideInterval);
-                autoSlideInterval = null;
-            }
-        });
-
-        container.addEventListener('mouseleave', function() {
-            startAutoSlide();
-        });
-    }
-
-    function openProductDetail(productId) {
-        // Redirect to product detail page
-        window.location.href = '/shop/' + productId;
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize slider
-        updateTotalSlides();
-        updateSlider();
-        startAutoSlide();
-        setupHoverPause();
-
-        // Handle resize
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                updateTotalSlides();
-                updateSlider();
-                resetAutoSlide();
-            }, 300);
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const productId = this.dataset.productId;
             });
         });
-    });
-</script>
+
+        // Update total slides when window loads
+        window.addEventListener('load', function() {
+            const slideCount = document.querySelectorAll('.slider-slide').length;
+            if (slideCount > 0) {
+                totalSlides = Math.ceil(slideCount / 5);
+                updateSlider();
+            }
+        });
+    </script>
 
 @endsection

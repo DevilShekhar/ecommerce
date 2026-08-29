@@ -64,4 +64,34 @@ class Order extends Model
     {
         return $this->hasMany(OrderReturn::class);
     }
+
+    public function statusHistories()
+    {
+        return $this->hasMany(OrderStatusHistory::class)->orderBy('changed_at', 'desc');
+    }
+
+    public function latestStatusHistory()
+    {
+        return $this->hasOne(OrderStatusHistory::class)->latest('changed_at');
+    }
+
+    // Helper method to get status change history
+    public function getStatusHistory()
+    {
+        return $this->statusHistories()->with('changer')->get();
+    }
+
+    // Helper to get formatted status history
+    public function getFormattedStatusHistory()
+    {
+        return $this->statusHistories->map(function ($history) {
+            return [
+                'from' => $history->old_status_label,
+                'to' => $history->new_status_label,
+                'changed_by' => $history->changer?->name ?? 'System',
+                'changed_at' => $history->changed_at->format('d M Y, h:i A'),
+                'notes' => $history->notes,
+            ];
+        });
+    }
 }

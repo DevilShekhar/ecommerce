@@ -205,7 +205,7 @@
 
         .return-action-card .header {
             border-bottom: 1px solid #f1dfb5;
-            margin-left:10px;
+            margin-left: 10px;
         }
 
         .return-action-title {
@@ -533,7 +533,7 @@
             'cancelled', 'returned', 'refunded', 'failed' => 'status-cancelled',
             default => 'status-pending'
         };
-        $mainStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered','return_requested','returned','refunded','return_rejected'];
+        $mainStatuses = ['pending', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery', 'delivered', 'return_requested', 'returned', 'refunded', 'return_rejected'];
         $currentIndex = array_search($currentStatus, $mainStatuses, true);
         if ($currentIndex === false) {
             $currentIndex = -1;
@@ -623,11 +623,11 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="info-row">
-                                    <div class="info-label">Quantity</div>
-                                    <div class="info-value">
-                                        {{ $returnRequest->quantity ?? 0 }}
+                                        <div class="info-label">Quantity</div>
+                                        <div class="info-value">
+                                            {{ $returnRequest->quantity ?? 0 }}
+                                        </div>
                                     </div>
-                                </div>
                                 </div>
                             </div>
                             @if($returnRequest->reason)
@@ -714,7 +714,7 @@
                                             <button type="submit" class="btn btn-primary btn-block"
                                                 onclick="event.preventDefault();Swal.fire({title:'Process Refund?',text:'Are you sure?',icon:'warning',showCancelButton:true,confirmButtonText:'Yes, Refund'}).then(r=>{if(r.isConfirmed)this.form.submit()})">
                                                 <i class="zmdi zmdi-money"></i>
-                                            Process Refund</button>
+                                                Process Refund</button>
                                         </form>
                                     </div>
                                 </div>
@@ -793,7 +793,8 @@
                         </div>
                         @if(in_array($currentStatus, ['cancelled', 'refunded']))
                             <div class="alert alert-info mt-3 mb-0"><strong>This order has reached its final status:</strong>
-                                {{ $statusLabels[$currentStatus] }}</div>
+                                {{ $statusLabels[$currentStatus] }}
+                            </div>
                         @endif
                     </div>
                 </div>
@@ -805,7 +806,8 @@
                                     <div class="col-md-8">
                                         <h4 class="mb-1">Order {{ $order->order_number }}</h4>
                                         <p class="text-muted mb-0">Placed on
-                                            {{ $order->created_at?->format('d M Y, h:i A') ?? '-' }}</p>
+                                            {{ $order->created_at?->format('d M Y, h:i A') ?? '-' }}
+                                        </p>
                                     </div>
                                     <div class="col-md-4 text-md-right mt-3 mt-md-0">
                                         <span class="badge {{ $statusBadgeClass }} order-status-badge">
@@ -840,10 +842,12 @@
                                                 Delivered</div>
                                         @elseif($isReturnFlow)
                                             <div class="final-status-message"><i class="zmdi zmdi-undo"></i> Return:
-                                                {{ ucfirst(str_replace('_', ' ', $returnRequest->status)) }}</div>
+                                                {{ ucfirst(str_replace('_', ' ', $returnRequest->status)) }}
+                                            </div>
                                         @elseif(in_array($currentStatus, ['cancelled', 'returned', 'refunded', 'failed']))
                                             <div class="final-status-message"><i class="zmdi zmdi-info-outline"></i>
-                                                {{ $statusLabels[$currentStatus] ?? ucfirst($currentStatus) }}</div>
+                                                {{ $statusLabels[$currentStatus] ?? ucfirst($currentStatus) }}
+                                            </div>
                                         @elseif($nextStatus)
                                             <div class="final-status-message">Next: {{ $nextStatusLabel }}</div>
                                         @endif
@@ -862,17 +866,35 @@
                                             $isCompleted = $currentIndex > $index;
                                             $isCurrent = $currentIndex === $index;
                                             $isLast = $index === count($mainStatuses) - 1;
+
+                                            // Get the timestamp for this status from the history
+                                            $statusTimestamp = null;
+                                            if (isset($statusTimestamps[$status])) {
+                                                $statusTimestamp = $statusTimestamps[$status];
+                                            }
+
+                                            // For the current status, also check status_updated_at
+                                            if ($isCurrent && !$statusTimestamp && $order->status_updated_at) {
+                                                $statusTimestamp = $order->status_updated_at;
+                                            }
                                         @endphp
                                         <div
                                             class="timeline-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
-                                            <div class="timeline-icon"><i
-                                                    class="zmdi {{ $statusIcons[$status] ?? 'zmdi-info' }}"></i></div>
+                                            <div class="timeline-icon">
+                                                <i class="zmdi {{ $statusIcons[$status] ?? 'zmdi-info' }}"></i>
+                                            </div>
                                             <div class="timeline-content">
                                                 <strong>{{ $statusLabels[$status] ?? ucfirst(str_replace('_', ' ', $status)) }}</strong>
-                                                @if($isCurrent && $order->status_updated_at)
+
+                                                {{-- Display timestamp for this status --}}
+                                                @if($statusTimestamp)
                                                     <div class="small text-muted mt-1">
-                                                        {{ $order->status_updated_at->format('d M Y, h:i A') }}</div>
+                                                        <i class="zmdi zmdi-time"></i>
+                                                        {{ $statusTimestamp instanceof \Carbon\Carbon ? $statusTimestamp->format('d M Y, h:i A') : $statusTimestamp }}
+                                                    </div>
                                                 @endif
+
+                                                {{-- Status label --}}
                                                 @if($isCurrent)
                                                     <span class="timeline-current">Current Status</span>
                                                 @elseif($isCompleted)
@@ -887,21 +909,47 @@
                                         </div>
                                     @endforeach
                                 </div>
+
+                                {{-- Return Status Section (if exists) --}}
                                 @if($returnRequest)
                                     <div class="additional-status mt-4">
                                         <div class="additional-status-title">Return Status</div>
                                         @if($returnRequest->status === 'return_requested')
-                                            <div class="additional-status-badge return-requested-badge"><i
-                                                    class="zmdi zmdi-time"></i> Return Requested</div>
+                                            <div class="additional-status-badge return-requested-badge">
+                                                <i class="zmdi zmdi-time"></i> Return Requested
+                                                @if($returnRequest->created_at)
+                                                    <small class="ml-2">
+                                                        {{ $returnRequest->created_at->format('d M Y, h:i A') }}
+                                                    </small>
+                                                @endif
+                                            </div>
                                         @elseif($returnRequest->status === 'approved')
-                                            <div class="additional-status-badge return-approved-badge"><i
-                                                    class="zmdi zmdi-check-circle"></i> Return Approved</div>
+                                            <div class="additional-status-badge return-approved-badge">
+                                                <i class="zmdi zmdi-check-circle"></i> Return Approved
+                                                @if($returnRequest->updated_at)
+                                                    <small class="ml-2">
+                                                        {{ $returnRequest->updated_at->format('d M Y, h:i A') }}
+                                                    </small>
+                                                @endif
+                                            </div>
                                         @elseif($returnRequest->status === 'rejected')
-                                            <div class="additional-status-badge return-rejected-badge"><i
-                                                    class="zmdi zmdi-close-circle"></i> Return Rejected</div>
+                                            <div class="additional-status-badge return-rejected-badge">
+                                                <i class="zmdi zmdi-close-circle"></i> Return Rejected
+                                                @if($returnRequest->updated_at)
+                                                    <small class="ml-2">
+                                                        {{ $returnRequest->updated_at->format('d M Y, h:i A') }}
+                                                    </small>
+                                                @endif
+                                            </div>
                                         @elseif($returnRequest->status === 'refunded')
-                                            <div class="additional-status-badge refunded-badge"><i class="zmdi zmdi-money"></i>
-                                                Refunded</div>
+                                            <div class="additional-status-badge refunded-badge">
+                                                <i class="zmdi zmdi-money"></i> Refunded
+                                                @if($returnRequest->refunded_at)
+                                                    <small class="ml-2">
+                                                        {{ $returnRequest->refunded_at instanceof \Carbon\Carbon ? $returnRequest->refunded_at->format('d M Y, h:i A') : $returnRequest->refunded_at }}
+                                                    </small>
+                                                @endif
+                                            </div>
                                         @endif
                                     </div>
                                 @endif
@@ -963,7 +1011,8 @@
                                                 @endif
                                             @endif
                                             <div class="product-quantity">₹{{ number_format($item->price ?? 0, 2) }} ×
-                                                {{ $item->quantity }}</div>
+                                                {{ $item->quantity }}
+                                            </div>
                                         </div>
                                         <div class="product-total">
                                             ₹{{ number_format($item->total ?? (($item->price ?? 0) * ($item->quantity ?? 0)), 2) }}
@@ -984,47 +1033,47 @@
                                 @endphp
                                 <div class="shipping-address">
 
-    <div class="info-row">
-        <div class="info-label">Name</div>
-        <div class="info-value">
-            {{ $order->user->name ?? '-' }}
-        </div>
-    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">Name</div>
+                                        <div class="info-value">
+                                            {{ $order->user->name ?? '-' }}
+                                        </div>
+                                    </div>
 
-    <div class="info-row">
-        <div class="info-label">Email</div>
-        <div class="info-value">
-            {{ $order->user->email ?? '-' }}
-        </div>
-    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">Email</div>
+                                        <div class="info-value">
+                                            {{ $order->user->email ?? '-' }}
+                                        </div>
+                                    </div>
 
-    <div class="info-row">
-        <div class="info-label">Mobile</div>
-        <div class="info-value">
-            {{ $shippingAddress['mobile'] ?? ($order->user->mobile ?? '-') }}
-        </div>
-    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">Mobile</div>
+                                        <div class="info-value">
+                                            {{ $shippingAddress['mobile'] ?? ($order->user->mobile ?? '-') }}
+                                        </div>
+                                    </div>
 
-    <div class="info-row">
-        <div class="info-label">Address</div>
-        <div class="info-value">
-            {{ $order->shipping_address ?? 'Address not available' }}
-        </div>
-    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">Address</div>
+                                        <div class="info-value">
+                                            {{ $order->shipping_address ?? 'Address not available' }}
+                                        </div>
+                                    </div>
 
-    <div class="info-row">
-        <div class="info-label">Location</div>
-        <div class="info-value">
-            {{ collect([
-                $order->shipping_city,
-                $order->shipping_state,
-                $order->shipping_country,
-                $order->shipping_pincode
-            ])->filter()->implode(', ') ?: '-' }}
-        </div>
-    </div>
+                                    <div class="info-row">
+                                        <div class="info-label">Location</div>
+                                        <div class="info-value">
+                                            {{ collect([
+        $order->shipping_city,
+        $order->shipping_state,
+        $order->shipping_country,
+        $order->shipping_pincode
+    ])->filter()->implode(', ') ?: '-' }}
+                                        </div>
+                                    </div>
 
-</div>
+                                </div>
                             </div>
                         </div>
                         @if($order->notes)
@@ -1054,7 +1103,8 @@
                                 <div class="summary-row"><span>Shipping</span><strong>@if(($order->shipping ?? 0) > 0)
                                 ₹{{ number_format($order->shipping, 2) }} @else Free @endif</strong></div>
                                 <div class="summary-total">
-                                    <span>Total</span><strong>₹{{ number_format($order->total ?? 0, 2) }}</strong></div>
+                                    <span>Total</span><strong>₹{{ number_format($order->total ?? 0, 2) }}</strong>
+                                </div>
                             </div>
                         </div>
                         <div class="card">
@@ -1065,14 +1115,16 @@
                                 <div class="info-row">
                                     <div class="info-label">Payment Method</div>
                                     <div class="info-value text-uppercase">
-                                        {{ str_replace('_', ' ', $order->payment_method ?? 'N/A') }}</div>
+                                        {{ str_replace('_', ' ', $order->payment_method ?? 'N/A') }}
+                                    </div>
                                 </div>
                                 <div class="info-row">
                                     <div class="info-label">Payment Status</div>
                                     @php $paymentStatus = strtolower($order->payment_status ?? 'pending'); @endphp
                                     <div
                                         class="info-value {{ $paymentStatus === 'paid' ? 'payment-paid' : 'payment-pending' }}">
-                                        {{ ucfirst($paymentStatus) }}</div>
+                                        {{ ucfirst($paymentStatus) }}
+                                    </div>
                                 </div>
                                 @if($order->razorpay_payment_id)
                                     <div class="info-row">

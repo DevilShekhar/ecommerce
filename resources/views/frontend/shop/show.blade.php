@@ -1177,7 +1177,7 @@
             gap: 30px;
             margin-top: 60px;
             padding: 24px 30px;
-            background: var(--cream);
+            background: white;
             border-radius: 16px;
             border: 1px solid var(--border)
         }
@@ -1564,17 +1564,6 @@
                     <div class="option-label">Material <span>{{ $product->variants ?? 'Premium Jewellery' }}</span></div>
                 </div>
                 <div class="option-group">
-                    <div class="option-label">Size</div>
-                    <div class="size-buttons">
-                        <button class="size-button">6</button>
-                        <button class="size-button">7</button>
-                        <button class="size-button active">8</button>
-                        <button class="size-button">9</button>
-                        <button class="size-button">10</button>
-                        <button class="size-button">11</button>
-                    </div>
-                </div>
-                <div class="option-group">
                     <div class="option-label">Quantity</div>
                     <div class="quantity-area">
                         <div class="quantity-control">
@@ -1592,13 +1581,11 @@
                 <div class="purchase-row">
                     @if($product->stock > 0)
                         <button type="button" class="btn-add-cart" onclick="window.location.href='{{ route('login') }}'"><i
-                                class="bi bi-bag-plus"></i> Add to Bag</button>
+                                class="bi bi-bag-plus"></i> Make It Yours</button>
                     @else
                         <button type="button" class="btn-add-cart" disabled>Out of Stock</button>
                     @endif
-                    <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
                 </div>
-                <button class="btn-store"><i class="bi bi-geo-alt"></i> Find in Store</button>
                 <div class="view-count"><i class="bi bi-eye"></i> 32 people are viewing this item</div>
                 <div class="quick-info">
                     @if($product->brand)
@@ -1929,17 +1916,78 @@
                 </div>
             </section>
         @endif
-        <div class="bottom-services">
-            <div class="bottom-service"><i class="bi bi-lock"></i>
-                <div><strong>Pay Securely</strong><span>100% Safe & Secure Payments</span></div>
-            </div>
-            <div class="bottom-service"><i class="bi bi-gift"></i>
-                <div><strong>Gift-Ready Packaging</strong><span>Premium Packaging Included</span></div>
-            </div>
-            <div class="bottom-service"><i class="bi bi-headset"></i>
-                <div><strong>Need Help?</strong><span>Contact Us Anytime</span></div>
-            </div>
+<div class="bottom-services">
+    <div class="bottom-service">
+        <i class="bi bi-lock"></i>
+        <div>
+            <strong>Pay Securely</strong>
+            <span>100% Safe & Secure Payments</span>
         </div>
+    </div>
+
+    <div class="bottom-service">
+        <i class="bi bi-gift"></i>
+        <div>
+            <strong>Gift-Ready Packaging</strong>
+            <span>Premium Packaging Included</span>
+        </div>
+    </div>
+
+    <div class="bottom-service">
+        <i class="bi bi-headset"></i>
+        <div>
+            <strong>Need Help?</strong>
+            <span>Contact Us Anytime</span>
+        </div>
+    </div>
+</div>
+
+<style>
+.bottom-services {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.bottom-service {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px;
+    background: #FBF7E8;
+    border: 1px solid #E9DDB8;
+    border-radius: 12px;
+}
+
+.bottom-service > i {
+    color: #B8953E;
+    font-size: 22px;
+}
+
+.bottom-service strong,
+.bottom-service span {
+    display: block;
+}
+
+.bottom-service strong {
+    color: #2B2418;
+    font-size: 14px;
+}
+
+.bottom-service span {
+    color: #756B58;
+    font-size: 12px;
+    margin-top: 3px;
+}
+
+@media (max-width: 768px) {
+    .bottom-services {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
         <div class="image-modal" id="imageModal" onclick="closeImageModal()">
             <span class="modal-close" onclick="closeImageModal()"><i class="bi bi-x-lg"></i></span>
             <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">

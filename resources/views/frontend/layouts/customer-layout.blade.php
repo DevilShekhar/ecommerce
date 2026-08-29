@@ -707,7 +707,8 @@
         .section-card {
             height: auto !important;
         }
-                .account-page {
+
+        .account-page {
             max-width: 1000rem;
             margin: 0 auto
         }
@@ -1065,7 +1066,10 @@
                                 <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
                             </li>
                             <li>
-                                <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
+                                <a href="#coupons-offers">
+                                    <i class="bi bi-ticket-perforated"></i>
+                                    Coupons & Offers
+                                </a>
                             </li>
                             <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
                                 <a href="{{ route('customer.returns.index') }}">
