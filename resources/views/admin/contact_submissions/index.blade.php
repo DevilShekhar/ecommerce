@@ -4,165 +4,149 @@
 
 @section('content')
 
-<section class="content">
-    <div class="body_scroll">
+    <section class="content">
+        <div class="body_scroll">
 
-        <div class="block-header">
-            <div class="row">
+            <div class="block-header">
+                <div class="row">
 
-                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="col-lg-6 col-md-6 col-sm-12">
 
-                    <h2>Contact Submissions</h2>
+                        <h2>Contact Submissions</h2>
 
-                    <ul class="breadcrumb">
-                        <li class="breadcrumb-item">
-                            <a href="{{ route('dashboard') }}">
-                                <i class="zmdi zmdi-home"></i>
-                                Dashboard
-                            </a>
-                        </li>
+                        <ul class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">
+                                    <i class="zmdi zmdi-home"></i>
+                                    Dashboard
+                                </a>
+                            </li>
 
-                        <li class="breadcrumb-item active">
-                            Contact Submissions
-                        </li>
-                    </ul>
+                            <li class="breadcrumb-item active">
+                                Contact Submissions
+                            </li>
+                        </ul>
+
+                    </div>
 
                 </div>
-
             </div>
-        </div>
 
-        <div class="container-fluid">
+            <div class="container-fluid">
 
-            <div class="card">
+                <div class="card">
 
-                <div class="header">
-                    <h2>
-                        <strong>Contact</strong> Submissions
-                    </h2>
-                </div>
+                    <div class="header">
+                        <h2>
+                            <strong>Contact</strong> Submissions
+                        </h2>
+                    </div>
 
-                <div class="body">
+                    <div class="body">
 
-                    @if($submissions->count())
+                        @if($submissions->count())
 
-                        <div class="table-responsive">
+                            <div class="table-responsive">
 
-                            <table class="table table-bordered table-striped" id="datatable">
+                                <table class="table table-bordered table-striped" id="datatable">
 
-                                <thead>
-                                    <tr>
-                                        <th>SrNo.</th>
-                                        <th>Page</th>
-                                        <th>Form</th>
-                                        <th>Submitted Data</th>
-                                        <th>Submitted At</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-
-                                    @foreach($submissions as $submission)
-
+                                    <thead>
                                         <tr>
-
-                                            <td>
-                                                {{ $submissions->firstItem() + $loop->index }}
-                                            </td>
-
-                                            <td>
-                                                {{ $submission->page->title ?? '-' }}
-                                            </td>
-
-                                            <td>
-                                                {{ $submission->section->title ?? 'Contact Form' }}
-                                            </td>
-
-                                            <td>
-
-                                                @foreach($submission->data ?? [] as $key => $value)
-
-                                                    <div class="mb-1">
-
-                                                        <strong>
-                                                            {{ ucwords(str_replace('_', ' ', $key)) }}:
-                                                        </strong>
-
-                                                        @if(is_array($value))
-
-                                                            {{ implode(', ', $value) }}
-
-                                                        @else
-
-                                                            {{ $value ?: '-' }}
-
-                                                        @endif
-
-                                                    </div>
-
-                                                @endforeach
-
-                                            </td>
-
-                                            <td>
-                                                {{ $submission->created_at->format('d M Y, h:i A') }}
-                                            </td>
-
-                                            <td>
-
-                                                <a
-                                                    href="{{ route('admin.contact-submissions.show', $submission->id) }}"
-                                                    class="btn btn-primary btn-sm"
-                                                >
-                                                    <i class="zmdi zmdi-eye"></i>
-                                                    View
-                                                </a>
-
-                                            </td>
-
+                                            <th>SrNo.</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Email</th>
+                                            <th>Interest</th>
+                                            <th>Message</th>
+                                            <th>Submitted At</th>
+                                            <th>Action</th>
                                         </tr>
+                                    </thead>
 
-                                    @endforeach
+                                    <tbody>
 
-                                </tbody>
+                                        @foreach($submissions as $submission)
 
-                            </table>
+                                            <tr>
 
-                        </div>
+                                                <td>
+                                                    {{ $submissions->firstItem() + $loop->index }}
+                                                </td>
 
-                        <div class="mt-3">
-                            {{ $submissions->links() }}
-                        </div>
+                                                <td>
+                                                    {{ $submission->first_name ?? '-' }}
+                                                </td>
 
-                    @else
+                                                <td>
+                                                    {{ $submission->last_name ?? '-' }}
+                                                </td>
 
-                        <div class="text-center py-5">
+                                                <td>
+                                                    {{ $submission->email ?? '-' }}
+                                                </td>
 
-                            <i
-                                class="zmdi zmdi-email"
-                                style="font-size:50px;"
-                            ></i>
+                                                <td>
+                                                    {{ $submission->interest ?? '-' }}
+                                                </td>
 
-                            <h4 class="mt-3">
-                                No Contact Submissions Found
-                            </h4>
+                                                <td style="max-width:300px;">
+                                                    {{ $submission->message ?? '-' }}
+                                                </td>
 
-                            <p class="text-muted">
-                                Contact form submissions will appear here once visitors submit the form.
-                            </p>
+                                                <td>
+                                                    {{ $submission->created_at?->format('d M Y, h:i A') ?? '-' }}
+                                                </td>
 
-                        </div>
+                                                <td>
+                                                    <a href="{{ route('admin.contact-submissions.show', $submission->id) }}"
+                                                        class="btn btn-primary btn-sm">
+                                                        <i class="zmdi zmdi-eye"></i>
+                                                        View
+                                                    </a>
+                                                </td>
 
-                    @endif
+                                            </tr>
+
+                                        @endforeach
+
+                                    </tbody>
+
+
+                                </table>
+
+                            </div>
+
+
+
+                            <div class="mt-3">
+                                {{ $submissions->links() }}
+                            </div>
+
+                        @else
+
+                            <div class="text-center py-5">
+
+                                <i class="zmdi zmdi-email" style="font-size:50px;"></i>
+
+                                <h4 class="mt-3">
+                                    No Contact Submissions Found
+                                </h4>
+
+                                <p class="text-muted">
+                                    Contact form submissions will appear here once visitors submit the form.
+                                </p>
+
+                            </div>
+
+                        @endif
+
+                    </div>
 
                 </div>
 
             </div>
 
         </div>
-
-    </div>
-</section>
+    </section>
 
 @endsection

@@ -29,9 +29,20 @@
     <nav class="navbar-modern">
         <div class="navbar-container">
             <!-- Logo -->
-            <a href="/" class="navbar-logo">
-                <span class="navbar-logo-text">Aethelweave</span>
-                <span class="navbar-logo-badge">Artisan</span>
+            @php
+                $siteLogo = \App\Models\Logo::first();
+            @endphp
+
+            <a href="{{ url('/') }}" class="navbar-logo">
+                @if($siteLogo && $siteLogo->logo)
+                    <img src="{{ asset('storage/' . $siteLogo->logo) }}" alt="{{ $siteLogo->site_name ?? 'Logo' }}"
+                        class="navbar-logo-image">
+                @else
+                    <span class="navbar-logo-text">
+                        {{ $siteLogo->site_name ?? 'Aethelweave' }}
+                    </span>
+                    <span class="navbar-logo-badge">Artisan</span>
+                @endif
             </a>
 
             <!-- Nav Links - Desktop -->
@@ -140,7 +151,7 @@
                     <a href="{{ route('privacy-policy.index')}}">Privacy Policy</a>
                     <a href={{ route('terms-conditions') }}>Terms of Use</a>
                     <a href={{ route('disclaimer') }}>Disclaimer</a>
-                    <a href="#">Sitemap</a>
+                    <a href="{{ route('sitemap') }}">Sitemap</a>
                 </div>
             </div>
         </div>
