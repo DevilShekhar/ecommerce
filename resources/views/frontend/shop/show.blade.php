@@ -1,1188 +1,2030 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>{{ $product->name }} - Aethelweave</title>
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+@extends('frontend.layouts.app')
+@section('title', $product->name . ' - Aethelweave')
+@push('styles')
     <style>
-        /* ========== RESET ========== */
+        :root {
+            --gold: #C9A96E;
+            --gold-light: #F5EDE0;
+            --gold-dark: #B8944C;
+            --gold-glow: rgba(201, 169, 110, 0.15);
+            --cream: #FDFBF7;
+            --cream-dark: #F8F4EC;
+            --border: #E8E0D4;
+            --text: #2C2A29;
+            --text-light: #7A7268;
+            --white: #FFFFFF;
+            --shadow: 0 8px 40px rgba(44, 42, 41, 0.06);
+            --shadow-hover: 0 12px 60px rgba(201, 169, 110, 0.12)
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
-            padding: 0;
+            padding: 0
         }
 
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #FDFBF7;
-            color: #2C2A29;
-            padding-top: 80px;
+        .page-container {
+            max-width: 1380px;
+            margin: auto;
+            padding: 20px 35px 80px
         }
 
-        /* ========== NAVBAR ========== */
-        .navbar-modern {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(253, 251, 247, .92);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(232, 226, 210, .6);
-            padding: 12px 0;
-            transition: .3s;
-        }
-
-        .navbar-modern.scrolled {
-            background: rgba(253, 251, 247, .98);
-            box-shadow: 0 2px 24px rgba(44, 42, 41, .06);
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .navbar-logo {
-            text-decoration: none;
+        .breadcrumb {
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
+            padding: 10px 0 30px;
+            font-size: 11px;
+            color: #A0988E;
+            letter-spacing: .03em
         }
 
-        .navbar-logo-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 500;
-            color: #A58B54;
-            letter-spacing: -.5px;
-        }
-
-        .navbar-logo-badge {
-            font-size: .55rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: .15em;
-            color: #8F753D;
-            background: rgba(165, 139, 84, .12);
-            padding: 2px 10px;
-            border-radius: 20px;
-            border: 1px solid rgba(165, 139, 84, .2);
-        }
-
-        .nav-links-desktop {
-            display: none;
-            list-style: none;
-            align-items: center;
-            gap: 28px;
-        }
-
-        .nav-links-desktop li a {
-            font-size: .75rem;
-            font-weight: 500;
-            color: #2C2A29;
+        .breadcrumb a {
+            color: var(--gold);
             text-decoration: none;
-            text-transform: uppercase;
-            letter-spacing: .08em;
+            transition: .25s;
+            font-weight: 500
+        }
+
+        .breadcrumb a:hover {
+            color: var(--gold-dark)
+        }
+
+        .breadcrumb .current {
+            color: var(--text);
+            font-weight: 600
+        }
+
+        .breadcrumb .separator {
+            color: #D5CDC2
+        }
+
+        .product-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border)
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 18px;
+            position: sticky;
+            top: 100px
+        }
+
+        .thumbnail-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 90px;
+            border: 2px solid transparent;
+            background: var(--cream-dark);
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 10px;
             transition: .3s;
-            position: relative;
-            padding-bottom: 4px;
+            position: relative
         }
 
-        .nav-links-desktop li a:hover,
-        .nav-links-desktop li a.active {
-            color: #A58B54;
+        .thumbnail:hover {
+            border-color: var(--gold-light)
         }
 
-        .nav-links-desktop li a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: #A58B54;
-            border-radius: 2px;
+        .thumbnail.active {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px var(--gold-glow)
         }
 
-        .navbar-icons {
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .thumbnail-empty {
+            height: 100%;
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            color: #CFC7BA;
+            font-size: 24px
         }
 
-        .navbar-icon {
-            color: #2C2A29;
-            text-decoration: none;
-            font-size: 1.1rem;
+        .main-gallery {
             position: relative;
-            transition: .3s;
+            background: var(--cream-dark);
+            border-radius: 16px;
+            overflow: hidden
         }
 
-        .navbar-icon:hover {
-            color: #A58B54;
+        .main-gallery-image {
+            width: 100%;
+            height: 580px;
+            object-fit: cover;
+            transition: opacity .3s ease
         }
 
-        .navbar-cart-count {
+        .gallery-badge {
             position: absolute;
-            top: -8px;
-            right: -10px;
-            background: #A58B54;
-            color: #fff;
-            font-size: .5rem;
+            top: 18px;
+            left: 18px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 6px 16px;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .15em;
             font-weight: 700;
-            width: 18px;
-            height: 18px;
+            border-radius: 50px
+        }
+
+        .gallery-badge.featured {
+            background: #2C3E50
+        }
+
+        .gallery-badge.popular {
+            background: var(--gold)
+        }
+
+        .gallery-badge.new {
+            background: var(--text)
+        }
+
+        .gallery-wishlist {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: .3s;
+            color: var(--text-light)
+        }
+
+        .gallery-wishlist:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+            transform: scale(1.05)
+        }
+
+        .gallery-expand {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid var(--border);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .hamburger-btn {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            background: none;
-            border: none;
             cursor: pointer;
-            padding: 4px;
-        }
-
-        .hamburger-btn span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: #2C2A29;
-            border-radius: 2px;
             transition: .3s;
+            color: var(--text-light)
         }
 
-        .mobile-menu {
-            display: none;
-            background: #fff;
-            border-top: 1px solid #E8E2D2;
-            padding: 16px 20px 20px;
-            margin-top: 12px;
+        .gallery-expand:hover {
+            color: var(--gold);
+            border-color: var(--gold)
         }
 
-        .mobile-menu ul {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .mobile-menu ul li a {
-            display: block;
-            padding: 10px 0;
-            font-size: .9rem;
-            font-weight: 500;
-            color: #2C2A29;
-            text-decoration: none;
-            border-bottom: 1px solid #F5F0E8;
-            transition: .3s;
-        }
-
-        .mobile-menu ul li a:hover,
-        .mobile-menu ul li a.active {
-            color: #A58B54;
-        }
-
-        .mobile-menu ul li:last-child a {
-            border-bottom: none;
-        }
-
-        @media(min-width:768px) {
-            .nav-links-desktop {
-                display: flex;
-            }
-
-            .hamburger-btn {
-                display: none;
-            }
-
-            .mobile-menu {
-                display: none !important;
-            }
-        }
-
-        @media(max-width:767px) {
-            .nav-links-desktop {
-                display: none;
-            }
-
-            .hamburger-btn {
-                display: flex;
-            }
-        }
-
-        /* ========== PRODUCT ========== */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 20px 50px;
-        }
-
-        .breadcrumb {
-            font-size: 13px;
-            color: #8a7a6a;
-            margin-bottom: 20px;
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, .95);
+            border: 1px solid var(--border);
+            border-radius: 50%;
             display: flex;
             align-items: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .breadcrumb a {
-            color: #A58B54;
-            text-decoration: none;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
             transition: .3s;
+            color: var(--text)
         }
 
-        .breadcrumb a:hover {
-            color: #2C2A29;
+        .main-gallery:hover .gallery-arrow {
+            opacity: 1
         }
 
-        .breadcrumb .sep {
-            color: #D5CFC5;
+        .gallery-arrow:hover {
+            color: var(--gold);
+            border-color: var(--gold)
         }
 
-        .breadcrumb .current {
-            color: #2C2A29;
-            font-weight: 500;
+        .gallery-arrow.prev {
+            left: 14px
         }
 
-        /* Product Detail - 6 Column Grid */
-        .product-detail {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            background: #fff;
-            border-radius: 14px;
-            padding: 28px;
-            border: 1px solid #E8E2D2;
-            margin-bottom: 45px;
-        }
-
-        .product-gallery {
-            position: relative;
-        }
-
-        .product-gallery .main-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 10px;
-            background: #FDFBF7;
-            border: 1px solid #E8E2D2;
-        }
-
-        .product-gallery .badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            padding: 4px 14px;
-            border-radius: 50px;
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            color: #fff;
-        }
-
-        .product-gallery .badge.featured {
-            background: #2C3E50;
-        }
-
-        .product-gallery .badge.popular {
-            background: #A58B54;
-        }
-
-        .product-gallery .badge.new {
-            background: #2C2A29;
+        .gallery-arrow.next {
+            right: 14px
         }
 
         .product-info {
-            display: flex;
-            flex-direction: column;
+            padding-top: 4px
         }
 
-        .product-info .category {
-            color: #A58B54;
-            font-size: 11px;
+        .product-label {
+            display: inline-block;
+            font-size: 10px;
+            color: var(--gold-dark);
             text-transform: uppercase;
-            letter-spacing: .15em;
-            font-weight: 600;
-        }
-
-        .product-info h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 500;
-            color: #2C2A29;
-            margin: 4px 0 2px;
-            line-height: 1.2;
-        }
-
-        .product-info .price {
-            font-size: 24px;
+            letter-spacing: .2em;
             font-weight: 700;
-            color: #2C2A29;
-            margin-bottom: 12px;
+            background: var(--gold-light);
+            padding: 4px 14px;
+            border-radius: 50px;
+            margin-bottom: 12px
         }
 
-        .product-info .price .original {
-            font-size: 16px;
-            color: #A08878;
+        .product-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            line-height: 1.08;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 6px
+        }
+
+        .product-sku {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-bottom: 14px;
+            letter-spacing: .05em
+        }
+
+        .rating-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 12px
+        }
+
+        .stars {
+            color: var(--gold);
+            letter-spacing: 3px;
+            font-size: 15px
+        }
+
+        .rating-number {
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        .review-link {
+            color: var(--text-light);
+            text-decoration: underline;
+            font-weight: 400
+        }
+
+        .review-link:hover {
+            color: var(--gold)
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 6px;
+            padding: 16px 0 12px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .product-price {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -.5px
+        }
+
+        .original-price {
+            font-size: 17px;
+            color: #B0A89C;
             text-decoration: line-through;
-            font-weight: 400;
-            margin-left: 10px;
+            font-weight: 400
         }
 
-        .product-info .stock {
+        .discount-badge {
+            background: #FDF0E8;
+            color: #B85C3A;
+            padding: 3px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 50px
+        }
+
+        .payment-note {
+            font-size: 12px;
+            color: var(--text-light);
+            margin: 8px 0 6px
+        }
+
+        .certified-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 5px 14px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 12px;
-            margin-bottom: 14px;
-            width: fit-content;
-        }
-
-        .product-info .stock.in {
             background: #E8F5E9;
-            color: #27AE60;
+            color: #2E7D32;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 600;
+            margin: 4px 0 10px
         }
 
-        .product-info .stock.out {
-            background: #FDE8E8;
-            color: #C0392B;
+        .certified-badge i {
+            font-size: 14px
         }
 
-        .product-info .desc {
-            color: #6B6A69;
-            line-height: 1.8;
-            font-size: 14px;
-            border-top: 1px solid #F0E8DC;
-            padding-top: 16px;
-            margin-bottom: 16px;
+        .info-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 18px 0
         }
 
-        .product-info .desc ul,
-        .product-info .desc ol {
-            padding-left: 20px;
+        .option-group {
+            margin-bottom: 18px
+        }
+
+        .option-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text);
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px
         }
 
-        .product-info .desc li {
-            margin-bottom: 4px;
+        .option-label span {
+            font-weight: 400;
+            color: var(--text-light)
         }
 
-        .product-info .desc h5,
-        .product-info .desc h6 {
-            color: #2C2A29;
-            margin-bottom: 6px;
-            font-family: 'Cormorant Garamond', serif;
+        .size-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px
         }
 
-        .product-info .desc h5 {
-            font-size: 15px;
-        }
-
-        .product-info .desc h6 {
-            font-size: 13px;
-        }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 18px;
-        }
-
-        .meta-item {
-            background: #FDFBF7;
-            padding: 8px 12px;
+        .size-button {
+            min-width: 52px;
+            padding: 10px 16px;
+            background: var(--white);
+            border: 1px solid var(--border);
             border-radius: 8px;
-            border: 1px solid #E8E2D2;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: .3s;
+            color: var(--text)
         }
 
-        .meta-item strong {
-            display: block;
-            font-size: 9px;
-            text-transform: uppercase;
-            color: #A08878;
-            letter-spacing: .08em;
+        .size-button:hover {
+            border-color: var(--gold);
+            color: var(--gold)
         }
 
-        .meta-item span {
+        .size-button.active {
+            background: var(--gold);
+            color: var(--white);
+            border-color: var(--gold)
+        }
+
+        .stock-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            width: fit-content
+        }
+
+        .stock-status.in {
+            background: #E8F5E9;
+            color: #2E7D32
+        }
+
+        .stock-status.out {
+            background: #FDE8E8;
+            color: #C0392B
+        }
+
+        .stock-status i {
+            font-size: 16px
+        }
+
+        .quantity-area {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px
+        }
+
+        .quantity-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text)
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            height: 42px;
+            overflow: hidden
+        }
+
+        .quantity-control button {
+            width: 36px;
+            height: 100%;
+            background: var(--white);
+            border: 0;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text);
+            transition: .2s
+        }
+
+        .quantity-control button:hover {
+            background: var(--gold-light);
+            color: var(--gold)
+        }
+
+        .quantity-control input {
+            width: 44px;
+            height: 100%;
+            border: 0;
+            border-left: 1px solid var(--border);
+            border-right: 1px solid var(--border);
+            text-align: center;
+            outline: none;
             font-size: 13px;
             font-weight: 500;
+            color: var(--text);
+            background: var(--white)
         }
 
-        .btn-cart {
-            padding: 14px;
-            background: #A58B54;
-            color: #fff;
-            border: none;
+        .purchase-row {
+            display: grid;
+            grid-template-columns: 1fr 52px;
+            gap: 10px;
+            margin-bottom: 10px
+        }
+
+        .btn-add-cart {
+            height: 52px;
+            background: var(--gold);
+            color: var(--white);
+            border: 0;
             border-radius: 10px;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 600;
+            cursor: pointer;
             text-transform: uppercase;
-            letter-spacing: .1em;
+            letter-spacing: .12em;
+            font-size: 12px;
+            font-weight: 700;
+            transition: .3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px
+        }
+
+        .btn-add-cart:hover:not(:disabled) {
+            background: var(--gold-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.3)
+        }
+
+        .btn-add-cart:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+            transform: none !important
+        }
+
+        .btn-wishlist {
+            height: 52px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: .3s;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .btn-wishlist:hover {
+            color: var(--gold);
+            border-color: var(--gold);
+            transform: translateY(-2px)
+        }
+
+        .btn-store {
+            width: 100%;
+            height: 44px;
+            background: var(--cream-dark);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-size: 10px;
+            font-weight: 600;
             cursor: pointer;
             transition: .3s;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px
         }
 
-        .btn-cart:hover:not(:disabled) {
-            background: #8F753D;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(165, 139, 84, .3);
+        .btn-store:hover {
+            background: var(--gold-light);
+            border-color: var(--gold);
+            color: var(--gold-dark)
         }
 
-        .btn-cart:disabled {
-            background: #D5CFC5;
-            cursor: not-allowed;
-            opacity: .7;
-        }
-
-        /* ========== RELATED ========== */
-        .related-header {
+        .view-count {
             text-align: center;
-            margin-bottom: 28px;
+            font-size: 11px;
+            color: var(--text-light);
+            margin: 14px 0 0
         }
 
-        .related-header .label {
-            display: inline-block;
-            padding: 3px 14px;
-            background: #F5EEDC;
-            color: #A58B54;
-            border-radius: 50px;
-            font-size: 10px;
+        .view-count i {
+            margin-right: 4px
+        }
+
+        .quick-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 20px;
+            padding: 14px 0;
+            border-top: 1px solid var(--border);
+            margin-top: 6px
+        }
+
+        .quick-info-item {
+            font-size: 11px;
+            color: var(--text-light);
+            display: flex;
+            gap: 6px
+        }
+
+        .quick-info-item strong {
+            color: var(--text);
+            font-weight: 600
+        }
+
+        .benefits-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-top: 40px
+        }
+
+        .benefit-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 22px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gold);
+            opacity: 0;
+            transition: opacity 0.3s ease
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.12);
+            border-color: var(--gold)
+        }
+
+        .benefit-card:hover::before {
+            opacity: 1
+        }
+
+        .benefit-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            background: var(--gold-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--gold);
+            transition: all 0.3s ease
+        }
+
+        .benefit-card:hover .benefit-icon {
+            background: var(--gold);
+            color: var(--white);
+            transform: scale(1.05)
+        }
+
+        .benefit-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px
+        }
+
+        .benefit-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.02em
+        }
+
+        .benefit-text {
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 400
+        }
+
+        .details-section {
+            margin-top: 50px
+        }
+
+        .details-tabs {
+            display: flex;
+            gap: 8px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+            overflow-x: auto;
+            padding: 0 4px;
+            background: var(--cream);
+            border-radius: 14px 14px 0 0;
+            padding: 6px 6px 0
+        }
+
+        .details-tab {
+            padding: 14px 24px;
+            border: 0;
+            background: transparent;
+            font-size: 11px;
             font-weight: 600;
+            color: var(--text-light);
             text-transform: uppercase;
-            letter-spacing: .15em;
-            margin-bottom: 4px;
+            letter-spacing: .08em;
+            cursor: pointer;
+            white-space: nowrap;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 8px
         }
 
-        .related-header h2 {
+        .details-tab i {
+            font-size: 14px
+        }
+
+        .details-tab[data-tab="specification"]:hover,
+        .details-tab[data-tab="specification"].active {
+            color: #B8944C;
+            background: rgba(184, 148, 76, 0.08)
+        }
+
+        .details-tab[data-tab="specification"].active::after {
+            background: #B8944C
+        }
+
+        .details-tab[data-tab="description"]:hover,
+        .details-tab[data-tab="description"].active {
+            color: #C9A96E;
+            background: rgba(201, 169, 110, 0.08)
+        }
+
+        .details-tab[data-tab="description"].active::after {
+            background: #C9A96E
+        }
+
+        .details-tab[data-tab="shipping"]:hover,
+        .details-tab[data-tab="shipping"].active {
+            color: #A58B54;
+            background: rgba(165, 139, 84, 0.08)
+        }
+
+        .details-tab[data-tab="shipping"].active::after {
+            background: #A58B54
+        }
+
+        .details-tab[data-tab="reviews"]:hover,
+        .details-tab[data-tab="reviews"].active {
+            color: #C89D91;
+            background: rgba(200, 157, 145, 0.08)
+        }
+
+        .details-tab[data-tab="reviews"].active::after {
+            background: #C89D91
+        }
+
+        .details-tab::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            right: 50%;
+            height: 3px;
+            border-radius: 3px 3px 0 0;
+            transition: all 0.3s ease
+        }
+
+        .details-tab.active::after {
+            left: 0;
+            right: 0
+        }
+
+        .details-tab:hover::after {
+            left: 10%;
+            right: 10%
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeInTab 0.4s ease
+        }
+
+        .tab-content.active {
+            display: block
+        }
+
+        @keyframes fadeInTab {
+            from {
+                opacity: 0;
+                transform: translateY(10px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        .details-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px
+        }
+
+        .description-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03)
+        }
+
+        .description-card:hover {
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.08);
+            border-color: var(--gold)
+        }
+
+        .description-card h3 {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 500;
-            color: #2C2A29;
+            font-size: 24px;
+            margin-bottom: 14px;
+            color: var(--text)
         }
 
-        .related-header p {
+        .description-card .product-description {
+            font-size: 13px;
+            color: #5F5A55;
+            line-height: 1.9
+        }
+
+        .description-card .product-description p {
+            margin-bottom: 14px
+        }
+
+        .description-card .product-description ul,
+        .description-card .product-description ol {
+            padding-left: 22px;
+            margin-top: 8px
+        }
+
+        .description-card .product-description li {
+            margin-bottom: 6px
+        }
+
+        .spec-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03)
+        }
+
+        .spec-card:hover {
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.08);
+            border-color: var(--gold)
+        }
+
+        .spec-card h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--text)
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 11px 0;
+            border-bottom: 1px solid #F0EBE3
+        }
+
+        .spec-item:last-child {
+            border-bottom: 0
+        }
+
+        .spec-icon {
+            width: 28px;
+            font-size: 18px;
+            color: var(--gold);
+            flex-shrink: 0
+        }
+
+        .spec-label {
+            font-size: 10px;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            font-weight: 600
+        }
+
+        .spec-value {
+            font-size: 12px;
+            color: var(--text);
+            font-weight: 500;
+            margin-top: 2px
+        }
+
+        .review-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            transition: all 0.3s ease
+        }
+
+        .review-card:hover {
+            border-color: var(--gold);
+            box-shadow: 0 4px 20px rgba(201, 169, 110, 0.08)
+        }
+
+        .review-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .reviewer-name {
             font-size: 14px;
-            color: #8A7A6A;
+            font-weight: 600;
+            color: var(--text)
+        }
+
+        .review-date {
+            font-size: 11px;
+            color: var(--text-light)
+        }
+
+        .review-stars {
+            color: var(--gold);
+            font-size: 14px;
+            letter-spacing: 2px
+        }
+
+        .review-text {
+            font-size: 13px;
+            color: #5F5A55;
+            line-height: 1.7;
+            margin: 0
+        }
+
+        .reviews-container {
+            padding: 10px 0
+        }
+
+        .reviews-header {
+            margin-bottom: 30px
+        }
+
+        .reviews-summary h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            color: var(--text);
+            margin-bottom: 8px
+        }
+
+        .reviews-rating {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .reviews-rating .stars {
+            color: var(--gold);
+            font-size: 20px;
+            letter-spacing: 4px
+        }
+
+        .reviews-rating .rating-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text)
+        }
+
+        .reviews-rating .rating-total {
+            font-size: 13px;
+            color: var(--text-light)
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px
+        }
+
+        .related-section {
+            margin-top: 60px
+        }
+
+        .related-heading {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-bottom: 28px
+        }
+
+        .related-heading-left small {
+            display: block;
+            color: var(--gold);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+            font-weight: 700
+        }
+
+        .related-heading-left h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 500;
+            color: var(--text);
+            margin-top: 2px
+        }
+
+        .view-all-link {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            transition: .3s;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 2px
+        }
+
+        .view-all-link:hover {
+            border-bottom-color: var(--gold)
         }
 
         .related-grid {
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 16px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px
         }
 
         .related-card {
-            background: #fff;
-            border-radius: 10px;
+            background: var(--white);
+            border-radius: 14px;
             overflow: hidden;
-            border: 1px solid #E8E2D2;
-            transition: .3s;
+            border: 1px solid var(--border);
+            transition: .3s
         }
 
         .related-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(44, 42, 41, .08);
-            border-color: #A58B54;
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--gold)
         }
 
-        .related-img {
+        .related-image {
             position: relative;
+            aspect-ratio: 1/1.1;
             overflow: hidden;
-            aspect-ratio: 1/1;
-            background: #FDFBF7;
+            background: var(--cream-dark)
         }
 
-        .related-img img {
+        .related-image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: .5s;
+            transition: transform .6s ease
         }
 
-        .related-card:hover .related-img img {
-            transform: scale(1.05);
+        .related-card:hover .related-image img {
+            transform: scale(1.06)
         }
 
-        .related-stock {
+        .related-badge {
             position: absolute;
-            bottom: 8px;
-            right: 8px;
-            background: #E8F5E9;
-            color: #27AE60;
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 9px;
-            font-weight: 600;
-        }
-
-        .related-info {
-            padding: 10px 12px 14px;
-        }
-
-        .related-info .cat {
-            font-size: 9px;
-            color: #A58B54;
+            top: 12px;
+            left: 12px;
+            background: var(--gold);
+            color: var(--white);
+            padding: 4px 12px;
+            font-size: 8px;
             text-transform: uppercase;
-            letter-spacing: .1em;
-            font-weight: 600;
-        }
-
-        .related-info h4 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 14px;
-            font-weight: 600;
-            margin: 2px 0 4px;
-        }
-
-        .related-info h4 a {
-            color: #2C2A29;
-            text-decoration: none;
-            transition: .3s;
-        }
-
-        .related-info h4 a:hover {
-            color: #A58B54;
-        }
-
-        .related-info .price {
+            letter-spacing: .12em;
             font-weight: 700;
-            color: #A58B54;
-            font-size: 14px;
+            border-radius: 50px
         }
 
-        .related-info .link {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 6px;
-            font-size: 11px;
-            color: #A58B54;
-            text-decoration: none;
-            font-weight: 600;
-            transition: .3s;
-        }
-
-        .related-info .link:hover {
-            color: #8F753D;
-            gap: 8px;
-        }
-
-        .empty-related {
-            text-align: center;
-            padding: 30px;
-            background: #fff;
-            border: 1px solid #E8E2D2;
-            border-radius: 10px;
-            color: #8A7A6A;
-            font-size: 14px;
-        }
-
-        /* ========== FOOTER ========== */
-        .footer {
-            background: #2C2A29;
-            padding: 35px 0 15px;
-            color: #fff;
-            margin-top: 10px;
-        }
-
-        .footer .container {
-            padding: 0 15px;
-        }
-
-        .footer-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1.5fr;
-            gap: 30px;
-            padding-bottom: 20px;
-        }
-
-        .footer-col {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .footer-brand {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            font-weight: 500;
-            color: #A58B54;
-        }
-
-        .footer-tagline {
-            font-size: .65rem;
-            color: rgba(255, 255, 255, .4);
-            letter-spacing: .2em;
-            text-transform: uppercase;
-        }
-
-        .footer-desc {
-            font-size: .75rem;
-            color: rgba(255, 255, 255, .5);
-            line-height: 1.6;
-            max-width: 280px;
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 8px;
-        }
-
-        .social-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        .related-wishlist {
+            position: absolute;
+            top: 12px;
+            right: 12px;
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, .06);
-            color: rgba(255, 255, 255, .5);
-            transition: .3s;
-            text-decoration: none;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, .95);
+            cursor: pointer;
             font-size: 14px;
-        }
-
-        .social-link:hover {
-            background: #A58B54;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-        .footer-heading {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #A58B54;
-            margin-bottom: 6px;
-        }
-
-        .footer-links {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .footer-links li a {
-            color: rgba(255, 255, 255, .6);
-            text-decoration: none;
-            font-size: .8rem;
+            color: var(--text-light);
             transition: .3s;
-        }
-
-        .footer-links li a:hover {
-            color: #A58B54;
-        }
-
-        .footer-payment {
             display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
+            align-items: center;
+            justify-content: center
         }
 
-        .payment-icon {
-            display: inline-flex;
+        .related-wishlist:hover {
+            color: var(--gold);
+            border-color: var(--gold)
+        }
+
+        .related-content {
+            padding: 14px 16px 18px
+        }
+
+        .related-category {
+            font-size: 9px;
+            color: var(--gold-dark);
+            text-transform: uppercase;
+            letter-spacing: .15em;
+            font-weight: 700
+        }
+
+        .related-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 17px;
+            font-weight: 600;
+            margin: 3px 0 4px
+        }
+
+        .related-title a {
+            color: var(--text);
+            text-decoration: none;
+            transition: .3s
+        }
+
+        .related-title a:hover {
+            color: var(--gold)
+        }
+
+        .related-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text)
+        }
+
+        .related-original {
+            font-size: 12px;
+            color: #B0A89C;
+            text-decoration: line-through;
+            font-weight: 400;
+            margin-left: 6px
+        }
+
+        .bottom-services {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+            padding: 24px 30px;
+            background: var(--cream);
+            border-radius: 16px;
+            border: 1px solid var(--border)
+        }
+
+        .bottom-service {
+            display: flex;
             align-items: center;
             justify-content: center;
-            width: 34px;
-            height: 26px;
-            background: rgba(255, 255, 255, .08);
-            border-radius: 4px;
-            color: rgba(255, 255, 255, .6);
-            font-size: 15px;
-            transition: .3s;
+            gap: 14px
         }
 
-        .payment-icon:hover {
-            background: #A58B54;
-            color: #fff;
+        .bottom-service i {
+            font-size: 24px;
+            color: var(--gold)
         }
 
-        .payment-text {
-            font-size: .65rem;
-            color: rgba(255, 255, 255, .4);
-            width: 100%;
+        .bottom-service strong {
+            display: block;
+            font-size: 12px;
+            color: var(--text)
         }
 
-        .footer-contact {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
+        .bottom-service span {
+            font-size: 10px;
+            color: var(--text-light)
         }
 
-        .footer-contact li {
-            color: rgba(255, 255, 255, .6);
-            font-size: .75rem;
-            line-height: 1.5;
-            display: flex;
-            gap: 8px;
-        }
-
-        .footer-contact li i {
-            color: #A58B54;
-            font-size: 14px;
-            margin-top: 2px;
-        }
-
-        .footer-divider {
-            border: none;
-            border-top: 1px solid rgba(255, 255, 255, .08);
-            margin: 10px 0;
-        }
-
-        .footer-bottom {
-            display: flex;
-            justify-content: space-between;
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .9);
+            z-index: 9999;
+            display: none;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
+            justify-content: center;
+            padding: 30px;
+            backdrop-filter: blur(4px)
         }
 
-        .footer-copy {
-            font-size: .65rem;
-            color: rgba(255, 255, 255, .3);
+        .image-modal.show {
+            display: flex
         }
 
-        .footer-bottom-links {
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
+        .image-modal img {
+            max-width: 92vw;
+            max-height: 92vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 20px 80px rgba(0, 0, 0, .4)
         }
 
-        .footer-bottom-links a {
-            color: rgba(255, 255, 255, .3);
-            text-decoration: none;
-            font-size: .6rem;
-            transition: .3s;
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #fff;
+            font-size: 32px;
+            cursor: pointer;
+            opacity: .7;
+            transition: .3s
         }
 
-        .footer-bottom-links a:hover {
-            color: #A58B54;
+        .modal-close:hover {
+            opacity: 1;
+            transform: rotate(90deg)
         }
 
-        /* ========== RESPONSIVE ========== */
-        @media(max-width:991px) {
-            body {
-                padding-top: 70px;
+        @media(max-width:1100px) {
+            .product-layout {
+                padding: 30px;
+                gap: 40px
+            }
+
+            .main-gallery-image {
+                height: 500px
+            }
+
+            .product-title {
+                font-size: 32px
             }
 
             .related-grid {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: repeat(3, 1fr)
+            }
+        }
+
+        @media(max-width:900px) {
+            .product-layout {
+                grid-template-columns: 1fr;
+                padding: 24px;
+                gap: 30px
             }
 
-            .footer-grid {
+            .gallery {
+                position: relative;
+                top: auto;
+                grid-template-columns: 70px 1fr
+            }
+
+            .main-gallery-image {
+                height: 480px
+            }
+
+            .thumbnail {
+                width: 70px;
+                height: 80px
+            }
+
+            .benefits-bar {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .details-content {
+                grid-template-columns: 1fr
+            }
+
+            .related-grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+
+            .bottom-services {
+                grid-template-columns: 1fr
+            }
+        }
+
+        @media(max-width:600px) {
+            .page-container {
+                padding: 10px 15px 40px
+            }
+
+            .breadcrumb {
+                padding: 8px 0 20px;
+                font-size: 10px
+            }
+
+            .product-layout {
+                padding: 16px;
+                border-radius: 12px
+            }
+
+            .gallery {
+                display: flex;
+                flex-direction: column-reverse;
+                gap: 12px
+            }
+
+            .thumbnail-column {
+                flex-direction: row;
+                overflow-x: auto;
+                padding-bottom: 4px
+            }
+
+            .thumbnail {
+                flex: 0 0 60px;
+                width: 60px;
+                height: 70px
+            }
+
+            .main-gallery-image {
+                height: 360px
+            }
+
+            .product-title {
+                font-size: 26px
+            }
+
+            .product-price {
+                font-size: 22px
+            }
+
+            .price-row {
+                flex-wrap: wrap;
+                padding: 12px 0
+            }
+
+            .quick-info {
+                grid-template-columns: 1fr
+            }
+
+            .benefits-bar {
                 grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media(max-width:768px) {
-            body {
-                padding-top: 65px;
+                padding: 16px 18px;
+                gap: 14px
             }
 
-            .product-detail {
-                grid-template-columns: 1fr;
-                padding: 18px;
-                gap: 20px;
+            .details-tabs {
+                gap: 4px;
+                padding: 4px 4px 0;
+                border-radius: 10px 10px 0 0
             }
 
-            .product-gallery .main-image {
-                height: 320px;
+            .details-tab {
+                padding: 10px 14px;
+                font-size: 9px;
+                gap: 4px
             }
 
-            .product-info h1 {
-                font-size: 24px;
+            .details-tab i {
+                font-size: 11px
             }
 
-            .product-info .price {
-                font-size: 20px;
+            .description-card,
+            .spec-card {
+                padding: 18px 16px;
+                border-radius: 10px
             }
 
-            .related-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
+            .review-card {
+                padding: 16px 18px
             }
 
-            .footer-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-            }
-
-            .footer-desc {
-                max-width: 100%;
-            }
-        }
-
-        @media(max-width:480px) {
-            body {
-                padding-top: 60px;
-            }
-
-            .container {
-                padding: 10px 12px 30px;
-            }
-
-            .product-detail {
-                padding: 12px;
-                gap: 16px;
-            }
-
-            .product-gallery .main-image {
-                height: 260px;
-            }
-
-            .product-info h1 {
-                font-size: 20px;
-            }
-
-            .product-info .price {
-                font-size: 18px;
-            }
-
-            .meta-grid {
-                grid-template-columns: 1fr;
+            .related-heading-left h2 {
+                font-size: 24px
             }
 
             .related-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
+                gap: 12px
             }
 
-            .related-info {
-                padding: 8px 10px 12px;
+            .related-title {
+                font-size: 14px
             }
 
-            .related-info h4 {
-                font-size: 12px;
+            .related-price {
+                font-size: 12px
             }
 
-            .related-info .price {
-                font-size: 12px;
+            .bottom-services {
+                padding: 18px 16px;
+                gap: 16px
             }
 
-            .footer-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
+            .bottom-service {
+                justify-content: flex-start
             }
 
-            .footer-bottom {
+            .purchase-row {
+                grid-template-columns: 1fr
+            }
+
+            .btn-wishlist {
+                height: 44px
+            }
+        }
+
+        @media(max-width:400px) {
+            .main-gallery-image {
+                height: 300px
+            }
+
+            .product-title {
+                font-size: 22px
+            }
+
+            .product-price {
+                font-size: 20px
+            }
+
+            .size-button {
+                min-width: 44px;
+                padding: 8px 12px;
+                font-size: 10px
+            }
+
+            .benefits-bar {
+                grid-template-columns: 1fr
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr 1fr
+            }
+
+            .thumbnail {
+                flex: 0 0 50px;
+                width: 50px;
+                height: 60px
+            }
+
+            .product-layout {
+                padding: 12px
+            }
+
+            .details-tab {
+                padding: 8px 10px;
+                font-size: 8px
+            }
+
+            .details-tab i {
+                font-size: 10px
+            }
+
+            .review-header {
                 flex-direction: column;
-                text-align: center;
+                align-items: flex-start
             }
 
-            .footer-bottom-links {
-                justify-content: center;
-            }
-        }
-
-        @media(max-width:360px) {
-            .related-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .product-gallery .main-image {
-                height: 220px;
+            .description-card,
+            .spec-card {
+                padding: 14px 12px
             }
         }
     </style>
-</head>
-
-<body>
-
-    <!-- ========== NAVBAR ========== -->
-    <nav class="navbar-modern">
-        <div class="navbar-container">
-            <a href="/" class="navbar-logo">
-                <span class="navbar-logo-text">Aethelweave</span>
-                <span class="navbar-logo-badge">Artisan</span>
-            </a>
-            <ul class="nav-links-desktop">
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
-
-                <li><a href="{{ route('about-us') }}">About</a></li>
-                <li><a href="{{ route('contact-us') }}">Contact</a></li>
-            </ul>
-            <div class="navbar-icons">
-                <a href="#" class="navbar-icon"><i class="bi bi-search"></i></a>
-                <a href="{{ route('login') }}" class="navbar-icon"><i class="bi bi-person"></i></a>
-                <a href="#" class="navbar-icon">
-                    <i class="bi bi-bag"></i>
-                    <span class="navbar-cart-count">0</span>
-                </a>
-                <button class="hamburger-btn" aria-label="Toggle menu">
-                    <span></span><span></span><span></span>
-                </button>
-            </div>
-        </div>
-        <div class="mobile-menu">
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}" class="active">Shop</a></li>
-
-                <li><a href="{{ route('about-us') }}">About</a></li>
-                <li><a href="{{ route('contact-us') }}">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- ========== PRODUCT ========== -->
-    <div class="container">
-
-        <!-- Breadcrumb -->
+@endpush
+@section('content')
+    <main class="page-container">
         <div class="breadcrumb">
-            <a href="/">Home</a><span class="sep">/</span>
+            <a href="/">Home</a>
+            <span class="separator">/</span>
             <a href="{{ route('shop.index') }}">Shop</a>
             @if($product->category)
-                <span class="sep">/</span>
-                <a
-                    href="{{ route('shop.index', ['category' => $product->category_id]) }}">{{ $product->category->name }}</a>
+                <span class="separator">/</span>
+                <a href="{{ route('shop.index', ['category' => $product->category_id]) }}">{{ $product->category->name }}</a>
             @endif
-            <span class="sep">/</span>
+            <span class="separator">/</span>
             <span class="current">{{ $product->name }}</span>
         </div>
-
-        <!-- Product Detail -->
-        <div class="product-detail">
-
-            <div class="product-gallery">
+        <div class="product-layout">
+            <div class="gallery">
                 @php
                     $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                    $firstImage = !empty($images) ? $images[0] : null;
+                    $images = array_values(array_filter($images));
+                    $firstImage = $images[0] ?? null;
                 @endphp
-                @if($firstImage)
-                    <img src="{{ asset($firstImage) }}" alt="{{ $product->name }}" class="main-image">
-                @else
-                    <div class="main-image" style="display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
-                        <i class="bi bi-image" style="font-size:50px;"></i>
-                    </div>
-                @endif
-
-                @if($product->is_featured == 2)
-                    <span class="badge featured">Featured</span>
-                @elseif($product->is_featured == 1)
-                    <span class="badge popular">Popular</span>
-                @elseif($product->created_at >= now()->subDays(30))
-                    <span class="badge new">New</span>
-                @endif
-            </div>
-
-            <div class="product-info">
-                <div class="category">{{ $product->category->name ?? 'Uncategorized' }}</div>
-                <h1>{{ $product->name }}</h1>
-                <div class="price">
-                    ₹{{ number_format($product->price, 2) }}
-                    @if($product->compare_price && $product->compare_price > $product->price)
-                        <span class="original">₹{{ number_format($product->compare_price, 2) }}</span>
-                    @endif
-                </div>
-
-                <div class="stock {{ $product->stock > 0 ? 'in' : 'out' }}">
-                    <i class="bi bi-{{ $product->stock > 0 ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
-                    {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
-                    @if($product->stock > 0 && $product->stock < 10)
-                        (Only {{ $product->stock }} left)
-                    @endif
-                </div>
-
-                <div class="desc">
-                    {!! $product->specification ?? $product->description ?? '' !!}
-                </div>
-
-                <div class="meta-grid">
-                    @if($product->sku)
-                        <div class="meta-item"><strong>SKU</strong><span>{{ $product->sku }}</span></div>
-                    @endif
-                    @if($product->brand)
-                        <div class="meta-item"><strong>Brand</strong><span>{{ $product->brand->name }}</span></div>
-                    @endif
-                    @if($product->subCategory)
-                        <div class="meta-item"><strong>Sub Category</strong><span>{{ $product->subCategory->name }}</span>
+                <div class="thumbnail-column">
+                    @if(count($images))
+                        @foreach($images as $index => $image)
+                            <div class="thumbnail {{ $index === 0 ? 'active' : '' }}"
+                                onclick="changeProductImage('{{ asset($image) }}',this)">
+                                <img src="{{ asset($image) }}" alt="{{ $product->name }}" loading="lazy">
+                            </div>
+                        @endforeach
+                    @else
+                        <div class="thumbnail">
+                            <div class="thumbnail-empty"><i class="bi bi-image"></i></div>
                         </div>
                     @endif
-                    @if($product->variants)
-                        <div class="meta-item"><strong>Material</strong><span>{{ $product->variants }}</span></div>
+                </div>
+                <div class="main-gallery">
+                    @if($firstImage)
+                        <img id="mainProductImage" src="{{ asset($firstImage) }}" alt="{{ $product->name }}"
+                            class="main-gallery-image">
+                    @else
+                        <div class="main-gallery-image" style="display:flex;align-items:center;justify-content:center;"><i
+                                class="bi bi-image" style="font-size:60px;color:#D5CFC5;"></i></div>
+                    @endif
+                    @if($product->is_featured == 2)
+                        <span class="gallery-badge featured">Featured</span>
+                    @elseif($product->is_featured == 1)
+                        <span class="gallery-badge popular">Popular</span>
+                    @elseif($product->created_at >= now()->subDays(30))
+                        <span class="gallery-badge new">New</span>
+                    @endif
+                    <button class="gallery-wishlist"><i class="bi bi-heart"></i></button>
+                    @if(count($images) > 1)
+                        <button class="gallery-arrow prev" onclick="previousImage()"><i class="bi bi-chevron-left"></i></button>
+                        <button class="gallery-arrow next" onclick="nextImage()"><i class="bi bi-chevron-right"></i></button>
+                    @endif
+                    <button class="gallery-expand" onclick="openImageModal()"><i
+                            class="bi bi-arrows-fullscreen"></i></button>
+                </div>
+            </div>
+            <div class="product-info">
+                <span class="product-label">{{ $product->category->name ?? 'Fine Jewellery' }}</span>
+                <h1 class="product-title">{{ $product->name }}</h1>
+                @if($product->sku)
+                <div class="product-sku">SKU: {{ $product->sku }}</div>@endif
+                <div class="rating-row">
+                    <span class="stars">★★★★★</span>
+                    <span class="rating-number">4.9</span>
+                    <a href="#reviews" class="review-link">(120 Reviews)</a>
+                </div>
+                <div class="price-row">
+                    <span class="product-price">₹{{ number_format($product->price, 2) }}</span>
+                    @if($product->compare_price && $product->compare_price > $product->price)
+                        <span class="original-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                        @php $discountPercentage = round((($product->compare_price - $product->price) / $product->compare_price) * 100); @endphp
+                        <span class="discount-badge">Save {{ $discountPercentage }}%</span>
                     @endif
                 </div>
-
-                @if($product->stock > 0)
-                    <button type="button" class="btn-cart" onclick="window.location.href='{{ route('login') }}'">
-                        <i class="bi bi-cart-plus"></i>
-                        Add to Cart
-                    </button>
-                @else
-                    <button type="button" class="btn-cart" disabled>
-                        <i class="bi bi-x-circle"></i>
-                        Out of Stock
-                    </button>
-                @endif
+                <div class="certified-badge"><i class="bi bi-check-circle-fill"></i> BIS Hallmarked & Certified</div>
+                <div class="payment-note"><i class="bi bi-shield-check"></i> Secure & trusted checkout</div>
+                <div class="info-divider"></div>
+                <div class="option-group">
+                    <div class="option-label">Material <span>{{ $product->variants ?? 'Premium Jewellery' }}</span></div>
+                </div>
+                <div class="option-group">
+                    <div class="option-label">Size</div>
+                    <div class="size-buttons">
+                        <button class="size-button">6</button>
+                        <button class="size-button">7</button>
+                        <button class="size-button active">8</button>
+                        <button class="size-button">9</button>
+                        <button class="size-button">10</button>
+                        <button class="size-button">11</button>
+                    </div>
+                </div>
+                <div class="option-group">
+                    <div class="option-label">Quantity</div>
+                    <div class="quantity-area">
+                        <div class="quantity-control">
+                            <button type="button" onclick="decreaseQuantity()">−</button>
+                            <input type="number" id="quantity" value="1" min="1" max="{{ $product->stock }}">
+                            <button type="button" onclick="increaseQuantity()">+</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="stock-status {{ $product->stock > 0 ? 'in' : 'out' }}">
+                    <i class="bi bi-{{ $product->stock > 0 ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
+                    {{ $product->stock > 0 ? 'In Stock' : 'Out of Stock' }}
+                    @if($product->stock > 0 && $product->stock < 10) — Only {{ $product->stock }} left @endif
+                </div>
+                <div class="purchase-row">
+                    @if($product->stock > 0)
+                        <button type="button" class="btn-add-cart" onclick="window.location.href='{{ route('login') }}'"><i
+                                class="bi bi-bag-plus"></i> Add to Bag</button>
+                    @else
+                        <button type="button" class="btn-add-cart" disabled>Out of Stock</button>
+                    @endif
+                    <button class="btn-wishlist"><i class="bi bi-heart"></i></button>
+                </div>
+                <button class="btn-store"><i class="bi bi-geo-alt"></i> Find in Store</button>
+                <div class="view-count"><i class="bi bi-eye"></i> 32 people are viewing this item</div>
+                <div class="quick-info">
+                    @if($product->brand)
+                    <div class="quick-info-item"><strong>Brand:</strong> {{ $product->brand->name }}</div>@endif
+                    @if($product->subCategory)
+                    <div class="quick-info-item"><strong>Collection:</strong> {{ $product->subCategory->name }}</div>@endif
+                    <div class="quick-info-item"><strong>Category:</strong>
+                        {{ $product->category->name ?? 'Premium Rings' }}</div>
+                    <div class="quick-info-item"><strong>Shipping:</strong> Free over ₹999</div>
+                </div>
             </div>
         </div>
+        <div class="benefits-bar">
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="bi bi-shield-check"></i></div>
+                <div class="benefit-content"><span class="benefit-title">BIS Hallmarked</span><span
+                        class="benefit-text">Certified Jewellery</span></div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="bi bi-truck"></i></div>
+                <div class="benefit-content"><span class="benefit-title">Free Shipping</span><span class="benefit-text">On
+                        All Orders</span></div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="bi bi-arrow-return-left"></i></div>
+                <div class="benefit-content"><span class="benefit-title">Easy Returns</span><span
+                        class="benefit-text">15-Day Return Policy</span></div>
+            </div>
+            <div class="benefit-card">
+                <div class="benefit-icon"><i class="bi bi-gem"></i></div>
+                <div class="benefit-content"><span class="benefit-title">Premium Quality</span><span
+                        class="benefit-text">Crafted With Perfection</span></div>
+            </div>
+        </div>
+        <section class="details-section" id="details">
+            <div class="details-tabs">
+                <button class="details-tab active" data-tab="specification" onclick="showTab('specification',this)"><i
+                        class="bi bi-file-text"></i> Specification</button>
+                <button class="details-tab" data-tab="description" onclick="showTab('description',this)"><i
+                        class="bi bi-list-ul"></i> Description</button>
+                <button class="details-tab" data-tab="shipping" onclick="showTab('shipping',this)"><i
+                        class="bi bi-truck"></i> Shipping & Returns</button>
+                <button class="details-tab" data-tab="reviews" onclick="showTab('reviews',this)"><i class="bi bi-star"></i>
+                    Reviews (120)</button>
+            </div>
 
-        <!-- ========== RELATED PRODUCTS (6 COLUMN) ========== -->
+            <!-- Specification Tab -->
+            <div id="specification" class="tab-content active">
+                <div class="details-content">
+                    <div class="spec-card">
+                        <h4>Product Specifications</h4>
+                        @if($product->specification)
+                            <div class="product-description" style="font-size:13px;color:#5F5A55;line-height:1.9;">
+                                {!! $product->specification !!}
+                            </div>
+                        @else
+                            <div class="spec-value">No specification available.</div>
+                        @endif
+                    </div>
+                    <div class="spec-card">
+                        <h4>Product Details</h4>
+                        @if($product->variants)
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-stars"></i></div>
+                                <div>
+                                    <div class="spec-label">Material</div>
+                                    <div class="spec-value">{{ $product->variants }}</div>
+                                </div>
+                            </div>
+                        @endif
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-gem"></i></div>
+                            <div>
+                                <div class="spec-label">Stone Type</div>
+                                <div class="spec-value">Premium Diamond</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-palette"></i></div>
+                            <div>
+                                <div class="spec-label">Metal Color</div>
+                                <div class="spec-value">Gold</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-ring"></i></div>
+                            <div>
+                                <div class="spec-label">Ring Type</div>
+                                <div class="spec-value">Diamond Ring</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-brush"></i></div>
+                            <div>
+                                <div class="spec-label">Finish</div>
+                                <div class="spec-value">High Polish</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-stars"></i></div>
+                            <div>
+                                <div class="spec-label">Design</div>
+                                <div class="spec-value">Elegant Solitaire Inspired Design</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-calendar-event"></i></div>
+                            <div>
+                                <div class="spec-label">Occasion</div>
+                                <div class="spec-value">Engagement, Wedding, Party & Everyday Wear</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-person"></i></div>
+                            <div>
+                                <div class="spec-label">Gender</div>
+                                <div class="spec-value">Women</div>
+                            </div>
+                        </div>
+                        @if($product->sku)
+                            <div class="spec-item">
+                                <div class="spec-icon"><i class="bi bi-upc-scan"></i></div>
+                                <div>
+                                    <div class="spec-label">Item Code</div>
+                                    <div class="spec-value">{{ $product->sku }}</div>
+                                </div>
+                            </div>
+                        @endif
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-weight-scale"></i></div>
+                            <div>
+                                <div class="spec-label">Weight</div>
+                                <div class="spec-value">Approx. 2.5 g</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-globe2"></i></div>
+                            <div>
+                                <div class="spec-label">Country of Origin</div>
+                                <div class="spec-value">India</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-info-circle"></i></div>
+                            <div>
+                                <div class="spec-label">Care Instructions</div>
+                                <div class="spec-value">Avoid contact with perfumes, chemicals and moisture. Store in a
+                                    jewellery box when not in use.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Tab -->
+            <div id="description" class="tab-content" style="display:none;">
+                <div class="details-content">
+                    <div class="description-card">
+                        <h3>Product Description</h3>
+                        @if($product->description)
+                            <div class="product-description">
+                                {!! $product->description !!}
+                            </div>
+                        @else
+                            <p>No description available.</p>
+                        @endif
+                    </div>
+                    <div class="spec-card">
+                        <h4>Why Choose This Piece</h4>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-award"></i></div>
+                            <div>
+                                <div class="spec-label">Quality</div>
+                                <div class="spec-value">Premium certified jewellery</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-hand-index"></i></div>
+                            <div>
+                                <div class="spec-label">Craftsmanship</div>
+                                <div class="spec-value">Expertly handcrafted</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-clock"></i></div>
+                            <div>
+                                <div class="spec-label">Durability</div>
+                                <div class="spec-value">Long-lasting premium finish</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-heart"></i></div>
+                            <div>
+                                <div class="spec-label">Gift Ready</div>
+                                <div class="spec-value">Perfect for special occasions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shipping Tab -->
+            <div id="shipping" class="tab-content" style="display:none;">
+                <div class="details-content">
+                    <div class="description-card">
+                        <h3>Shipping & Returns</h3>
+                        <p>We carefully pack every order to make sure your jewellery reaches you safely and beautifully.</p>
+                        <ul>
+                            <li><strong>Free Shipping</strong> — On all orders across India</li>
+                            <li><strong>Secure Packaging</strong> — Orders are carefully packed</li>
+                            <li><strong>Pan India Delivery</strong> — Available across India</li>
+                            <li><strong>Tracking</strong> — Details shared after dispatch</li>
+                            <li><strong>Easy Returns</strong> — 15-day return policy</li>
+                        </ul>
+                        <p style="margin-top:12px;"><strong>Estimated Delivery:</strong> 5-7 business days</p>
+                    </div>
+                    <div class="spec-card">
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-box-seam"></i></div>
+                            <div>
+                                <div class="spec-label">Packaging</div>
+                                <div class="spec-value">Premium Jewellery Box</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-arrow-counterclockwise"></i></div>
+                            <div>
+                                <div class="spec-label">Returns</div>
+                                <div class="spec-value">Easy returns within 15 days</div>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-icon"><i class="bi bi-headset"></i></div>
+                            <div>
+                                <div class="spec-label">Support</div>
+                                <div class="spec-value">Available 24/7 for assistance</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div id="reviews" class="tab-content" style="display:none;">
+                <div class="reviews-container">
+                    <div class="reviews-header">
+                        <div class="reviews-summary">
+                            <h3>Customer Reviews</h3>
+                            <div class="reviews-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-number">4.9</span>
+                                <span class="rating-total">(120 Reviews)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="reviews-list">
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info"><span class="reviewer-name">Priya S.</span><span
+                                        class="review-date">2 weeks ago</span></div>
+                                <span class="review-stars">★★★★★</span>
+                            </div>
+                            <p class="review-text">"Absolutely stunning piece! The craftsmanship is exceptional and it looks
+                                even more beautiful in person. Highly recommend!"</p>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info"><span class="reviewer-name">Rahul M.</span><span
+                                        class="review-date">1 month ago</span></div>
+                                <span class="review-stars">★★★★★</span>
+                            </div>
+                            <p class="review-text">"Perfect ring for my engagement! The diamond sparkles beautifully and the
+                                gold finish is flawless. Love it!"</p>
+                        </div>
+                        <div class="review-card">
+                            <div class="review-header">
+                                <div class="reviewer-info"><span class="reviewer-name">Ananya P.</span><span
+                                        class="review-date">2 months ago</span></div>
+                                <span class="review-stars">★★★★★</span>
+                            </div>
+                            <p class="review-text">"The quality exceeded my expectations. Beautifully packaged and delivered
+                                on time. Will definitely buy again!"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
         @php
             $recommendations = $relatedProducts ?? collect();
-            if ($recommendations->count() < 6) {
-                $additional = \App\Models\Product::where('id', '!=', $product->id)
-                    ->where('stock', '>', 0)
-                    ->when($product->category_id, fn($q) => $q->where('category_id', $product->category_id))
-                    ->latest()
-                    ->take(6 - $recommendations->count())
-                    ->get();
+            if ($recommendations->count() < 4) {
+                $additional = \App\Models\Product::where('id', '!=', $product->id)->where('stock', '>', 0)->when($product->category_id, fn($q) => $q->where('category_id', $product->category_id))->latest()->take(4 - $recommendations->count())->get();
                 $recommendations = $recommendations->merge($additional);
             }
-            $recommendations = $recommendations->where('id', '!=', $product->id)->where('stock', '>', 0)->unique('id')->take(6);
+            $recommendations = $recommendations->where('id', '!=', $product->id)->where('stock', '>', 0)->unique('id')->take(4);
         @endphp
-
-        @if($recommendations->count() > 0)
-            <div>
-                <div class="related-header">
-                    <span class="label"><i class="bi bi-gem"></i> Recommended</span>
-                    <h2>You May Also Like</h2>
-                    <p>Discover more exquisite jewellery pieces</p>
+        @if($recommendations->count())
+            <section class="related-section">
+                <div class="related-heading">
+                    <div class="related-heading-left">
+                        <small>Curated For You</small>
+                        <h2>You May Also Like</h2>
+                    </div>
+                    <a href="{{ route('shop.index') }}" class="view-all-link">View All →</a>
                 </div>
-
                 <div class="related-grid">
                     @foreach($recommendations as $related)
+                        @php $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
+                        $relFirst = $relImages[0] ?? null; @endphp
                         <div class="related-card">
-                            <div class="related-img">
-                                @php
-                                    $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
-                                    $relFirst = !empty($relImages) ? $relImages[0] : null;
-                                @endphp
-                                @if($relFirst)
-                                    <img src="{{ asset($relFirst) }}" alt="{{ $related->name }}" loading="lazy">
-                                @else
-                                    <div style="height:100%;display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
-                                        <i class="bi bi-image" style="font-size:30px;"></i>
-                                    </div>
-                                @endif
-                                <span class="related-stock">In Stock</span>
+                            <div class="related-image">
+                                @if($relFirst)<img src="{{ asset($relFirst) }}" alt="{{ $related->name }}" loading="lazy">@else<div
+                                    style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
+                                <i class="bi bi-image" style="font-size:40px;"></i></div>@endif
+                                @if($related->created_at >= now()->subDays(30))<span class="related-badge">New</span>@endif
+                                <button class="related-wishlist"><i class="bi bi-heart"></i></button>
                             </div>
-                            <div class="related-info">
-                                <div class="cat">{{ $related->category->name ?? 'Jewellery' }}</div>
-                                <h4><a href="{{ route('shop.show', $related->id) }}">{{ Str::limit($related->name, 25) }}</a>
-                                </h4>
-                                <div class="price">₹{{ number_format($related->price, 2) }}</div>
-                                <a href="{{ route('shop.show', $related->id) }}" class="link">
-                                    View <i class="bi bi-arrow-right"></i>
-                                </a>
+                            <div class="related-content">
+                                <div class="related-category">{{ $related->category->name ?? 'Jewellery' }}</div>
+                                <h3 class="related-title"><a
+                                        href="{{ route('shop.show', $related->slug) }}">{{ Str::limit($related->name, 32) }}</a>
+                                </h3>
+                                <div class="related-price">
+                                    ₹{{ number_format($related->price, 2) }}@if($related->compare_price && $related->compare_price > $related->price)<span
+                                    class="related-original">₹{{ number_format($related->compare_price, 2) }}</span>@endif</div>
                             </div>
                         </div>
                     @endforeach
                 </div>
-            </div>
+            </section>
         @endif
-    </div>
-
-    <!-- ========== FOOTER ========== -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <div class="footer-brand">Aethelweave</div>
-                    <div class="footer-tagline">Artisan Jewellery · Since 2010</div>
-                    <div class="footer-desc">Premium handcrafted jewellery for those who appreciate timeless elegance.
-                    </div>
-                    <div class="footer-social">
-                        <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-youtube"></i></a>
-                        <a href="#" class="social-link"><i class="bi bi-pinterest"></i></a>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-heading">Quick Links</div>
-                    <ul class="footer-links">
-                        <li><a href="{{ route('about-us') }}">About Us</a></li>
-                        <li><a href="{{ route('contact-us') }}">Contact Us</a></li>
-                        <li><a href="#">Blogs</a></li>
-                        <li><a href="#">Courses</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-heading">We Accept</div>
-                    <div class="footer-payment">
-                        <span class="payment-icon"><i class="bi bi-credit-card"></i></span>
-                        <span class="payment-icon"><i class="bi bi-paypal"></i></span>
-                        <span class="payment-icon"><i class="bi bi-bank"></i></span>
-                        <span class="payment-icon"><i class="bi bi-cash"></i></span>
-                        <span class="payment-text">Secure payment options</span>
-                    </div>
-                </div>
-                <div class="footer-col">
-                    <div class="footer-heading">Contact Us</div>
-                    <ul class="footer-contact">
-                        <li><i class="bi bi-envelope"></i> info@aethelweave.com</li>
-                        <li><i class="bi bi-geo-alt"></i> Pune, Maharashtra, India</li>
-                        <li><i class="bi bi-telephone"></i> +91 98765 43210</li>
-                    </ul>
-                </div>
+        <div class="bottom-services">
+            <div class="bottom-service"><i class="bi bi-lock"></i>
+                <div><strong>Pay Securely</strong><span>100% Safe & Secure Payments</span></div>
             </div>
-            <hr class="footer-divider">
-            <div class="footer-bottom">
-                <span class="footer-copy">&copy; 2026 Aethelweave. All Rights Reserved.</span>
-                <div class="footer-bottom-links">
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Use</a>
-                    <a href="#">Disclaimer</a>
-                    <a href="#">Sitemap</a>
-                </div>
+            <div class="bottom-service"><i class="bi bi-gift"></i>
+                <div><strong>Gift-Ready Packaging</strong><span>Premium Packaging Included</span></div>
+            </div>
+            <div class="bottom-service"><i class="bi bi-headset"></i>
+                <div><strong>Need Help?</strong><span>Contact Us Anytime</span></div>
             </div>
         </div>
-    </footer>
-
-    <!-- ========== SCRIPTS ========== -->
+        <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+            <span class="modal-close" onclick="closeImageModal()"><i class="bi bi-x-lg"></i></span>
+            <img id="modalImage" src="" alt="" onclick="event.stopPropagation()">
+        </div>
+    </main>
+@endsection
+@push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const hamburger = document.querySelector('.hamburger-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            if (hamburger && mobileMenu) {
-                hamburger.addEventListener('click', function () {
-                    mobileMenu.style.display = mobileMenu.style.display === 'block' ? 'none' : 'block';
+        const productImages = @json(collect($images ?? [])->map(fn($image) => asset($image))->values());
+        let currentImageIndex = 0;
+        function changeProductImage(src, element) {
+            const mainImage = document.getElementById('mainProductImage');
+            if (!mainImage) return;
+            mainImage.style.opacity = '0';
+            setTimeout(function () {
+                mainImage.src = src;
+                mainImage.onload = function () { mainImage.style.opacity = '1'; };
+            }, 150);
+            document.querySelectorAll('.thumbnail').forEach(function (thumbnail) {
+                thumbnail.classList.remove('active');
+            });
+            if (element) element.classList.add('active');
+            currentImageIndex = productImages.indexOf(src);
+            if (currentImageIndex < 0) currentImageIndex = 0;
+        }
+        function nextImage() {
+            if (!productImages.length) return;
+            currentImageIndex = (currentImageIndex + 1) % productImages.length;
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            changeProductImage(productImages[currentImageIndex], thumbnails[currentImageIndex]);
+        }
+        function previousImage() {
+            if (!productImages.length) return;
+            currentImageIndex = (currentImageIndex - 1 + productImages.length) % productImages.length;
+            const thumbnails = document.querySelectorAll('.thumbnail');
+            changeProductImage(productImages[currentImageIndex], thumbnails[currentImageIndex]);
+        }
+        function increaseQuantity() {
+            const input = document.getElementById('quantity');
+            if (!input) return;
+            const max = parseInt(input.max || 999);
+            let value = parseInt(input.value || 1);
+            if (value < max) input.value = value + 1;
+        }
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity');
+            if (!input) return;
+            let value = parseInt(input.value || 1);
+            if (value > 1) input.value = value - 1;
+        }
+        document.querySelectorAll('.size-button').forEach(function (button) {
+            button.addEventListener('click', function () {
+                document.querySelectorAll('.size-button').forEach(function (item) {
+                    item.classList.remove('active');
                 });
-            }
-            const navbar = document.querySelector('.navbar-modern');
-            if (navbar) {
-                window.addEventListener('scroll', function () {
-                    navbar.classList.toggle('scrolled', window.scrollY > 50);
-                });
-            }
+                this.classList.add('active');
+            });
+        });
+        function showTab(id, button) {
+            document.querySelectorAll('.tab-content').forEach(function (content) {
+                content.style.display = 'none';
+            });
+            document.querySelectorAll('.details-tab').forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+            const selected = document.getElementById(id);
+            if (selected) selected.style.display = 'block';
+            if (button) button.classList.add('active');
+        }
+        function openImageModal() {
+            const main = document.getElementById('mainProductImage');
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+            if (!main || !modalImage) return;
+            modalImage.src = main.src;
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeImageModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeImageModal();
         });
     </script>
-
-</body>
-
-</html>
+@endpush

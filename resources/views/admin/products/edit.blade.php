@@ -44,7 +44,8 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('admin.products.update', $product->slug) }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('admin.products.update', $product->slug) }}"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -224,13 +225,26 @@
                                         </div>
                                         <!-- Specification -->
                                         <div class="col-md-12">
-                                            <div class="form-group">    
+                                            <div class="form-group">
                                                 <label>Product Specification</label>
 
                                                 <textarea name="specification" id="specification"
                                                     class="summernote">{{ old('specification', $product->specification) }}</textarea>
 
                                                 @error('specification')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Product Description</label>
+
+                                                <textarea name="description" id="description"
+                                                    class="summernote">{{ old('description', $product->description) }}</textarea>
+
+                                                @error('description')
                                                     <small class="text-danger">{{ $message }}</small>
                                                 @enderror
                                             </div>
@@ -396,15 +410,15 @@
                             thumbWrapper.style.width = '85px';
 
                             thumbWrapper.innerHTML = `
-                                    <button type="button"
-                                            onclick="removeNewImage(${index})"
-                                            class="btn btn-danger btn-sm p-0 position-absolute"
-                                            style="top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; line-height: 18px; font-weight: bold;"
-                                            title="Remove image">
-                                        &times;
-                                    </button>
-                                    <img src="${e.target.result}" style="width: 75px; height: 75px; object-fit: cover;" class="img-thumbnail mt-1">
-                                `;
+                                            <button type="button"
+                                                    onclick="removeNewImage(${index})"
+                                                    class="btn btn-danger btn-sm p-0 position-absolute"
+                                                    style="top: -6px; right: -6px; width: 20px; height: 20px; border-radius: 50%; font-size: 12px; line-height: 18px; font-weight: bold;"
+                                                    title="Remove image">
+                                                &times;
+                                            </button>
+                                            <img src="${e.target.result}" style="width: 75px; height: 75px; object-fit: cover;" class="img-thumbnail mt-1">
+                                        `;
 
                             container.appendChild(thumbWrapper);
                         };

@@ -117,7 +117,7 @@ Route::prefix('admin')
 // Add after your about-us route
 Route::get('/shops', [ShopController::class, 'index'])
     ->name('shop.index');
-Route::get('/shop/{id}', [ShopController::class, 'show'])
+Route::get('/shop/{slug}', [ShopController::class, 'show'])
     ->name('shop.show');
 Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
     ->name('shop.subcategories');

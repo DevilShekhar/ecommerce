@@ -193,6 +193,19 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label>Product Description</label>
+
+                                                <textarea name="description" id="description"
+                                                    class="summernote">{{ old('description') }}</textarea>
+
+                                                @error('description')
+                                                    <small class="text-danger">{{ $message }}</small>
+                                                @enderror
+                                            </div>
+                                        </div>
+
                                         <!-- Meta Title -->
                                         <div class="col-md-12">
                                             <div class="form-group">
@@ -248,34 +261,33 @@
 
 @endsection
 @push('styles')
-<link rel="stylesheet"
-      href="{{ asset('assets/admin/plugins/summernote/dist/summernote.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/plugins/summernote/dist/summernote.css') }}">
 @endpush
 
 @push('scripts')
-<script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
+    <script src="{{ asset('assets/admin/plugins/summernote/dist/summernote.js') }}"></script>
 
-<script>
-    $(document).ready(function () {
+    <script>
+        $(document).ready(function () {
 
-        // ===================== SUMMERNOTE =====================
-        $('.summernote').summernote({
-            height: 250,
-            placeholder: 'Enter detailed product specifications...',
-            toolbar: [
-                ['style', ['style']],
-                ['font', ['bold', 'underline', 'clear']],
-                ['fontname', ['fontname']],
-                ['color', ['color']],
-                ['para', ['ul', 'ol', 'paragraph']],
-                ['table', ['table']],
-                ['insert', ['link']],
-                ['view', ['fullscreen', 'codeview']]
-            ]
+            // ===================== SUMMERNOTE =====================
+            $('.summernote').summernote({
+                height: 250,
+                placeholder: 'Enter detailed product specifications...',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+
         });
-
-    });
-</script>
+    </script>
 @endpush
 <script>
     // Global DataTransfer Object to store selected files dynamically
@@ -343,19 +355,18 @@
         }
     }
 
-    // Function to remove selected image by index
     function removeImage(index) {
         var dt = new DataTransfer();
         var files = selectedFiles.files;
 
         for (var i = 0; i < files.length; i++) {
             if (i !== index) {
-                dt.items.add(files[i]); // Keep all files except the deleted one
+                dt.items.add(files[i]);
             }
         }
 
         selectedFiles = dt;
-        document.getElementById('product_images').files = selectedFiles.files; // Update form input files
-        renderPreviews(); // Re-render preview grid & badge count
+        document.getElementById('product_images').files = selectedFiles.files;
+        renderPreviews();
     }
 </script>
