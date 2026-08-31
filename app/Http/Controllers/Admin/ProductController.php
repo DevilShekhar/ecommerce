@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
@@ -334,7 +334,6 @@ class ProductController extends Controller
         );
     }
 
-    // In app/Http/Controllers/Customer/ProductController.php
     public function getDetail($id)
     {
         try {

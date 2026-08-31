@@ -20,8 +20,9 @@
                         </ul>
                     </div>
                     <div class="col-lg-6 col-md-6 col-sm-12 text-right">
-                        <a href="{{ route('admin.products.edit', $product->slug) }}" class="btn btn-warning">
-                            <i class="zmdi zmdi-edit"></i> Edit Product
+                        <a href="{{ route('admin.products.edit', ['product' => $product->slug]) }}"
+                            class="btn btn-warning btn-sm" title="Edit">
+                            <i class="zmdi zmdi-edit"></i>
                         </a>
 
                         <a href="{{ route('admin.products.index') }}" class="btn btn-danger">
