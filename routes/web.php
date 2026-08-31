@@ -10,7 +10,7 @@ use App\Http\Controllers\Admin\CustomerAccountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
-use App\Http\Controllers\admin\OfferController;
+use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\admin\OrderReturnController;
 use App\Http\Controllers\admin\PageController;
