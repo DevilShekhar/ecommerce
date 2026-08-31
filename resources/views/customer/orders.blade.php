@@ -109,43 +109,44 @@
                                     {{ $order->items_count ?? ($order->items?->count() ?? 0) }}
                                 </div>
                             </div>
-                           {{-- Subtotal --}}
+
+                            {{-- Subtotal - This is the discounted subtotal from checkout --}}
                             <div>
                                 <div class="order-meta-label">Subtotal</div>
                                 <div class="order-meta-value">
-                                    ₹{{ number_format($order->subtotal ?? $order->total ?? 0, 2) }}
+                                    ₹{{ number_format($order->subtotal ?? 0, 2) }}
                                 </div>
                             </div>
 
                             {{-- Coupon Discount (if applied) --}}
                             @if(!empty($order->coupon_discount) && $order->coupon_discount > 0)
-                            <div style="color: #16a34a;">
-                                <div class="order-meta-label">Coupon Discount</div>
-                                <div class="order-meta-value">
-                                    - ₹{{ number_format($order->coupon_discount, 2) }}
-                                    @if(!empty($order->coupon_code))
-                                        <small style="font-size: 11px; color: #64748b;">({{ $order->coupon_code }})</small>
-                                    @endif
+                                <div style="color: #16a34a;">
+                                    <div class="order-meta-label">Coupon Discount</div>
+                                    <div class="order-meta-value">
+                                        - ₹{{ number_format($order->coupon_discount, 2) }}
+                                        @if(!empty($order->coupon_code))
+                                            <small style="font-size: 11px; color: #64748b;">({{ $order->coupon_code }})</small>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
                             @endif
 
                             {{-- Shipping --}}
                             @if(!empty($order->shipping) && $order->shipping > 0)
-                            <div>
-                                <div class="order-meta-label">Shipping</div>
-                                <div class="order-meta-value">
-                                    ₹{{ number_format($order->shipping, 2) }}
+                                <div>
+                                    <div class="order-meta-label">Shipping</div>
+                                    <div class="order-meta-value">
+                                        ₹{{ number_format($order->shipping, 2) }}
+                                    </div>
                                 </div>
-                            </div>
                             @else
-                            <div>
-                                <div class="order-meta-label">Shipping</div>
-                                <div class="order-meta-value" style="color: #16a34a;">FREE</div>
-                            </div>
+                                <div>
+                                    <div class="order-meta-label">Shipping</div>
+                                    <div class="order-meta-value" style="color: #16a34a;">FREE</div>
+                                </div>
                             @endif
 
-                            {{-- Final Total --}}
+                            {{-- Final Total - This is the discounted total --}}
                             <div style="border-top: 1px solid #e5eaf1; padding-top: 10px; margin-top: 5px; font-weight: 700;">
                                 <div class="order-meta-label" style="font-size: 16px;">Total</div>
                                 <div class="order-meta-value" style="font-size: 18px; color: #2878f0;">
@@ -153,12 +154,7 @@
                                 </div>
                             </div>
 
-                            {{-- Tax Note --}}
-                            @if(!empty($order->tax) && $order->tax > 0)
-                            <div style="font-size: 11px; color: #64748b; margin-top: 5px; text-align: right;">
-                                Inclusive of ₹{{ number_format($order->tax, 2) }} tax
-                            </div>
-                            @endif
+                            {{-- Status --}}
                             <div>
                                 <div class="order-meta-label">Status</div>
                                 <span class="status-badge {{ $statusClass }}">
@@ -452,7 +448,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if(!in_array($trackingStatus, ['cancelled','failed','return_requested','returned','refunded']))
+                                @if(!in_array($trackingStatus, ['cancelled', 'failed', 'return_requested', 'returned', 'refunded']))
                                     <h5 class="tracking-section-title">Order Status</h5>
                                     <div class="tracking-timeline-horizontal">
                                         @foreach($steps as $key => $step)
@@ -467,7 +463,8 @@
                                                     $statusTimestamp = $order->statusTimestamps[$key];
                                                 }
                                             @endphp
-                                            <div class="tracking-horizontal-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
+                                            <div
+                                                class="tracking-horizontal-item {{ $isCompleted ? 'completed' : '' }} {{ $isCurrent ? 'current' : '' }}">
                                                 <div class="tracking-horizontal-icon-wrapper">
                                                     <div class="tracking-horizontal-icon">
                                                         <i class="bi {{ $step['icon'] }}"></i>
@@ -515,86 +512,121 @@
                                         </span>
                                     </div>
                                     @forelse($order->items ?? [] as $item)
-                                        @php
-                                            $product = $item->product ?? null;
-                                            $productName = $product->name ?? $item->product_name ?? $item->name ?? 'Product';
-                                            $productSku = $product->sku ?? $item->sku ?? null;
-                                            $quantity = $item->quantity ?? $item->qty ?? 1;
-                                            $unitPrice = $item->price ?? $item->unit_price ?? 0;
-                                            $subtotal = $item->subtotal ?? $item->total ?? ($unitPrice * $quantity);
-                                            $productImage = $product->image ?? $product->image_path ?? $product->thumbnail ?? $item->image ?? null;
-                                            if ($productImage && !\Illuminate\Support\Str::startsWith($productImage, ['http://', 'https://'])) {
-                                                $productImage = asset('storage/' . ltrim($productImage, '/'));
-                                            }
-                                        @endphp
-                                        <div class="tracking-product-item">
-                                            @php
-                                                $imageValue = $item->image;
-                                                if (!$imageValue && $item->product) {
-                                                    $imageValue = $item->product->image;
-                                                }
-                                                $images = $imageValue ? array_map('trim', explode(',', $imageValue)) : [];
-                                                $firstImage = $images[0] ?? null;
-                                                if ($firstImage) {
-                                                    $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                                                    $imgUrl = asset($firstImage);
-                                                } else {
-                                                    $imgUrl = null;
-                                                }
-                                            @endphp
-                                            <div class="tracking-product-image product-details-trigger"
-                                                data-product-id="{{ $product?->id }}" role="button" tabindex="0"
-                                                title="View Product Details">
+    @php
+        $product = $item->product ?? null;
+        $productName = $product->name ?? $item->product_name ?? $item->name ?? 'Product';
+        $productSku = $product->sku ?? $item->sku ?? null;
+        $quantity = $item->quantity ?? $item->qty ?? 1;
+        
+        // ============================================================
+        // CALCULATE DISCOUNTED PRICE - FIX HERE
+        // ============================================================
+        $originalPrice = $product->price ?? $item->price ?? 0;
+        $displayPrice = $item->price ?? $originalPrice;
+        
+        // Check if product has active offer
+        $activeOffer = $product?->activeOffer ?? null;
+        if ($activeOffer && $displayPrice >= $originalPrice) {
+            if ($activeOffer->discount_type === 'percentage') {
+                $displayPrice = $originalPrice - ($originalPrice * $activeOffer->discount_value / 100);
+            } else {
+                $displayPrice = max(0, $originalPrice - $activeOffer->discount_value);
+            }
+        }
+        
+        // If stored price is less than original, use stored price
+        if ($item->price > 0 && $item->price < $originalPrice) {
+            $displayPrice = $item->price;
+        }
+        
+        $hasDiscount = $originalPrice > $displayPrice && $displayPrice > 0;
+        $itemSubtotal = $displayPrice * $quantity;
+        
+        $productImage = $product->image ?? $product->image_path ?? $product->thumbnail ?? $item->image ?? null;
+        if ($productImage && !\Illuminate\Support\Str::startsWith($productImage, ['http://', 'https://'])) {
+            $productImage = asset('storage/' . ltrim($productImage, '/'));
+        }
+    @endphp
+    
+    <div class="tracking-product-item">
+        @php
+            $imageValue = $item->image;
+            if (!$imageValue && $item->product) {
+                $imageValue = $item->product->image;
+            }
+            $images = $imageValue ? array_map('trim', explode(',', $imageValue)) : [];
+            $firstImage = $images[0] ?? null;
+            if ($firstImage) {
+                $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                $imgUrl = asset($firstImage);
+            } else {
+                $imgUrl = null;
+            }
+        @endphp
+        
+        <div class="tracking-product-image product-details-trigger"
+            data-product-id="{{ $product?->id }}" role="button" tabindex="0"
+            title="View Product Details">
 
-                                                @if($imgUrl)
-                                                    <img src="{{ $imgUrl }}" alt="{{ $productName }}"
-                                                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                                    <div class="tracking-product-placeholder" style="display:none;">
-                                                        <i class="bi bi-image"></i>
-                                                    </div>
-                                                @else
-                                                    <div class="tracking-product-placeholder">
-                                                        <i class="bi bi-image"></i>
-                                                    </div>
-                                                @endif
+            @if($imgUrl)
+                <img src="{{ $imgUrl }}" alt="{{ $productName }}"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="tracking-product-placeholder" style="display:none;">
+                    <i class="bi bi-image"></i>
+                </div>
+            @else
+                <div class="tracking-product-placeholder">
+                    <i class="bi bi-image"></i>
+                </div>
+            @endif
 
-                                                <div class="product-image-overlay">
-                                                    <i class="bi bi-eye"></i>
-                                                    <span>View</span>
-                                                </div>
-                                            </div>
-                                            <div class="tracking-product-details">
-                                                <div class="tracking-product-name">
-                                                    {{ $productName }}
-                                                </div>
-                                                <div class="tracking-product-meta">
-                                                    @if($productSku)
-                                                        <span>
-                                                            SKU: {{ $productSku }}
-                                                        </span>
-                                                    @endif
-                                                    <span>
-                                                        Qty: {{ $quantity }}
-                                                    </span>
-                                                    <span>
-                                                        ₹{{ number_format($unitPrice, 2) }} each
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="tracking-product-price">
-                                                <strong>
-                                                    ₹{{ number_format($subtotal, 2) }}
-                                                </strong>
-                                                <span>
-                                                    Subtotal
-                                                </span>
-                                            </div>
-                                        </div>
-                                    @empty
-                                        <div class="p-4 text-center text-muted">
-                                            Product information is not available.
-                                        </div>
-                                    @endforelse
+            <div class="product-image-overlay">
+                <i class="bi bi-eye"></i>
+                <span>View</span>
+            </div>
+        </div>
+        
+        <div class="tracking-product-details">
+            <div class="tracking-product-name">
+                {{ $productName }}
+            </div>
+            <div class="tracking-product-meta">
+                @if($productSku)
+                    <span>SKU: {{ $productSku }}</span>
+                @endif
+                <span>Qty: {{ $quantity }}</span>
+                
+                {{-- Show price with discount if applicable --}}
+                @if($hasDiscount)
+                    <span class="text-muted text-decoration-line-through" style="font-size: 12px;">
+                        ₹{{ number_format($originalPrice, 2) }}
+                    </span>
+                    <span class="text-success fw-bold" style="font-size: 13px;">
+                        ₹{{ number_format($displayPrice, 2) }} each
+                    </span>
+                @else
+                    <span>₹{{ number_format($displayPrice, 2) }} each</span>
+                @endif
+            </div>
+        </div>
+        
+        <div class="tracking-product-price">
+            <strong>
+                ₹{{ number_format($itemSubtotal, 2) }}
+            </strong>
+            @if($hasDiscount)
+                <span style="font-size: 11px; color: #94a3b8; text-decoration: line-through; display: block;">
+                    ₹{{ number_format($originalPrice * $quantity, 2) }}
+                </span>
+            @endif
+            <span>Subtotal</span>
+        </div>
+    </div>
+@empty
+    <div class="p-4 text-center text-muted">
+        Product information is not available.
+    </div>
+@endforelse
                                 </div>
                                 <h5 class="tracking-section-title">
                                     Order Details
@@ -999,22 +1031,22 @@
 
                         if (product.is_futured) {
                             action.innerHTML = `
-                        <button type="button"
-                            class="product-modal-notify notify-me-btn"
-                            data-product-id="${product.id}">
-                            <i class="bi bi-bell me-2"></i>
-                            Notify Me
-                        </button>
-                    `;
+                                <button type="button"
+                                    class="product-modal-notify notify-me-btn"
+                                    data-product-id="${product.id}">
+                                    <i class="bi bi-bell me-2"></i>
+                                    Notify Me
+                                </button>
+                            `;
                         } else if (product.is_out_of_stock) {
                             action.innerHTML = `
-                        <button type="button"
-                            class="product-modal-add-cart"
-                            disabled>
-                            <i class="bi bi-x-circle me-2"></i>
-                            Out of Stock
-                        </button>
-                    `;
+                                <button type="button"
+                                    class="product-modal-add-cart"
+                                    disabled>
+                                    <i class="bi bi-x-circle me-2"></i>
+                                    Out of Stock
+                                </button>
+                            `;
                         } else {
                             // FIXED: Use JavaScript variables instead of Blade syntax
                             // Get the CSRF token from the meta tag
@@ -1023,14 +1055,14 @@
                             const addToCartUrl = "{{ url('/cart/add') }}" + '/' + product.id;
 
                             action.innerHTML = `
-                        <form class="add-to-cart-form" action="${addToCartUrl}" method="POST">
-                            <input type="hidden" name="_token" value="${csrfToken}">
-                            <button type="submit" class="rec-add-cart">
-                                <i class="bi bi-cart3 me-1"></i>
-                                Add to Cart
-                            </button>
-                        </form>
-                    `;
+                                <form class="add-to-cart-form" action="${addToCartUrl}" method="POST">
+                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                    <button type="submit" class="rec-add-cart">
+                                        <i class="bi bi-cart3 me-1"></i>
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            `;
                         }
 
                         loader.style.display = 'none';
@@ -1122,4 +1154,3 @@
         });
     </script>
 @endsection
-    

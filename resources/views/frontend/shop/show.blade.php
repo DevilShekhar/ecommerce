@@ -1553,8 +1553,6 @@
                     <span class="product-price">₹{{ number_format($product->price, 2) }}</span>
                     @if($product->compare_price && $product->compare_price > $product->price)
                         <span class="original-price">₹{{ number_format($product->compare_price, 2) }}</span>
-                        @php $discountPercentage = round((($product->compare_price - $product->price) / $product->compare_price) * 100); @endphp
-                        <span class="discount-badge">Save {{ $discountPercentage }}%</span>
                     @endif
                 </div>
                 <div class="certified-badge"><i class="bi bi-check-circle-fill"></i> BIS Hallmarked & Certified</div>

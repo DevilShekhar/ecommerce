@@ -433,35 +433,32 @@
                                                 @if($activeOffer)
 
                                                     {{-- DISCOUNTED PRICE --}}
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                    color:#ef4444;
-                                                                                                                                                                                                                                                    font-weight:700;
-                                                                                                                                                                                                                                                ">
+                                                    <span style="
+                                                                            color:#ef4444;
+                                                                            font-weight:700;
+                                                                        ">
                                                         ₹{{ number_format($discountedPrice, 0) }}
                                                     </span>
 
 
                                                     {{-- ORIGINAL PRICE --}}
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                    color:#94a3b8;
-                                                                                                                                                                                                                                                    text-decoration:line-through;
-                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                    margin-left:5px;
-                                                                                                                                                                                                                                                ">
+                                                    <span style="
+                                                                            color:#94a3b8;
+                                                                            text-decoration:line-through;
+                                                                            font-size:12px;
+                                                                            margin-left:5px;
+                                                                        ">
                                                         ₹{{ number_format($originalPrice, 0) }}
                                                     </span>
 
 
                                                     {{-- DISCOUNT --}}
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                    color:#16a34a;
-                                                                                                                                                                                                                                                    font-size:11px;
-                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                    margin-left:5px;
-                                                                                                                                                                                                                                                ">
+                                                    <span style="
+                                                                            color:#16a34a;
+                                                                            font-size:11px;
+                                                                            font-weight:600;
+                                                                            margin-left:5px;
+                                                                                 ">
 
                                                         @if($activeOffer->discount_type === 'percentage')
 
@@ -476,7 +473,7 @@
                                                                 ),
                                                                 '.'
                                                             )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }}% OFF
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }}% OFF
 
                                                         @else
 
@@ -492,10 +489,10 @@
 
                                                     <div
                                                         style="
-                                                                                                                                                                                                                                                    font-size:11px;
-                                                                                                                                                                                                                                                    color:#64748b;
-                                                                                                                                                                                                                                                    margin-top:2px;
-                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                    font-size:11px;
+                                                                                                                                                                                                                                                                                    color:#64748b;
+                                                                                                                                                                                                                                                                                    margin-top:2px;
+                                                                                                                                                                                                                                                                                ">
                                                         per item
                                                     </div>
 
@@ -507,10 +504,10 @@
 
                                                     <span
                                                         style="
-                                                                                                                                                                                                                                                    font-size:11px;
-                                                                                                                                                                                                                                                    color:#64748b;
-                                                                                                                                                                                                                                                    margin-left:3px;
-                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                    font-size:11px;
+                                                                                                                                                                                                                                                                                    color:#64748b;
+                                                                                                                                                                                                                                                                                    margin-left:3px;
+                                                                                                                                                                                                                                                                                ">
                                                         per item
                                                     </span>
 
@@ -524,14 +521,14 @@
 
                                                 <div
                                                     style="
-                                                                                                                                                                                                                                                margin-top:5px;
-                                                                                                                                                                                                                                                display:inline-flex;
-                                                                                                                                                                                                                                                align-items:center;
-                                                                                                                                                                                                                                                gap:4px;
-                                                                                                                                                                                                                                                color:#16a34a;
-                                                                                                                                                                                                                                                font-size:11px;
-                                                                                                                                                                                                                                                font-weight:600;
-                                                                                                                                                                                                                                            ">
+                                                                                                                                                                                                                                                                                margin-top:5px;
+                                                                                                                                                                                                                                                                                display:inline-flex;
+                                                                                                                                                                                                                                                                                align-items:center;
+                                                                                                                                                                                                                                                                                gap:4px;
+                                                                                                                                                                                                                                                                                color:#16a34a;
+                                                                                                                                                                                                                                                                                font-size:11px;
+                                                                                                                                                                                                                                                                                font-weight:600;
+                                                                                                                                                                                                                                                                            ">
 
                                                     <i class="bi bi-tag-fill"></i>
 
@@ -548,7 +545,7 @@
                                                             ),
                                                             '.'
                                                         )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }}% offer applied
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }}% offer applied
 
                                                     @else
 
@@ -573,10 +570,10 @@
 
                                                     <span
                                                         style="
-                                                                                                                                                                                                                                                    color:#ef4444;
-                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                    color:#ef4444;
+                                                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                                                ">
                                                         Out of Stock
                                                     </span>
 
@@ -590,10 +587,10 @@
 
                                                     <span
                                                         style="
-                                                                                                                                                                                                                                                    color:#f59e0b;
-                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                    color:#f59e0b;
+                                                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                                                ">
                                                         Only {{ $stock }}
                                                         {{ $stock == 1 ? 'item' : 'items' }}
                                                         left in stock
@@ -609,10 +606,10 @@
 
                                                     <span
                                                         style="
-                                                                                                                                                                                                                                                    color:#16a34a;
-                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                ">
+                                                                                                                                                                                                                                                                                    color:#16a34a;
+                                                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                                                ">
                                                         In Stock
                                                     </span>
 
@@ -688,10 +685,10 @@
 
                                                                                             <span
                                                                                                 style="
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        color:#94a3b8;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-decoration:line-through;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        font-size:12px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        color:#94a3b8;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-decoration:line-through;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        font-size:12px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
                                                                                                 ₹{{ number_format(
                                                                             $originalPrice * $currentQty,
                                                                             0
@@ -887,7 +884,7 @@
                         <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock
                 ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
                 : ''
-                                                                                                                    }}>
+                                                                                                                                    }}>
 
                             <i class="bi bi-arrow-right me-2"></i>
 
@@ -905,14 +902,14 @@
 
                             <div
                                 style="
-                                                                                                                                                                            padding:8px 16px;
-                                                                                                                                                                            background:#fef2f2;
-                                                                                                                                                                            border:1px solid #fecaca;
-                                                                                                                                                                            border-radius:4px;
-                                                                                                                                                                            margin-top:10px;
-                                                                                                                                                                            font-size:12px;
-                                                                                                                                                                            color:#dc2626;
-                                                                                                                                                                        ">
+                                                                                                                                                                                                    padding:8px 16px;
+                                                                                                                                                                                                    background:#fef2f2;
+                                                                                                                                                                                                    border:1px solid #fecaca;
+                                                                                                                                                                                                    border-radius:4px;
+                                                                                                                                                                                                    margin-top:10px;
+                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                    color:#dc2626;
+                                                                                                                                                                                                ">
 
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
 
