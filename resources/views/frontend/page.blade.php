@@ -357,7 +357,7 @@
                     <p>Explore our curated collection of artisan jewellery, each piece crafted with precision and
                         passion.</p>
                 </div>
-                <a href="#" class="btn-hero">
+                <a href="/login" class="btn-hero">
                     Shop Now <i class="bi bi-arrow-right"></i>
                 </a>
             </div>
@@ -452,7 +452,7 @@
                                         @if($banner->subtitle)
                                             <p class="banner-carousel-subtitle">{{ $banner->subtitle }}</p>
                                         @endif
-                                        <a href="{{ $banner->link_url ?? '#' }}" class="banner-btn">
+                                        <a href="/login" class="banner-btn">
                                             Shop Now <i class="bi bi-arrow-right"></i>
                                         </a>
                                     </div>

@@ -205,6 +205,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customer/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'])->name('customer.wishlist.toggle');
     Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])->name('customer.wishlist.remove');
     Route::get('/customer/products', [DashboardController::class, 'customerProducts'])->name('customer.products');
+    
 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
     Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])->name('cart.add');
@@ -276,17 +277,5 @@ Route::get('/search', function (Request $request) {
     return response()->json([
         'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
         'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
-    ]);
-});
-
-// In routes/web.php
-Route::get('/debug-session', function() {
-    return response()->json([
-        'cart' => session('cart'),
-        'applied_coupon_code' => session('applied_coupon_code'),
-        'applied_coupon_discount' => session('applied_coupon_discount'),
-        'coupon_discount_amount' => session('coupon_discount_amount'),
-        'applied_coupon_data' => session('applied_coupon_data'),
-        'all_session' => session()->all(),
     ]);
 });

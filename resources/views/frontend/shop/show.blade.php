@@ -1580,10 +1580,20 @@
                 </div>
                 <div class="purchase-row">
                     @if($product->stock > 0)
-                        <button type="button" class="btn-add-cart" onclick="window.location.href='{{ route('login') }}'"><i
-                                class="bi bi-bag-plus"></i> Make It Yours</button>
+                        @auth
+                            <button type="button" class="btn-add-cart"
+                                onclick="window.location.href='{{ route('customer.products', ['category_id' => $product->category_id]) }}'">
+                                <i class="bi bi-bag-plus"></i> Make It Yours
+                            </button>
+                        @else
+                            <button type="button" class="btn-add-cart" onclick="window.location.href='{{ route('login') }}'">
+                                <i class="bi bi-bag-plus"></i> Make It Yours
+                            </button>
+                        @endauth
                     @else
-                        <button type="button" class="btn-add-cart" disabled>Out of Stock</button>
+                        <button type="button" class="btn-add-cart" disabled>
+                            Out of Stock
+                        </button>
                     @endif
                 </div>
                 <div class="view-count"><i class="bi bi-eye"></i> 32 people are viewing this item</div>
@@ -1593,7 +1603,8 @@
                     @if($product->subCategory)
                     <div class="quick-info-item"><strong>Collection:</strong> {{ $product->subCategory->name }}</div>@endif
                     <div class="quick-info-item"><strong>Category:</strong>
-                        {{ $product->category->name ?? 'Premium Rings' }}</div>
+                        {{ $product->category->name ?? 'Premium Rings' }}
+                    </div>
                     <div class="quick-info-item"><strong>Shipping:</strong> Free over ₹999</div>
                 </div>
             </div>
@@ -1898,7 +1909,8 @@
                             <div class="related-image">
                                 @if($relFirst)<img src="{{ asset($relFirst) }}" alt="{{ $related->name }}" loading="lazy">@else<div
                                     style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
-                                <i class="bi bi-image" style="font-size:40px;"></i></div>@endif
+                                    <i class="bi bi-image" style="font-size:40px;"></i>
+                                </div>@endif
                                 @if($related->created_at >= now()->subDays(30))<span class="related-badge">New</span>@endif
                                 <button class="related-wishlist"><i class="bi bi-heart"></i></button>
                             </div>
@@ -1916,77 +1928,77 @@
                 </div>
             </section>
         @endif
-<div class="bottom-services">
-    <div class="bottom-service">
-        <i class="bi bi-lock"></i>
-        <div>
-            <strong>Pay Securely</strong>
-            <span>100% Safe & Secure Payments</span>
+        <div class="bottom-services">
+            <div class="bottom-service">
+                <i class="bi bi-lock"></i>
+                <div>
+                    <strong>Pay Securely</strong>
+                    <span>100% Safe & Secure Payments</span>
+                </div>
+            </div>
+
+            <div class="bottom-service">
+                <i class="bi bi-gift"></i>
+                <div>
+                    <strong>Gift-Ready Packaging</strong>
+                    <span>Premium Packaging Included</span>
+                </div>
+            </div>
+
+            <div class="bottom-service">
+                <i class="bi bi-headset"></i>
+                <div>
+                    <strong>Need Help?</strong>
+                    <span>Contact Us Anytime</span>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="bottom-service">
-        <i class="bi bi-gift"></i>
-        <div>
-            <strong>Gift-Ready Packaging</strong>
-            <span>Premium Packaging Included</span>
-        </div>
-    </div>
+        <style>
+            .bottom-services {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                margin-top: 20px;
+            }
 
-    <div class="bottom-service">
-        <i class="bi bi-headset"></i>
-        <div>
-            <strong>Need Help?</strong>
-            <span>Contact Us Anytime</span>
-        </div>
-    </div>
-</div>
+            .bottom-service {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                padding: 16px;
+                background: #FBF7E8;
+                border: 1px solid #E9DDB8;
+                border-radius: 12px;
+            }
 
-<style>
-.bottom-services {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-    margin-top: 20px;
-}
+            .bottom-service>i {
+                color: #B8953E;
+                font-size: 22px;
+            }
 
-.bottom-service {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 16px;
-    background: #FBF7E8;
-    border: 1px solid #E9DDB8;
-    border-radius: 12px;
-}
+            .bottom-service strong,
+            .bottom-service span {
+                display: block;
+            }
 
-.bottom-service > i {
-    color: #B8953E;
-    font-size: 22px;
-}
+            .bottom-service strong {
+                color: #2B2418;
+                font-size: 14px;
+            }
 
-.bottom-service strong,
-.bottom-service span {
-    display: block;
-}
+            .bottom-service span {
+                color: #756B58;
+                font-size: 12px;
+                margin-top: 3px;
+            }
 
-.bottom-service strong {
-    color: #2B2418;
-    font-size: 14px;
-}
-
-.bottom-service span {
-    color: #756B58;
-    font-size: 12px;
-    margin-top: 3px;
-}
-
-@media (max-width: 768px) {
-    .bottom-services {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
+            @media (max-width: 768px) {
+                .bottom-services {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
 
         <div class="image-modal" id="imageModal" onclick="closeImageModal()">
             <span class="modal-close" onclick="closeImageModal()"><i class="bi bi-x-lg"></i></span>
