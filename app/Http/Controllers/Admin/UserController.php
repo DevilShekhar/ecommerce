@@ -32,7 +32,7 @@ class UserController extends Controller
             ->whereDate('end_date', '>=', now())
             ->latest()
             ->get();
-        $coupons = Coupon::where('status', 1)
+        $coupons = Coupon::query()->where('status', 1)
             ->whereDate('start_date', '<=', now()->toDateString())
             ->whereDate('end_date', '>=', now()->toDateString())
             ->orderBy('code')

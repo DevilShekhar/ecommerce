@@ -19,7 +19,7 @@ use App\Http\Controllers\admin\ProductCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SubCategoryController;
-use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\admin\WarehouseController;
 use App\Http\Controllers\admin\WishlistController;
 use App\Http\Controllers\Frontend\AboutUsController;
