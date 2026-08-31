@@ -26,7 +26,7 @@ class OrderController extends Controller
             $orders = Order::with([
                 'user',
                 'items.product',
-                'statusHistories', // Load status histories
+                'statusHistories',
             ])
                 ->withCount('items')
                 ->latest()
