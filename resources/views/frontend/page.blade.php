@@ -27,7 +27,308 @@
             }
         </script>
     @endpush
+    {{-- =============================================
+    STYLES
+    ============================================= --}}
+    <style>
+        /* Product Card Hover Effects */
+        .product-card-compact:hover .hover-image {
+            opacity: 1 !important;
+        }
 
+        .product-card-compact:hover .main-image {
+            opacity: 0;
+        }
+
+        .product-card-compact {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card-compact:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image-wrapper-compact img {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Product Detail Gallery Styles */
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 20px 0;
+        }
+
+        .gallery-section {
+            position: relative;
+        }
+
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #FDFBF7;
+            aspect-ratio: 1/1;
+        }
+
+        .main-display-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #E8E2D2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .main-image-container:hover .gallery-nav {
+            opacity: 1;
+        }
+
+        .gallery-nav:hover {
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        .gallery-nav.prev {
+            left: 10px;
+        }
+
+        .gallery-nav.next {
+            right: 10px;
+        }
+
+        .gallery-nav i {
+            font-size: 18px;
+            color: #2C2A29;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 5;
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        .thumbnail-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .thumbnail-img:hover {
+            border-color: #D5CFC5;
+            transform: scale(1.05);
+        }
+
+        .thumbnail-img.active {
+            border-color: #A58B54;
+            box-shadow: 0 0 0 3px rgba(165, 139, 84, 0.2);
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cat {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 500;
+            color: #2C2A29;
+            margin: 0;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2C2A29;
+        }
+
+        .price .original {
+            font-size: 18px;
+            font-weight: 400;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .stock-status.in {
+            background: #E8F5E9;
+            color: #27AE60;
+        }
+
+        .stock-status.out {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #6B6A69;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+            background: #F8F6F1;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-item strong {
+            font-size: 11px;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .meta-item span {
+            font-size: 14px;
+            color: #2C2A29;
+        }
+
+        .btn-add {
+            padding: 14px 32px;
+            background: #A58B54;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+        }
+
+        .btn-add:hover:not(:disabled) {
+            background: #8A7344;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(165, 139, 84, 0.3);
+        }
+
+        .btn-add:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-add i {
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .thumbnail-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .gallery-nav {
+                width: 32px;
+                height: 32px;
+                opacity: 1;
+            }
+
+            .gallery-nav i {
+                font-size: 14px;
+            }
+        }
+
+        /* Modal styles */
+        .modal-open {
+            overflow: hidden;
+        }
+
+        #productModal {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Image counter on product cards */
+        .image-counter {
+            font-weight: 500;
+        }
+
+        /* Dot active state */
+        .dot.active {
+            background: #A58B54 !important;
+            transform: scale(1.2);
+        }
+    </style>
     {{-- =============================================
     HERO SECTION
     ============================================= --}}
@@ -978,323 +1279,29 @@
     {{-- =============================================
     PRODUCT DETAIL MODAL
     ============================================= --}}
-    <div id="productModal"
-        style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;justify-content:center;align-items:center;padding:20px;">
-        <div
-            style="background:#fff;border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:30px;position:relative;">
-            <button onclick="closeProductDetail()"
-                style="position:absolute;top:15px;right:20px;background:none;border:none;font-size:28px;cursor:pointer;color:#999;z-index:10;">&times;</button>
-            <div id="productDetailContent">
-                <div style="text-align:center;padding:40px 0;">
-                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;"></i>
-                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
-                </div>
+    <div id="productModal" 
+     style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;justify-content:center;align-items:center;padding:10px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);">
+    
+    <div style="background:#ffffff;border-radius:16px;max-width:900px;width:100%;max-height:85vh;overflow-y:auto;padding:20px 25px 25px;position:relative;margin:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalSlideIn 0.3s ease;">
+        
+        <!-- Close Button - Improved for mobile -->
+        <button onclick="closeProductDetail()" 
+                style="position:sticky;top:0;float:right;background:rgba(255,255,255,0.9);border:none;font-size:28px;cursor:pointer;color:#666;z-index:10;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.2s;"
+                onmouseover="this.style.backgroundColor='#f0f0f0';this.style.color='#333';"
+                onmouseout="this.style.backgroundColor='rgba(255,255,255,0.9)';this.style.color='#666';">
+            &times;
+        </button>
+        
+        <div id="productDetailContent" style="clear:both;">
+            <!-- Loading State -->
+            <div style="text-align:center;padding:30px 0;">
+                <div style="display:inline-block;width:50px;height:50px;border:4px solid #f3f3f3;border-top:4px solid #B8944C;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                <p style="margin-top:15px;color:#888;font-size:14px;">Loading product details...</p>
             </div>
         </div>
     </div>
+</div>
 
-    {{-- =============================================
-    STYLES
-    ============================================= --}}
-    <style>
-        /* Product Card Hover Effects */
-        .product-card-compact:hover .hover-image {
-            opacity: 1 !important;
-        }
-
-        .product-card-compact:hover .main-image {
-            opacity: 0;
-        }
-
-        .product-card-compact {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .product-card-compact:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .product-image-wrapper-compact img {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-        }
-
-        /* Product Detail Gallery Styles */
-        .product-detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 20px 0;
-        }
-
-        .gallery-section {
-            position: relative;
-        }
-
-        .main-image-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 12px;
-            background: #FDFBF7;
-            aspect-ratio: 1/1;
-        }
-
-        .main-display-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255,255,255,0.9);
-            border: 1px solid #E8E2D2;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 5;
-            opacity: 0;
-        }
-
-        .main-image-container:hover .gallery-nav {
-            opacity: 1;
-        }
-
-        .gallery-nav:hover {
-            background: #fff;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-        }
-
-        .gallery-nav.prev {
-            left: 10px;
-        }
-
-        .gallery-nav.next {
-            right: 10px;
-        }
-
-        .gallery-nav i {
-            font-size: 18px;
-            color: #2C2A29;
-        }
-
-        .image-counter {
-            position: absolute;
-            bottom: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.7);
-            color: #fff;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            z-index: 5;
-        }
-
-        .thumbnail-container {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            overflow-x: auto;
-            padding: 5px 0;
-        }
-
-        .thumbnail-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .thumbnail-img:hover {
-            border-color: #D5CFC5;
-            transform: scale(1.05);
-        }
-
-        .thumbnail-img.active {
-            border-color: #A58B54;
-            box-shadow: 0 0 0 3px rgba(165, 139, 84, 0.2);
-        }
-
-        .info {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .cat {
-            font-size: 12px;
-            font-weight: 600;
-            color: #A58B54;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-        }
-
-        .info h2 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 500;
-            color: #2C2A29;
-            margin: 0;
-        }
-
-        .price {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2C2A29;
-        }
-
-        .price .original {
-            font-size: 18px;
-            font-weight: 400;
-            color: #999;
-            text-decoration: line-through;
-            margin-left: 10px;
-        }
-
-        .stock-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            width: fit-content;
-        }
-
-        .stock-status.in {
-            background: #E8F5E9;
-            color: #27AE60;
-        }
-
-        .stock-status.out {
-            background: #FFEBEE;
-            color: #C62828;
-        }
-
-        .desc {
-            font-size: 14px;
-            color: #6B6A69;
-            line-height: 1.6;
-            margin: 5px 0;
-        }
-
-        .meta-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px 20px;
-            background: #F8F6F1;
-            padding: 16px;
-            border-radius: 8px;
-        }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .meta-item strong {
-            font-size: 11px;
-            color: #A58B54;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .meta-item span {
-            font-size: 14px;
-            color: #2C2A29;
-        }
-
-        .btn-add {
-            padding: 14px 32px;
-            background: #A58B54;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            width: fit-content;
-        }
-
-        .btn-add:hover:not(:disabled) {
-            background: #8A7344;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(165, 139, 84, 0.3);
-        }
-
-        .btn-add:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        .btn-add i {
-            font-size: 18px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .product-detail-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .thumbnail-img {
-                width: 60px;
-                height: 60px;
-            }
-
-            .gallery-nav {
-                width: 32px;
-                height: 32px;
-                opacity: 1;
-            }
-
-            .gallery-nav i {
-                font-size: 14px;
-            }
-        }
-
-        /* Modal styles */
-        .modal-open {
-            overflow: hidden;
-        }
-
-        #productModal {
-            backdrop-filter: blur(4px);
-        }
-
-        /* Image counter on product cards */
-        .image-counter {
-            font-weight: 500;
-        }
-
-        /* Dot active state */
-        .dot.active {
-            background: #A58B54 !important;
-            transform: scale(1.2);
-        }
-    </style>
 
     {{-- =============================================
     SCRIPTS
