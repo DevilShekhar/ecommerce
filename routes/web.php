@@ -12,7 +12,7 @@ use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\admin\OrderReturnController; 
+use App\Http\Controllers\admin\OrderReturnController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
@@ -32,10 +32,10 @@ use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialLoginController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -211,7 +211,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customer/notify-me', [CheckoutController::class, 'store'])->name('customer.notify-me');
     Route::get('/customer/product-details/{id}', [DashboardController::class, 'getProductDetails'])->name('customer.product.details');
 
-    Route::post('/products/{product}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
+    Route::post('/products/{product:id}/add-stock', [ProductController::class, 'addStock'])->name('products.add-stock');
     Route::delete('/cart/remove/{key}', [CheckoutController::class, 'removeFromCart'])->name('cart.remove');
     Route::post('/checkout/place', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
     Route::post('/cart/update/{key}', [CheckoutController::class, 'updateCart'])->name('cart.update');
@@ -271,10 +271,12 @@ Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetai
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/search', function (Request $request) {
     $q = $request->input('q');
-    if (!$q) return response()->json(['products' => [], 'categories' => []]);
+    if (! $q) {
+        return response()->json(['products' => [], 'categories' => []]);
+    }
 
     return response()->json([
-        'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
-        'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
+        'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id', 'name']),
+        'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id', 'name', 'slug', 'price', 'image']),
     ]);
 });
