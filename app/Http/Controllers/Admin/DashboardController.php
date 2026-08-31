@@ -32,15 +32,15 @@ class DashboardController extends Controller
             return redirect()->route('customer.dashboard');
         }
         $totalProducts = Product::count();
-        $activeProducts = Product::where('status', 1)->count();
-        $inactiveProducts = Product::where('status', 0)->count();
-        $featuredProducts = Product::where('is_futured', 1)->count();
+        $activeProducts = Product::query()->where('status', 1)->count();
+        $inactiveProducts = Product::query()->where('status', 0)->count();
+        $featuredProducts = Product::query()->where('is_futured', 1)->count();
 
         $totalCustomers = User::whereHas('roles', function ($query) {
             $query->where('name', 'Customer');
         })->count();
 
-        $activeCustomers = User::where('status', 1)
+        $activeCustomers = User::query()->where('status', 1)
             ->whereHas('roles', function ($query) {
                 $query->where('name', 'Customer');
             })
@@ -48,13 +48,13 @@ class DashboardController extends Controller
 
         $totalBrands = Brand::count();
 
-        $activeBrands = Brand::where('status', 1)->count();
+        $activeBrands = Brand::query()->where('status', 1)->count();
 
         $totalCategories = ProductCategory::count();
 
         $totalCoupons = Coupon::count();
 
-        $activeCoupons = Coupon::where('status', 1)
+        $activeCoupons = Coupon::query()->where('status', 1)
             ->whereDate('start_date', '<=', now())
             ->whereDate('end_date', '>=', now())
             ->count();
@@ -63,15 +63,15 @@ class DashboardController extends Controller
 
         $totalOffers = Offer::count();
 
-        $activeOffers = Offer::where('status', 1)->count();
+        $activeOffers = Offer::query()->where('status', 1)->count();
 
         $totalStock = Product::sum('stock');
 
-        $lowStockProducts = Product::where('stock', '<=', 5)
+        $lowStockProducts = Product::query()->where('stock', '<=', 5)
             ->where('stock', '>', 0)
             ->count();
 
-        $outOfStockProducts = Product::where('stock', '<=', 0)->count();
+        $outOfStockProducts = Product::query()->where('stock', '<=', 0)->count();
 
         $totalStockIn = InventoryTransaction::where('type', 'stock_in')
             ->sum('quantity');

@@ -26,8 +26,15 @@ class PageController extends Controller
 
         $banners = Banner::query()
             ->where('status', 1)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
+            ->where(function ($query) {
+                $query->whereNull('start_date')
+                    ->orWhereDate('start_date', '<=', today());
+            })
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', today());
+            })
+            ->orderBy('sort_order')
             ->get();
 
         $categories = ProductCategory::query()
@@ -61,6 +68,7 @@ class PageController extends Controller
         if ($aboutUs) {
             Log::info('About Us Title:', ['title' => $aboutUs->about_title]);
         }
+
         return view('frontend.page', compact(
             'page',
             'banners',
@@ -87,8 +95,15 @@ class PageController extends Controller
 
         $banners = Banner::query()
             ->where('status', 1)
-            ->orderBy('sort_order', 'asc')
-            ->orderBy('id', 'desc')
+            ->where(function ($query) {
+                $query->whereNull('start_date')
+                    ->orWhereDate('start_date', '<=', today());
+            })
+            ->where(function ($query) {
+                $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', today());
+            })
+            ->orderBy('sort_order')
             ->get();
 
         $categories = ProductCategory::query()

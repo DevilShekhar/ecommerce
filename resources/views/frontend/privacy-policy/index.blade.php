@@ -8,8 +8,8 @@
         rel="stylesheet" />
     <style>
         /* =============================================
-                PRIVACY POLICY
-            ============================================= */
+                    PRIVACY POLICY
+                ============================================= */
         .privacy-page {
             padding: 70px 20px 40px;
         }
@@ -53,12 +53,17 @@
             padding: 35px;
             margin-bottom: 25px;
             box-shadow: 0 5px 25px rgba(0, 0, 0, .05);
+
+            /* Fixed height */
+            height: 520px;
+            overflow: hidden;
         }
 
         .privacy-section-content {
             display: flex;
             gap: 35px;
             align-items: flex-start;
+            height: 100%;
         }
 
         .privacy-image {
@@ -67,50 +72,40 @@
         }
 
         .privacy-image img {
-            width: 100%;
-            height: 220px;
+            width: 108%;
+            height: 458px;
             object-fit: cover;
             border-radius: 10px;
         }
 
         .privacy-content {
             flex: 1;
+            height: 100%;
+
+            /* Scroll when content is more */
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            padding-right: 15px;
         }
 
-        .privacy-content .section-subtitle {
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #b08d57;
-            font-size: 12px;
-            margin-bottom: 8px;
-            font-weight: 600;
+        /* Scrollbar */
+        .privacy-content::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .privacy-content h2 {
-            font-size: 26px;
-            margin: 0 0 18px;
-            color: #292929;
-            font-family: 'Cormorant Garamond', serif;
+        .privacy-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
         }
 
-        .privacy-description {
-            font-size: 15px;
-            line-height: 1.8;
-            color: #666;
+        .privacy-content::-webkit-scrollbar-thumb {
+            background: #b08d57;
+            border-radius: 10px;
         }
 
-        .privacy-description p {
-            margin-bottom: 12px;
-        }
-
-        .privacy-description ul,
-        .privacy-description ol {
-            padding-left: 22px;
-            margin-bottom: 12px;
-        }
-
-        .privacy-description li {
-            margin-bottom: 6px;
+        .privacy-content::-webkit-scrollbar-thumb:hover {
+            background: #967442;
         }
 
         @media (max-width: 480px) {
@@ -124,10 +119,12 @@
 
             .privacy-section {
                 padding: 25px;
+                height: 500px;
             }
 
             .privacy-section-content {
                 display: block;
+                height: 100%;
             }
 
             .privacy-image {
@@ -137,6 +134,13 @@
 
             .privacy-image img {
                 height: 200px;
+                width: 100%;
+            }
+
+            .privacy-content {
+                height: calc(100% - 225px);
+                overflow-y: auto;
+                padding-right: 10px;
             }
         }
     </style>
@@ -145,8 +149,8 @@
 @section('content')
 
     <!-- =============================================
-            PRIVACY POLICY CONTENT
-        ============================================= -->
+                PRIVACY POLICY CONTENT
+            ============================================= -->
     <section class="privacy-page">
         <div class="privacy-container">
             <div class="privacy-header">
