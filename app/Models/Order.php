@@ -33,6 +33,9 @@ class Order extends Model
         'razorpay_payment_id',
         'razorpay_signature',
         'cancellation_reason', 'return_reason',
+        'discount_amount',
+        'discount_type',
+        'discount_code',
     ];
 
     protected $casts = [
