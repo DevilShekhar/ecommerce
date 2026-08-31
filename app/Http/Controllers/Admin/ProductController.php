@@ -286,6 +286,7 @@ class ProductController extends Controller
 
     public function addStock(Request $request, Product $product)
     {
+        //  dd($product->id, $product->stock);
         $validated = $request->validate([
             'quantity' => 'required|integer|min:1',
             'supplier_name' => 'nullable|string|max:255',
