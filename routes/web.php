@@ -181,11 +181,11 @@ Route::middleware('auth')->group(function () {
 });
 
 // Wishlist Routes (Old)
-// Route::middleware(['auth'])->group(function () {
-//     Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
-//     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
-//     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
-// });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+    Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
+});
 // =============================================
 Route::middleware(['auth'])->group(function () {
 
