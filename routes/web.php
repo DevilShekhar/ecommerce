@@ -4,7 +4,7 @@ use App\Http\Controllers\admin\BannerController;
 use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
 use App\Http\Controllers\admin\CheckoutController;
-use App\Http\Controllers\admin\ContactSubmissionController;
+use App\Http\Controllers\Admin\ContactSubmissionController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\CustomerAccountController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -16,7 +16,7 @@ use App\Http\Controllers\admin\OrderReturnController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
-use App\Http\Controllers\admin\ProductController;
+use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\admin\RoleController;
 use App\Http\Controllers\admin\SubCategoryController;
 use App\Http\Controllers\admin\UserController;
@@ -272,7 +272,7 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::get('/search', function (Request $request) {
     $q = $request->input('q');
     if (!$q) return response()->json(['products' => [], 'categories' => []]);
-    
+
     return response()->json([
         'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
         'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
