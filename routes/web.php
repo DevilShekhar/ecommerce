@@ -32,7 +32,10 @@ use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialLoginController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Product;
+use App\Models\ProductCategory;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -266,3 +269,12 @@ Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetai
     ->name('customer.product.detail');
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+Route::get('/search', function (Request $request) {
+    $q = $request->input('q');
+    if (!$q) return response()->json(['products' => [], 'categories' => []]);
+    
+    return response()->json([
+        'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
+        'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
+    ]);
+});
