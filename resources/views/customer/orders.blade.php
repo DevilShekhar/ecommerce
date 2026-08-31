@@ -109,12 +109,56 @@
                                     {{ $order->items_count ?? ($order->items?->count() ?? 0) }}
                                 </div>
                             </div>
+                           {{-- Subtotal --}}
                             <div>
-                                <div class="order-meta-label">Total</div>
+                                <div class="order-meta-label">Subtotal</div>
                                 <div class="order-meta-value">
+                                    ₹{{ number_format($order->subtotal ?? $order->total ?? 0, 2) }}
+                                </div>
+                            </div>
+
+                            {{-- Coupon Discount (if applied) --}}
+                            @if(!empty($order->coupon_discount) && $order->coupon_discount > 0)
+                            <div style="color: #16a34a;">
+                                <div class="order-meta-label">Coupon Discount</div>
+                                <div class="order-meta-value">
+                                    - ₹{{ number_format($order->coupon_discount, 2) }}
+                                    @if(!empty($order->coupon_code))
+                                        <small style="font-size: 11px; color: #64748b;">({{ $order->coupon_code }})</small>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
+
+                            {{-- Shipping --}}
+                            @if(!empty($order->shipping) && $order->shipping > 0)
+                            <div>
+                                <div class="order-meta-label">Shipping</div>
+                                <div class="order-meta-value">
+                                    ₹{{ number_format($order->shipping, 2) }}
+                                </div>
+                            </div>
+                            @else
+                            <div>
+                                <div class="order-meta-label">Shipping</div>
+                                <div class="order-meta-value" style="color: #16a34a;">FREE</div>
+                            </div>
+                            @endif
+
+                            {{-- Final Total --}}
+                            <div style="border-top: 1px solid #e5eaf1; padding-top: 10px; margin-top: 5px; font-weight: 700;">
+                                <div class="order-meta-label" style="font-size: 16px;">Total</div>
+                                <div class="order-meta-value" style="font-size: 18px; color: #2878f0;">
                                     ₹{{ number_format($order->total ?? 0, 2) }}
                                 </div>
                             </div>
+
+                            {{-- Tax Note --}}
+                            @if(!empty($order->tax) && $order->tax > 0)
+                            <div style="font-size: 11px; color: #64748b; margin-top: 5px; text-align: right;">
+                                Inclusive of ₹{{ number_format($order->tax, 2) }} tax
+                            </div>
+                            @endif
                             <div>
                                 <div class="order-meta-label">Status</div>
                                 <span class="status-badge {{ $statusClass }}">
@@ -1078,3 +1122,4 @@
         });
     </script>
 @endsection
+    

@@ -2,6 +2,16 @@
 
 @section('title', 'Checkout - ShopEase')
 @section('content')
+    @php
+        // Debug session data
+        $debugData = [
+            'coupon_code' => session()->get('applied_coupon_code'),
+            'coupon_discount' => session()->get('applied_coupon_discount'),
+            'coupon_data' => session()->get('applied_coupon_data'),
+            'cart' => session()->get('cart'),
+            'shipping' => session()->get('shipping'),
+        ];
+    @endphp
     <div class="checkout-page">
         <div class="checkout-header">
             <div class="checkout-header-inner">
@@ -297,7 +307,7 @@
 
                                         if ($activeOffer) {
 
-                                            $discountValue = (float)
+                                            $discountValue = (float) 
                                                 $activeOffer->discount_value;
 
                                             if (
@@ -423,32 +433,35 @@
                                                 @if($activeOffer)
 
                                                     {{-- DISCOUNTED PRICE --}}
-                                                    <span style="
-                                                                    color:#ef4444;
-                                                                    font-weight:700;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#ef4444;
+                                                                                                                                                                                                                                                    font-weight:700;
+                                                                                                                                                                                                                                                ">
                                                         ₹{{ number_format($discountedPrice, 0) }}
                                                     </span>
 
 
                                                     {{-- ORIGINAL PRICE --}}
-                                                    <span style="
-                                                                    color:#94a3b8;
-                                                                    text-decoration:line-through;
-                                                                    font-size:12px;
-                                                                    margin-left:5px;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#94a3b8;
+                                                                                                                                                                                                                                                    text-decoration:line-through;
+                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                    margin-left:5px;
+                                                                                                                                                                                                                                                ">
                                                         ₹{{ number_format($originalPrice, 0) }}
                                                     </span>
 
 
                                                     {{-- DISCOUNT --}}
-                                                    <span style="
-                                                                    color:#16a34a;
-                                                                    font-size:11px;
-                                                                    font-weight:600;
-                                                                    margin-left:5px;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#16a34a;
+                                                                                                                                                                                                                                                    font-size:11px;
+                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                    margin-left:5px;
+                                                                                                                                                                                                                                                ">
 
                                                         @if($activeOffer->discount_type === 'percentage')
 
@@ -463,7 +476,7 @@
                                                                 ),
                                                                 '.'
                                                             )
-                                                                                            }}% OFF
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }}% OFF
 
                                                         @else
 
@@ -477,11 +490,12 @@
                                                     </span>
 
 
-                                                    <div style="
-                                                                    font-size:11px;
-                                                                    color:#64748b;
-                                                                    margin-top:2px;
-                                                                ">
+                                                    <div
+                                                        style="
+                                                                                                                                                                                                                                                    font-size:11px;
+                                                                                                                                                                                                                                                    color:#64748b;
+                                                                                                                                                                                                                                                    margin-top:2px;
+                                                                                                                                                                                                                                                ">
                                                         per item
                                                     </div>
 
@@ -491,11 +505,12 @@
                                                         ₹{{ number_format($originalPrice, 0) }}
                                                     </span>
 
-                                                    <span style="
-                                                                    font-size:11px;
-                                                                    color:#64748b;
-                                                                    margin-left:3px;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    font-size:11px;
+                                                                                                                                                                                                                                                    color:#64748b;
+                                                                                                                                                                                                                                                    margin-left:3px;
+                                                                                                                                                                                                                                                ">
                                                         per item
                                                     </span>
 
@@ -507,15 +522,16 @@
                                             {{-- OFFER APPLIED --}}
                                             @if($activeOffer)
 
-                                                <div style="
-                                                                margin-top:5px;
-                                                                display:inline-flex;
-                                                                align-items:center;
-                                                                gap:4px;
-                                                                color:#16a34a;
-                                                                font-size:11px;
-                                                                font-weight:600;
-                                                            ">
+                                                <div
+                                                    style="
+                                                                                                                                                                                                                                                margin-top:5px;
+                                                                                                                                                                                                                                                display:inline-flex;
+                                                                                                                                                                                                                                                align-items:center;
+                                                                                                                                                                                                                                                gap:4px;
+                                                                                                                                                                                                                                                color:#16a34a;
+                                                                                                                                                                                                                                                font-size:11px;
+                                                                                                                                                                                                                                                font-weight:600;
+                                                                                                                                                                                                                                            ">
 
                                                     <i class="bi bi-tag-fill"></i>
 
@@ -532,7 +548,7 @@
                                                             ),
                                                             '.'
                                                         )
-                                                                                    }}% offer applied
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                }}% offer applied
 
                                                     @else
 
@@ -555,11 +571,12 @@
 
                                                     <i class="bi bi-x-circle-fill"></i>
 
-                                                    <span style="
-                                                                    color:#ef4444;
-                                                                    font-size:12px;
-                                                                    font-weight:600;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#ef4444;
+                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                ">
                                                         Out of Stock
                                                     </span>
 
@@ -571,11 +588,12 @@
 
                                                     <i class="bi bi-exclamation-triangle-fill"></i>
 
-                                                    <span style="
-                                                                    color:#f59e0b;
-                                                                    font-size:12px;
-                                                                    font-weight:600;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#f59e0b;
+                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                ">
                                                         Only {{ $stock }}
                                                         {{ $stock == 1 ? 'item' : 'items' }}
                                                         left in stock
@@ -589,11 +607,12 @@
 
                                                     <i class="bi bi-check-circle-fill"></i>
 
-                                                    <span style="
-                                                                    color:#16a34a;
-                                                                    font-size:12px;
-                                                                    font-weight:600;
-                                                                ">
+                                                    <span
+                                                        style="
+                                                                                                                                                                                                                                                    color:#16a34a;
+                                                                                                                                                                                                                                                    font-size:12px;
+                                                                                                                                                                                                                                                    font-weight:600;
+                                                                                                                                                                                                                                                ">
                                                         In Stock
                                                     </span>
 
@@ -667,11 +686,12 @@
 
                                                                                         <div>
 
-                                                                                            <span style="
-                                                                                                                color:#94a3b8;
-                                                                                                                text-decoration:line-through;
-                                                                                                                font-size:12px;
-                                                                                                            ">
+                                                                                            <span
+                                                                                                style="
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        color:#94a3b8;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-decoration:line-through;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        font-size:12px;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
                                                                                                 ₹{{ number_format(
                                                                             $originalPrice * $currentQty,
                                                                             0
@@ -746,7 +766,7 @@
                         @php
                             $shippingAmount = (float) ($shipping ?? 0);
                             $discountAmount = (float) ($discount ?? 0);
-                            $finalTotal = max(0,($subtotal ?? 0) + $shippingAmount - $discountAmount);
+                            $finalTotal = max(0, ($subtotal ?? 0) + $shippingAmount - $discountAmount);
                         @endphp
                         {{-- DELIVERY --}}
                         <div class="summary-row">
@@ -867,7 +887,7 @@
                         <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock
                 ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
                 : ''
-                            }}>
+                                                                                                                    }}>
 
                             <i class="bi bi-arrow-right me-2"></i>
 
@@ -883,15 +903,16 @@
                         {{-- STOCK WARNING --}}
                         @if($hasOutOfStock)
 
-                            <div style="
-                                        padding:8px 16px;
-                                        background:#fef2f2;
-                                        border:1px solid #fecaca;
-                                        border-radius:4px;
-                                        margin-top:10px;
-                                        font-size:12px;
-                                        color:#dc2626;
-                                    ">
+                            <div
+                                style="
+                                                                                                                                                                            padding:8px 16px;
+                                                                                                                                                                            background:#fef2f2;
+                                                                                                                                                                            border:1px solid #fecaca;
+                                                                                                                                                                            border-radius:4px;
+                                                                                                                                                                            margin-top:10px;
+                                                                                                                                                                            font-size:12px;
+                                                                                                                                                                            color:#dc2626;
+                                                                                                                                                                        ">
 
                                 <i class="bi bi-exclamation-triangle-fill me-1"></i>
 
@@ -1578,6 +1599,24 @@
             var confirmOrderBtn = document.getElementById('confirmOrderBtn');
 
             function showConfirmModal() {
+                console.log('=== SHOWING CONFIRMATION MODAL ===');
+                console.log('Current totals from display:');
+
+                var totalEl = document.getElementById('totalDisplay');
+                console.log('Total Display:', totalEl ? totalEl.textContent : 'null');
+
+                var subtotalEl = document.getElementById('subtotalDisplay');
+                console.log('Subtotal Display:', subtotalEl ? subtotalEl.textContent : 'null');
+
+                var discountEl = document.getElementById('discountDisplay');
+                console.log('Discount Display:', discountEl ? discountEl.textContent : 'null');
+
+                var couponRow = document.getElementById('couponDiscountRow');
+                console.log('Coupon Row Visible:', couponRow ? couponRow.style.display : 'null');
+
+                var couponCodeInput = document.getElementById('couponCode');
+                console.log('Coupon Code Input Value:', couponCodeInput ? couponCodeInput.value : 'null');
+
                 if (confirmModal) {
                     var subtotalEl = document.getElementById('subtotalDisplay');
                     var totalEl = document.getElementById('totalDisplay');
@@ -1594,20 +1633,43 @@
                         confirmItems.textContent = itemsCount;
                     }
 
+                    // Get subtotal
                     if (confirmSubtotal && subtotalEl) {
-                        confirmSubtotal.textContent = subtotalEl.textContent;
+                        var subtotalText = subtotalEl.textContent.replace(/[₹,\s]/g, '').trim();
+                        console.log('Parsed Subtotal:', subtotalText);
+                        confirmSubtotal.textContent = '₹' + Number(subtotalText).toLocaleString('en-IN');
                     }
 
+                    // Get total - this already has discount applied
                     if (confirmTotal && totalEl) {
-                        confirmTotal.textContent = totalEl.textContent;
+                        var totalText = totalEl.textContent.replace(/[₹,\s]/g, '').trim();
+                        console.log('Parsed Total (with discount):', totalText);
+                        confirmTotal.textContent = '₹' + Number(totalText).toLocaleString('en-IN');
                     }
 
+                    // Handle discount
                     if (confirmDiscount) {
-                        if (couponRow && couponRow.style.display !== 'none' && discountEl) {
-                            confirmDiscount.textContent = discountEl.textContent;
-                            confirmDiscount.style.display = 'block';
+                        // Check if coupon is applied
+                        var couponCodeInput = document.getElementById('couponCode');
+                        var isCouponApplied = couponCodeInput && couponCodeInput.value && couponCodeInput.hasAttribute('readonly');
+
+                        console.log('Is coupon applied?', isCouponApplied);
+
+                        if (isCouponApplied && discountEl) {
+                            var discountText = discountEl.textContent.replace(/[₹,\-\s]/g, '').trim();
+                            console.log('Parsed Discount:', discountText);
+                            if (discountText && discountText !== '0') {
+                                confirmDiscount.textContent = '- ₹' + Number(discountText).toLocaleString('en-IN');
+                                confirmDiscount.style.display = 'block';
+                                confirmDiscount.style.color = '#16a34a';
+                            } else {
+                                confirmDiscount.textContent = '- ₹0';
+                                confirmDiscount.style.display = 'block';
+                            }
                         } else {
                             confirmDiscount.textContent = '- ₹0';
+                            confirmDiscount.style.display = 'block';
+                            confirmDiscount.style.color = '#64748b';
                         }
                     }
 
@@ -1688,9 +1750,20 @@
             // PLACE COD ORDER
             // ============================================================
             function placeCodOrder(addressId, btn, cancelBtn) {
+                console.log('=== PLACING COD ORDER ===');
+                console.log('Address ID:', addressId);
+
+                var totalDisplay = document.getElementById('totalDisplay');
+                var finalAmount = totalDisplay ? totalDisplay.textContent.replace(/[₹,\s]/g, '').trim() : '0';
+
+                var couponInput = document.getElementById('couponCode');
+                var couponCode = couponInput ? couponInput.value : '';
+
                 var orderData = {
                     address_id: addressId,
                     payment_method: 'cod',
+                    coupon_code: couponCode,  // Send coupon code
+                    amount: parseFloat(finalAmount) || 0,
                     notes: ''
                 };
 
@@ -1703,8 +1776,12 @@
                     },
                     body: JSON.stringify(orderData)
                 })
-                    .then(function (response) { return response.json(); })
+                    .then(function (response) {
+                        console.log('COD Response Status:', response.status);
+                        return response.json();
+                    })
                     .then(function (data) {
+                        console.log('COD Response Data:', data);
                         if (data.success) {
                             closeConfirmModal();
                             showToast('success', 'Success!', data.message);
@@ -1719,7 +1796,7 @@
                         }
                     })
                     .catch(function (error) {
-                        console.error('Order error:', error);
+                        console.error('❌ COD Order Error:', error);
                         showToast('error', 'Error!', 'Something went wrong. Please try again.');
                         btn.disabled = false;
                         cancelBtn.disabled = false;
@@ -1731,7 +1808,24 @@
             // CREATE RAZORPAY ORDER
             // ============================================================
             function createRazorpayOrder(addressId, btn, cancelBtn) {
+                console.log('=== CREATE RAZORPAY ORDER ===');
+                console.log('Address ID:', addressId);
+
                 isProcessingOrder = true;
+
+                // Get the correct total from the display (already has discount applied)
+                var totalDisplay = document.getElementById('totalDisplay');
+                var finalTotal = totalDisplay ? totalDisplay.textContent.replace(/[₹,\s]/g, '').trim() : '0';
+                console.log('Final Total from display:', finalTotal);
+
+                // Get coupon code if applied
+                var couponInput = document.getElementById('couponCode');
+                var couponCode = couponInput ? couponInput.value : '';
+
+                // Get subtotal from display
+                var subtotalDisplay = document.getElementById('subtotalDisplay');
+                var subtotal = subtotalDisplay ? subtotalDisplay.textContent.replace(/[₹,\s]/g, '').trim() : '0';
+                console.log('Subtotal from display:', subtotal);
 
                 fetch('{{ route("checkout.create.razorpay.order") }}', {
                     method: 'POST',
@@ -1739,11 +1833,20 @@
                         'X-CSRF-TOKEN': csrfToken,
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({
+                        address_id: addressId,
+                        coupon_code: couponCode,
+                        final_total: parseFloat(finalTotal) || 0,  // Send the correct total
+                        subtotal: parseFloat(subtotal) || 0        // Send the subtotal
+                    })
                 })
-                    .then(function (response) { return response.json(); })
+                    .then(function (response) {
+                        return response.json();
+                    })
                     .then(function (data) {
                         if (data.success) {
+                            console.log('✅ Order created successfully!');
                             closeConfirmModal();
                             openRazorpayCheckout(data, addressId);
 
@@ -1754,6 +1857,7 @@
                                 isProcessingOrder = false;
                             }, 500);
                         } else {
+                            console.error('❌ Server returned error:', data.message);
                             showToast('error', 'Error!', data.message || 'Failed to initialize payment.');
                             btn.disabled = false;
                             cancelBtn.disabled = false;
@@ -1762,7 +1866,7 @@
                         }
                     })
                     .catch(function (error) {
-                        console.error('Razorpay error:', error);
+                        console.error('❌ Fetch error:', error);
                         showToast('error', 'Error!', 'Something went wrong. Please try again.');
                         btn.disabled = false;
                         cancelBtn.disabled = false;
@@ -1770,14 +1874,18 @@
                         isProcessingOrder = false;
                     });
             }
-
             // ============================================================
             // OPEN RAZORPAY CHECKOUT
             // ============================================================
             function openRazorpayCheckout(data, addressId) {
+                console.log('=== OPENING RAZORPAY CHECKOUT ===');
+                console.log('Razorpay Data:', data);
+                console.log('Amount from server:', data.amount);
+                console.log('Amount in rupees:', data.amount / 100);
+
                 var options = {
                     key: data.key,
-                    amount: data.amount,
+                    amount: data.amount, // Amount is in paise
                     currency: data.currency,
                     name: data.name,
                     description: data.description,
@@ -1789,11 +1897,14 @@
                     },
                     notes: data.notes,
                     handler: function (response) {
+                        console.log('=== PAYMENT SUCCESSFUL ===');
+                        console.log('Payment Response:', response);
                         // Payment successful - verify
                         verifyRazorpayPayment(response, addressId);
                     },
                     modal: {
                         ondismiss: function () {
+                            console.log('Payment modal dismissed by user');
                             isProcessingOrder = false;
                             var confirmBtn = document.getElementById('confirmOrderBtn');
                             var cancelBtn = document.getElementById('cancelOrderBtn');
@@ -1812,6 +1923,7 @@
                     }
                 };
 
+                console.log('Razorpay Options:', options);
                 var rzp = new Razorpay(options);
                 rzp.open();
             }
@@ -1820,10 +1932,24 @@
             // VERIFY RAZORPAY PAYMENT
             // ============================================================
             function verifyRazorpayPayment(response, addressId) {
+                console.log('=== VERIFYING RAZORPAY PAYMENT ===');
+                console.log('Payment Response:', response);
+                console.log('Address ID:', addressId);
+
                 var placeBtn = document.getElementById('placeOrderBtn');
                 if (placeBtn) {
                     placeBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Verifying...';
                 }
+
+                var verificationData = {
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature,
+                    address_id: addressId,
+                    payment_method: 'razorpay'
+                };
+
+                console.log('Verification Data:', verificationData);
 
                 fetch('{{ route("checkout.verify.razorpay") }}', {
                     method: 'POST',
@@ -1832,22 +1958,21 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature,
-                        address_id: addressId,
-                        payment_method: 'razorpay'
-                    })
+                    body: JSON.stringify(verificationData)
                 })
-                    .then(function (response) { return response.json(); })
+                    .then(function (response) {
+                        console.log('Verification Response Status:', response.status);
+                        return response.json();
+                    })
                     .then(function (data) {
+                        console.log('Verification Response Data:', data);
                         if (data.success) {
                             showToast('success', 'Payment Success!', data.message);
                             setTimeout(function () {
                                 window.location.href = data.redirect_url || '{{ route("customer.dashboard") }}';
                             }, 2000);
                         } else {
+                            console.error('❌ Payment Verification Failed:', data.message);
                             showToast('error', 'Payment Failed!', data.message || 'Payment verification failed.');
                             if (placeBtn) {
                                 placeBtn.disabled = false;
@@ -1861,7 +1986,7 @@
                         }
                     })
                     .catch(function (error) {
-                        console.error('Verification error:', error);
+                        console.error('❌ Verification Error:', error);
                         showToast('error', 'Error!', 'Payment verification failed. Please contact support.');
                         if (placeBtn) {
                             placeBtn.disabled = false;
@@ -1902,15 +2027,18 @@
                         return;
                     }
 
+                    console.log('=== APPLYING COUPON ===');
+                    console.log('Coupon Code:', couponCode);
+
                     applyCouponBtn.disabled = true;
-                    applyCouponBtn.innerHTML = 'Applying...';
+                    applyCouponBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Applying...';
 
                     fetch("{{ route('checkout.applyCoupon') }}", {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                             'Accept': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': csrfToken
                         },
                         body: JSON.stringify({
                             coupon_code: couponCode,
@@ -1918,33 +2046,43 @@
                         })
                     })
                         .then(response => {
-                            return response.json().then(data => {
-                                if (!response.ok) {
-                                    throw new Error(data.message || 'Failed to apply coupon.');
-                                }
-                                return data;
-                            });
+                            console.log('Coupon Response Status:', response.status);
+                            return response.json();
                         })
                         .then(data => {
+                            console.log('Coupon Response Data:', data);
+
                             if (data.success) {
+                                // Update all displays
                                 totalDisplay.textContent = '₹' + formatAmount(data.final_amount);
                                 discountDisplay.textContent = '- ₹' + formatAmount(data.discount_amount);
                                 couponDiscountRow.style.display = 'flex';
+                                couponDiscountRow.style.background = '#f0fdf4';
+                                couponDiscountRow.style.padding = '8px 0';
                                 appliedCouponCode.textContent = '(' + data.coupon.code + ')';
                                 couponCodeInput.value = data.coupon.code;
                                 couponCodeInput.setAttribute('readonly', true);
                                 applyCouponBtn.innerHTML = 'Applied ✅';
                                 applyCouponBtn.classList.remove('btn-outline-primary');
                                 applyCouponBtn.classList.add('btn-success');
+
+                                // Update the original total for reference
+                                totalDisplay.dataset.originalTotal = data.final_amount;
+
+                                // Show success message
                                 showToast('success', 'Coupon Applied!', data.message);
+
+                                console.log('Updated Total:', data.final_amount);
+                                console.log('Discount Amount:', data.discount_amount);
                             } else {
+                                console.error('Coupon application failed:', data.message);
                                 showToast('error', 'Error', data.message || 'Failed to apply coupon.');
                                 applyCouponBtn.disabled = false;
                                 applyCouponBtn.innerHTML = 'Apply';
                             }
                         })
                         .catch(error => {
-                            console.error('Coupon error:', error);
+                            console.error('❌ Coupon error:', error);
                             showToast('error', 'Coupon Error', error.message || 'Something went wrong while applying the coupon.');
                             applyCouponBtn.disabled = false;
                             applyCouponBtn.innerHTML = 'Apply';

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\OrderPlacedMail;
 use App\Models\Coupon;
 use App\Models\Offer;
 use App\Models\Order;
@@ -16,9 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Razorpay\Api\Api;
 
 class CheckoutController extends Controller
@@ -298,276 +295,200 @@ class CheckoutController extends Controller
             if (! $user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Please login to place order.',
+                    'message' => 'Please login to continue.',
                 ], 401);
             }
 
             $cart = session()->get('cart', []);
 
-            if (empty($cart) || ! is_array($cart)) {
+            if (empty($cart)) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Your cart is empty.',
                 ], 400);
             }
 
-            // Fix: Add 'razorpay' to the validation rules
-            $request->validate([
-                'address_id' => 'nullable',
-                'payment_method' => 'required|string|in:cod,upi,card,netbanking,razorpay',
-                'notes' => 'nullable|string|max:1000',
-                'razorpay_payment_id' => 'nullable|string',
-                'razorpay_order_id' => 'nullable|string',
-                'razorpay_signature' => 'nullable|string',
-            ]);
-
-            $addresses = $user->address;
-
-            if (is_string($addresses)) {
-                $addresses = json_decode($addresses, true);
-            }
-
-            if (! is_array($addresses)) {
-                $addresses = [];
-            }
-
-            $addressId = $request->address_id;
-            $selectedAddress = null;
-
-            if ($addressId !== null) {
-                foreach ($addresses as $address) {
-                    if (
-                        isset($address['id']) &&
-                        (string) $address['id'] === (string) $addressId
-                    ) {
-                        $selectedAddress = $address;
-                        break;
-                    }
-                }
-            }
-
-            if (! $selectedAddress) {
-                $selectedAddress = collect($addresses)
-                    ->firstWhere('is_default', true);
-            }
-
-            if (! $selectedAddress) {
-                $selectedAddress = [
-                    'address' => $user->location_address ?? '',
-                    'city' => $user->city ?? '',
-                    'state' => $user->state ?? '',
-                    'country' => $user->country ?? '',
-                    'pincode' => $user->pincode ?? '',
-                ];
-            }
-
-            $shippingAddress = $selectedAddress['address'] ?? $user->location_address ?? '';
-            $shippingCity = $selectedAddress['city'] ?? $user->city ?? '';
-            $shippingState = $selectedAddress['state'] ?? $user->state ?? '';
-            $shippingCountry = $selectedAddress['country'] ?? $user->country ?? '';
-            $shippingPincode = $selectedAddress['pincode'] ?? $user->pincode ?? '';
-
-            $latitude = $selectedAddress['latitude'] ?? $user->latitude ?? null;
-            $longitude = $selectedAddress['longitude'] ?? $user->longitude ?? null;
-
-            $shipping = 0;
-            $discount = 0;
             $subtotal = 0;
-            $orderItems = [];
 
-            foreach ($cart as $cartItem) {
-                if (! is_array($cartItem)) {
-                    continue;
-                }
-
-                $productId = $cartItem['id'] ?? null;
-                $quantity = (int) ($cartItem['quantity'] ?? 1);
-
-                if (! $productId || $quantity < 1) {
-                    continue;
-                }
-
-                $product = Product::with([
-                    'category',
-                    'subCategory',
-                    'brand',
-                ])->where('id', $productId)
-                    ->where('status', 1)
-                    ->first();
+            foreach ($cart as $item) {
+                $product = Product::query()->find($item['id'] ?? null);
 
                 if (! $product) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'One of the products in your cart is no longer available.',
-                    ], 400);
+                    continue;
                 }
 
-                if ($product->stock < $quantity) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Only '.$product->stock.' '.$product->name.' available in stock.',
-                    ], 400);
+                $price = (float) ($item['price'] ?? $product->price ?? 0);
+                $quantity = (int) ($item['quantity'] ?? 1);
+
+                $activeOffer = $item['active_offer'] ?? $product->activeOffer ?? null;
+
+                if ($activeOffer) {
+                    $discountValue = (float) $activeOffer->discount_value;
+
+                    if ($activeOffer->discount_type === 'percentage') {
+                        $price = $price - ($price * $discountValue / 100);
+                    } else {
+                        $price = $price - $discountValue;
+                    }
+
+                    $price = max($price, 0);
                 }
 
-                $price = (float) $product->price;
-                $itemTotal = $price * $quantity;
-
-                $subtotal += $itemTotal;
-
-                $orderItems[] = [
-                    'product' => $product,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                    'total' => $itemTotal,
-                ];
+                $subtotal += $price * $quantity;
             }
 
-            if (empty($orderItems)) {
+            $subtotal = round($subtotal, 2);
+
+            $discount = 0;
+            $discountType = null;
+            $discountCode = null;
+
+            if (session()->has('applied_coupon_discount')) {
+                $discount = (float) session()->get('applied_coupon_discount', 0);
+                $discountCode = session()->get('applied_coupon_code');
+
+                if ($discount > 0) {
+                    $discountType = 'coupon';
+                }
+            }
+
+            if ($discount <= 0 && session()->has('coupon_discount_amount')) {
+                $discount = (float) session()->get('coupon_discount_amount', 0);
+                $discountCode = session()->get('coupon_code_applied');
+
+                if ($discount > 0) {
+                    $discountType = 'coupon';
+                }
+            }
+
+            $discount = min($discount, $subtotal);
+            $discount = round($discount, 2);
+
+            $shipping = (float) session()->get('shipping', 0);
+
+            if ($subtotal > 999) {
+                $shipping = 0;
+            }
+
+            $shipping = round($shipping, 2);
+
+            $tax = 0;
+
+            $finalTotal = $subtotal + $shipping + $tax - $discount;
+            $finalTotal = max($finalTotal, 0);
+            $finalTotal = round($finalTotal, 2);
+
+            Log::info('=== PLACE ORDER CALCULATIONS ===', [
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'discount_type' => $discountType,
+                'discount_code' => $discountCode,
+                'shipping' => $shipping,
+                'tax' => $tax,
+                'final_total' => $finalTotal,
+                'payment_method' => $request->payment_method,
+            ]);
+
+            if ($finalTotal <= 0) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No valid products found in your cart.',
+                    'message' => 'Invalid order amount. Please check your cart.',
                 ], 400);
             }
 
-            $total = $subtotal + $shipping - $discount;
+            $orderNumber = 'ORD-'.date('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
 
-            DB::beginTransaction();
+            $order = Order::create([
+                'order_number' => $orderNumber,
+                'user_id' => $user->id,
+                'address_id' => $request->address_id,
+                'subtotal' => $subtotal,
+                'discount_amount' => $discount,
+                'discount_type' => $discountType,
+                'discount_code' => $discountCode,
+                'discount' => $discount,
+                'coupon_code' => $discountType === 'coupon' ? $discountCode : null,
+                'coupon_discount' => $discountType === 'coupon' ? $discount : 0,
+                'shipping' => $shipping,
+                'tax' => $tax,
+                'total' => $finalTotal,
+                'status' => 'pending',
+                'order_status' => 'pending',
+                'payment_method' => $request->payment_method ?? 'online',
+                'payment_status' => 'pending',
+                'notes' => $request->notes ?? '',
+            ]);
+            foreach ($cart as $item) {
+                $product = Product::query()->find($item['id'] ?? null);
 
-            try {
-                $orderNumber = 'ORD-'.now()->format('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
-
-                $paymentStatus = 'pending';
-                $paymentMethod = $request->payment_method;
-
-                // If payment method is 'razorpay' or has razorpay payment id, mark as paid
-                if ($paymentMethod === 'razorpay' || $request->razorpay_payment_id) {
-                    $paymentStatus = 'paid';
-                    $paymentMethod = 'razorpay'; // Normalize to razorpay
-                } elseif ($paymentMethod === 'cod') {
-                    $paymentStatus = 'pending';
+                if (! $product) {
+                    continue;
                 }
 
-                $order = Order::create([
-                    'user_id' => $user->id,
-                    'order_number' => $orderNumber,
-                    'subtotal' => $subtotal,
-                    'shipping' => $shipping,
-                    'discount' => $discount,
-                    'total' => $total,
-                    'payment_method' => $paymentMethod,
-                    'payment_status' => $paymentStatus,
-                    'order_status' => 'pending',
-                    'shipping_address' => $shippingAddress,
-                    'shipping_city' => $shippingCity,
-                    'shipping_state' => $shippingState,
-                    'shipping_country' => $shippingCountry,
-                    'shipping_pincode' => $shippingPincode,
-                    'latitude' => $latitude,
-                    'longitude' => $longitude,
-                    'notes' => $request->notes,
-                    'razorpay_order_id' => $request->razorpay_order_id,
-                    'razorpay_payment_id' => $request->razorpay_payment_id,
-                    'razorpay_signature' => $request->razorpay_signature,
-                ]);
+                $price = (float) ($item['price'] ?? $product->price ?? 0);
+                $quantity = (int) ($item['quantity'] ?? 1);
 
-                foreach ($orderItems as $item) {
-                    $product = $item['product'];
+                $activeOffer = $item['active_offer'] ?? $product->activeOffer ?? null;
 
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'product_id' => $product->id,
-                        'category_id' => $product->category_id,
-                        'sub_category_id' => $product->sub_category_id,
-                        'brand_id' => $product->brand_id,
-                        'product_name' => $product->name,
-                        'sku' => $product->sku,
-                        'price' => $item['price'],
-                        'quantity' => $item['quantity'],
-                        'total' => $item['total'],
-                        'image' => $product->image,
-                        'variants' => $product->variants,
-                        'specification' => $product->specification,
-                    ]);
+                if ($activeOffer) {
+                    $discountValue = (float) $activeOffer->discount_value;
 
-                    $product->query()->decrement('stock', $item['quantity']);
-                }
-                // Mark applied coupon as used
-                $appliedCouponId = session()->get('applied_coupon_id');
-
-                if ($appliedCouponId) {
-                    $coupon = Coupon::query()
-                        ->lockForUpdate()
-                        ->find($appliedCouponId);
-
-                    if ($coupon) {
-                        $coupon->increment('used_count');
-
-                        // Disable coupon after successful order
-                        $coupon->update([
-                            'status' => 0,
-                        ]);
-                    }
-                }
-                $order->load([
-                    'user',
-                    'items.product',
-                ]);
-
-                DB::commit();
-
-                try {
-
-                    if ($order->user?->email) {
-                        Mail::to($order->user->email)
-                            ->send(new OrderPlacedMail($order, false));
+                    if ($activeOffer->discount_type === 'percentage') {
+                        $price = $price - ($price * $discountValue / 100);
+                    } else {
+                        $price = $price - $discountValue;
                     }
 
-                    if (config('mail.super_admin_email')) {
-                        Mail::to(config('mail.super_admin_email'))
-                            ->send(new OrderPlacedMail($order, true));
-                    }
-
-                } catch (\Exception $e) {
-
-                    Log::error('Order confirmation email failed', [
-                        'order_id' => $order->id,
-                        'error' => $e->getMessage(),
-                    ]);
+                    $price = max($price, 0);
                 }
 
-                session()->forget('cart');
+                $itemTotal = $price * $quantity;
 
-                session()->forget([
-                    'applied_coupon_id',
-                    'applied_coupon_code',
-                    'applied_coupon_discount',
-                ]);
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Order placed successfully! Your order has been confirmed.',
+                OrderItem::create([
                     'order_id' => $order->id,
-                    'order_number' => $order->order_number,
-                    'total' => $order->total,
-                    'redirect_url' => route('customer.dashboard'),
+                    'product_id' => $product->id,
+                    'product_name' => $product->name,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'subtotal' => $itemTotal,
+                    'total' => $itemTotal,
                 ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Order creation failed: '.$e->getMessage());
-                Log::error('Stack trace: '.$e->getTraceAsString());
-
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Failed to create order: '.$e->getMessage(),
-                ], 500);
             }
 
-        } catch (\Exception $e) {
-            Log::error('Place order error: '.$e->getMessage(), [
-                'user_id' => Auth::id(),
-                'trace' => $e->getTraceAsString(),
+            Log::info('=== ORDER CREATED WITH ITEMS ===', [
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'subtotal' => $order->subtotal,
+                'discount_amount' => $order->discount_amount,
+                'coupon_discount' => $order->coupon_discount,
+                'total' => $order->total,
+                'items_count' => $order->items()->count(),
             ]);
+
+            // Clear session
+            session()->forget([
+                'cart',
+                'applied_coupon_discount',
+                'applied_coupon_code',
+                'applied_coupon_id',
+                'applied_coupon_data',
+                'coupon_discount_amount',
+                'coupon_code_applied',
+                'coupon_final_amount',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Order placed successfully!',
+                'order_id' => $order->id,
+                'order_number' => $order->order_number,
+                'order' => $order,
+                'redirect_url' => route('customer.orders.show', $order->id),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Order placement failed: '.$e->getMessage());
+            Log::error('Stack trace: '.$e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
@@ -652,103 +573,119 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
-
     public function applyCoupon(Request $request)
     {
-        $request->validate([
-            'coupon_code' => ['required', 'string', 'max:100'],
-            'order_amount' => ['required', 'numeric', 'min:0'],
-        ]);
+        try {
+            $couponCode = $request->input('coupon_code');
+            $orderAmount = $request->input('order_amount');
 
-        $couponCode = strtoupper(trim($request->coupon_code));
-        $orderAmount = (float) $request->order_amount;
+            Log::info('=== APPLYING COUPON ===');
+            Log::info('Coupon Code:', ['code' => $couponCode]);
+            Log::info('Order Amount:', ['amount' => $orderAmount]);
 
-        $coupon = Coupon::query()->where('code', $couponCode)
-            ->where('status', true)
-            ->first();
+            // Find the coupon
+            $coupon = Coupon::query()
+                ->where('code', strtoupper(trim($couponCode)))
+                ->first();
 
-        if (! $coupon) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid or inactive coupon code.',
-            ], 422);
-        }
-
-        $today = Carbon::today();
-
-        if ($coupon->start_date && $today->lt($coupon->start_date)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This coupon is not active yet.',
-            ], 422);
-        }
-
-        if ($coupon->end_date && $today->gt($coupon->end_date)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This coupon has expired.',
-            ], 422);
-        }
-
-        if (
-            ! is_null($coupon->usage_limit) &&
-            $coupon->used_count >= $coupon->usage_limit
-        ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This coupon usage limit has been reached.',
-            ], 422);
-        }
-
-        if (
-            $coupon->minimum_order_amount > 0 &&
-            $orderAmount < $coupon->minimum_order_amount
-        ) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Minimum order amount for this coupon is ₹'.
-                    number_format($coupon->minimum_order_amount, 0),
-            ], 422);
-        }
-
-        $discountAmount = 0;
-
-        if ($coupon->discount_type === 'percentage') {
-            $discountAmount = ($orderAmount * $coupon->discount_value) / 100;
-
-            if (
-                ! is_null($coupon->maximum_discount) &&
-                $coupon->maximum_discount > 0 &&
-                $discountAmount > $coupon->maximum_discount
-            ) {
-                $discountAmount = (float) $coupon->maximum_discount;
+            if (! $coupon) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid coupon code.',
+                ], 404);
             }
 
-        } elseif ($coupon->discount_type === 'flat') {
-            $discountAmount = (float) $coupon->discount_value;
+            // Check coupon status
+            if ((int) $coupon->status !== 1) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This coupon is currently inactive and cannot be used.',
+                ], 400);
+            }
+            if (! $coupon) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid coupon code.',
+                ], 404);
+            }
+
+            // Check if coupon is valid
+            $now = now();
+            if ($coupon->expires_at && $coupon->expires_at < $now) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Coupon has expired.',
+                ], 400);
+            }
+
+            if ($coupon->usage_limit && $coupon->used_count >= $coupon->usage_limit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Coupon usage limit has been reached.',
+                ], 400);
+            }
+
+            // Calculate discount
+            $discountAmount = 0;
+            if ($coupon->discount_type === 'percentage') {
+                $discountAmount = ($orderAmount * $coupon->discount_value) / 100;
+            } else {
+                $discountAmount = $coupon->discount_value;
+            }
+
+            // Cap discount at order amount
+            $discountAmount = min($discountAmount, $orderAmount);
+
+            // Apply minimum order amount check
+            if ($coupon->minimum_order_amount && $orderAmount < $coupon->minimum_order_amount) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Minimum order amount of ₹'.number_format($coupon->minimum_order_amount, 0).' required.',
+                ], 400);
+            }
+
+            // Store coupon details in session
+            session([
+                'applied_coupon_code' => $coupon->code,
+                'applied_coupon_discount' => $discountAmount,
+                'applied_coupon_id' => $coupon->id,
+                'applied_coupon_data' => [
+                    'code' => $coupon->code,
+                    'discount_type' => $coupon->discount_type,
+                    'discount_value' => $coupon->discount_value,
+                    'discount_amount' => $discountAmount,
+                ],
+                'coupon_discount_amount' => $discountAmount,
+                'coupon_code_applied' => $coupon->code,
+                'coupon_final_amount' => $orderAmount - $discountAmount,
+            ]);
+
+            session()->save();
+
+            Log::info('Coupon applied and session saved:', [
+                'code' => $couponCode,
+                'discount_amount' => $discountAmount,
+                'final_amount' => $orderAmount - $discountAmount,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Coupon applied successfully!',
+                'coupon' => $coupon,
+                'discount_amount' => $discountAmount,
+                'final_amount' => $orderAmount - $discountAmount,
+                'formatted_discount' => '₹'.number_format($discountAmount, 0),
+                'formatted_final' => '₹'.number_format($orderAmount - $discountAmount, 0),
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Coupon application error:', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to apply coupon. Please try again.',
+            ], 500);
         }
-
-        $discountAmount = min($discountAmount, $orderAmount);
-        $finalAmount = max($orderAmount - $discountAmount, 0);
-
-        // Store applied coupon in session
-        session()->put('applied_coupon_id', $coupon->id);
-        session()->put('applied_coupon_code', $coupon->code);
-        session()->put('applied_coupon_discount', round($discountAmount, 2));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Coupon applied successfully.',
-            'coupon' => [
-                'id' => $coupon->id,
-                'code' => $coupon->code,
-                'discount_type' => $coupon->discount_type,
-                'discount_value' => $coupon->discount_value,
-            ],
-            'original_amount' => round($orderAmount, 2),
-            'discount_amount' => round($discountAmount, 2),
-            'final_amount' => round($finalAmount, 2),
-        ]);
     }
 
     public function createRazorpayOrder(Request $request)
@@ -766,22 +703,64 @@ class CheckoutController extends Controller
             $cart = session()->get('cart', []);
 
             if (empty($cart)) {
+                Log::warning('Cart is empty');
+
                 return response()->json([
                     'success' => false,
                     'message' => 'Your cart is empty.',
                 ], 400);
             }
 
-            $subtotal = 0;
-            foreach ($cart as $item) {
-                $subtotal += ($item['price'] ?? 0) * ($item['quantity'] ?? 1);
+            // ============================================================
+            // USE THE TOTAL PASSED FROM FRONTEND
+            // ============================================================
+            $finalTotal = $request->input('final_total', 0);
+            $subtotal = $request->input('subtotal', 0);
+            $couponCode = $request->input('coupon_code');
+
+            Log::info('=== CREATE RAZORPAY ORDER ===');
+            Log::info('Final Total from frontend:', ['total' => $finalTotal]);
+            Log::info('Subtotal from frontend:', ['subtotal' => $subtotal]);
+            Log::info('Coupon Code:', ['code' => $couponCode]);
+
+            // If frontend didn't send total, calculate it
+            if ($finalTotal == 0) {
+                // Calculate subtotal from cart
+                $subtotal = 0;
+                foreach ($cart as $key => $item) {
+                    $product = Product::query()->find($item['id'] ?? null);
+                    $price = $item['price'] ?? 0;
+                    $quantity = $item['quantity'] ?? 1;
+
+                    $activeOffer = $item['active_offer'] ?? $product?->activeOffer ?? null;
+                    if ($activeOffer) {
+                        $discountValue = (float) $activeOffer->discount_value;
+                        if ($activeOffer->discount_type === 'percentage') {
+                            $discountedPrice = $price - ($price * $discountValue / 100);
+                        } else {
+                            $discountedPrice = $price - $discountValue;
+                        }
+                        $discountedPrice = max(0, $discountedPrice);
+                        $price = $discountedPrice;
+                    }
+
+                    $subtotal += $price * $quantity;
+                }
+
+                // Get discount from session
+                $discount = (float) session()->get('applied_coupon_discount', 0);
+                $shipping = (float) session()->get('shipping', 0);
+                $finalTotal = $subtotal + $shipping - $discount;
+                $finalTotal = max($finalTotal, 0);
             }
+            if ($finalTotal <= 0) {
+                Log::warning('Total amount is zero or negative:', ['total' => $finalTotal]);
 
-            $discount = (float) session()->get('applied_coupon_discount', 0);
-            $shipping = (float) session()->get('shipping', 0);
-
-            $total = $subtotal + $shipping - $discount;
-            $total = max($total, 0);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid order amount. Please check your cart.',
+                ], 400);
+            }
 
             $api = new Api(
                 config('services.razorpay.key'),
@@ -790,9 +769,16 @@ class CheckoutController extends Controller
 
             $razorpayOrder = $api->order->create([
                 'receipt' => 'order_'.time(),
-                'amount' => (int) round($total * 100),
+                'amount' => (int) round($finalTotal * 100),
                 'currency' => 'INR',
                 'payment_capture' => 1,
+            ]);
+            Log::info('Razorpay Order Created:', [
+                'id' => $razorpayOrder['id'],
+                'amount' => $razorpayOrder['amount'],
+                'amount_in_rupees' => $razorpayOrder['amount'] / 100,
+                'currency' => $razorpayOrder['currency'],
+                'status' => $razorpayOrder['status'],
             ]);
 
             return response()->json([
@@ -810,15 +796,18 @@ class CheckoutController extends Controller
                 ],
                 'notes' => [
                     'user_id' => $user->id,
+                    'final_amount' => $finalTotal,
                 ],
             ]);
 
         } catch (\Exception $e) {
             Log::error('Razorpay order creation failed: '.$e->getMessage());
+            Log::error('Exception trace:', ['trace' => $e->getTraceAsString()]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'Unable to initialize payment. Please try again.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -835,6 +824,8 @@ class CheckoutController extends Controller
                 'notes' => 'nullable|string|max:1000',
             ]);
 
+            Log::info('=== VERIFYING RAZORPAY PAYMENT ===');
+
             $api = new Api(
                 config('services.razorpay.key'),
                 config('services.razorpay.secret')
@@ -848,7 +839,9 @@ class CheckoutController extends Controller
 
             $api->utility->verifyPaymentSignature($attributes);
 
-            // Payment verified - place order with razorpay as payment method
+            Log::info('Payment signature verified successfully');
+
+            // Place order
             $orderRequest = new Request([
                 'address_id' => $request->address_id,
                 'payment_method' => 'razorpay',
@@ -876,7 +869,6 @@ class CheckoutController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Razorpay verification failed: '.$e->getMessage());
-            Log::error('Stack trace: '.$e->getTraceAsString());
 
             return response()->json([
                 'success' => false,
