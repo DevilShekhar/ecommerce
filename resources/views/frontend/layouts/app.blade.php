@@ -400,9 +400,11 @@
             <!-- Right Icons -->
             <div class="navbar-icons">
                 <!-- Search Icon -->
+                @if(!Auth::check())
                 <a href="#" onclick="event.preventDefault(); openSearch();" class="navbar-icon" aria-label="Search">
                     <i class="bi bi-search"></i>
                 </a>
+                @endif
 
                 <a href="{{ route('login') }}" class="navbar-icon">
                     <i class="bi bi-person"></i>

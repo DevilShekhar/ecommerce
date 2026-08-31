@@ -1279,19 +1279,19 @@
     {{-- =============================================
     PRODUCT DETAIL MODAL
     ============================================= --}}
-    <div id="productModal" 
+    <div id="productModal"
      style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;justify-content:center;align-items:center;padding:10px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);">
-    
+
     <div style="background:#ffffff;border-radius:16px;max-width:900px;width:100%;max-height:85vh;overflow-y:auto;padding:20px 25px 25px;position:relative;margin:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalSlideIn 0.3s ease;">
-        
+
         <!-- Close Button - Improved for mobile -->
-        <button onclick="closeProductDetail()" 
+        <button onclick="closeProductDetail()"
                 style="position:sticky;top:0;float:right;background:rgba(255,255,255,0.9);border:none;font-size:28px;cursor:pointer;color:#666;z-index:10;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.2s;"
                 onmouseover="this.style.backgroundColor='#f0f0f0';this.style.color='#333';"
                 onmouseout="this.style.backgroundColor='rgba(255,255,255,0.9)';this.style.color='#666';">
             &times;
         </button>
-        
+
         <div id="productDetailContent" style="clear:both;">
             <!-- Loading State -->
             <div style="text-align:center;padding:30px 0;">
@@ -1537,8 +1537,12 @@
         }
 
         function addToCart(productId) {
-            alert('Product ' + productId + ' added to cart!');
-            // You can replace this with your actual add to cart logic
+            Swal.fire({
+                icon: 'warning',
+                title: 'Login Required',
+                text: 'Please log in to add this product to your cart.',
+                confirmButtonText: 'Login'
+            });
         }
 
         // =============================================
