@@ -162,9 +162,11 @@
                                                             onsubmit="return confirm('Are you sure you want to delete this About Us content?');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                                <i class="zmdi zmdi-delete"></i>
-                                                            </button>
+                                                            @if($aboutUs->count() == 0)
+                                                                <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            @endif
                                                         </form>
                                                     </td>
                                                 </tr>

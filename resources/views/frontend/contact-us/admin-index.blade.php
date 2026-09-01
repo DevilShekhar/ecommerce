@@ -102,10 +102,12 @@
                                                             method="POST" class="d-inline delete-form">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="button" class="btn btn-danger btn-sm delete-btn"
-                                                                title="Delete">
-                                                                <i class="zmdi zmdi-delete"></i>
-                                                            </button>
+                                                            @if($contacts->count() == 0)
+                                                                <button type="button" class="btn btn-danger btn-sm delete-btn"
+                                                                    title="Delete">
+                                                                    <i class="zmdi zmdi-delete"></i>
+                                                                </button>
+                                                            @endif
                                                         </form>
                                                     </td>
                                                 </tr>

@@ -116,10 +116,12 @@
                                                             data-terms-title="{{ $termsCondition->terms_conditions_title }}">
                                                             @csrf
                                                             @method('DELETE')
+                                                             @if($termsConditions->count() == 0)
                                                             <button type="button" class="btn btn-sm btn-danger delete-btn"
                                                                 title="Delete">
                                                                 <i class="zmdi zmdi-delete"></i>
                                                             </button>
+                                                            @endif
                                                         </form>
                                                     </td>
                                                 </tr>
