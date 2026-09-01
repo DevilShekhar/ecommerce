@@ -982,8 +982,7 @@
                                                     $discounted = max(0, $original - $product->active_offer->discount_value);
                                                 }
                                             @endphp
-                                            <span class="current" style="color:#ef4444;">₹{{ number_format($discounted, 0) }}</span>
-                                            <span style="font-size:12px; color:#94a3b8; text-decoration:line-through; margin-left:6px;">
+                                            <span class="current ">
                                                 ₹{{ number_format($original, 0) }}
                                             </span>
                                         @else
