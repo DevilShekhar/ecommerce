@@ -3,9 +3,6 @@
 @section('title', 'Shops · Aethelweave')
 @section('content')
     @push('styles')
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -13,30 +10,322 @@
                     extend: {
                         colors: {
                             brand: {
-                                bg: '#FCFAF6',
-                                beige: '#F4EFE7',
-                                dark: '#292725',
-                                gold: '#B89B5E',
-                                goldDark: '#967A3F',
+                                bg: '#FDFBF7',
+                                dark: '#2C2A29',
+                                gold: '#A58B54',
+                                goldDark: '#8F753D',
                                 card: '#FFFFFF',
-                                border: '#E8E1D7',
-                                gray: '#77736D'
+                                border: '#E8E2D2'
                             }
                         },
                         fontFamily: {
                             serif: ['"Cormorant Garamond"', 'serif'],
                             sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-                        },
-                        boxShadow: {
-                            card: '0 2px 20px rgba(41, 39, 37, 0.06)',
-                            'card-hover': '0 12px 32px rgba(41, 39, 37, 0.12)'
                         }
                     }
                 }
             }
         </script>
     @endpush
+    <style>
+        /* Product Card Hover Effects */
+        .product-card-compact:hover .hover-image {
+            opacity: 1 !important;
+        }
 
+        .product-card-compact:hover .main-image {
+            opacity: 0;
+        }
+
+        .product-card-compact {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card-compact:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-image-wrapper-compact img {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Product Detail Gallery Styles */
+        .product-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 20px 0;
+        }
+
+        .gallery-section {
+            position: relative;
+        }
+
+        .main-image-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            background: #FDFBF7;
+            aspect-ratio: 1/1;
+        }
+
+        .main-display-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #E8E2D2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 5;
+            opacity: 0;
+        }
+
+        .main-image-container:hover .gallery-nav {
+            opacity: 1;
+        }
+
+        .gallery-nav:hover {
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        .gallery-nav.prev {
+            left: 10px;
+        }
+
+        .gallery-nav.next {
+            right: 10px;
+        }
+
+        .gallery-nav i {
+            font-size: 18px;
+            color: #2C2A29;
+        }
+
+        .image-counter {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            z-index: 5;
+        }
+
+        .thumbnail-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            overflow-x: auto;
+            padding: 5px 0;
+        }
+
+        .thumbnail-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .thumbnail-img:hover {
+            border-color: #D5CFC5;
+            transform: scale(1.05);
+        }
+
+        .thumbnail-img.active {
+            border-color: #A58B54;
+            box-shadow: 0 0 0 3px rgba(165, 139, 84, 0.2);
+        }
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .cat {
+            font-size: 12px;
+            font-weight: 600;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .info h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 500;
+            color: #2C2A29;
+            margin: 0;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2C2A29;
+        }
+
+        .price .original {
+            font-size: 18px;
+            font-weight: 400;
+            color: #999;
+            text-decoration: line-through;
+            margin-left: 10px;
+        }
+
+        .stock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .stock-status.in {
+            background: #E8F5E9;
+            color: #27AE60;
+        }
+
+        .stock-status.out {
+            background: #FFEBEE;
+            color: #C62828;
+        }
+
+        .desc {
+            font-size: 14px;
+            color: #6B6A69;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+            background: #F8F6F1;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .meta-item strong {
+            font-size: 11px;
+            color: #A58B54;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .meta-item span {
+            font-size: 14px;
+            color: #2C2A29;
+        }
+
+        .btn-add {
+            padding: 14px 32px;
+            background: #A58B54;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            width: fit-content;
+        }
+
+        .btn-add:hover:not(:disabled) {
+            background: #8A7344;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(165, 139, 84, 0.3);
+        }
+
+        .btn-add:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .btn-add i {
+            font-size: 18px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-detail-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .thumbnail-img {
+                width: 60px;
+                height: 60px;
+            }
+
+            .gallery-nav {
+                width: 32px;
+                height: 32px;
+                opacity: 1;
+            }
+
+            .gallery-nav i {
+                font-size: 14px;
+            }
+        }
+
+        /* Modal styles */
+        .modal-open {
+            overflow: hidden;
+        }
+
+        #productModal {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Image counter on product cards */
+        .image-counter {
+            font-weight: 500;
+        }
+
+        /* Dot active state */
+        .dot.active {
+            background: #A58B54 !important;
+            transform: scale(1.2);
+        }
+    </style>
     {{-- HERO SECTION --}}
     <section class="hero-section-modern">
         <div class="hero-slider-container">
@@ -220,10 +509,10 @@
         <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
             <div class="section-header-compact text-center mb-3">
                 <span class="section-badge-compact"
-                    style="display:inline-block;padding:2px 12px;background:#F4EFE7;color:#B89B5E;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Featured</span>
+                    style="display:inline-block;padding:2px 12px;background:#F5EEDC;color:#A58B54;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Featured</span>
                 <h2 class="section-title">
                     Best Sellers</h2>
-                <p class="section-subtitle" style="font-size:0.8rem;color:#77736D;margin-bottom:0;">Our most
+                <p class="section-subtitle" style="font-size:0.8rem;color:#6B6A69;margin-bottom:0;">Our most
                     loved pieces</p>
             </div>
 
@@ -295,125 +584,124 @@
     </section>
 
     {{-- AVAILABLE PRODUCTS SLIDER --}}
-@if(isset($availableProducts) && $availableProducts->count() > 0)
-    <section class="products-section-compact py-4" style="background:#FFFFFF;">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-            <div class="section-header-compact text-center mb-3">
-                <span class="section-badge-compact"
-                    style="display:inline-block;padding:2px 12px;background:#F4EFE7;color:#B89B5E;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Available</span>
-                <h2 class="section-title"
-                    >
-                    Available Products</h2>
-                <p class="section-subtitle-compact" style="font-size:0.8rem;color:#77736D;margin-bottom:0;">Explore our
-                    available jewellery collection</p>
-            </div>
-
-            <!-- Slider Container -->
-            <div class="slider-container" style="position:relative;overflow:hidden;">
-                <div class="slider-track" id="availableSliderTrack"
-                    style="display:flex;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);gap:15px;">
-                    @foreach($availableProducts as $product)
-                        <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
-                            <a href="{{ route('shop.show', $product->slug) }}" 
-                               class="product-card-compact" 
-                               style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E1D7;transition:all 0.3s ease;height:100%;display:block;text-decoration:none;">
-                                <div class="product-image-wrapper-compact"
-                                    style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FCFAF6;">
-                                    @php
-                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                                        $primaryImage = !empty($images) ? $images[0] : null;
-                                        $hasMultipleImages = count($images) > 1;
-                                    @endphp
-
-                                    <!-- Main Image -->
-                                    @if($primaryImage)
-                                        <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
-                                            class="product-image-compact main-image"
-                                            style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;position:absolute;top:0;left:0;"
-                                            loading="lazy">
-                                    @else
-                                        <div class="product-image-placeholder-compact"
-                                            style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
-                                            <i class="bi bi-image" style="font-size:40px;"></i>
-                                        </div>
-                                    @endif
-
-                                    <!-- Hover Image (Second Image) -->
-                                    @if($hasMultipleImages && isset($images[1]))
-                                        <img src="{{ asset($images[1]) }}" alt="{{ $product->name }} - view 2"
-                                            class="product-image-compact hover-image"
-                                            style="width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;position:absolute;top:0;left:0;opacity:0;"
-                                            loading="lazy">
-                                    @endif
-
-                                    <span class="product-badge-compact"
-                                        style="position:absolute;top:10px;left:10px;background:#292725;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;z-index:2;">
-                                        <i class="bi bi-fire" style="font-size:8px;"></i>
-                                    </span>
-                                    <span class="stock-badge-compact"
-                                        style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
-
-                                </div>
-                                <div class="product-body-compact" style="padding:12px 14px 16px;">
-                                    @if($product->brand)
-                                        <div class="product-brand-compact"
-                                            style="font-size:10px;font-weight:600;color:#B89B5E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">
-                                            {{ $product->brand->name }}</div>
-                                    @endif
-                                    <h5 class="product-title-compact"
-                                        style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#292725;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                        {{ Str::limit($product->name, 20) }}</h5>
-                                    <div class="product-price-compact"
-                                        style="font-size:16px;font-weight:700;color:#292725;margin-bottom:8px;">
-                                        ₹{{ number_format($product->price, 0) }}</div>
-                                    <div class="product-action-compact">
-                                        <button type="button" class="add-to-cart-btn" data-product-id="{{ $product->id }}"
-                                            onclick="event.stopPropagation();"
-                                            style="width:100%;padding:6px 12px;background:#B89B5E;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
-                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i> Add
-                                        </button>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @endforeach
+    @if(isset($availableProducts) && $availableProducts->count() > 0)
+        <section class="products-section-compact py-4" style="background:#FFFFFF;">
+            <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
+                <div class="section-header-compact text-center mb-3">
+                    <span class="section-badge-compact"
+                        style="display:inline-block;padding:2px 12px;background:#F5EEDC;color:#A58B54;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Available</span>
+                    <h2 class="section-title"
+                        >
+                        Available Products</h2>
+                    <p class="section-subtitle-compact" style="font-size:0.8rem;color:#6B6A69;margin-bottom:0;">Explore our
+                        available jewellery collection</p>
                 </div>
 
-                <!-- Navigation Buttons -->
-                <button class="slider-nav prev" onclick="slideProducts(-1)"
-                    style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-                    <i class="bi bi-chevron-left" style="font-size:18px;color:#292725;"></i>
-                </button>
-                <button class="slider-nav next" onclick="slideProducts(1)"
-                    style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-                    <i class="bi bi-chevron-right" style="font-size:18px;color:#292725;"></i>
-                </button>
-            </div>
+                <!-- Slider Container -->
+                <div class="slider-container" style="position:relative;overflow:hidden;">
+                    <div class="slider-track" id="availableSliderTrack"
+                        style="display:flex;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);gap:15px;">
+                        @foreach($availableProducts as $product)
+                            <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
+                                <div class="product-card-compact" onclick="openProductDetail({{ $product->id }})"
+                                    style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E2D2;transition:all 0.3s ease;height:100%;">
+                                    <div class="product-image-wrapper-compact"
+                                        style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FDFBF7;">
+                                        @php
+                                            $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                            $primaryImage = !empty($images) ? $images[0] : null;
+                                            $hasMultipleImages = count($images) > 1;
+                                        @endphp
 
-            <!-- Dots -->
-            <div class="slider-dots" style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
-                @php
-                    $totalSlides = ceil($availableProducts->count() / 5);
-                @endphp
-                @for($i = 0; $i < $totalSlides; $i++)
-                    <span class="dot" data-index="{{ $i }}" onclick="goToSlide({{ $i }})"
-                        style="width:10px;height:10px;border-radius:50%;background:#D5CFC5;cursor:pointer;transition:all 0.3s ease;{{ $i === 0 ? 'background:#B89B5E;transform:scale(1.2);' : '' }}"></span>
-                @endfor
-            </div>
+                                        <!-- Main Image -->
+                                        @if($primaryImage)
+                                            <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
+                                                class="product-image-compact main-image"
+                                                style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;position:absolute;top:0;left:0;"
+                                                loading="lazy">
+                                        @else
+                                            <div class="product-image-placeholder-compact"
+                                                style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
+                                                <i class="bi bi-image" style="font-size:40px;"></i>
+                                            </div>
+                                        @endif
 
-            <div class="text-center mt-3">
-                <a href="{{ route('shop.index') }}" class="btn-view-all"
-                    style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#B89B5E;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #B89B5E;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
-                    View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
-                </a>
+                                        <!-- Hover Image (Second Image) -->
+                                        @if($hasMultipleImages && isset($images[1]))
+                                            <img src="{{ asset($images[1]) }}" alt="{{ $product->name }} - view 2"
+                                                class="product-image-compact hover-image"
+                                                style="width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;position:absolute;top:0;left:0;opacity:0;"
+                                                loading="lazy">
+                                        @endif
+
+                                        <span class="product-badge-compact"
+                                            style="position:absolute;top:10px;left:10px;background:#2C2A29;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;z-index:2;">
+                                            <i class="bi bi-fire" style="font-size:8px;"></i>
+                                        </span>
+                                        <span class="stock-badge-compact"
+                                            style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
+
+                                    </div>
+                                    <div class="product-body-compact" style="padding:12px 14px 16px;">
+                                        @if($product->brand)
+                                            <div class="product-brand-compact"
+                                                style="font-size:10px;font-weight:600;color:#A58B54;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">
+                                                {{ $product->brand->name }}</div>
+                                        @endif
+                                        <h5 class="product-title-compact"
+                                            style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#2C2A29;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                            {{ Str::limit($product->name, 20) }}</h5>
+                                        <div class="product-price-compact"
+                                            style="font-size:16px;font-weight:700;color:#2C2A29;margin-bottom:8px;">
+                                            ₹{{ number_format($product->price, 0) }}</div>
+                                        <div class="product-action-compact">
+                                            <button type="button" class="add-to-cart-btn" data-product-id="{{ $product->id }}"
+                                                onclick="event.stopPropagation();"
+                                                style="width:100%;padding:6px 12px;background:#A58B54;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                                <i class="bi bi-cart-plus" style="font-size:12px;"></i> Add
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button class="slider-nav prev" onclick="slideProducts(-1)"
+                        style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-left" style="font-size:18px;color:#2C2A29;"></i>
+                    </button>
+                    <button class="slider-nav next" onclick="slideProducts(1)"
+                        style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E2D2;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-right" style="font-size:18px;color:#2C2A29;"></i>
+                    </button>
+                </div>
+
+                <!-- Dots -->
+                <div class="slider-dots" style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+                    @php
+                        $totalSlides = ceil($availableProducts->count() / 5);
+                    @endphp
+                    @for($i = 0; $i < $totalSlides; $i++)
+                        <span class="dot" data-index="{{ $i }}" onclick="goToSlide({{ $i }})"
+                            style="width:10px;height:10px;border-radius:50%;background:#D5CFC5;cursor:pointer;transition:all 0.3s ease;{{ $i === 0 ? 'background:#A58B54;transform:scale(1.2);' : '' }}"></span>
+                    @endfor
+                </div>
+
+                <div class="text-center mt-3">
+                    <a href="{{ route('shop') }}" class="btn-view-all"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#A58B54;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #A58B54;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
+                        View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
+                    </a>
+                </div>
             </div>
-        </div>
-    </section>
-@endif
+        </section>
+    @endif
 
     {{-- ABOUT SECTION --}}
     @if(isset($aboutUs) && $aboutUs)
-        <section class="about-section-home py-4" style="background: #F4EFE7;">
+        <section class="about-section-home py-4" style="background: #FCF8ED;">
             <div class="container">
                 <div class="about-wrapper">
                     @if($aboutUs->about_image)
@@ -500,7 +788,7 @@
 
 
     {{-- SHIPPING PROCESS --}}
-    <section class="shipping-process-section" style="background: #F4EFE7;">
+    <section class="shipping-process-section" style="background: #FCF8ED;">
         <div class="shipping-process-container">
             <div class="shipping-process-header">
                 <div class="shipping-process-badge">
@@ -852,7 +1140,7 @@
                 <div class="lg:col-span-7 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
                                 </svg>
@@ -862,7 +1150,7 @@
                         </div>
 
                         <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                                 </svg>
@@ -872,7 +1160,7 @@
                         </div>
 
                         <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                            <div class="w-12 h-12 rounded-full bg-[#F5EEDC] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                                 </svg>
@@ -964,6 +1252,30 @@
             </div>
         </div>
     </section>
+
+    {{-- PRODUCT DETAIL MODAL --}}
+    <div id="productModal"
+     style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;justify-content:center;align-items:center;padding:10px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);">
+
+    <div style="background:#ffffff;border-radius:16px;max-width:900px;width:100%;max-height:85vh;overflow-y:auto;padding:20px 25px 25px;position:relative;margin:10px;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:modalSlideIn 0.3s ease;">
+
+        <!-- Close Button - Improved for mobile -->
+        <button onclick="closeProductDetail()"
+                style="position:sticky;top:0;float:right;background:rgba(255,255,255,0.9);border:none;font-size:28px;cursor:pointer;color:#666;z-index:10;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1);transition:all 0.2s;"
+                onmouseover="this.style.backgroundColor='#f0f0f0';this.style.color='#333';"
+                onmouseout="this.style.backgroundColor='rgba(255,255,255,0.9)';this.style.color='#666';">
+            &times;
+        </button>
+
+        <div id="productDetailContent" style="clear:both;">
+            <!-- Loading State -->
+            <div style="text-align:center;padding:30px 0;">
+                <div style="display:inline-block;width:50px;height:50px;border:4px solid #f3f3f3;border-top:4px solid #B8944C;border-radius:50%;animation:spin 1s linear infinite;"></div>
+                <p style="margin-top:15px;color:#888;font-size:14px;">Loading product details...</p>
+            </div>
+        </div>
+    </div>
+</div>
     <script>
         // SLIDER FUNCTIONS
         let currentSlide = 0;
@@ -992,7 +1304,7 @@
             track.style.transform = `translateX(-${offset}px)`;
 
             document.querySelectorAll('.dot').forEach((dot, index) => {
-                dot.style.background = index === currentSlide ? '#B89B5E' : '#D5CFC5';
+                dot.style.background = index === currentSlide ? '#A58B54' : '#D5CFC5';
                 dot.style.transform = index === currentSlide ? 'scale(1.2)' : 'scale(1)';
             });
         }
@@ -1052,6 +1364,141 @@
 
             changeMainImage(newIndex);
         }
+
+        function openProductDetail(productId) {
+            const modal = document.getElementById('productModal');
+            const content = document.getElementById('productDetailContent');
+
+            content.innerHTML = `
+                <div style="text-align:center;padding:40px 0;">
+                    <i class="bi bi-hourglass-split" style="font-size:40px;color:#B8944C;animation:spin 1s linear infinite;"></i>
+                    <p style="margin-top:10px;color:#888;">Loading product details...</p>
+                </div>
+                <style>
+                    @keyframes spin {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                </style>
+            `;
+
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+
+            fetch(`/customer/product-detail/${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const p = data.product;
+                        const images = p.image ? p.image.split(',').map(s => s.trim()) : [];
+                        const firstImage = images.length > 0 ? images[0] : null;
+                        const hasMultipleImages = images.length > 1;
+
+                        productImages = images;
+                        currentImageIndex = 0;
+
+                        const stockClass = p.stock > 0 ? 'in' : 'out';
+                        const stockText = p.stock > 0 ? 'In Stock' : 'Out of Stock';
+                        const stockIcon = p.stock > 0 ? 'check-circle-fill' : 'x-circle-fill';
+
+                        let thumbnailsHTML = '';
+                        if (hasMultipleImages) {
+                            thumbnailsHTML = `
+                                <div class="thumbnail-container">
+                                    ${images.map((img, index) => `
+                                        <img src="${img}" alt="${p.name} - view ${index + 1}"
+                                             class="thumbnail-img ${index === 0 ? 'active' : ''}"
+                                             data-index="${index}">
+                                    `).join('')}
+                                </div>
+                            `;
+                        }
+
+                        let mainImageHTML = '';
+                        if (firstImage) {
+                            mainImageHTML = `
+                                <div class="main-image-container">
+                                    <img src="${firstImage}" alt="${p.name}" class="gallery-img main-display-image" id="mainDisplayImage">
+                                    ${hasMultipleImages ? `
+                                        <button class="gallery-nav prev" onclick="event.stopPropagation(); changeImage(-1)">
+                                            <i class="bi bi-chevron-left"></i>
+                                        </button>
+                                        <button class="gallery-nav next" onclick="event.stopPropagation(); changeImage(1)">
+                                            <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                        <div class="image-counter">1 / ${images.length}</div>
+                                    ` : ''}
+                                </div>
+                            `;
+                        } else {
+                            mainImageHTML = `
+                                <div class="gallery-img" style="display:flex;align-items:center;justify-content:center;color:#D5CFC5;min-height:300px;">
+                                    <i class="bi bi-image" style="font-size:50px;"></i>
+                                </div>
+                            `;
+                        }
+
+                        content.innerHTML = `
+                            <div class="product-detail-grid">
+                                <div class="gallery-section">
+                                    ${mainImageHTML}
+                                    ${thumbnailsHTML}
+                                </div>
+                                <div class="info">
+                                    <div class="cat">${p.category ? p.category.name : 'Uncategorized'}</div>
+                                    <h2>${p.name}</h2>
+                                    <div class="price">
+                                        ₹${parseFloat(p.price).toFixed(2)}
+                                        ${p.compare_price && p.compare_price > p.price ?
+                                            `<span class="original">₹${parseFloat(p.compare_price).toFixed(2)}</span>` : ''}
+                                    </div>
+                                    <div class="stock-status ${stockClass}">
+                                        <i class="bi bi-${stockIcon}"></i>
+                                        ${stockText}
+                                        ${p.stock > 0 && p.stock < 10 ? `(Only ${p.stock} left)` : ''}
+                                    </div>
+                                    <div class="desc">${p.specification || p.description || ''}</div>
+                                    <div class="meta-grid">
+                                        ${p.sku ? `<div class="meta-item"><strong>SKU</strong><span>${p.sku}</span></div>` : ''}
+                                        ${p.brand ? `<div class="meta-item"><strong>Brand</strong><span>${p.brand.name}</span></div>` : ''}
+                                        ${p.sub_category ? `<div class="meta-item"><strong>Sub Category</strong><span>${p.sub_category.name}</span></div>` : ''}
+                                        ${p.variants ? `<div class="meta-item"><strong>Material</strong><span>${p.variants}</span></div>` : ''}
+                                    </div>
+                                    ${p.stock > 0 ? `
+                                        <button class="btn-add" onclick="event.stopPropagation(); addToCart(${p.id})">
+                                            <i class="bi bi-cart-plus"></i>
+                                            Add to Cart
+                                        </button>
+                                    ` : `
+                                        <button class="btn-add" disabled>
+                                            <i class="bi bi-x-circle"></i>
+                                            Out of Stock
+                                        </button>
+                                    `}
+                                </div>
+                            </div>
+                        `;
+
+                    } else {
+                        content.innerHTML = `
+                            <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                                <i class="bi bi-exclamation-circle" style="font-size:40px;"></i>
+                                <p style="margin-top:10px;">${data.message || 'Product not found'}</p>
+                            </div>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    content.innerHTML = `
+                        <div style="text-align:center;padding:40px 0;color:#C0392B;">
+                            <i class="bi bi-exclamation-triangle" style="font-size:40px;"></i>
+                            <p style="margin-top:10px;">Error loading product details. Please try again.</p>
+                        </div>
+                    `;
+                    console.error('Error:', error);
+                });
+        }
+
         function closeProductDetail() {
             document.getElementById('productModal').style.display = 'none';
             document.body.classList.remove('modal-open');

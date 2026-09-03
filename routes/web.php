@@ -12,7 +12,7 @@ use App\Http\Controllers\admin\LogoController;
 use App\Http\Controllers\admin\OfferCategoryController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\admin\OrderReturnController; 
+use App\Http\Controllers\admin\OrderReturnController;
 use App\Http\Controllers\admin\PageController;
 use App\Http\Controllers\admin\PageSectionController;
 use App\Http\Controllers\admin\ProductCategoryController;
@@ -25,6 +25,7 @@ use App\Http\Controllers\admin\WishlistController;
 use App\Http\Controllers\Frontend\AboutUsController;
 use App\Http\Controllers\Frontend\ContactUsController;
 use App\Http\Controllers\Frontend\DisclaimerController;
+use App\Http\Controllers\Frontend\HomeSectionController;
 use App\Http\Controllers\Frontend\PageController as FrontendPageController;
 use App\Http\Controllers\Frontend\PrivacyPolicyController;
 use App\Http\Controllers\Frontend\ShopController;
@@ -111,6 +112,13 @@ Route::prefix('admin')
         Route::get('/privacy-policies/{privacyPolicy}/edit', [PrivacyPolicyController::class, 'edit'])->name('privacy-policies.edit');
         Route::put('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'update'])->name('privacy-policies.update');
         Route::delete('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'destroy'])->name('privacy-policies.destroy');
+
+        Route::get('/sections', [HomeSectionController::class,'adminIndex'])->name('sections.index');
+        Route::get('/sections/create', [HomeSectionController::class,'create'])->name('sections.create');
+        Route::post('/sections', [ HomeSectionController::class,'store'])->name('sections.store');
+        Route::get('/sections/{homeSection}/edit', [HomeSectionController::class,'edit'])->name('sections.edit');
+        Route::put('/sections/{homeSection}', [HomeSectionController::class,'update'])->name('sections.update');
+        Route::delete('/sections/{homeSection}', [HomeSectionController::class,'destroy'])->name('sections.destroy');
     });
 
 // Add after your about-us route
@@ -205,7 +213,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customer/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'])->name('customer.wishlist.toggle');
     Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])->name('customer.wishlist.remove');
     Route::get('/customer/products', [DashboardController::class, 'customerProducts'])->name('customer.products');
-    
+
 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
     Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])->name('cart.add');
@@ -277,5 +285,5 @@ Route::get('/search', function (Request $request) {
     return response()->json([
         'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
         'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
-    ]);
+]);
 });

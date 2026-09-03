@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\AboutUs;
 use App\Models\Banner;
+use App\Models\HomeSection;
 use App\Models\Page;
 use App\Models\Product;
 use App\Models\ProductCategory;
-use Illuminate\Support\Facades\Log; // Add this for logging
+use Illuminate\Support\Facades\Log;
 
 class PageController extends Controller
 {
@@ -47,22 +48,25 @@ class PageController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        $featuredProducts = Product::where('is_futured', 1)
+        $featuredProducts = Product::query()->where('is_futured', 1)
             ->where('status', 1)
             ->with(['category', 'brand'])
             ->take(8)
             ->get();
 
-        $newProducts = Product::where('is_futured', 2)
+        $newProducts = Product::query()->where('is_futured', 2)
             ->where('status', 1)
             ->with(['category', 'brand'])
             ->take(8)
             ->get();
-        $availableProducts = Product::where('stock', '>', 0)
+        $availableProducts = Product::query()->where('stock', '>', 0)
             ->latest()
             ->get();
 
         $aboutUs = AboutUs::where('status', 1)->first();
+        $homeSections = HomeSection::query()->where('status', 1)
+            ->latest()
+            ->get();
 
         Log::info('About Us Data:', ['aboutUs' => $aboutUs ? 'Found' : 'Not Found']);
         if ($aboutUs) {
@@ -75,7 +79,7 @@ class PageController extends Controller
             'categories',
             'featuredProducts',
             'newProducts',
-            'aboutUs', 'availableProducts'
+            'aboutUs', 'availableProducts','homeSections'
         ));
     }
 
@@ -120,19 +124,22 @@ class PageController extends Controller
             ->pluck('image')
             ->filter();
 
-        $featuredProducts = Product::where('is_futured', 1)
+        $featuredProducts = Product::query()->where('is_futured', 1)
             ->where('status', 1)
             ->with(['category', 'brand'])
             ->take(8)
             ->get();
 
-        $newProducts = Product::where('is_futured', 2)
+        $newProducts = Product::query()->where('is_futured', 2)
             ->where('status', 1)
             ->with(['category', 'brand'])
             ->take(8)
             ->get();
 
         $aboutUs = AboutUs::get();
+        $homeSections = HomeSection::query()->where('status', 1)
+            ->latest()
+            ->get();
 
         // DEBUG: Check if aboutUs exists
         Log::info('About Us Data (show method):', ['aboutUs' => $aboutUs ? 'Found' : 'Not Found']);
@@ -147,7 +154,8 @@ class PageController extends Controller
             'categories',
             'featuredProducts',
             'newProducts',
-            'aboutUs'
+            'aboutUs',
+            'homeSections'
         ));
     }
 }

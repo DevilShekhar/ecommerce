@@ -495,6 +495,10 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="{{ route('admin.sections.index') }}">
+                                    <i class="zmdi zmdi-image"></i>
+                                    Home Banners
+                                </a>
                                 <a href="{{ route('admin.about-us.index') }}">
                                     <i class="zmdi zmdi-image"></i>
                                     About Us
@@ -527,7 +531,6 @@
                             <span>Contact Submissions</span>
                         </a>
                     </li>
-
                 @endif
     </aside>
     <!-- Page Content -->
