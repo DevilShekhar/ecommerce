@@ -617,12 +617,6 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="info-row">
-                                        <div class="info-label">Product</div>
-                                        <div class="info-value">{{ $returnRequest->product_name ?? '-' }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="info-row">
                                         <div class="info-label">Quantity</div>
                                         <div class="info-value">
                                             {{ $returnRequest->quantity ?? 0 }}
@@ -1150,7 +1144,7 @@
                         @endif
                     </div>
                     <div class="col-lg-4">
-                        
+
                         <div class="card">
                             <div class="header">
                                 <h2><strong>Payment</strong> Details</h2>
