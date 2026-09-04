@@ -977,6 +977,35 @@
                                         } else {
                                             $imgUrl = null;
                                         }
+
+                                        // =============================================
+                                        // GET SELLING PRICE AND ORIGINAL PRICE
+                                        // =============================================
+                                        $product = $item->product;
+                                        $quantity = $item->quantity ?? 1;
+
+                                        // Original price from product or item
+                                        $originalPrice = (float) ($product->price ?? $item->price ?? 0);
+
+                                        // Selling price - priority: item selling_price > product selling_price > item price > product price
+                                        $sellingPrice = (float) (
+                                            $item->selling_price ??
+                                            $product->selling_price ??
+                                            $item->price ??
+                                            $product->price ??
+                                            0
+                                        );
+
+                                        if ($sellingPrice <= 0) {
+                                            $sellingPrice = $originalPrice;
+                                        }
+
+                                        $hasDiscount = $originalPrice > $sellingPrice && $sellingPrice > 0;
+                                        $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+
+                                        // Item totals
+                                        $itemSellingTotal = $sellingPrice * $quantity;
+                                        $itemOriginalTotal = $originalPrice * $quantity;
                                     @endphp
                                     <div class="order-product-item">
                                         <div class="product-image">
@@ -991,6 +1020,31 @@
                                             <h6>{{ $item->product_name }}</h6>
                                             @if($item->sku)
                                             <div class="product-sku">SKU: {{ $item->sku }}</div>@endif
+
+                                            {{-- PRICE DISPLAY WITH SELLING AND ORIGINAL PRICE --}}
+                                            <div class="product-price-display" style="margin-top:5px;">
+                                                @if($hasDiscount)
+                                                    <span style="color:#198754;font-weight:600;font-size:14px;">
+                                                        ₹{{ number_format($sellingPrice, 2) }}
+                                                    </span>
+                                                    <span
+                                                        style="color:#94a3b8;font-size:12px;text-decoration:line-through;text-decoration-thickness:1px;margin-left:6px;">
+                                                        ₹{{ number_format($originalPrice, 2) }}
+                                                    </span>
+                                                    <span
+                                                        style="background:#fef2f2;color:#ef4444;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;margin-left:6px;">
+                                                        {{ $discountPercent }}% OFF
+                                                    </span>
+                                                @else
+                                                    <span style="color:#198754;font-weight:600;font-size:14px;">
+                                                        ₹{{ number_format($sellingPrice, 2) }}
+                                                    </span>
+                                                @endif
+                                                <span style="color:#64748b;font-size:12px;margin-left:4px;">
+                                                    × {{ $quantity }}
+                                                </span>
+                                            </div>
+
                                             @if(!empty($item->variants))
                                                 @php
                                                     $variants = $item->variants;
@@ -1010,12 +1064,20 @@
                                                     </div>
                                                 @endif
                                             @endif
-                                            <div class="product-quantity">₹{{ number_format($item->price ?? 0, 2) }} ×
-                                                {{ $item->quantity }}
-                                            </div>
                                         </div>
-                                        <div class="product-total">
-                                            ₹{{ number_format($item->total ?? (($item->price ?? 0) * ($item->quantity ?? 0)), 2) }}
+                                        <div class="product-total" style="text-align:right;">
+                                            {{-- Selling Price Total (green) --}}
+                                            <div style="color:#198754;font-weight:700;font-size:16px;">
+                                                ₹{{ number_format($itemSellingTotal, 2) }}
+                                            </div>
+                                            {{-- Original Price Total (crossed out) --}}
+                                            @if($hasDiscount)
+                                                <div
+                                                    style="color:#94a3b8;font-size:12px;text-decoration:line-through;text-decoration-thickness:1px;">
+                                                    ₹{{ number_format($itemOriginalTotal, 2) }}
+                                                </div>
+                                            @endif
+                                            <div style="font-size:10px;color:#64748b;margin-top:2px;">Subtotal</div>
                                         </div>
                                     </div>
                                 @empty
@@ -1088,25 +1150,7 @@
                         @endif
                     </div>
                     <div class="col-lg-4">
-                        <div class="card">
-                            <div class="header">
-                                <h2><strong>Order</strong> Summary</h2>
-                            </div>
-                            <div class="body">
-                                <div class="summary-row">
-                                    <span>Subtotal</span><strong>₹{{ number_format($order->subtotal ?? 0, 2) }}</strong>
-                                </div>
-                                @if(($order->discount ?? 0) > 0)
-                                    <div class="summary-row discount-row"><span>Discount</span><strong>-
-                                            ₹{{ number_format($order->discount, 2) }}</strong></div>
-                                @endif
-                                <div class="summary-row"><span>Shipping</span><strong>@if(($order->shipping ?? 0) > 0)
-                                ₹{{ number_format($order->shipping, 2) }} @else Free @endif</strong></div>
-                                <div class="summary-total">
-                                    <span>Total</span><strong>₹{{ number_format($order->total ?? 0, 2) }}</strong>
-                                </div>
-                            </div>
-                        </div>
+                        
                         <div class="card">
                             <div class="header">
                                 <h2><strong>Payment</strong> Details</h2>
