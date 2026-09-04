@@ -91,6 +91,7 @@ class ProductCategoryController extends Controller
         }
 
         $validatedData['slug'] = $slug;
+        dd($validatedData);
 
         // Delete old image and upload new image
         if ($request->hasFile('image')) {
