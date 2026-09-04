@@ -7,7 +7,6 @@ use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Str;
 
 class ProductCategoryController extends Controller
 {
@@ -91,7 +90,7 @@ class ProductCategoryController extends Controller
         }
 
         $validatedData['slug'] = $slug;
-        dd($validatedData);
+        // dd($validatedData);
 
         // Delete old image and upload new image
         if ($request->hasFile('image')) {
@@ -105,9 +104,16 @@ class ProductCategoryController extends Controller
 
             $validatedData['image'] = $request->file('image')
                 ->store('product-categories', 'public');
+            // dd([
+            //     'stored_path' => $validatedData['image'],
+            //     'full_storage_path' => Storage::disk('public')->path($validatedData['image']),
+            //     'public_url' => Storage::disk('public')->url($validatedData['image']),
+            //     'exists' => Storage::disk('public')->exists($validatedData['image']),
+            // ]);
         }
 
         $productCategory->update($validatedData);
+        dd($productCategory);
 
         return redirect()
             ->route('product_categories.index')
