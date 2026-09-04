@@ -176,72 +176,73 @@
         </section>
     @endif
 
-  @if(isset($banners) && $banners->count() > 0)
-<section class="banner-slider-section py-5">
-    <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;">
+    @if(isset($banners) && $banners->count() > 0)
+        <section class="banner-slider-section py-5">
+            <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;">
 
-        <div class="banner-slider-wrapper" style="position:relative;overflow:hidden;">
+                <div class="banner-slider-wrapper" style="position:relative;overflow:hidden;">
 
-            <!-- Track -->
-            <div class="banner-slider-track" id="bannerSliderTrack"
-                 style="display:flex;gap:20px;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+                    <!-- Track -->
+                    <div class="banner-slider-track" id="bannerSliderTrack"
+                        style="display:flex;gap:20px;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
 
-                @foreach($banners as $banner)
-                    <div class="banner-card"
-                         style="min-width:100%;flex-shrink:0;height:380px;border-radius:16px;overflow:hidden;position:relative;background:#f4efe7;">
+                        @foreach($banners as $banner)
+                            <div class="banner-card"
+                                style="min-width:100%;flex-shrink:0;height:380px;border-radius:16px;overflow:hidden;position:relative;background:#f4efe7;">
 
-                        <img src="{{ asset('storage/' . $banner->image) }}"
-                             alt="{{ $banner->title }}"
-                             style="width:100%;height:100%;object-fit:cover;">
+                                <img src="{{ asset('storage/' . $banner->image) }}" alt="{{ $banner->title }}"
+                                    style="width:100%;height:100%;object-fit:cover;">
 
-                        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.55), transparent);"></div>
+                                <div
+                                    style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.55), transparent);">
+                                </div>
 
-                        <div style="position:absolute;bottom:30px;left:30px;right:30px;color:#fff;">
-                            @if($banner->title)
-                                <h3 style="font-size:28px;font-weight:600;margin-bottom:8px;">
-                                    {{ $banner->title }}
-                                </h3>
-                            @endif
-                            @if($banner->subtitle)
-                                <p style="font-size:15px;opacity:0.9;margin-bottom:16px;">
-                                    {{ $banner->subtitle }}
-                                </p>
-                            @endif
-                            <a href="/login"
-                               style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#B89B5E;color:#fff;border-radius:50px;text-decoration:none;font-weight:600;font-size:13px;">
-                                Shop Now <i class="bi bi-arrow-right"></i>
-                            </a>
-                        </div>
+                                <div style="position:absolute;bottom:30px;left:30px;right:30px;color:#fff;">
+                                    @if($banner->title)
+                                        <h3 style="font-size:28px;font-weight:600;margin-bottom:8px;">
+                                            {{ $banner->title }}
+                                        </h3>
+                                    @endif
+                                    @if($banner->subtitle)
+                                        <p style="font-size:15px;opacity:0.9;margin-bottom:16px;">
+                                            {{ $banner->subtitle }}
+                                        </p>
+                                    @endif
+                                    <a href="/login"
+                                        style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#B89B5E;color:#fff;border-radius:50px;text-decoration:none;font-weight:600;font-size:13px;">
+                                        Shop Now <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+
                     </div>
-                @endforeach
 
+                    <!-- Arrows -->
+                    @if($banners->count() > 1)
+                        <button class="banner-prev"
+                            style="position:absolute;top:50%;left:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="banner-next"
+                            style="position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    @endif
+                </div>
+
+                <!-- Dots -->
+                @if($banners->count() > 1)
+                    <div class="banner-dots" style="display:flex;justify-content:center;gap:8px;margin-top:18px;">
+                        @foreach($banners as $index => $banner)
+                            <span class="banner-dot" data-index="{{ $index }}"
+                                style="width:10px;height:10px;border-radius:50%;background:{{ $index === 0 ? '#B89B5E' : '#D5CFC5' }};cursor:pointer;transition:all 0.3s;"></span>
+                        @endforeach
+                    </div>
+                @endif
             </div>
-
-            <!-- Arrows -->
-            @if($banners->count() > 1)
-                <button class="banner-prev"
-                        style="position:absolute;top:50%;left:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-                <button class="banner-next"
-                        style="position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-            @endif
-        </div>
-
-        <!-- Dots -->
-        @if($banners->count() > 1)
-            <div class="banner-dots" style="display:flex;justify-content:center;gap:8px;margin-top:18px;">
-                @foreach($banners as $index => $banner)
-                    <span class="banner-dot" data-index="{{ $index }}"
-                          style="width:10px;height:10px;border-radius:50%;background:{{ $index === 0 ? '#B89B5E' : '#D5CFC5' }};cursor:pointer;transition:all 0.3s;"></span>
-                @endforeach
-            </div>
-        @endif
-    </div>
-</section>
-@endif
+        </section>
+    @endif
     <section class="products-section-compact py-4 bg-brand-bg">
         <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
             <div class="section-header-compact text-center mb-3">
@@ -406,18 +407,18 @@
                                             <!-- DISCOUNT BADGE - Show only if discount exists -->
                                             @if($hasDiscount)
                                                 <span style="
-                                                        position:absolute;
-                                                        top:10px;
-                                                        left:10px;
-                                                        background:#e74c3c;
-                                                        color:#fff;
-                                                        padding:3px 10px;
-                                                        border-radius:4px;
-                                                        font-size:10px;
-                                                        font-weight:700;
-                                                        z-index:2;
-                                                        box-shadow:0 2px 8px rgba(231,76,60,0.3);
-                                                    ">
+                                                                        position:absolute;
+                                                                        top:10px;
+                                                                        left:10px;
+                                                                        background:#e74c3c;
+                                                                        color:#fff;
+                                                                        padding:3px 10px;
+                                                                        border-radius:4px;
+                                                                        font-size:10px;
+                                                                        font-weight:700;
+                                                                        z-index:2;
+                                                                        box-shadow:0 2px 8px rgba(231,76,60,0.3);
+                                                                    ">
                                                     {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
                                                 </span>
                                             @endif
@@ -445,27 +446,27 @@
                                                 ₹{{ number_format($sellingPrice, 0) }}
 
                                                 @if($hasDiscount)
-                                                            <span style="
-                                                        color:#888;
-                                                        font-size:13px;
-                                                        font-weight:400;
-                                                        text-decoration:line-through;
-                                                        text-decoration-thickness:1px;
-                                                        margin-left:5px;
-                                                    ">
-                                                                ₹{{ number_format($originalPrice, 0) }}
-                                                            </span>
-                                                            <span style="
-                                                        color:#e74c3c;
-                                                        font-size:11px;
-                                                        font-weight:600;
-                                                        margin-left:5px;
-                                                        background:#fef0ef;
-                                                        padding:1px 6px;
-                                                        border-radius:3px;
-                                                    ">
-                                                                {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
-                                                            </span>
+                                                    <span style="
+                                                                        color:#888;
+                                                                        font-size:13px;
+                                                                        font-weight:400;
+                                                                        text-decoration:line-through;
+                                                                        text-decoration-thickness:1px;
+                                                                        margin-left:5px;
+                                                                    ">
+                                                        ₹{{ number_format($originalPrice, 0) }}
+                                                    </span>
+                                                    <span style="
+                                                                        color:#e74c3c;
+                                                                        font-size:11px;
+                                                                        font-weight:600;
+                                                                        margin-left:5px;
+                                                                        background:#fef0ef;
+                                                                        padding:1px 6px;
+                                                                        border-radius:3px;
+                                                                    ">
+                                                        {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
+                                                    </span>
                                                 @endif
                                             </div>
                                         </div>
@@ -473,10 +474,8 @@
 
                                     <!-- Wishlist Heart Button -->
                                     <button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
-                                        data-product-name="{{ addslashes($productName) }}"
-                                        data-product-price="{{ $sellingPrice }}"
-                                        data-product-slug="{{ $productSlug }}"
-                                        data-product-image="{{ $primaryImage }}"
+                                        data-product-name="{{ addslashes($productName) }}" data-product-price="{{ $sellingPrice }}"
+                                        data-product-slug="{{ $productSlug }}" data-product-image="{{ $primaryImage }}"
                                         onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $sellingPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}', {{ $originalPrice }});"
                                         style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
                                         aria-label="Add to wishlist">
@@ -1393,80 +1392,80 @@
         // MAIN INIT - SINGLE DOMContentLoaded
         // =============================================
         document.addEventListener('DOMContentLoaded', function () {
-    const track = document.getElementById('bannerSliderTrack');
-    const cards = document.querySelectorAll('.banner-card');
-    const dots = document.querySelectorAll('.banner-dot');
-    const prevBtn = document.querySelector('.banner-prev');
-    const nextBtn = document.querySelector('.banner-next');
+            const track = document.getElementById('bannerSliderTrack');
+            const cards = document.querySelectorAll('.banner-card');
+            const dots = document.querySelectorAll('.banner-dot');
+            const prevBtn = document.querySelector('.banner-prev');
+            const nextBtn = document.querySelector('.banner-next');
 
-    if (!track || cards.length === 0) return;
+            if (!track || cards.length === 0) return;
 
-    let currentIndex = 0;
-    let autoSlide;
+            let currentIndex = 0;
+            let autoSlide;
 
-    function goToSlide(index) {
-        if (index < 0) index = cards.length - 1;
-        if (index >= cards.length) index = 0;
+            function goToSlide(index) {
+                if (index < 0) index = cards.length - 1;
+                if (index >= cards.length) index = 0;
 
-        currentIndex = index;
+                currentIndex = index;
 
-        // Move track (one full card at a time)
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+                // Move track (one full card at a time)
+                track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
-        // Update dots
-        dots.forEach((dot, i) => {
-            dot.style.background = i === currentIndex ? '#B89B5E' : '#D5CFC5';
+                // Update dots
+                dots.forEach((dot, i) => {
+                    dot.style.background = i === currentIndex ? '#B89B5E' : '#D5CFC5';
+                });
+            }
+
+            function next() {
+                goToSlide(currentIndex + 1);
+            }
+
+            function prev() {
+                goToSlide(currentIndex - 1);
+            }
+
+            // Buttons
+            if (nextBtn) nextBtn.addEventListener('click', () => {
+                next();
+                resetAuto();
+            });
+
+            if (prevBtn) prevBtn.addEventListener('click', () => {
+                prev();
+                resetAuto();
+            });
+
+            // Dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    goToSlide(index);
+                    resetAuto();
+                });
+            });
+
+            // Auto slide
+            function startAuto() {
+                autoSlide = setInterval(next, 4000);
+            }
+
+            function resetAuto() {
+                clearInterval(autoSlide);
+                startAuto();
+            }
+
+            // Pause on hover
+            const wrapper = document.querySelector('.banner-slider-wrapper');
+            if (wrapper) {
+                wrapper.addEventListener('mouseenter', () => clearInterval(autoSlide));
+                wrapper.addEventListener('mouseleave', startAuto);
+            }
+
+            // Init
+            goToSlide(0);
+            startAuto();
         });
-    }
-
-    function next() {
-        goToSlide(currentIndex + 1);
-    }
-
-    function prev() {
-        goToSlide(currentIndex - 1);
-    }
-
-    // Buttons
-    if (nextBtn) nextBtn.addEventListener('click', () => {
-        next();
-        resetAuto();
-    });
-
-    if (prevBtn) prevBtn.addEventListener('click', () => {
-        prev();
-        resetAuto();
-    });
-
-    // Dots
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            goToSlide(index);
-            resetAuto();
-        });
-    });
-
-    // Auto slide
-    function startAuto() {
-        autoSlide = setInterval(next, 4000);
-    }
-
-    function resetAuto() {
-        clearInterval(autoSlide);
-        startAuto();
-    }
-
-    // Pause on hover
-    const wrapper = document.querySelector('.banner-slider-wrapper');
-    if (wrapper) {
-        wrapper.addEventListener('mouseenter', () => clearInterval(autoSlide));
-        wrapper.addEventListener('mouseleave', startAuto);
-    }
-
-    // Init
-    goToSlide(0);
-    startAuto();
-});
 
         // Update total slides when window loads
         window.addEventListener('load', function () {
@@ -1594,6 +1593,40 @@
         });
 
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // FAQ Accordion Functionality
+            const faqItems = document.querySelectorAll('.faq-item');
 
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const toggleIcon = item.querySelector('.faq-toggle i');
+
+                question.addEventListener('click', function () {
+                    const isOpen = item.classList.contains('active');
+
+                    // Close all FAQ items
+                    faqItems.forEach(otherItem => {
+                        otherItem.classList.remove('active');
+                        otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+                        const otherToggle = otherItem.querySelector('.faq-toggle i');
+                        if (otherToggle) {
+                            otherToggle.className = 'bi bi-chevron-down';
+                        }
+                    });
+
+                    // Toggle the clicked item
+                    if (!isOpen) {
+                        item.classList.add('active');
+                        question.setAttribute('aria-expanded', 'true');
+                        if (toggleIcon) {
+                            toggleIcon.className = 'bi bi-chevron-up';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 
 @endsection

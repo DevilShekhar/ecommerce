@@ -539,15 +539,6 @@
                                 @endforeach
                             </select>
                         </div>
-                         <!-- Subcategories (dynamically loaded) -->
-                        <div id="subcategoryContainer" style="display:none; margin-top: 12px;">
-                            <div class="filter-group">
-                                <label for="subcategory">Sub Category</label>
-                                <select name="subcategory" id="subcategory" onchange="applyFilters()">
-                                    <option value="">All Subcategories</option>
-                                </select>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- FILTERS -->
@@ -650,129 +641,152 @@
     </div>
 
     <!-- =============================================
-                        SCRIPTS
-                    ============================================= -->
+        SCRIPTS
+    ============================================= -->
     <script>
         let currentPage = 1;
         let isLoading = false;
 
         // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function () {
-            const hamburger = document.querySelector('.hamburger-btn');
-            const mobileMenu = document.querySelector('.mobile-menu');
-
-            if (hamburger && mobileMenu) {
-                hamburger.addEventListener('click', function () {
-                    const isOpen = mobileMenu.style.display === 'block';
-                    mobileMenu.style.display = isOpen ? 'none' : 'block';
-                });
-            }
-
-            const navbar = document.querySelector('.navbar-modern');
-            if (navbar) {
-                window.addEventListener('scroll', function () {
-                    if (window.scrollY > 50) {
-                        navbar.classList.add('scrolled');
-                    } else {
-                        navbar.classList.remove('scrolled');
-                    }
-                });
-            }
-
-            // Load initial products
-            applyFilters();
-        });
-
         // =============================================
-// LOAD SUBCATEGORIES
+// PAGE LOAD - CHECK FOR SELECTED CATEGORY
 // =============================================
-function loadSubcategories(categorySlug) {
-    const container = document.getElementById('subcategoryContainer');
-    const subcategorySelect = document.getElementById('subcategory');
+document.addEventListener('DOMContentLoaded', function () {
+    // Mobile menu toggle
+    const hamburger = document.querySelector('.hamburger-btn');
+    const mobileMenu = document.querySelector('.mobile-menu');
 
-    if (!categorySlug) {
-        container.style.display = 'none';
-        subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
-        applyFilters();
-        return;
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function () {
+            const isOpen = mobileMenu.style.display === 'block';
+            mobileMenu.style.display = isOpen ? 'none' : 'block';
+        });
     }
 
-    // Show loading state
-    container.style.display = 'block';
-    subcategorySelect.innerHTML = '<option value="">Loading...</option>';
-    subcategorySelect.disabled = true;
+    const navbar = document.querySelector('.navbar-modern');
+    if (navbar) {
+        window.addEventListener('scroll', function () {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
 
-    // Fetch subcategories
-    fetch(`/get-subcategories/${categorySlug}`, {
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
-
-        if (data.success && data.subcategories.length > 0) {
-            data.subcategories.forEach(sub => {
-                const option = document.createElement('option');
-                option.value = sub.slug;
-                option.textContent = sub.name;
-                subcategorySelect.appendChild(option);
-            });
-            subcategorySelect.disabled = false;
-        } else {
-            subcategorySelect.innerHTML = '<option value="">No Subcategories</option>';
-            subcategorySelect.disabled = true;
-        }
-
-        // Apply filters to refresh products
-        applyFilters();
-    })
-    .catch(error => {
-        console.error('Error loading subcategories:', error);
-        subcategorySelect.innerHTML = '<option value="">Error loading</option>';
-        subcategorySelect.disabled = true;
-    });
-}
-
-// Update getFilters function to include subcategory
-function getFilters() {
-    return {
-        category: document.getElementById('category').value,
-        subcategory: document.getElementById('subcategory') ? document.getElementById('subcategory').value : '',
-        brand: document.getElementById('brand') ? document.getElementById('brand').value : '',
-        material: document.getElementById('material') ? document.getElementById('material').value : '',
-        min_price: document.getElementById('min_price').value,
-        max_price: document.getElementById('max_price').value,
-        search: document.getElementById('search').value,
-        sort: document.getElementById('sort').value,
-        page: currentPage
-    };
-}
-
-// Update resetFilters function to reset subcategory
-function resetFilters() {
-    document.getElementById('category').value = '';
-    document.getElementById('subcategory').value = '';
-    document.getElementById('subcategoryContainer').style.display = 'none';
-    if (document.getElementById('brand')) document.getElementById('brand').value = '';
-    if (document.getElementById('material')) document.getElementById('material').value = '';
-    document.getElementById('min_price').value = '';
-    document.getElementById('max_price').value = '';
-    document.getElementById('search').value = '';
-    document.getElementById('sort').value = 'newest';
-    currentPage = 1;
-    applyFilters(1);
-}
-
-// On page load, check if a category is already selected
-document.addEventListener('DOMContentLoaded', function() {
+    // Load subcategories if category is selected
     const selectedCategory = document.getElementById('category').value;
     if (selectedCategory) {
         loadSubcategories(selectedCategory);
+    } else {
+        // Load initial products
+        applyFilters();
     }
+
+    // Add event listener for category change
+    document.getElementById('category').addEventListener('change', function() {
+        const categorySlug = this.value;
+        if (categorySlug) {
+            loadSubcategories(categorySlug);
+        } else {
+            // Hide subcategory container and reset
+            document.getElementById('subcategoryContainer').style.display = 'none';
+            document.getElementById('subcategory').innerHTML = '<option value="">All Subcategories</option>';
+            applyFilters();
+        }
+    });
 });
+
+        // =============================================
+    // LOAD SUBCATEGORIES
+    // =============================================
+    function loadSubcategories(categorySlug) {
+        const container = document.getElementById('subcategoryContainer');
+        const subcategorySelect = document.getElementById('subcategory');
+
+        if (!categorySlug) {
+            container.style.display = 'none';
+            subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
+            applyFilters();
+            return;
+        }
+
+        // Show loading state
+        container.style.display = 'block';
+        subcategorySelect.innerHTML = '<option value="">Loading...</option>';
+        subcategorySelect.disabled = true;
+
+        // Fetch subcategories
+        fetch(`/get-subcategories/${categorySlug}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
+
+            if (data.success && data.subcategories.length > 0) {
+                data.subcategories.forEach(sub => {
+                    const option = document.createElement('option');
+                    option.value = sub.slug;
+                    option.textContent = sub.name;
+                    subcategorySelect.appendChild(option);
+                });
+                subcategorySelect.disabled = false;
+            } else {
+                subcategorySelect.innerHTML = '<option value="">No Subcategories</option>';
+                subcategorySelect.disabled = true;
+            }
+
+            // Apply filters to refresh products
+            applyFilters();
+        })
+        .catch(error => {
+            console.error('Error loading subcategories:', error);
+            subcategorySelect.innerHTML = '<option value="">Error loading</option>';
+            subcategorySelect.disabled = true;
+        });
+    }
+
+    // Update getFilters function to include subcategory
+    function getFilters() {
+        return {
+            category: document.getElementById('category').value,
+            subcategory: document.getElementById('subcategory') ? document.getElementById('subcategory').value : '',
+            brand: document.getElementById('brand') ? document.getElementById('brand').value : '',
+            material: document.getElementById('material') ? document.getElementById('material').value : '',
+            min_price: document.getElementById('min_price').value,
+            max_price: document.getElementById('max_price').value,
+            search: document.getElementById('search').value,
+            sort: document.getElementById('sort').value,
+            page: currentPage
+        };
+    }
+
+    // Update resetFilters function to reset subcategory
+    function resetFilters() {
+        document.getElementById('category').value = '';
+        document.getElementById('subcategory').value = '';
+        document.getElementById('subcategoryContainer').style.display = 'none';
+        if (document.getElementById('brand')) document.getElementById('brand').value = '';
+        if (document.getElementById('material')) document.getElementById('material').value = '';
+        document.getElementById('min_price').value = '';
+        document.getElementById('max_price').value = '';
+        document.getElementById('search').value = '';
+        document.getElementById('sort').value = 'newest';
+        currentPage = 1;
+        applyFilters(1);
+    }
+
+    // On page load, check if a category is already selected
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedCategory = document.getElementById('category').value;
+        if (selectedCategory) {
+            loadSubcategories(selectedCategory);
+        }
+    });
 
         function applyFilters(page = 1) {
             if (page) currentPage = page;
