@@ -120,9 +120,30 @@
                                                     </td>
                                                     {{-- Total --}}
                                                     <td>
-                                                        <strong>
-                                                            ₹{{ number_format($order->total ?? 0, 2) }}
+                                                        @php
+                                                            $sellingTotal = $order->items->sum(function ($item) {
+                                                                return (float) ($item->selling_price ?? $item->price ?? 0) * (int) ($item->quantity ?? 1);
+                                                            });
+
+                                                            $originalTotal = $order->items->sum(function ($item) {
+                                                                return (float) ($item->price ?? 0) * (int) ($item->quantity ?? 1);
+                                                            });
+                                                        @endphp
+
+                                                        <strong style="color:#198754;">
+                                                            ₹{{ number_format($sellingTotal, 2) }}
                                                         </strong>
+
+                                                        @if($originalTotal > $sellingTotal)
+                                                                                                    <br>
+                                                                                                    <span style="
+                                                                color:#888;
+                                                                font-size:12px;
+                                                                text-decoration:line-through;
+                                                            ">
+                                                                                                        ₹{{ number_format($originalTotal, 2) }}
+                                                                                                    </span>
+                                                        @endif
                                                     </td>
                                                     {{-- Status --}}
                                                     <td>
