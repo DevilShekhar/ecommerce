@@ -15,7 +15,7 @@ class ProductCategoryController extends Controller
     {
         $categories = ProductCategory::with(['createdBy', 'updatedBy'])
             ->latest()
-            ->paginate(10);
+            ->paginate(30);
 
         return view('admin.product_categories.index', compact('categories'));
     }
