@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Super;
 
 use App\Exports\DashboardReportExport;
 use App\Http\Controllers\Controller;
 use App\Models\Banner;
 use App\Models\Brand;
+use App\Models\ContactSubmission;
 use App\Models\Coupon;
 use App\Models\InventoryTransaction;
 use App\Models\Offer;
@@ -50,6 +51,7 @@ class DashboardController extends Controller
         $totalBrands = Brand::count();
 
         $activeBrands = Brand::query()->where('status', 1)->count();
+        $contactSubmission = ContactSubmission::all();
 
         $totalCategories = ProductCategory::count();
 
@@ -212,6 +214,7 @@ class DashboardController extends Controller
             'activeProducts',
             'inactiveProducts',
             'featuredProducts',
+            'contactSubmission',
 
             // Customers
             'totalCustomers',

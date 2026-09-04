@@ -340,7 +340,28 @@
                             </div>
 
                         </div>
-
+                        <a href="{{ route('admin.contact-submissions.index') }}" class="text-decoration-none">
+                            <div class="stat-card-content"
+                                style="background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:20px;border-radius:12px;color:#fff;">
+                                <div class="stat-icon-box">
+                                    <i class="zmdi zmdi-email"></i>
+                                </div>
+                                <div class="stat-details">
+                                    <span class="stat-title" style="opacity:0.9;color:white; margin-bottom:2rem">Contact
+                                        Submissions</span>
+                                    <h2 style="margin:8px 0;font-size:32px;">
+                                        {{ number_format($contactSubmission->count() ?? 0) }}</h2>
+                                    <div class="stat-subtitle active-text"
+                                        style="opacity:0.8;display:flex;align-items:center;gap:5px;">
+                                        <i class="zmdi zmdi-arrow-right"></i> View All
+                                    </div>
+                                </div>
+                                <div class="stat-bg-icon"
+                                    style="position:absolute;right:5px;bottom:0;font-size:70px;opacity:0.1;">
+                                    <i class="zmdi zmdi-email"></i>
+                                </div>
+                            </div>
+                        </a>
 
                         {{-- ============================================
                         INVENTORY OVERVIEW
