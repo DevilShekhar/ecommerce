@@ -468,10 +468,10 @@ class CheckoutController extends Controller
                 'shipping' => $shipping,
                 'tax' => $tax,
                 'total' => $finalTotal,
-                'status' => 'pending',
-                'order_status' => 'pending',
+                'status' => $request->razorpay_payment_id ? 'confirmed' : 'pending',
+                'order_status' => $request->razorpay_payment_id ? 'confirmed' : 'pending',
                 'payment_method' => $request->payment_method ?? 'online',
-                'payment_status' => 'pending',
+                'payment_status' => $request->razorpay_payment_id ? 'paid' : 'pending',
                 'notes' => $request->notes ?? '',
             ]);
             foreach ($cart as $item) {

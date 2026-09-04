@@ -82,6 +82,7 @@
                                             <th>Link Type</th>
                                             <th>Start Date</th>
                                             <th>End Date</th>
+                                            <th>Banner Status</th>
                                             <th>Status</th>
                                             <th>Sort Order</th>
                                             <th>Created At</th>
@@ -171,6 +172,15 @@
                                                     {{ $banner->end_date ? $banner->end_date->format('d M Y') : '-' }}
                                                 </td>
 
+                                                <td>
+                                                    @if(now()->lt($banner->start_date))
+                                                        <span class="badge badge-warning">Upcoming</span>
+                                                    @elseif(now()->gt($banner->end_date))
+                                                        <span class="badge badge-danger">Expired</span>
+                                                    @else
+                                                        <span class="badge badge-success">Available</span>
+                                                    @endif
+                                                </td>
 
                                                 {{-- Status --}}
                                                 <td>

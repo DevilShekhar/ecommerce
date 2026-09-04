@@ -286,7 +286,6 @@ class ShopController extends Controller
 
         // Get all active products of selected category
         $products = Product::with(['category', 'brand', 'subCategory'])
-            ->query()
             ->where('status', 1)
             ->where('category_id', $category->id)
             ->latest()

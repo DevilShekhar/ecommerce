@@ -21,8 +21,8 @@
         }
 
         /* =========================================================
-               PAGE
-            ========================================================= */
+                   PAGE
+                ========================================================= */
 
         .wishlist-page {
             min-height: 100vh;
@@ -31,8 +31,8 @@
         }
 
         /* =========================================================
-               HEADER
-            ========================================================= */
+                   HEADER
+                ========================================================= */
 
         .wishlist-heading {
             display: flex;
@@ -106,8 +106,8 @@
         }
 
         /* =========================================================
-               SERVICE STRIP
-            ========================================================= */
+                   SERVICE STRIP
+                ========================================================= */
 
         .wishlist-services {
             display: grid;
@@ -161,8 +161,8 @@
         }
 
         /* =========================================================
-               FILTER SECTION - FOR RECOMMENDED PRODUCTS
-            ========================================================= */
+                   FILTER SECTION - FOR RECOMMENDED PRODUCTS
+                ========================================================= */
 
         .recommended-filter-section {
             background: #ffffff;
@@ -280,8 +280,8 @@
         }
 
         /* =========================================================
-               PRODUCT AREA
-            ========================================================= */
+                   PRODUCT AREA
+                ========================================================= */
 
         .wishlist-products-section {
             width: 100%;
@@ -337,8 +337,8 @@
         }
 
         /* =========================================================
-               PRODUCT GRID
-            ========================================================= */
+                   PRODUCT GRID
+                ========================================================= */
 
         .wishlist-grid {
             display: grid;
@@ -347,8 +347,8 @@
         }
 
         /* =========================================================
-               PRODUCT CARD
-            ========================================================= */
+                   PRODUCT CARD
+                ========================================================= */
 
         .jewel-product-card {
             background: #fff;
@@ -368,8 +368,8 @@
         }
 
         /* =========================================================
-               IMAGE
-            ========================================================= */
+                   IMAGE
+                ========================================================= */
 
         .jewel-product-image {
             height: 245px;
@@ -401,8 +401,8 @@
         }
 
         /* =========================================================
-               BADGES
-            ========================================================= */
+                   BADGES
+                ========================================================= */
 
         .jewel-badge {
             position: absolute;
@@ -431,8 +431,8 @@
         }
 
         /* =========================================================
-               HEART
-            ========================================================= */
+                   HEART
+                ========================================================= */
 
         .jewel-heart {
             position: absolute;
@@ -468,8 +468,8 @@
         }
 
         /* =========================================================
-               STOCK
-            ========================================================= */
+                   STOCK
+                ========================================================= */
 
         .jewel-stock {
             position: absolute;
@@ -493,8 +493,8 @@
         }
 
         /* =========================================================
-               PRODUCT INFO
-            ========================================================= */
+                   PRODUCT INFO
+                ========================================================= */
 
         .jewel-product-info {
             padding: 11px 12px 12px;
@@ -522,8 +522,8 @@
         }
 
         /* =========================================================
-               RATING
-            ========================================================= */
+                   RATING
+                ========================================================= */
 
         .jewel-rating {
             display: flex;
@@ -544,8 +544,8 @@
         }
 
         /* =========================================================
-               PRICE
-            ========================================================= */
+                   PRICE
+                ========================================================= */
 
         .jewel-price-row {
             display: flex;
@@ -574,8 +574,8 @@
         }
 
         /* =========================================================
-               CART BUTTON
-            ========================================================= */
+                   CART BUTTON
+                ========================================================= */
 
         .jewel-cart-btn {
             width: 100%;
@@ -614,8 +614,8 @@
         }
 
         /* =========================================================
-               EMPTY
-            ========================================================= */
+                   EMPTY
+                ========================================================= */
 
         .wishlist-empty {
             background: #fff;
@@ -672,8 +672,8 @@
         }
 
         /* =========================================================
-               RECOMMENDED - FILTERED SECTION
-            ========================================================= */
+                   RECOMMENDED - FILTERED SECTION
+                ========================================================= */
 
         .recommended-section {
             margin-top: 20px;
@@ -728,8 +728,8 @@
         }
 
         /* =========================================================
-               PRODUCT MODAL
-            ========================================================= */
+                   PRODUCT MODAL
+                ========================================================= */
 
         #productDetailsModal .modal-content {
             border: 0;
@@ -742,8 +742,8 @@
         }
 
         /* =========================================================
-               RESPONSIVE
-            ========================================================= */
+                   RESPONSIVE
+                ========================================================= */
 
         @media(max-width:1200px) {
             .wishlist-grid {
@@ -1319,10 +1319,10 @@
 
                                             <button type="button" class="jewel-heart wishlist-btn"
                                                 data-product-id="{{ $product->id }}" onclick="
-                                                                                    event.preventDefault();
-                                                                                    event.stopPropagation();
-                                                                                    toggleWishlist(this)
-                                                                                ">
+                                                                                                event.preventDefault();
+                                                                                                event.stopPropagation();
+                                                                                                toggleWishlist(this)
+                                                                                            ">
 
                                                 <i class="bi bi-heart"></i>
 
@@ -1334,7 +1334,7 @@
                                             @if($product->stock !== null)
 
                                                                 <span class="jewel-stock
-                                                                                                                                                {{ $isOutOfStock
+                                                                                                                                                                                {{ $isOutOfStock
                                                 ? 'out-stock'
                                                 : 'in-stock' }}">
 
@@ -1423,9 +1423,9 @@
 
                                                 <button type="button" class="jewel-cart-btn notify notify-me-btn"
                                                     data-product-id="{{ $product->id }}" onclick="
-                                                                                                    event.preventDefault();
-                                                                                                    event.stopPropagation();
-                                                                                                ">
+                                                                                                                    event.preventDefault();
+                                                                                                                    event.stopPropagation();
+                                                                                                                ">
 
                                                     <i class="bi bi-bell"></i>
                                                     Notify Me
@@ -1533,26 +1533,26 @@
 
 
                         <div style="
-                                                    text-align:center;
-                                                    padding:30px 20px;
-                                                    background:#fff;
-                                                    border:1px solid var(--s-border);
-                                                    border-radius:8px;
-                                                ">
+                                                            text-align:center;
+                                                            padding:30px 20px;
+                                                            background:#fff;
+                                                            border:1px solid var(--s-border);
+                                                            border-radius:8px;
+                                                        ">
 
                             <i class="bi bi-box" style="
-                                                        font-size:38px;
-                                                        color:#d5cfc5;
-                                                        display:block;
-                                                        margin-bottom:10px;
-                                                    ">
+                                                                font-size:38px;
+                                                                color:#d5cfc5;
+                                                                display:block;
+                                                                margin-bottom:10px;
+                                                            ">
                             </i>
 
                             <p style="
-                                                        color:#77736d;
-                                                        font-size:11px;
-                                                        margin:0;
-                                                    ">
+                                                                color:#77736d;
+                                                                font-size:11px;
+                                                                margin:0;
+                                                            ">
 
                                 @if(isset($selectedCategory))
 
@@ -1602,10 +1602,10 @@
             <div class="modal-content">
 
                 <button type="button" class="btn-close position-absolute" style="
-                                right:20px;
-                                top:20px;
-                                z-index:10;
-                            " data-bs-dismiss="modal">
+                                    right:20px;
+                                    top:20px;
+                                    z-index:10;
+                                " data-bs-dismiss="modal">
                 </button>
 
 
@@ -1626,17 +1626,17 @@
                             <div class="col-md-6">
 
                                 <div style="
-                                                height:430px;
-                                                background:#f8f6f1;
-                                                border-radius:8px;
-                                                overflow:hidden;
-                                            ">
+                                                    height:430px;
+                                                    background:#f8f6f1;
+                                                    border-radius:8px;
+                                                    overflow:hidden;
+                                                ">
 
                                     <img id="modalProductImage" src="" alt="Product" style="
-                                                    width:100%;
-                                                    height:100%;
-                                                    object-fit:contain;
-                                                ">
+                                                        width:100%;
+                                                        height:100%;
+                                                        object-fit:contain;
+                                                    ">
 
                                 </div>
 
@@ -1646,30 +1646,30 @@
                             <div class="col-md-6">
 
                                 <span id="modalProductCategory" style="
-                                                color:var(--s-primary);
-                                                font-size:10px;
-                                                font-weight:700;
-                                                text-transform:uppercase;
-                                                letter-spacing:.7px;
-                                            ">
+                                                    color:var(--s-primary);
+                                                    font-size:10px;
+                                                    font-weight:700;
+                                                    text-transform:uppercase;
+                                                    letter-spacing:.7px;
+                                                ">
                                 </span>
 
 
                                 <h3 id="modalProductName" style="
-                                                font-family:'Cormorant Garamond',serif;
-                                                font-size:30px;
-                                                margin:7px 0 10px;
-                                                font-weight:600;
-                                                color:var(--s-text);
-                                            ">
+                                                    font-family:'Cormorant Garamond',serif;
+                                                    font-size:30px;
+                                                    margin:7px 0 10px;
+                                                    font-weight:600;
+                                                    color:var(--s-text);
+                                                ">
                                 </h3>
 
 
                                 <div style="
-                                                color:var(--s-gold);
-                                                margin-bottom:14px;
-                                                font-size:11px;
-                                            ">
+                                                    color:var(--s-gold);
+                                                    margin-bottom:14px;
+                                                    font-size:11px;
+                                                ">
 
                                     <i class="bi bi-star-fill"></i>
                                     <i class="bi bi-star-fill"></i>
@@ -1678,10 +1678,10 @@
                                     <i class="bi bi-star-half"></i>
 
                                     <span style="
-                                                    color:#999;
-                                                    font-size:10px;
-                                                    margin-left:5px;
-                                                ">
+                                                        color:#999;
+                                                        font-size:10px;
+                                                        margin-left:5px;
+                                                    ">
 
                                         4.8 Reviews
 
@@ -1691,41 +1691,41 @@
 
 
                                 <div id="modalProductPrice" style="
-                                                font-size:24px;
-                                                font-weight:800;
-                                                margin-bottom:15px;
-                                                color:var(--s-text);
-                                            ">
+                                                    font-size:24px;
+                                                    font-weight:800;
+                                                    margin-bottom:15px;
+                                                    color:var(--s-text);
+                                                ">
                                 </div>
 
 
                                 <div id="modalProductDescription" style="
-                                                color:#6b6862;
-                                                font-size:12px;
-                                                line-height:1.7;
-                                                border-top:1px solid #eee;
-                                                border-bottom:1px solid #eee;
-                                                padding:13px 0;
-                                                margin-bottom:16px;
-                                            ">
+                                                    color:#6b6862;
+                                                    font-size:12px;
+                                                    line-height:1.7;
+                                                    border-top:1px solid #eee;
+                                                    border-bottom:1px solid #eee;
+                                                    padding:13px 0;
+                                                    margin-bottom:16px;
+                                                ">
                                 </div>
 
 
                                 <div style="
-                                                display:grid;
-                                                grid-template-columns:1fr 1fr;
-                                                gap:15px;
-                                                margin-bottom:18px;
-                                            ">
+                                                    display:grid;
+                                                    grid-template-columns:1fr 1fr;
+                                                    gap:15px;
+                                                    margin-bottom:18px;
+                                                ">
 
                                     <div>
 
                                         <small style="
-                                                        color:#999;
-                                                        display:block;
-                                                        font-size:9px;
-                                                        margin-bottom:3px;
-                                                    ">
+                                                            color:#999;
+                                                            display:block;
+                                                            font-size:9px;
+                                                            margin-bottom:3px;
+                                                        ">
 
                                             Availability
 
@@ -1740,11 +1740,11 @@
                                     <div>
 
                                         <small style="
-                                                        color:#999;
-                                                        display:block;
-                                                        font-size:9px;
-                                                        margin-bottom:3px;
-                                                    ">
+                                                            color:#999;
+                                                            display:block;
+                                                            font-size:9px;
+                                                            margin-bottom:3px;
+                                                        ">
 
                                             Category
 
@@ -1827,13 +1827,13 @@
 
             const container = document.getElementById('recommendedProductsGrid');
             container.innerHTML = `
-                    <div class="no-products-found" style="grid-column:1/-1;text-align:center;padding:40px 20px;">
-                        <div class="spinner-border" style="color:var(--s-primary);width:2rem;height:2rem;" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                        <div class="no-products-found" style="grid-column:1/-1;text-align:center;padding:40px 20px;">
+                            <div class="spinner-border" style="color:var(--s-primary);width:2rem;height:2rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p style="color:#999;font-size:12px;margin-top:10px;">Loading products...</p>
                         </div>
-                        <p style="color:#999;font-size:12px;margin-top:10px;">Loading products...</p>
-                    </div>
-                `;
+                    `;
 
             fetch(`{{ route('customer.wishlist.filter') }}?${params.toString()}`, {
                 headers: {
@@ -1847,21 +1847,21 @@
                         container.innerHTML = data.html;
                     } else {
                         container.innerHTML = `
-                            <div class="no-products-found">
-                                <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
-                                <p>${data.message || 'Failed to load products.'}</p>
-                            </div>
-                        `;
+                                <div class="no-products-found">
+                                    <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
+                                    <p>${data.message || 'Failed to load products.'}</p>
+                                </div>
+                            `;
                     }
                 })
                 .catch(error => {
                     console.error('Filter error:', error);
                     container.innerHTML = `
-                        <div class="no-products-found">
-                            <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
-                            <p>Something went wrong. Please try again.</p>
-                        </div>
-                    `;
+                            <div class="no-products-found">
+                                <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
+                                <p>Something went wrong. Please try again.</p>
+                            </div>
+                        `;
                 });
         }
 
@@ -1935,17 +1935,17 @@
                         const hasDiscount = originalPrice > sellingPrice;
 
                         let priceHtml = `
-                        `;
+                            `;
 
                         if (hasDiscount) {
                             priceHtml += `
-                                <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
-                                    ₹${parseFloat(originalPrice).toFixed(0)}
-                                </span>
-                                <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
-                                    ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
-                                </span>
-                            `;
+                                    <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
+                                        ₹${parseFloat(originalPrice).toFixed(0)}
+                                    </span>
+                                    <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
+                                        ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
+                                    </span>
+                                `;
                         }
 
                         document.getElementById('modalProductPrice').innerHTML = priceHtml;
@@ -1974,34 +1974,34 @@
                         if (actionEl) {
                             if (product.is_futured) {
                                 actionEl.innerHTML = `
-                            <button class="btn btn-outline-secondary w-100" style="padding:12px;font-weight:600;">
-                                <i class="bi bi-bell me-2"></i> Notify Me
-                            </button>
-                        `;
+                                <button class="btn btn-outline-secondary w-100" style="padding:12px;font-weight:600;">
+                                    <i class="bi bi-bell me-2"></i> Notify Me
+                                </button>
+                            `;
                             } else if (product.is_out_of_stock || product.stock <= 0) {
                                 actionEl.innerHTML = `
-                            <button class="btn btn-secondary w-100" disabled style="padding:12px;font-weight:600;cursor:not-allowed;">
-                                <i class="bi bi-x-circle me-2"></i> Out of Stock
-                            </button>
-                        `;
+                                <button class="btn btn-secondary w-100" disabled style="padding:12px;font-weight:600;cursor:not-allowed;">
+                                    <i class="bi bi-x-circle me-2"></i> Out of Stock
+                                </button>
+                            `;
                             } else {
                                 // Check if product is in cart
                                 const cart = getCart ? getCart() : [];
                                 const inCart = cart.some(item => item.id == product.id);
 
                                 actionEl.innerHTML = `
-                            <button type="button" class="btn btn-primary w-100 add-to-cart-btn"
-                                data-product-id="${product.id}"
-                                data-product-name="${product.name.replace(/'/g, "\\'")}"
-                                data-product-price="${sellingPrice}"
-                                data-product-slug="${product.slug || ''}"
-                                data-product-image="${product.image || ''}"
-                                onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug || ''}', '${product.image || ''}', ${originalPrice});"
-                                style="padding:12px;font-weight:600;">
-                                <i class="bi ${inCart ? 'bi-check-lg' : 'bi-cart-plus'} me-2"></i>
-                                ${inCart ? 'In Cart' : 'Add to Cart'}
-                            </button>
-                        `;
+                                <button type="button" class="btn btn-primary w-100 add-to-cart-btn"
+                                    data-product-id="${product.id}"
+                                    data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                    data-product-price="${sellingPrice}"
+                                    data-product-slug="${product.slug || ''}"
+                                    data-product-image="${product.image || ''}"
+                                    onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug || ''}', '${product.image || ''}', ${originalPrice});"
+                                    style="padding:12px;font-weight:600;">
+                                    <i class="bi ${inCart ? 'bi-check-lg' : 'bi-cart-plus'} me-2"></i>
+                                    ${inCart ? 'In Cart' : 'Add to Cart'}
+                                </button>
+                            `;
                             }
                         }
 
@@ -2016,11 +2016,11 @@
                         if (content) {
                             content.style.display = 'block';
                             content.innerHTML = `
-                        <div class="text-center py-4">
-                            <i class="bi bi-exclamation-circle" style="font-size:40px;color:#ef4444;"></i>
-                            <p class="mt-2 text-danger">${error.message || 'Failed to load product details.'}</p>
-                        </div>
-                    `;
+                            <div class="text-center py-4">
+                                <i class="bi bi-exclamation-circle" style="font-size:40px;color:#ef4444;"></i>
+                                <p class="mt-2 text-danger">${error.message || 'Failed to load product details.'}</p>
+                            </div>
+                        `;
                         }
                     });
             });
@@ -2152,35 +2152,35 @@
                 toastContainer = document.createElement('div');
                 toastContainer.id = 'wishlist-toast-container';
                 toastContainer.style.cssText = `
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                z-index: 99999;
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-                max-width: 350px;
-                width: 100%;
-            `;
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 99999;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    max-width: 350px;
+                    width: 100%;
+                `;
                 document.body.appendChild(toastContainer);
             }
 
             const toast = document.createElement('div');
             const bgColor = type === 'added' ? '#27ae60' : '#e74c3c';
             toast.style.cssText = `
-            background: #fff;
-            padding: 12px 18px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            border-left: 4px solid ${bgColor};
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideInRight 0.3s ease;
-            font-size: 14px;
-            color: #292725;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        `;
+                background: #fff;
+                padding: 12px 18px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                border-left: 4px solid ${bgColor};
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                animation: slideInRight 0.3s ease;
+                font-size: 14px;
+                color: #292725;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+            `;
 
             const icon = document.createElement('i');
             icon.className = type === 'added' ? 'bi bi-heart-fill' : 'bi bi-heart';

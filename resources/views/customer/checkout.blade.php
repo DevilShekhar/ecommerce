@@ -1977,6 +1977,10 @@
                     .then(function (data) {
                         console.log('Verification Response Data:', data);
                         if (data.success) {
+                            localStorage.removeItem('cart');
+                            sessionStorage.removeItem('cart_synced');
+                            sessionStorage.setItem('order_placed', 'true');
+                            console.log('Cart cleared from localStorage after Razorpay payment');
                             showToast('success', 'Payment Success!', data.message);
                             setTimeout(function () {
                                 window.location.href = data.redirect_url || '{{ route("customer.dashboard") }}';

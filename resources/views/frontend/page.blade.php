@@ -176,51 +176,72 @@
         </section>
     @endif
 
-    {{-- BANNER CAROUSEL — Dynamic from Backend --}}
-    @if(isset($banners) && $banners->count() > 0)
-        <section class="banner-carousel-section py-5">
-            <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-                <div class="banner-carousel-wrapper">
-                    <div class="banner-carousel-container">
-                        @foreach($banners as $index => $banner)
-                            <div class="banner-carousel-slide {{ $index === 0 ? 'active' : '' }}"
-                                style="background-image: url('{{ asset('storage/' . $banner->image) }}');">
-                                <div class="banner-carousel-overlay"></div>
-                                <div class="banner-carousel-content">
-                                    <div class="banner-carousel-text">
-                                        @if($banner->title)
-                                            <h3 class="banner-carousel-title">{{ $banner->title }}</h3>
-                                        @endif
-                                        @if($banner->subtitle)
-                                            <p class="banner-carousel-subtitle">{{ $banner->subtitle }}</p>
-                                        @endif
-                                        <a href="/login" class="banner-btn">
-                                            Shop Now <i class="bi bi-arrow-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
+  @if(isset($banners) && $banners->count() > 0)
+<section class="banner-slider-section py-5">
+    <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;">
 
-                        @if($banners->count() > 1)
-                            <div class="banner-carousel-dots">
-                                @foreach($banners as $index => $banner)
-                                    <span class="banner-carousel-dot {{ $index === 0 ? 'active' : '' }}"
-                                        data-slide="{{ $index }}"></span>
-                                @endforeach
-                            </div>
-                            <button class="banner-carousel-arrow prev" type="button">
-                                <i class="bi bi-chevron-left"></i>
-                            </button>
-                            <button class="banner-carousel-arrow next" type="button">
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
-                        @endif
+        <div class="banner-slider-wrapper" style="position:relative;overflow:hidden;">
+
+            <!-- Track -->
+            <div class="banner-slider-track" id="bannerSliderTrack"
+                 style="display:flex;gap:20px;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);">
+
+                @foreach($banners as $banner)
+                    <div class="banner-card"
+                         style="min-width:100%;flex-shrink:0;height:380px;border-radius:16px;overflow:hidden;position:relative;background:#f4efe7;">
+
+                        <img src="{{ asset('storage/' . $banner->image) }}"
+                             alt="{{ $banner->title }}"
+                             style="width:100%;height:100%;object-fit:cover;">
+
+                        <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(0,0,0,0.55), transparent);"></div>
+
+                        <div style="position:absolute;bottom:30px;left:30px;right:30px;color:#fff;">
+                            @if($banner->title)
+                                <h3 style="font-size:28px;font-weight:600;margin-bottom:8px;">
+                                    {{ $banner->title }}
+                                </h3>
+                            @endif
+                            @if($banner->subtitle)
+                                <p style="font-size:15px;opacity:0.9;margin-bottom:16px;">
+                                    {{ $banner->subtitle }}
+                                </p>
+                            @endif
+                            <a href="/login"
+                               style="display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:#B89B5E;color:#fff;border-radius:50px;text-decoration:none;font-weight:600;font-size:13px;">
+                                Shop Now <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
                     </div>
-                </div>
+                @endforeach
+
             </div>
-        </section>
-    @endif
+
+            <!-- Arrows -->
+            @if($banners->count() > 1)
+                <button class="banner-prev"
+                        style="position:absolute;top:50%;left:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="banner-next"
+                        style="position:absolute;top:50%;right:12px;transform:translateY(-50%);z-index:5;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,0.95);box-shadow:0 4px 15px rgba(0,0,0,0.1);cursor:pointer;">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            @endif
+        </div>
+
+        <!-- Dots -->
+        @if($banners->count() > 1)
+            <div class="banner-dots" style="display:flex;justify-content:center;gap:8px;margin-top:18px;">
+                @foreach($banners as $index => $banner)
+                    <span class="banner-dot" data-index="{{ $index }}"
+                          style="width:10px;height:10px;border-radius:50%;background:{{ $index === 0 ? '#B89B5E' : '#D5CFC5' }};cursor:pointer;transition:all 0.3s;"></span>
+                @endforeach
+            </div>
+        @endif
+    </div>
+</section>
+@endif
     <section class="products-section-compact py-4 bg-brand-bg">
         <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
             <div class="section-header-compact text-center mb-3">
@@ -345,7 +366,7 @@
                                 $productName = $product->name;
                                 $sellingPrice = $product->selling_price;
                                 $originalPrice = $product->price;
-                                $hasDiscount = $originalPrice > $sellingPrice; 
+                                $hasDiscount = $originalPrice > $sellingPrice;
                                 $productSlug = $product->slug;
                                 $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
                                 $primaryImage = !empty($images) ? $images[0] : null;
@@ -451,19 +472,18 @@
                                     </a>
 
                                     <!-- Wishlist Heart Button -->
-                                    <!-- Wishlist Heart Button - NOW PASSING BOTH PRICES -->
-<button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
-    data-product-name="{{ addslashes($productName) }}"
-    data-product-price="{{ $sellingPrice }}"
-    data-product-slug="{{ $productSlug }}"
-    data-product-image="{{ $primaryImage }}"
-    onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $sellingPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}', {{ $originalPrice }});"
-    style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
-    aria-label="Add to wishlist">
-    <i class="bi bi-heart" style="font-size:14px;color:#77736D;transition:all 0.3s ease;"></i>
-</button>
+                                    <button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
+                                        data-product-name="{{ addslashes($productName) }}"
+                                        data-product-price="{{ $sellingPrice }}"
+                                        data-product-slug="{{ $productSlug }}"
+                                        data-product-image="{{ $primaryImage }}"
+                                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $sellingPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}', {{ $originalPrice }});"
+                                        style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+                                        aria-label="Add to wishlist">
+                                        <i class="bi bi-heart" style="font-size:14px;color:#77736D;transition:all 0.3s ease;"></i>
+                                    </button>
 
-                                    <!-- Add to Cart Button - NOW PASSING BOTH PRICES -->
+                                    <!-- Add to Cart Button -->
                                     <div class="product-action-compact" style="padding:0 14px 16px;">
                                         <button type="button" class="add-to-cart-btn" data-product-id="{{ $productId }}"
                                             data-product-name="{{ addslashes($productName) }}"
@@ -1373,62 +1393,80 @@
         // MAIN INIT - SINGLE DOMContentLoaded
         // =============================================
         document.addEventListener('DOMContentLoaded', function () {
-            // Initialize all components
-            startAutoSlide();
-            initHeroSlider();
-            initCategorySlider();
-            initAvailableSlider();
-            initFaq();
+    const track = document.getElementById('bannerSliderTrack');
+    const cards = document.querySelectorAll('.banner-card');
+    const dots = document.querySelectorAll('.banner-dot');
+    const prevBtn = document.querySelector('.banner-prev');
+    const nextBtn = document.querySelector('.banner-next');
 
-            // Stop auto-slide on hover
-            const sliderContainer = document.querySelector('.slider-container');
-            if (sliderContainer) {
-                sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-                sliderContainer.addEventListener('mouseleave', startAutoSlide);
-            }
+    if (!track || cards.length === 0) return;
 
-            // Handle window resize
-            window.addEventListener('resize', function () {
-                updateSlider();
-            });
+    let currentIndex = 0;
+    let autoSlide;
 
-            // Modal close on background click
-            const modal = document.getElementById('productModal');
-            if (modal) {
-                modal.addEventListener('click', function (e) {
-                    if (e.target === this) {
-                        closeProductDetail();
-                    }
-                });
-            }
+    function goToSlide(index) {
+        if (index < 0) index = cards.length - 1;
+        if (index >= cards.length) index = 0;
 
-            // Modal close on Escape key
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    closeProductDetail();
-                }
-            });
+        currentIndex = index;
 
-            // Thumbnail click delegation
-            document.addEventListener('click', function (e) {
-                const thumbnail = e.target.closest('.thumbnail-img');
-                if (thumbnail) {
-                    const index = parseInt(thumbnail.dataset.index);
-                    if (!isNaN(index)) {
-                        changeMainImage(index);
-                    }
-                }
+        // Move track (one full card at a time)
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
 
-                const navBtn = e.target.closest('.gallery-nav');
-                if (navBtn) {
-                    if (navBtn.classList.contains('prev')) {
-                        changeImage(-1);
-                    } else if (navBtn.classList.contains('next')) {
-                        changeImage(1);
-                    }
-                }
-            });
+        // Update dots
+        dots.forEach((dot, i) => {
+            dot.style.background = i === currentIndex ? '#B89B5E' : '#D5CFC5';
         });
+    }
+
+    function next() {
+        goToSlide(currentIndex + 1);
+    }
+
+    function prev() {
+        goToSlide(currentIndex - 1);
+    }
+
+    // Buttons
+    if (nextBtn) nextBtn.addEventListener('click', () => {
+        next();
+        resetAuto();
+    });
+
+    if (prevBtn) prevBtn.addEventListener('click', () => {
+        prev();
+        resetAuto();
+    });
+
+    // Dots
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSlide(index);
+            resetAuto();
+        });
+    });
+
+    // Auto slide
+    function startAuto() {
+        autoSlide = setInterval(next, 4000);
+    }
+
+    function resetAuto() {
+        clearInterval(autoSlide);
+        startAuto();
+    }
+
+    // Pause on hover
+    const wrapper = document.querySelector('.banner-slider-wrapper');
+    if (wrapper) {
+        wrapper.addEventListener('mouseenter', () => clearInterval(autoSlide));
+        wrapper.addEventListener('mouseleave', startAuto);
+    }
+
+    // Init
+    goToSlide(0);
+    startAuto();
+});
 
         // Update total slides when window loads
         window.addEventListener('load', function () {

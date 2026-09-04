@@ -35,6 +35,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialLoginController;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -82,7 +83,7 @@ Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shops', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/shop/{slug}', [ShopController::class, 'show'])
     ->name('shop.show');
-    Route::get('/customer/products/{slug}', [DashboardController::class, 'customerProductDetail'])
+Route::get('/customer/products/{slug}', [DashboardController::class, 'customerProductDetail'])
     ->name('customer.products.detail');
 Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
     ->name('shop.subcategories');
@@ -305,3 +306,23 @@ Route::get('/search', function (Request $request) {
             ->limit(8)->get(['id', 'name', 'slug', 'price', 'image']),
     ]);
 });
+Route::get('/get-subcategories/{categorySlug}', function ($categorySlug) {
+    $category = ProductCategory::query()->where('slug', $categorySlug)->first();
+
+    if (! $category) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Category not found',
+        ]);
+    }
+
+    $subcategories = SubCategory::query()->where('category_id', $category->id)
+        ->where('status', 1)
+        ->orderBy('name')
+        ->get(['id', 'slug', 'name']);
+
+    return response()->json([
+        'success' => true,
+        'subcategories' => $subcategories,
+    ]);
+})->name('get.subcategories');
