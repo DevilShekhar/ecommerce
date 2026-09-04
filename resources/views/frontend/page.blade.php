@@ -405,21 +405,21 @@
 
                                             <!-- DISCOUNT BADGE - Show only if discount exists -->
                                             @if($hasDiscount)
-                                                        <span style="
-                                                    position:absolute;
-                                                    top:10px;
-                                                    left:10px;
-                                                    background:#e74c3c;
-                                                    color:#fff;
-                                                    padding:3px 10px;
-                                                    border-radius:4px;
-                                                    font-size:10px;
-                                                    font-weight:700;
-                                                    z-index:2;
-                                                    box-shadow:0 2px 8px rgba(231,76,60,0.3);
-                                                ">
-                                                            {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
-                                                        </span>
+                                                <span style="
+                                                        position:absolute;
+                                                        top:10px;
+                                                        left:10px;
+                                                        background:#e74c3c;
+                                                        color:#fff;
+                                                        padding:3px 10px;
+                                                        border-radius:4px;
+                                                        font-size:10px;
+                                                        font-weight:700;
+                                                        z-index:2;
+                                                        box-shadow:0 2px 8px rgba(231,76,60,0.3);
+                                                    ">
+                                                    {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
+                                                </span>
                                             @endif
 
                                             <!-- Stock Badge -->
