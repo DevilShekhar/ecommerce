@@ -34,29 +34,18 @@ class ProductCategoryController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_ads' => 'nullable|string',
             'meta_keyword' => 'nullable|string',
+            'slug' => 'nullable|string|max:255|unique:product_categories,slug',
         ]);
+        $validatedData['slug'] = \Illuminate\Support\Str::slug($request->name);
 
-        $validatedData['slug'] = Str::slug($request->name);
-
-        // Debug: Check if file is uploaded
+        // Upload category image
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-
-            // Debug: Check file details
-            dd([
-                'file_exists' => $file->isValid(),
-                'original_name' => $file->getClientOriginalName(),
-                'extension' => $file->getClientOriginalExtension(),
-                'size' => $file->getSize(),
-                'mime_type' => $file->getMimeType(),
-                'temp_path' => $file->getRealPath(),
-            ]);
-
-            $path = $file->store('categories', 'public');
-            $validatedData['image'] = $path;
+            $validatedData['image'] = $request->file('image')
+                ->store('categories', 'public');
         }
 
         $validatedData['created_by'] = Auth::id();
+
         ProductCategory::create($validatedData);
 
         return redirect()
@@ -64,17 +53,16 @@ class ProductCategoryController extends Controller
             ->with('success', 'Product category created successfully.');
     }
 
+    public function edit(ProductCategory $productCategory)
+    {
+        $categories = ProductCategory::query()->latest()->get();
+
+        return view('admin.product_categories.edit', compact('productCategory', 'categories'));
+    }
+
     public function update(Request $request, $id)
     {
         $productCategory = ProductCategory::findOrFail($id);
-
-        // Debug: Check current record before update
-        dd([
-            'current_record' => $productCategory->toArray(),
-            'current_image_path' => $productCategory->image,
-            'image_exists_in_storage' => $productCategory->image ? Storage::disk('public')->exists($productCategory->image) : false,
-            'full_url' => $productCategory->image ? asset('storage/'.$productCategory->image) : null,
-        ]);
 
         $validatedData = $request->validate([
             'name' => 'required|string|max:255|unique:product_categories,name,'.$id,
@@ -86,7 +74,10 @@ class ProductCategoryController extends Controller
             'meta_keyword' => 'nullable|string',
         ]);
 
-        $slug = Str::slug($request->name);
+        // Generate slug automatically from category name
+        $slug = \Illuminate\Support\Str::slug($request->name);
+
+        // Make sure slug is unique except current category
         $originalSlug = $slug;
         $counter = 1;
 
@@ -98,20 +89,21 @@ class ProductCategoryController extends Controller
             $slug = $originalSlug.'-'.$counter;
             $counter++;
         }
+
         $validatedData['slug'] = $slug;
 
-        // Debug: Check new file upload
+        // Delete old image and upload new image
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
 
-            // Delete old image
-            if ($productCategory->image) {
+            if (
+                $productCategory->image &&
+                Storage::disk('public')->exists($productCategory->image)
+            ) {
                 Storage::disk('public')->delete($productCategory->image);
             }
 
-            // Store new image
-            $path = $file->store('categories', 'public');
-            $validatedData['image'] = $path;
+            $validatedData['image'] = $request->file('image')
+                ->store('categories', 'public');
         }
 
         $productCategory->update($validatedData);
