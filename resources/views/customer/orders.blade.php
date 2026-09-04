@@ -1,6 +1,6 @@
 @extends('frontend.layouts.customer-layout')
 
-@section('title', 'My Orders - ShopEase')
+@section('title', 'My Orders - Aethelweave')
 
 @section('styles')
 

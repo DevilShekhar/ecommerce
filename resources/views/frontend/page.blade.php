@@ -5,7 +5,9 @@
     @push('styles')
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
             tailwind.config = {
@@ -42,27 +44,21 @@
         <div class="hero-slider-container">
 
             {{-- HARD CODED SLIDE 1 --}}
-            <div class="hero-slide active"
-                data-subtitle="Exquisite Craftsmanship"
-                data-title="Discover Timeless Elegance"
+            <div class="hero-slide active" data-subtitle="Exquisite Craftsmanship" data-title="Discover Timeless Elegance"
                 data-description="Explore our curated collection of artisan jewellery, each piece crafted with precision and passion."
                 style="background-image:url('https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1920&h=1080&fit=crop');">
                 <div class="hero-overlay"></div>
             </div>
 
             {{-- HARD CODED SLIDE 2 --}}
-            <div class="hero-slide"
-                data-subtitle="Timeless Beauty"
-                data-title="Elegance That Speaks"
+            <div class="hero-slide" data-subtitle="Timeless Beauty" data-title="Elegance That Speaks"
                 data-description="Discover jewellery designed to celebrate your most beautiful moments."
                 style="background-image:url('https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=1920&h=1080&fit=crop');">
                 <div class="hero-overlay"></div>
             </div>
 
             {{-- HARD CODED SLIDE 3 --}}
-            <div class="hero-slide"
-                data-subtitle="Luxury Collection"
-                data-title="Made To Shine"
+            <div class="hero-slide" data-subtitle="Luxury Collection" data-title="Made To Shine"
                 data-description="Beautifully crafted pieces created to make every occasion unforgettable."
                 style="background-image:url('https://images.unsplash.com/photo-1589674781759-c21c37956a44?w=1920&h=1080&fit=crop');">
                 <div class="hero-overlay"></div>
@@ -70,11 +66,9 @@
 
             {{-- DYNAMIC ADMIN SLIDES --}}
             @foreach($homeSections as $section)
-                <div class="hero-slide"
-                    data-subtitle="{{ $section->subtitle }}"
-                    data-title="{{ $section->title }}"
+                <div class="hero-slide" data-subtitle="{{ $section->subtitle }}" data-title="{{ $section->title }}"
                     data-description="{{ $section->description }}"
-                    style="background-image:url('{{ $section->image ? asset('storage/'.$section->image) : 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1920&h=1080&fit=crop' }}');">
+                    style="background-image:url('{{ $section->image ? asset('storage/' . $section->image) : 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1920&h=1080&fit=crop' }}');">
                     <div class="hero-overlay"></div>
                 </div>
             @endforeach
@@ -124,9 +118,9 @@
         </button>
     </section>
 
-    
+
     {{-- CATEGORY SLIDER — Dynamic from Backend --}}
-   
+
     @if(isset($categories) && $categories->count() > 0)
         <section class="category-slider-section py-5">
             <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
@@ -143,7 +137,9 @@
                     <div class="category-slider-container">
                         @foreach($categories as $category)
                             <div class="category-slide">
-                                <a href="{{ route('shop', ['category' => $category->slug]) }}" class="category-card">
+                                <a href="{{ route('customer.shop.category', ['category' => $category->slug]) }}"
+                                    class="category-card">
+
                                     <div class="category-card-image">
                                         @if($category->image)
                                             <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
@@ -153,15 +149,24 @@
                                                 <i class="bi bi-folder"></i>
                                             </div>
                                         @endif
-                                        <span class="category-product-count">{{ $category->products_count ?? 0 }}
-                                            Products</span>
+
+                                        <span class="category-product-count">
+                                            {{ $category->products_count ?? 0 }} Products
+                                        </span>
                                     </div>
+
                                     <div class="category-card-body">
-                                        <h5 class="category-card-name">{{ $category->name }}</h5>
+                                        <h5 class="category-card-name">
+                                            {{ $category->name }}
+                                        </h5>
+
                                         @if($category->description)
-                                            <p class="category-card-desc">{{ Str::limit($category->description, 40) }}</p>
+                                            <p class="category-card-desc">
+                                                {{ Str::limit($category->description, 40) }}
+                                            </p>
                                         @endif
                                     </div>
+
                                 </a>
                             </div>
                         @endforeach
@@ -229,59 +234,82 @@
 
             <div class="row" style="display:flex;flex-wrap:wrap;margin:0 -5px;">
                 @foreach($featuredProducts as $product)
-                    <div class="product-col-compact">
-                        <div class="product-card-compact">
-                            <div class="product-image-wrapper-compact">
-                                @php
-                                    $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                                    $primaryImage = !empty($images) ? $images[0] : null;
-                                @endphp
+                    @php
+                        $productId = $product->id;
+                        $productName = $product->name;
+                        $productPrice = $product->price;
+                        $productSlug = $product->slug;
+                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                        $primaryImage = !empty($images) ? $images[0] : null;
+                    @endphp
 
-                                @if($primaryImage)
-                                    <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}" class="product-image-compact"
-                                        loading="lazy">
-                                @else
-                                    <div class="product-image-placeholder-compact">
-                                        <i class="bi bi-image"></i>
-                                    </div>
-                                @endif
-
-                                <span class="product-badge-compact futured-badge-compact">
-                                    <i class="bi bi-star-fill" style="font-size:8px;"></i>
-                                </span>
-
-                                @if($product->stock !== null && $product->stock <= 0)
-                                    <span class="stock-badge-compact out-of-stock-compact">Out</span>
-                                @else
-                                    <span class="stock-badge-compact in-stock-compact">In</span>
-                                @endif
-                            </div>
-
-                            <div class="product-body-compact">
-                                @if($product->brand)
-                                    <div class="product-brand-compact">{{ $product->brand->name }}</div>
-                                @endif
-
-                                <h5 class="product-title-compact">{{ Str::limit($product->name, 20) }}</h5>
-
-                                <div class="product-price-compact">
-                                    ₹{{ number_format($product->price, 0) }}
-                                </div>
-
-                                <div class="product-action-compact">
-                                    @if($product->stock !== null && $product->stock <= 0)
-                                        <button type="button" class="btn-add-cart-compact" disabled>
-                                            <i class="bi bi-x-circle" style="font-size:12px;"></i>
-                                        </button>
+                    <div class="product-col-compact" style="position:relative;">
+                        <a href="{{ route('shop.show', $product->slug) }}" class="product-card-compact"
+                            style="display:block;text-decoration:none;cursor:pointer;">
+                            <div class="product-card-compact">
+                                <div class="product-image-wrapper-compact" style="position:relative;">
+                                    @if($primaryImage)
+                                        <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
+                                            class="product-image-compact" loading="lazy">
                                     @else
-                                        <button type="button" class="btn-add-cart-compact add-to-cart-btn"
-                                            data-product-id="{{ $product->id }}">
-                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i>
-                                        </button>
+                                        <div class="product-image-placeholder-compact">
+                                            <i class="bi bi-image"></i>
+                                        </div>
                                     @endif
+
+                                    <span class="product-badge-compact futured-badge-compact">
+                                        <i class="bi bi-star-fill" style="font-size:8px;"></i>
+                                    </span>
+
+                                    @if($product->stock !== null && $product->stock <= 0)
+                                        <span class="stock-badge-compact out-of-stock-compact">Out</span>
+                                    @else
+                                        <span class="stock-badge-compact in-stock-compact">In</span>
+                                    @endif
+
+                                    <!-- Wishlist Heart Button -->
+                                    <button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
+                                        data-product-name="{{ addslashes($productName) }}"
+                                        data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                        data-product-image="{{ $primaryImage }}"
+                                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');"
+                                        style="position:absolute;top:8px;right:8px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+                                        aria-label="Add to wishlist">
+                                        <i class="bi bi-heart"
+                                            style="font-size:13px;color:#77736D;transition:all 0.3s ease;"></i>
+                                    </button>
+                                </div>
+
+                                <div class="product-body-compact">
+                                    @if($product->brand)
+                                        <div class="product-brand-compact">{{ $product->brand->name }}</div>
+                                    @endif
+
+                                    <h5 class="product-title-compact">{{ Str::limit($product->name, 20) }}</h5>
+
+                                    <div class="product-price-compact">
+                                        ₹{{ number_format($product->price, 0) }}
+                                    </div>
+
+                                    <div class="product-action-compact">
+                                        @if($product->stock !== null && $product->stock <= 0)
+                                            <button type="button" class="btn-add-cart-compact" disabled>
+                                                <i class="bi bi-x-circle" style="font-size:12px;"></i>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn-add-cart-compact add-to-cart-btn"
+                                                data-product-id="{{ $productId }}"
+                                                data-product-name="{{ addslashes($productName) }}"
+                                                data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                                data-product-image="{{ $primaryImage }}"
+                                                onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');">
+                                                <i class="bi bi-cart-plus" style="font-size:12px;"></i>
+                                            </button>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -294,122 +322,144 @@
         </div>
     </section>
 
+
     {{-- AVAILABLE PRODUCTS SLIDER --}}
-@if(isset($availableProducts) && $availableProducts->count() > 0)
-    <section class="products-section-compact py-4" style="background:#FFFFFF;">
-        <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
-            <div class="section-header-compact text-center mb-3">
-                <span class="section-badge-compact"
-                    style="display:inline-block;padding:2px 12px;background:#F4EFE7;color:#B89B5E;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Available</span>
-                <h2 class="section-title"
-                    >
-                    Available Products</h2>
-                <p class="section-subtitle-compact" style="font-size:0.8rem;color:#77736D;margin-bottom:0;">Explore our
-                    available jewellery collection</p>
-            </div>
+    @if(isset($availableProducts) && $availableProducts->count() > 0)
+        <section class="products-section-compact py-4" style="background:#FFFFFF;">
+            <div class="container" style="max-width:1200px;margin:0 auto;padding:0 15px;width:100%;">
+                <div class="section-header-compact text-center mb-3">
+                    <span class="section-badge-compact"
+                        style="display:inline-block;padding:2px 12px;background:#F4EFE7;color:#B89B5E;font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.12em;border-radius:50px;margin-bottom:4px;">Available</span>
+                    <h2 class="section-title">Available Products</h2>
+                    <p class="section-subtitle-compact" style="font-size:0.8rem;color:#77736D;margin-bottom:0;">Explore our
+                        available jewellery collection</p>
+                </div>
 
-            <!-- Slider Container -->
-            <div class="slider-container" style="position:relative;overflow:hidden;">
-                <div class="slider-track" id="availableSliderTrack"
-                    style="display:flex;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);gap:15px;">
-                    @foreach($availableProducts as $product)
-                        <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
-                            <a href="{{ route('shop.show', $product->slug) }}" 
-                               class="product-card-compact" 
-                               style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E1D7;transition:all 0.3s ease;height:100%;display:block;text-decoration:none;">
-                                <div class="product-image-wrapper-compact"
-                                    style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FCFAF6;">
-                                    @php
-                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                                        $primaryImage = !empty($images) ? $images[0] : null;
-                                        $hasMultipleImages = count($images) > 1;
-                                    @endphp
+                <!-- Slider Container -->
+                <div class="slider-container" style="position:relative;overflow:hidden;">
+                    <div class="slider-track" id="availableSliderTrack"
+                        style="display:flex;transition:transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);gap:15px;">
+                        @foreach($availableProducts as $product)
+                            @php
+                                $productId = $product->id;
+                                $productName = $product->name;
+                                $productPrice = $product->price;
+                                $productSlug = $product->slug;
+                                $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                $primaryImage = !empty($images) ? $images[0] : null;
+                                $hasMultipleImages = count($images) > 1;
+                            @endphp
+                            <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
+                                <div class="product-card-compact"
+                                    style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E1D7;transition:all 0.3s ease;height:100%;display:block;text-decoration:none;position:relative;">
 
-                                    <!-- Main Image -->
-                                    @if($primaryImage)
-                                        <img src="{{ asset($primaryImage) }}" alt="{{ $product->name }}"
-                                            class="product-image-compact main-image"
-                                            style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;position:absolute;top:0;left:0;"
-                                            loading="lazy">
-                                    @else
-                                        <div class="product-image-placeholder-compact"
-                                            style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
-                                            <i class="bi bi-image" style="font-size:40px;"></i>
+                                    <a href="{{ route('shop.show', $productSlug) }}"
+                                        style="text-decoration:none;color:inherit;display:block;">
+                                        <div class="product-image-wrapper-compact"
+                                            style="position:relative;aspect-ratio:1/1;overflow:hidden;background:#FCFAF6;">
+
+                                            <!-- Main Image -->
+                                            @if($primaryImage)
+                                                <img src="{{ asset($primaryImage) }}" alt="{{ $productName }}"
+                                                    class="product-image-compact main-image"
+                                                    style="width:100%;height:100%;object-fit:cover;transition:transform 0.5s ease;position:absolute;top:0;left:0;"
+                                                    loading="lazy">
+                                            @else
+                                                <div class="product-image-placeholder-compact"
+                                                    style="display:flex;align-items:center;justify-content:center;height:100%;color:#D5CFC5;">
+                                                    <i class="bi bi-image" style="font-size:40px;"></i>
+                                                </div>
+                                            @endif
+
+                                            <!-- Hover Image (Second Image) -->
+                                            @if($hasMultipleImages && isset($images[1]))
+                                                <img src="{{ asset($images[1]) }}" alt="{{ $productName }} - view 2"
+                                                    class="product-image-compact hover-image"
+                                                    style="width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;position:absolute;top:0;left:0;opacity:0;"
+                                                    loading="lazy">
+                                            @endif
+
+                                            <!-- Stock Badge -->
+                                            <span class="stock-badge-compact"
+                                                style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
                                         </div>
-                                    @endif
 
-                                    <!-- Hover Image (Second Image) -->
-                                    @if($hasMultipleImages && isset($images[1]))
-                                        <img src="{{ asset($images[1]) }}" alt="{{ $product->name }} - view 2"
-                                            class="product-image-compact hover-image"
-                                            style="width:100%;height:100%;object-fit:cover;transition:opacity 0.5s ease;position:absolute;top:0;left:0;opacity:0;"
-                                            loading="lazy">
-                                    @endif
+                                        <div class="product-body-compact" style="padding:12px 14px 16px;">
+                                            @if($product->brand)
+                                                <div class="product-brand-compact"
+                                                    style="font-size:10px;font-weight:600;color:#B89B5E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">
+                                                    {{ $product->brand->name }}
+                                                </div>
+                                            @endif
+                                            <h5 class="product-title-compact"
+                                                style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#292725;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                                {{ Str::limit($productName, 20) }}
+                                            </h5>
+                                            <div class="product-price-compact"
+                                                style="font-size:16px;font-weight:700;color:#292725;margin-bottom:8px;">
+                                                ₹{{ number_format($productPrice, 0) }}
+                                            </div>
+                                        </div>
+                                    </a>
 
-                                    <span class="product-badge-compact"
-                                        style="position:absolute;top:10px;left:10px;background:#292725;color:#fff;padding:3px 10px;border-radius:20px;font-size:9px;font-weight:600;text-transform:uppercase;z-index:2;">
-                                        <i class="bi bi-fire" style="font-size:8px;"></i>
-                                    </span>
-                                    <span class="stock-badge-compact"
-                                        style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
+                                    <!-- Wishlist Heart Button -->
+                                    <button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
+                                        data-product-name="{{ $productName }}" data-product-price="{{ $productPrice }}"
+                                        data-product-slug="{{ $productSlug }}" data-product-image="{{ $primaryImage }}"
+                                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');"
+                                        style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+                                        aria-label="Add to wishlist">
+                                        <i class="bi bi-heart" style="font-size:14px;color:#77736D;transition:all 0.3s ease;"></i>
+                                    </button>
 
-                                </div>
-                                <div class="product-body-compact" style="padding:12px 14px 16px;">
-                                    @if($product->brand)
-                                        <div class="product-brand-compact"
-                                            style="font-size:10px;font-weight:600;color:#B89B5E;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2px;">
-                                            {{ $product->brand->name }}</div>
-                                    @endif
-                                    <h5 class="product-title-compact"
-                                        style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#292725;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                        {{ Str::limit($product->name, 20) }}</h5>
-                                    <div class="product-price-compact"
-                                        style="font-size:16px;font-weight:700;color:#292725;margin-bottom:8px;">
-                                        ₹{{ number_format($product->price, 0) }}</div>
-                                    <div class="product-action-compact">
-                                        <button type="button" class="add-to-cart-btn" data-product-id="{{ $product->id }}"
-                                            onclick="event.stopPropagation();"
+                                    <!-- Add to Cart Button (outside the link) -->
+                                    <div class="product-action-compact" style="padding:0 14px 16px;">
+                                        <button type="button" class="add-to-cart-btn" data-product-id="{{ $productId }}"
+                                            data-product-name="{{ addslashes($productName) }}"
+                                            data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                            data-product-image="{{ $primaryImage }}"
+                                            onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');"
                                             style="width:100%;padding:6px 12px;background:#B89B5E;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
-                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i> Add
+                                            <i class="bi bi-cart-plus" style="font-size:12px;"></i>
+                                            <span class="btn-text">Add</span>
                                         </button>
                                     </div>
                                 </div>
-                            </a>
-                        </div>
-                    @endforeach
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <button class="slider-nav prev" onclick="slideProducts(-1)"
+                        style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-left" style="font-size:18px;color:#292725;"></i>
+                    </button>
+                    <button class="slider-nav next" onclick="slideProducts(1)"
+                        style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+                        <i class="bi bi-chevron-right" style="font-size:18px;color:#292725;"></i>
+                    </button>
                 </div>
 
-                <!-- Navigation Buttons -->
-                <button class="slider-nav prev" onclick="slideProducts(-1)"
-                    style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-                    <i class="bi bi-chevron-left" style="font-size:18px;color:#292725;"></i>
-                </button>
-                <button class="slider-nav next" onclick="slideProducts(1)"
-                    style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.95);border:1px solid #E8E1D7;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
-                    <i class="bi bi-chevron-right" style="font-size:18px;color:#292725;"></i>
-                </button>
-            </div>
+                <!-- Dots -->
+                <div class="slider-dots" style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
+                    @php
+                        $totalSlides = ceil($availableProducts->count() / 5);
+                    @endphp
+                    @for($i = 0; $i < $totalSlides; $i++)
+                        <span class="dot" data-index="{{ $i }}" onclick="goToSlide({{ $i }})"
+                            style="width:10px;height:10px;border-radius:50%;background:#D5CFC5;cursor:pointer;transition:all 0.3s ease;{{ $i === 0 ? 'background:#B89B5E;transform:scale(1.2);' : '' }}"></span>
+                    @endfor
+                </div>
 
-            <!-- Dots -->
-            <div class="slider-dots" style="display:flex;justify-content:center;gap:8px;margin-top:16px;">
-                @php
-                    $totalSlides = ceil($availableProducts->count() / 5);
-                @endphp
-                @for($i = 0; $i < $totalSlides; $i++)
-                    <span class="dot" data-index="{{ $i }}" onclick="goToSlide({{ $i }})"
-                        style="width:10px;height:10px;border-radius:50%;background:#D5CFC5;cursor:pointer;transition:all 0.3s ease;{{ $i === 0 ? 'background:#B89B5E;transform:scale(1.2);' : '' }}"></span>
-                @endfor
+                <div class="text-center mt-3">
+                    <a href="{{ route('shop.index') }}" class="btn-view-all"
+                        style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#B89B5E;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #B89B5E;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
+                        View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
+                    </a>
+                </div>
             </div>
-
-            <div class="text-center mt-3">
-                <a href="{{ route('shop.index') }}" class="btn-view-all"
-                    style="display:inline-flex;align-items:center;gap:6px;padding:8px 24px;background:transparent;color:#B89B5E;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;border:2px solid #B89B5E;border-radius:50px;text-decoration:none;transition:all 0.3s ease;">
-                    View All <i class="bi bi-arrow-right" style="font-size:12px;"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-@endif
+        </section>
+    @endif
 
     {{-- ABOUT SECTION --}}
     @if(isset($aboutUs) && $aboutUs)
@@ -606,7 +656,8 @@
 
             <div class="why-grid">
                 <div class="why-card">
-                    <img src="assets/admin/images/why-1.jpg" alt="Certified Jewellery Purity" class="why-card-image" loading="lazy">
+                    <img src="assets/admin/images/why-1.jpg" alt="Certified Jewellery Purity" class="why-card-image"
+                        loading="lazy">
                     <div class="why-card-overlay"></div>
                     <div class="why-card-content">
                         <div class="why-card-top">
@@ -617,13 +668,15 @@
                         </div>
                         <div class="why-card-details">
                             <h3 class="why-card-title">Certified Purity</h3>
-                            <p class="why-card-text">Every piece is hallmarked and certified for purity, quality and authenticity.</p>
+                            <p class="why-card-text">Every piece is hallmarked and certified for purity, quality and
+                                authenticity.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="why-card">
-                    <img src="assets/admin/images/why-2.jpg" alt="Expert Jewellery Craftsmanship" class="why-card-image" loading="lazy">
+                    <img src="assets/admin/images/why-2.jpg" alt="Expert Jewellery Craftsmanship" class="why-card-image"
+                        loading="lazy">
                     <div class="why-card-overlay"></div>
                     <div class="why-card-content">
                         <div class="why-card-top">
@@ -634,13 +687,15 @@
                         </div>
                         <div class="why-card-details">
                             <h3 class="why-card-title">Expert Craftsmanship</h3>
-                            <p class="why-card-text">Handcrafted by skilled master artisans who combine traditional techniques with modern craftsmanship.</p>
+                            <p class="why-card-text">Handcrafted by skilled master artisans who combine traditional
+                                techniques with modern craftsmanship.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="why-card">
-                    <img src="assets/admin/images/why-3.jpg" alt="Timeless Jewellery Designs" class="why-card-image" loading="lazy">
+                    <img src="assets/admin/images/why-3.jpg" alt="Timeless Jewellery Designs" class="why-card-image"
+                        loading="lazy">
                     <div class="why-card-overlay"></div>
                     <div class="why-card-content">
                         <div class="why-card-top">
@@ -651,13 +706,15 @@
                         </div>
                         <div class="why-card-details">
                             <h3 class="why-card-title">Timeless Designs</h3>
-                            <p class="why-card-text">Discover elegant designs ranging from classic heritage pieces to contemporary styles.</p>
+                            <p class="why-card-text">Discover elegant designs ranging from classic heritage pieces to
+                                contemporary styles.</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="why-card">
-                    <img src="assets/admin/images/why-4.jpg" alt="Trusted Jewellery Legacy" class="why-card-image" loading="lazy">
+                    <img src="assets/admin/images/why-4.jpg" alt="Trusted Jewellery Legacy" class="why-card-image"
+                        loading="lazy">
                     <div class="why-card-overlay"></div>
                     <div class="why-card-content">
                         <div class="why-card-top">
@@ -668,7 +725,8 @@
                         </div>
                         <div class="why-card-details">
                             <h3 class="why-card-title">Trusted Legacy</h3>
-                            <p class="why-card-text">Built on trust, transparency and exceptional service, we proudly serve customers with jewellery they can cherish.</p>
+                            <p class="why-card-text">Built on trust, transparency and exceptional service, we proudly serve
+                                customers with jewellery they can cherish.</p>
                         </div>
                     </div>
                 </div>
@@ -736,9 +794,10 @@
     <section class="faq-section-modern py-5">
         <div class="container">
             <div class="faq-header text-center">
-                <span class="section-badge">FAQ</span>
-                <h2 class="section-title">Frequently Asked Questions</h2>
-                <p class="section-subtitle">Find answers to common questions about our products, jewellery care, shipping and services.</p>
+                <div class="faq-eyebrow">FAQ</div>
+                <h2 class="faq-title">Frequently Asked Questions</h2>
+                <p class="faq-subtitle">Find answers to common questions about our products, jewellery care, shipping and
+                    services.</p>
             </div>
 
             <div class="faq-wrapper">
@@ -755,7 +814,8 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                We offer a 30-day return policy on all items. If you're not completely satisfied with your purchase, you can return it within 30 days of delivery for a full refund or exchange.
+                                We offer a 30-day return policy on all items. If you're not completely satisfied with your
+                                purchase, you can return it within 30 days of delivery for a full refund or exchange.
                             </div>
                         </div>
                     </div>
@@ -772,7 +832,8 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Yes, we specialize in custom jewellery design. Our expert designers work closely with you to create a unique piece that reflects your personal style.
+                                Yes, we specialize in custom jewellery design. Our expert designers work closely with you to
+                                create a unique piece that reflects your personal style.
                             </div>
                         </div>
                     </div>
@@ -789,7 +850,8 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                To keep your jewellery looking its best, clean it regularly with a soft cloth and mild soap solution. Avoid exposing it to harsh chemicals, perfumes or lotions.
+                                To keep your jewellery looking its best, clean it regularly with a soft cloth and mild soap
+                                solution. Avoid exposing it to harsh chemicals, perfumes or lotions.
                             </div>
                         </div>
                     </div>
@@ -806,7 +868,8 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Standard shipping within India typically takes 5–7 business days. International shipping generally takes 10–14 business days.
+                                Standard shipping within India typically takes 5–7 business days. International shipping
+                                generally takes 10–14 business days.
                             </div>
                         </div>
                     </div>
@@ -823,7 +886,8 @@
                         </button>
                         <div class="faq-answer">
                             <div class="faq-answer-inner">
-                                Selected jewellery pieces come with applicable authenticity and certification documentation. Product-specific certification details are provided on the respective product page.
+                                Selected jewellery pieces come with applicable authenticity and certification documentation.
+                                Product-specific certification details are provided on the respective product page.
                             </div>
                         </div>
                     </div>
@@ -837,44 +901,57 @@
         <div class="max-w-7xl mx-auto">
             <div class="text-center max-w-2xl mx-auto mb-14">
                 <p class="text-[11px] uppercase tracking-[0.3em] text-brand-gold font-semibold mb-2">We're Here To Help</p>
-                <h1 class="font-serif text-4xl sm:text-5xl font-medium tracking-wide mb-4 text-white">Let's Connect With Us</h1>
+                <h1 class="font-serif text-4xl sm:text-5xl font-medium tracking-wide mb-4 text-white">Let's Connect With Us
+                </h1>
                 <div class="flex items-center justify-center space-x-3 mb-5">
                     <span class="h-[1px] w-12 bg-brand-gold/40"></span>
                     <span class="w-1.5 h-1.5 rounded-full bg-brand-gold/60"></span>
                     <span class="h-[1px] w-12 bg-brand-gold/40"></span>
                 </div>
                 <p class="text-sm sm:text-base text-brand-gold font-light leading-relaxed max-w-xl mx-auto">
-                    Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always happy to assist.
+                    Have a question about our jewelry, orders, shipping, or anything else? Our expert team is always happy
+                    to assist.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 <div class="lg:col-span-7 space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                                    <path
+                                        d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.124-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
                                 </svg>
                             </div>
-                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">WhatsApp</h3>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">WhatsApp
+                            </h3>
                             <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
                         </div>
 
-                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
                             </div>
-                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Call Us</h3>
+                            <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Call Us
+                            </h3>
                             <p class="text-sm font-medium text-brand-dark">+91 98765 43210</p>
                         </div>
 
-                        <div class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
-                            <div class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
+                        <div
+                            class="bg-brand-card p-6 rounded-xl border border-brand-border/60 shadow-card hover-lift text-center flex flex-col items-center justify-center transition">
+                            <div
+                                class="w-12 h-12 rounded-full bg-[#F4EFE7] flex items-center justify-center text-brand-gold mb-3">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <h3 class="text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 mb-1">Email</h3>
@@ -882,10 +959,14 @@
                         </div>
                     </div>
 
-                    <div class="bg-brand-card p-6 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                    <div
+                        class="bg-brand-card p-6 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-gold bg-brand-bg px-3 py-1 rounded border border-brand-border/60">Find Us On Map</h3>
-                            <a href="https://maps.google.com" target="_blank" class="text-xs text-brand-gold underline hover:text-brand-dark transition">Open in Maps</a>
+                            <h3
+                                class="text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-gold bg-brand-bg px-3 py-1 rounded border border-brand-border/60">
+                                Find Us On Map</h3>
+                            <a href="https://maps.google.com" target="_blank"
+                                class="text-xs text-brand-gold underline hover:text-brand-dark transition">Open in Maps</a>
                         </div>
                         <div class="map-container w-full h-56 bg-gray-100 rounded-lg mb-4 border border-brand-border/60">
                             <iframe width="100%" height="100%" frameborder="0" style="border:0" loading="lazy"
@@ -894,13 +975,16 @@
                             </iframe>
                         </div>
                         <div class="text-center">
-                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">Visit Our Boutique</p>
-                            <p class="text-xs text-brand-dark font-medium">123, Jewelry Lane, Koregaon Park, Pune, Maharashtra 411001, India</p>
+                            <p class="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-1">Visit Our
+                                Boutique</p>
+                            <p class="text-xs text-brand-dark font-medium">123, Jewelry Lane, Koregaon Park, Pune,
+                                Maharashtra 411001, India</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 bg-brand-card p-8 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
+                <div
+                    class="lg:col-span-5 bg-brand-card p-8 rounded-xl border border-brand-border shadow-card hover:shadow-card-hover transition">
                     <h2 class="text-xl font-serif font-medium text-brand-dark mb-1">Get In Touch</h2>
                     <p class="text-xs text-gray-500 mb-6">Speak with our jewellery consultant</p>
 
@@ -915,25 +999,31 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
-                                <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">First Name *</label>
+                                <label
+                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">First
+                                    Name *</label>
                                 <input type="text" name="first_name" required placeholder="Enter your first name"
                                     class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                             </div>
                             <div>
-                                <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Last Name *</label>
+                                <label
+                                    class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Last
+                                    Name *</label>
                                 <input type="text" name="last_name" required placeholder="Enter your last name"
                                     class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Email Address *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Email
+                                Address *</label>
                             <input type="email" name="email" required placeholder="Enter your email"
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold input-focus-ring transition" />
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">I am Interested In... *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">I am
+                                Interested In... *</label>
                             <select name="interest" required
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold text-gray-600 transition">
                                 <option value="" disabled selected>I am Interested In...</option>
@@ -946,7 +1036,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Tell us your enquiry *</label>
+                            <label class="block text-[11px] font-medium uppercase tracking-wider text-gray-600 mb-1">Tell us
+                                your enquiry *</label>
                             <textarea name="message" rows="3" required placeholder="Enter your message"
                                 class="w-full px-4 py-2.5 text-sm bg-brand-bg/50 border border-brand-border rounded-lg focus:outline-none focus:ring-1 focus:ring-brand-gold resize-none input-focus-ring transition"></textarea>
                         </div>
@@ -959,13 +1050,16 @@
                 </div>
             </div>
 
-            <div class="text-center mt-12 text-[10px] text-white tracking-widest uppercase border-t border-brand-border/40 pt-6">
+            <div
+                class="text-center mt-12 text-[10px] text-white tracking-widest uppercase border-t border-brand-border/40 pt-6">
                 <span class="text-brand-gold/60">✦</span> Aethelweave · artisan jewellery
             </div>
         </div>
     </section>
     <script>
+        // =============================================
         // SLIDER FUNCTIONS
+        // =============================================
         let currentSlide = 0;
         let totalSlides = {{ ceil(($availableProducts->count() ?? 0) / 5) }};
         const slidesToShow = 5;
@@ -1052,6 +1146,7 @@
 
             changeMainImage(newIndex);
         }
+
         function closeProductDetail() {
             document.getElementById('productModal').style.display = 'none';
             document.body.classList.remove('modal-open');
@@ -1067,11 +1162,172 @@
         }
 
         // =============================================
-        // EVENT LISTENERS
+        // HERO SLIDER FUNCTIONS
         // =============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            // Auto-slide
+        function initHeroSlider() {
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            const title = document.querySelector('.hero-title');
+            const subtitle = document.querySelector('.hero-subtitle');
+            const description = document.querySelector('.hero-description p');
+            let i = 0;
+
+            function updateHeroText(index) {
+                const slide = slides[index];
+                if (!slide) return;
+                if (title) title.textContent = slide.getAttribute('data-title') || '';
+                if (subtitle) subtitle.textContent = slide.getAttribute('data-subtitle') || '';
+                if (description) description.textContent = slide.getAttribute('data-description') || '';
+            }
+
+            function goTo(n) {
+                if (!slides.length) return;
+                slides[i].classList.remove('active');
+                dots[i].classList.remove('active');
+                i = (n + slides.length) % slides.length;
+                slides[i].classList.add('active');
+                dots[i].classList.add('active');
+                updateHeroText(i);
+            }
+
+            const nextBtn = document.querySelector('.hero-slider-arrow.next');
+            const prevBtn = document.querySelector('.hero-slider-arrow.prev');
+
+            if (nextBtn) nextBtn.onclick = () => goTo(i + 1);
+            if (prevBtn) prevBtn.onclick = () => goTo(i - 1);
+
+            // Auto-slide hero
+            setInterval(() => goTo(i + 1), 5000);
+
+            // Dot clicks
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', function () {
+                    goTo(index);
+                });
+            });
+
+            // Initial update
+            updateHeroText(0);
+        }
+
+        // =============================================
+        // CATEGORY SLIDER
+        // =============================================
+        function initCategorySlider() {
+            const container = document.querySelector('.category-slider-container');
+            if (!container) return;
+
+            let scrollAmount = 0;
+            let speed = 1;
+            let isPaused = false;
+            container.innerHTML += container.innerHTML;
+
+            function autoSlide() {
+                if (!isPaused) {
+                    scrollAmount += speed;
+                    if (scrollAmount >= container.scrollWidth / 2) {
+                        scrollAmount = 0;
+                    }
+                    container.scrollLeft = scrollAmount;
+                }
+                requestAnimationFrame(autoSlide);
+            }
+
+            autoSlide();
+            container.addEventListener('mouseenter', () => isPaused = true);
+            container.addEventListener('mouseleave', () => isPaused = false);
+        }
+
+        // =============================================
+        // AVAILABLE PRODUCTS SLIDER
+        // =============================================
+        function initAvailableSlider() {
+            const track = document.getElementById('availableSliderTrack');
+            if (!track) return;
+
+            const slides = track.querySelectorAll('.slider-slide');
+            if (!slides.length) return;
+
+            const slideWidth = slides[0].offsetWidth + 15;
+            let currentIndex = 0;
+            let isPaused = false;
+            let autoSlideInterval;
+
+            function goToSlide(index) {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                currentIndex = index;
+                track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            }
+
+            window.slideProducts = function (direction) {
+                goToSlide(currentIndex + direction);
+                resetAutoSlide();
+            };
+
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(() => {
+                    if (!isPaused) {
+                        goToSlide(currentIndex + 1);
+                    }
+                }, 3000);
+            }
+
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+
+            const container = track.closest('.slider-container');
+            if (container) {
+                container.addEventListener('mouseenter', () => isPaused = true);
+                container.addEventListener('mouseleave', () => isPaused = false);
+            }
+
             startAutoSlide();
+
+            // Update dots
+            window.goToSlide = function (index) {
+                goToSlide(index);
+                resetAutoSlide();
+            };
+        }
+
+        // =============================================
+        // FAQ TOGGLE
+        // =============================================
+        function initFaq() {
+            document.querySelectorAll('.faq-question').forEach(button => {
+                button.addEventListener('click', function () {
+                    const item = this.closest('.faq-item');
+                    const isActive = item.classList.contains('active');
+
+                    // Close all other items
+                    document.querySelectorAll('.faq-item').forEach(faqItem => {
+                        faqItem.classList.remove('active');
+                        const btn = faqItem.querySelector('.faq-question');
+                        if (btn) btn.setAttribute('aria-expanded', 'false');
+                    });
+
+                    // Toggle the clicked item
+                    if (!isActive) {
+                        item.classList.add('active');
+                        this.setAttribute('aria-expanded', 'true');
+                    }
+                });
+            });
+        }
+
+        // =============================================
+        // MAIN INIT - SINGLE DOMContentLoaded
+        // =============================================
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize all components
+            startAutoSlide();
+            initHeroSlider();
+            initCategorySlider();
+            initAvailableSlider();
+            initFaq();
 
             // Stop auto-slide on hover
             const sliderContainer = document.querySelector('.slider-container');
@@ -1081,26 +1337,29 @@
             }
 
             // Handle window resize
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 updateSlider();
             });
 
             // Modal close on background click
-            document.getElementById('productModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeProductDetail();
-                }
-            });
+            const modal = document.getElementById('productModal');
+            if (modal) {
+                modal.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        closeProductDetail();
+                    }
+                });
+            }
 
             // Modal close on Escape key
-            document.addEventListener('keydown', function(e) {
+            document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
                     closeProductDetail();
                 }
             });
 
             // Thumbnail click delegation
-            document.addEventListener('click', function(e) {
+            document.addEventListener('click', function (e) {
                 const thumbnail = e.target.closest('.thumbnail-img');
                 if (thumbnail) {
                     const index = parseInt(thumbnail.dataset.index);
@@ -1109,7 +1368,6 @@
                     }
                 }
 
-                // Navigation button clicks
                 const navBtn = e.target.closest('.gallery-nav');
                 if (navBtn) {
                     if (navBtn.classList.contains('prev')) {
@@ -1119,29 +1377,10 @@
                     }
                 }
             });
-
-            // FAQ toggle
-            document.querySelectorAll('.faq-question').forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = this.closest('.faq-item');
-                    const isActive = item.classList.contains('active');
-
-                    document.querySelectorAll('.faq-item').forEach(faqItem => {
-                        faqItem.classList.remove('active');
-                        const btn = faqItem.querySelector('.faq-question');
-                        if (btn) btn.setAttribute('aria-expanded', 'false');
-                    });
-
-                    if (!isActive) {
-                        item.classList.add('active');
-                        this.setAttribute('aria-expanded', 'true');
-                    }
-                });
-            });
         });
 
         // Update total slides when window loads
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             const slideCount = document.querySelectorAll('.slider-slide').length;
             if (slideCount > 0) {
                 totalSlides = Math.ceil(slideCount / 5);
@@ -1151,21 +1390,21 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const slides = document.querySelectorAll('.hero-slide');
-        const dots = document.querySelectorAll('.hero-dot');
-        let i = 0;
+            const slides = document.querySelectorAll('.hero-slide');
+            const dots = document.querySelectorAll('.hero-dot');
+            let i = 0;
 
-        function goTo(n) {
-            slides[i].classList.remove('active');
-            dots[i].classList.remove('active');
-            i = (n + slides.length) % slides.length;
-            slides[i].classList.add('active');
-            dots[i].classList.add('active');
-        }
+            function goTo(n) {
+                slides[i].classList.remove('active');
+                dots[i].classList.remove('active');
+                i = (n + slides.length) % slides.length;
+                slides[i].classList.add('active');
+                dots[i].classList.add('active');
+            }
 
-        document.querySelector('.hero-slider-arrow.next').onclick = () => goTo(i + 1);
-        document.querySelector('.hero-slider-arrow.prev').onclick = () => goTo(i - 1);
-        setInterval(() => goTo(i + 1), 5000);
+            document.querySelector('.hero-slider-arrow.next').onclick = () => goTo(i + 1);
+            document.querySelector('.hero-slider-arrow.prev').onclick = () => goTo(i - 1);
+            setInterval(() => goTo(i + 1), 5000);
         });
     </script>
     <script>
@@ -1203,67 +1442,69 @@
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-        const container = document.querySelector('.category-slider-container');
-        if (!container) return;
+            const container = document.querySelector('.category-slider-container');
+            if (!container) return;
 
-        let scrollAmount = 0;
-        let speed = 1;
-        let isPaused = false;
-        container.innerHTML += container.innerHTML;
+            let scrollAmount = 0;
+            let speed = 1;
+            let isPaused = false;
+            container.innerHTML += container.innerHTML;
 
-        function autoSlide() {
-            if (!isPaused) {
-            scrollAmount += speed;
-            if (scrollAmount >= container.scrollWidth / 2) {
-                scrollAmount = 0;
+            function autoSlide() {
+                if (!isPaused) {
+                    scrollAmount += speed;
+                    if (scrollAmount >= container.scrollWidth / 2) {
+                        scrollAmount = 0;
+                    }
+                    container.scrollLeft = scrollAmount;
+                }
+                requestAnimationFrame(autoSlide);
             }
-            container.scrollLeft = scrollAmount;
-            }
-            requestAnimationFrame(autoSlide);
-        }
 
-        autoSlide();
-        container.addEventListener('mouseenter', () => isPaused = true);
-        container.addEventListener('mouseleave', () => isPaused = false);
+            autoSlide();
+            container.addEventListener('mouseenter', () => isPaused = true);
+            container.addEventListener('mouseleave', () => isPaused = false);
         });
         document.addEventListener('DOMContentLoaded', function () {
-        const track = document.getElementById('availableSliderTrack');
-        if (!track) return;
+            const track = document.getElementById('availableSliderTrack');
+            if (!track) return;
 
-        const slides = track.querySelectorAll('.slider-slide');
-        const slideWidth = slides[0].offsetWidth + 15; // width + gap
-        let currentIndex = 0;
-        let isPaused = false;
-        let autoSlideInterval;
+            const slides = track.querySelectorAll('.slider-slide');
+            const slideWidth = slides[0].offsetWidth + 15; // width + gap
+            let currentIndex = 0;
+            let isPaused = false;
+            let autoSlideInterval;
 
-        function goToSlide(index) {
-            if (index < 0) index = slides.length - 1;
-            if (index >= slides.length) index = 0;
+            function goToSlide(index) {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
 
-            currentIndex = index;
-            track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-        }
-        window.slideProducts = function (direction) {
-            goToSlide(currentIndex + direction);
-            resetAutoSlide(); 
-        };
-        function startAutoSlide() {
-            autoSlideInterval = setInterval(() => {
-                if (!isPaused) {
-                    goToSlide(currentIndex + 1);
-                }
-            }, 3000);
-        }
+                currentIndex = index;
+                track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            }
+            window.slideProducts = function (direction) {
+                goToSlide(currentIndex + direction);
+                resetAutoSlide();
+            };
+            function startAutoSlide() {
+                autoSlideInterval = setInterval(() => {
+                    if (!isPaused) {
+                        goToSlide(currentIndex + 1);
+                    }
+                }, 3000);
+            }
 
-        function resetAutoSlide() {
-            clearInterval(autoSlideInterval);
+            function resetAutoSlide() {
+                clearInterval(autoSlideInterval);
+                startAutoSlide();
+            }
+            const container = track.closest('.slider-container');
+            container.addEventListener('mouseenter', () => isPaused = true);
+            container.addEventListener('mouseleave', () => isPaused = false);
             startAutoSlide();
-        }
-        const container = track.closest('.slider-container');
-        container.addEventListener('mouseenter', () => isPaused = true);
-        container.addEventListener('mouseleave', () => isPaused = false);
-        startAutoSlide();
-    });
+        });
+        
     </script>
+
 
 @endsection

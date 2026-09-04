@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'ShopEase')</title>
+    <title>@yield('title', 'Aethelweave')</title>
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,74 +21,103 @@
             padding: 0
         }
 
+        /* =========================================================
+           HORIZONTAL SIDEBAR
+        ========================================================= */
+        .horizontal-sidebar {
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 0;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            position: sticky;
+            top: 72px;
+            z-index: 99;
+        }
+
+        .horizontal-sidebar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .horizontal-sidebar .sidebar-menu {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            min-width: max-content;
+        }
+
+        .horizontal-sidebar .sidebar-menu li a,
+        .horizontal-sidebar .sidebar-menu li button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+
+        .horizontal-sidebar .sidebar-menu li a:hover,
+        .horizontal-sidebar .sidebar-menu li.active a {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .horizontal-sidebar .sidebar-menu li.active a {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+
+        .horizontal-sidebar .sidebar-menu li i {
+            font-size: 16px;
+            width: 18px;
+        }
+
+        .horizontal-sidebar .sidebar-menu li .badge {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            margin-left: 4px;
+        }
+
+        .horizontal-sidebar .sidebar-menu .logout-item {
+            margin-left: auto;
+            border-left: 1px solid #e5e7eb;
+            padding-left: 4px;
+        }
+
+        .horizontal-sidebar .sidebar-menu .logout-item button {
+            color: #ef4444;
+        }
+
+        .horizontal-sidebar .sidebar-menu .logout-item button:hover {
+            color: #dc2626;
+            border-bottom-color: #ef4444;
+        }
+
+        /* =========================================================
+           HEADER
+        ========================================================= */
         .customer-header {
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
-            padding: 12px 0;
+            padding: 10px 0;
             position: sticky;
             top: 0;
             z-index: 100
-        }
-
-        /* Header action */
-        .action-item {
-            position: relative;
-        }
-
-        /* Count badge */
-        .badge-count {
-            position: absolute;
-            top: -8px;
-            right: -10px;
-            min-width: 17px;
-            height: 17px;
-            padding: 0 5px;
-            border-radius: 50px;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            line-height: 1;
-            z-index: 10;
-        }
-
-        /* Mobile View */
-        @media (max-width: 768px) {
-
-            .header-actions {
-                gap: 14px !important;
-                flex-shrink: 0;
-            }
-
-            .action-item {
-                display: flex;
-                position: relative !important;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .action-item i {
-                font-size: 20px;
-            }
-
-            /* Hide text but keep icons and counts */
-            .action-item>span:not(.badge-count) {
-                display: none;
-            }
-
-            /* Make sure count is visible */
-            .badge-count {
-                display: flex !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-                position: absolute !important;
-                top: -7px !important;
-                right: -9px !important;
-                z-index: 999 !important;
-                min-width: 17px;
-                height: 17px;
-                font-size: 9px;
-            }
         }
 
         .brand-logo {
@@ -155,16 +184,17 @@
         .badge-count {
             position: absolute;
             top: -4px;
-            right: 8px;
+            right: -8px;
             background: #ef4444;
             color: #fff;
-            font-size: 10px;
+            font-size: 9px;
             width: 16px;
             height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: center
+            justify-content: center;
+            font-weight: 700;
         }
 
         .user-avatar {
@@ -196,27 +226,88 @@
             color: #0f172a
         }
 
-        .customer-sidebar {
-            background: #fff;
-            border-radius: 12px;
-            padding: 12px 0;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-            position: sticky;
-            top: 80px
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+        .mobile-toggle-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #0f172a;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: color 0.2s;
         }
 
-        .sidebar-menu {
+        .mobile-toggle-btn:hover {
+            color: #3b82f6;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .mobile-sidebar {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: #fff;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
+            padding: 16px 0;
+        }
+
+        .mobile-sidebar.open {
+            left: 0;
+        }
+
+        .mobile-sidebar .sidebar-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #475569;
+            cursor: pointer;
+        }
+
+        .mobile-sidebar .sidebar-close:hover {
+            color: #0f172a;
+        }
+
+        .mobile-sidebar .sidebar-menu {
             list-style: none;
             padding: 0;
-            margin: 0
+            margin: 0;
+            padding-top: 50px;
         }
 
-        .sidebar-menu li a,
-        .sidebar-menu li button {
+        .mobile-sidebar .sidebar-menu li a,
+        .mobile-sidebar .sidebar-menu li button {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
+            padding: 14px 20px;
             color: #475569;
             text-decoration: none;
             font-size: 14px;
@@ -229,27 +320,57 @@
             cursor: pointer
         }
 
-        .sidebar-menu li a:hover,
-        .sidebar-menu li.active a {
+        .mobile-sidebar .sidebar-menu li a:hover,
+        .mobile-sidebar .sidebar-menu li.active a {
             background: #eff6ff;
             color: #3b82f6
         }
 
-        .sidebar-menu li.active a {
+        .mobile-sidebar .sidebar-menu li.active a {
             border-right: 3px solid #3b82f6
         }
 
-        .sidebar-menu li i {
+        .mobile-sidebar .sidebar-menu li i {
             font-size: 18px;
             width: 22px
         }
 
-        .logout-item {
+        .mobile-sidebar .logout-item {
             border-top: 1px solid #f1f5f9;
             margin-top: 8px;
             padding-top: 8px
         }
 
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media(max-width:991px) {
+            .horizontal-sidebar {
+                display: none;
+            }
+
+            .mobile-toggle-btn {
+                display: block;
+            }
+
+            .header-actions .action-item span {
+                display: none;
+            }
+
+            .header-actions {
+                gap: 8px !important;
+            }
+        }
+
+        @media(max-width:767px) {
+            .search-box {
+                display: none;
+            }
+        }
+
+        /* =========================================================
+           CONTENT STYLES
+        ========================================================= */
         .welcome-card,
         .profile-card,
         .section-card {
@@ -333,67 +454,6 @@
             font-weight: 500
         }
 
-        .order-status-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap
-        }
-
-        .order-status-item {
-            text-align: center;
-            flex: 1;
-            min-width: 70px
-        }
-
-        .status-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 8px;
-            font-size: 18px
-        }
-
-        .status-icon.pending {
-            background: #fef3c7;
-            color: #d97706
-        }
-
-        .status-icon.confirmed {
-            background: #dbeafe;
-            color: #2563eb
-        }
-
-        .status-icon.shipped {
-            background: #e0e7ff;
-            color: #4f46e5
-        }
-
-        .status-icon.delivered {
-            background: #d1fae5;
-            color: #059669
-        }
-
-        .status-icon.cancelled {
-            background: #fee2e2;
-            color: #dc2626
-        }
-
-        .status-label {
-            display: block;
-            font-size: 12px;
-            color: #64748b;
-            margin-bottom: 2px
-        }
-
-        .order-status-item strong {
-            font-size: 18px;
-            color: #0f172a
-        }
-
         .category-icons {
             display: flex;
             flex-wrap: wrap;
@@ -429,136 +489,6 @@
             color: #fff
         }
 
-        .top-categories {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            padding-bottom: 4px
-        }
-
-        .top-cat {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            color: #475569;
-            font-size: 12px;
-            min-width: 70px
-        }
-
-        .top-cat-placeholder {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #3b82f6
-        }
-
-        .product-slider {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            padding-bottom: 8px
-        }
-
-        .product-card {
-            min-width: 160px;
-            max-width: 180px;
-            background: #fff;
-            border: 1px solid #f1f5f9;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.2s;
-            position: relative
-        }
-
-        .product-card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            transform: translateY(-3px)
-        }
-
-        .product-img {
-            height: 140px;
-            background: #f8fafc;
-            position: relative
-        }
-
-        .product-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .no-img {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #cbd5e1;
-            font-size: 32px
-        }
-
-        .product-info {
-            padding: 12px
-        }
-
-        .product-info h6 {
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #0f172a;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis
-        }
-
-        .price .current {
-            font-weight: 700;
-            color: #0f172a;
-            font-size: 14px
-        }
-
-        .wishlist-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: #94a3b8;
-            transition: all 0.2s;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            z-index: 2;
-            padding: 0
-        }
-
-        .wishlist-btn:hover {
-            background: #fff;
-            color: #ef4444;
-            transform: scale(1.05)
-        }
-
-        .wishlist-btn.active {
-            color: #ef4444;
-            background: #fff
-        }
-
-        .wishlist-btn i {
-            pointer-events: none
-        }
-
         .benefits-bar {
             background: #fff;
             border-radius: 14px;
@@ -592,107 +522,7 @@
             color: #94a3b8
         }
 
-        /* Mobile Toggle Button */
-        .mobile-toggle-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #0f172a;
-            padding: 4px 8px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .mobile-toggle-btn:hover {
-            color: #3b82f6;
-        }
-
-        /* Sidebar Overlay */
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-            opacity: 1;
-        }
-
-        /* Mobile Sidebar */
-        .mobile-sidebar {
-            position: fixed;
-            top: 0;
-            left: -300px;
-            width: 280px;
-            height: 100%;
-            background: #fff;
-            z-index: 1000;
-            overflow-y: auto;
-            transition: left 0.3s ease;
-            box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
-            padding: 16px 0;
-        }
-
-        .mobile-sidebar.open {
-            left: 0;
-        }
-
-        .mobile-sidebar .sidebar-close {
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #475569;
-            cursor: pointer;
-        }
-
-        .mobile-sidebar .sidebar-close:hover {
-            color: #0f172a;
-        }
-
-        .mobile-sidebar .sidebar-menu {
-            padding-top: 50px;
-        }
-
-        .mobile-sidebar .sidebar-menu li a,
-        .mobile-sidebar .sidebar-menu li button {
-            padding: 14px 20px;
-        }
-
-        @media(max-width:991px) {
-            .customer-sidebar {
-                display: none;
-            }
-
-            .mobile-toggle-btn {
-                display: block;
-            }
-
-            .header-actions .action-item span {
-                display: none;
-            }
-
-            .header-actions {
-                gap: 8px !important;
-            }
-        }
-
         @media(max-width:767px) {
-            .search-box {
-                display: none;
-            }
-
             .profile-stats {
                 grid-template-columns: 1fr;
             }
@@ -701,183 +531,6 @@
             .profile-card,
             .section-card {
                 padding: 16px;
-            }
-        }
-
-        .section-card {
-            height: auto !important;
-        }
-
-        .account-page {
-            max-width: 1000rem;
-            margin: 0 auto
-        }
-
-        .settings-card {
-            background: #fff;
-            border: 1px solid #edf0f4;
-            border-radius: 14px;
-            padding: 25px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, .04);
-            margin-bottom: 24px
-        }
-
-        .settings-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 18px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid #edf0f4
-        }
-
-        .settings-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 12px;
-            background: #eff6ff;
-            color: #3b82f6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 21px
-        }
-
-        .settings-header h5 {
-            margin: 0;
-            font-weight: 700;
-            color: #0f172a
-        }
-
-        .settings-header p {
-            margin: 3px 0 0;
-            font-size: 13px;
-            color: #94a3b8
-        }
-
-        .profile-image-area {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 28px
-        }
-
-        .profile-avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            overflow: hidden;
-            background: #eff6ff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #3b82f6;
-            font-size: 38px;
-            border: 3px solid #e0ecff;
-            flex-shrink: 0
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover
-        }
-
-        .avatar-content h6 {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #0f172a
-        }
-
-        .avatar-content p {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 10px
-        }
-
-        .form-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #334155;
-            margin-bottom: 7px
-        }
-
-        .form-control {
-            border: 1px solid #e2e8f0;
-            border-radius: 9px;
-            min-height: 44px;
-            font-size: 14px
-        }
-
-        textarea.form-control {
-            min-height: 110px;
-            resize: vertical
-        }
-
-        .form-control:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, .10)
-        }
-
-        .btn-save {
-            background: #3b82f6;
-            border: 1px solid #3b82f6;
-            color: #fff;
-            border-radius: 9px;
-            padding: 10px 24px;
-            font-weight: 600;
-            font-size: 14px
-        }
-
-        .btn-save:hover {
-            background: #2563eb;
-            border-color: #2563eb;
-            color: #fff
-        }
-
-        .btn-upload {
-            border-radius: 8px;
-            font-size: 13px
-        }
-
-        .required {
-            color: #ef4444
-        }
-
-        .address-card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px;
-            transition: .2s ease
-        }
-
-        .address-card:hover {
-            border-color: #bfdbfe;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, .05)
-        }
-
-        .address-card h6 {
-            font-weight: 700;
-            color: #0f172a
-        }
-
-        .address-details {
-            line-height: 1.7
-        }
-
-        .empty-address {
-            border: 1px dashed #cbd5e1;
-            border-radius: 12px
-        }
-
-        @media(max-width:576px) {
-            .settings-card {
-                padding: 18px
-            }
-
-            .profile-image-area {
-                align-items: flex-start
             }
         }
     </style>
@@ -915,24 +568,20 @@
                 <a href="{{ route('checkout') }}"><i class="bi bi-credit-card"></i> Checkout</a>
             </li>
             <li>
-                <a href="#"><i class="bi bi-geo-alt"></i> Addresses</a>
+                <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
             </li>
             <li>
                 <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
             </li>
             <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
-                <a href="{{ route('customer.returns.index') }}">
-                    <i class="bi bi-arrow-return-left"></i>
-                    Returns & Refunds
-                </a>
+                <a href="{{ route('customer.returns.index') }}"><i class="bi bi-arrow-return-left"></i> Returns &
+                    Refunds</a>
             </li>
             <li>
                 <a href="#"><i class="bi bi-star"></i> My Reviews</a>
             </li>
             <li>
-                <a href="{{ route('account.settings') }}">
-                    Account Settings
-                </a>
+                <a href="{{ route('account.settings') }}"><i class="bi bi-gear"></i> Account Settings</a>
             </li>
             <li>
                 <a href="#"><i class="bi bi-question-circle"></i> Help & Support</a>
@@ -958,8 +607,16 @@
                     </button>
 
                     <a href="{{ route('dashboard') }}" class="brand-logo">
-                        <span class="logo-icon"><i class="bi bi-bag-fill"></i></span>
-                        <span class="logo-text">ShopEase</span>
+                        @php
+                            $siteLogo = \App\Models\Logo::first();
+                        @endphp
+                        @if($siteLogo && $siteLogo->logo)
+                            <img src="{{ asset('storage/' . $siteLogo->logo) }}" alt="{{ $siteLogo->site_name ?? 'Logo' }}"
+                                class="brand-logo-image" style="height:40px;width:auto;">
+                        @else
+                            <span class="logo-icon"><i class="bi bi-bag-fill"></i></span>
+                            <span class="logo-text">{{ $siteLogo->site_name ?? 'Aethelweave' }}</span>
+                        @endif
                     </a>
 
                     <div class="search-box flex-grow-1">
@@ -986,7 +643,6 @@
                             $cart = session('cart', []);
                             $cartCount = collect($cart)->sum('quantity');
                         @endphp
-
                         <a href="{{ route('checkout') }}" class="action-item position-relative">
                             <i class="bi bi-cart3"></i>
                             <span>Cart</span>
@@ -1036,73 +692,61 @@
             </div>
         </header>
 
+        <!-- HORIZONTAL SIDEBAR -->
+        <div class="horizontal-sidebar">
+            <ul class="sidebar-menu">
+                <li class="@if(Route::currentRouteName() == 'customer.dashboard') active @endif">
+                    <a href="{{ route('customer.dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+                </li>
+                <li class="@if(Route::currentRouteName() == 'customer.products') active @endif">
+                    <a href="{{ route('customer.products') }}"><i class="bi bi-box-seam"></i> Products</a>
+                </li>
+                <li>
+                    <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My Orders</a>
+                </li>
+                <li class="@if(Route::currentRouteName() == 'customer.wishlist') active @endif">
+                    <a href="{{ route('customer.wishlist') }}">
+                        <i class="bi bi-heart"></i> Wishlist
+                        <span class="badge bg-primary">{{ $wishlistCount ?? 0 }}</span>
+                    </a>
+                </li>
+                <li class="@if(Route::currentRouteName() == 'checkout') active @endif">
+                    <a href="{{ route('checkout') }}"><i class="bi bi-credit-card"></i> Checkout</a>
+                </li>
+                <li>
+                    <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
+                </li>
+                <li>
+                    <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
+                </li>
+                <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
+                    <a href="{{ route('customer.returns.index') }}"><i class="bi bi-arrow-return-left"></i> Returns &
+                        Refunds</a>
+                </li>
+                <li>
+                    <a href="#"><i class="bi bi-star"></i> My Reviews</a>
+                </li>
+                <li>
+                    <a href="{{ route('account.settings') }}"><i class="bi bi-gear"></i> Account Settings</a>
+                </li>
+                <li>
+                    <a href="#"><i class="bi bi-question-circle"></i> Help & Support</a>
+                </li>
+                <li class="logout-item">
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
         <div class="container-fluid py-4">
             <div class="row g-4">
-
-                <!-- SIDEBAR -->
-                <div class="col-lg-2 col-md-3">
-                    <div class="customer-sidebar">
-                        <ul class="sidebar-menu">
-                            <li class="@if(Route::currentRouteName() == 'customer.dashboard') active @endif">
-                                <a href="{{ route('customer.dashboard') }}"><i class="bi bi-grid-1x2"></i> Dashboard</a>
-                            </li>
-                            <li class="@if(Route::currentRouteName() == 'customer.products') active @endif">
-                                <a href="{{ route('customer.products') }}"><i class="bi bi-box-seam"></i> Products</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('customer.orders.index') }}"><i class="bi bi-bag-check"></i> My
-                                    Orders</a>
-                            </li>
-                            <li class="@if(Route::currentRouteName() == 'customer.wishlist') active @endif">
-                                <a href="{{ route('customer.wishlist') }}">
-                                    <i class="bi bi-heart"></i> Wishlist
-                                    <span class="badge bg-primary ms-auto">{{ $wishlistCount ?? 0 }}</span>
-                                </a>
-                            </li>
-                            <li class="@if(Route::currentRouteName() == 'checkout') active @endif">
-                                <a href="{{ route('checkout') }}"><i class="bi bi-credit-card"></i> Checkout</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
-                            </li>
-                            <li>
-                                <a href="#coupons-offers">
-                                    <i class="bi bi-ticket-perforated"></i>
-                                    Coupons & Offers
-                                </a>
-                            </li>
-                            <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
-                                <a href="{{ route('customer.returns.index') }}">
-                                    <i class="bi bi-arrow-return-left"></i>
-                                    Returns & Refunds
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="bi bi-star"></i> My Reviews</a>
-                            </li>
-                            <li>
-                                <a href="{{ route('account.settings') }}"><i class="bi bi-gear"></i>
-                                    Account Settings
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="bi bi-question-circle"></i> Help & Support</a>
-                            </li>
-                            <li class="logout-item">
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- MAIN CONTENT -->
-                <div class="col-lg-10 col-md-9">
+                <div class="col-12">
                     @yield('content')
                 </div>
-
             </div>
         </div>
     </div>
@@ -1209,9 +853,7 @@
         }
 
         function addAllToCart() {
-            const forms = document.querySelectorAll(
-                '.wishlist-product-card form[action*="/cart/add/"]'
-            );
+            const forms = document.querySelectorAll('.wishlist-product-card form[action*="/cart/add/"]');
             if (!forms.length) {
                 alert('No products available in your wishlist.');
                 return;
@@ -1225,10 +867,8 @@
 
         window.clearWishlist = clearWishlist;
         window.addAllToCart = addAllToCart;
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
 
+        document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.add-to-cart-form').forEach(function (form) {
                 form.addEventListener('submit', function (e) {
                     e.preventDefault();

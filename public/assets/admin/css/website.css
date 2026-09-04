@@ -4668,8 +4668,8 @@
     }
 
     /* =========================================================
-   FAQ SECTION - CENTERED
-========================================================= */
+    FAQ SECTION - CENTERED
+    ========================================================= */
 
     .faq-section-modern {
         position: relative;
@@ -7378,3 +7378,33 @@
         flex: 0 0 auto;
         width: 280px;
     }
+
+    /* Minimal Category Card Hover */
+.category-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card-image {
+    overflow: hidden;
+}
+
+.category-card-image img {
+    transition: transform 0.4s ease;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+.category-card:hover .category-card-image img {
+    transform: scale(1.04);
+}
+
+.category-card-name {
+    transition: color 0.3s ease;
+}
+
+.category-card:hover .category-card-name {
+    color: #a58b54;
+}

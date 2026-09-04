@@ -503,8 +503,8 @@
     </style>
 
     <!-- =============================================
-                SHOP HEADER
-            ============================================= -->
+                        SHOP HEADER
+                    ============================================= -->
     <section class="shop-header">
         <h1><i class="fas fa-store"></i> All Jewellery</h1>
         <p>Discover our curated collection of timeless pieces</p>
@@ -515,8 +515,8 @@
     </section>
 
     <!-- =============================================
-                SHOP CONTENT
-            ============================================= -->
+                        SHOP CONTENT
+                    ============================================= -->
     <div class="shop-container">
         <div class="shop-layout">
 
@@ -527,11 +527,13 @@
                     <!-- CATEGORIES -->
                     <div class="filter-section">
                         <h3><i class="fas fa-tags"></i> Categories</h3>
+
                         <div class="filter-group">
                             <select name="category" id="category">
                                 <option value="">All Categories</option>
+
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}">
+                                    <option value="{{ $category->slug }}" {{ request('category') == $category->slug ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -639,8 +641,8 @@
     </div>
 
     <!-- =============================================
-                SCRIPTS
-            ============================================= -->
+                        SCRIPTS
+                    ============================================= -->
     <script>
         let currentPage = 1;
         let isLoading = false;
@@ -687,7 +689,6 @@
 
         function applyFilters(page = 1) {
             if (page) currentPage = page;
-
             const filters = getFilters();
             const loading = document.getElementById('loadingOverlay');
             const container = document.getElementById('productsContainer');
@@ -723,12 +724,12 @@
                         document.getElementById('productCount').textContent = data.total || 0;
                     } else {
                         container.innerHTML = `
-                                    <div class="no-products">
-                                        <i class="fas fa-box-open"></i>
-                                        <h3>No products found</h3>
-                                        <p>Try adjusting your filters or search terms.</p>
-                                    </div>
-                                `;
+                                            <div class="no-products">
+                                                <i class="fas fa-box-open"></i>
+                                                <h3>No products found</h3>
+                                                <p>Try adjusting your filters or search terms.</p>
+                                            </div>
+                                        `;
                         document.getElementById('productCount').textContent = '0';
                     }
                 })
@@ -736,12 +737,12 @@
                     console.error('Error:', error);
                     loading.style.display = 'none';
                     container.innerHTML = `
-                                <div class="no-products">
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    <h3>Something went wrong</h3>
-                                    <p>Please try again later.</p>
-                                </div>
-                            `;
+                                        <div class="no-products">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            <h3>Something went wrong</h3>
+                                            <p>Please try again later.</p>
+                                        </div>
+                                    `;
                 });
         }
 
@@ -750,12 +751,12 @@
 
             if (!products || products.length === 0) {
                 container.innerHTML = `
-                            <div class="no-products">
-                                <i class="fas fa-box-open"></i>
-                                <h3>No products found</h3>
-                                <p>Try adjusting your filters or search terms.</p>
-                            </div>
-                        `;
+                    <div class="no-products">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No products found</h3>
+                        <p>Try adjusting your filters or search terms.</p>
+                    </div>
+                `;
                 return;
             }
 
@@ -779,35 +780,83 @@
                 const stockText = product.stock > 0 ? 'In Stock' : 'Out of Stock';
                 const stockExtra = product.stock > 0 && product.stock < 10 ? `(${product.stock} left)` : '';
 
+                // Check if product is in wishlist
+                const inWishlist = isInWishlist ? isInWishlist(product.id) : false;
+                const heartIcon = inWishlist ? 'fas fa-heart' : 'far fa-heart';
+                const heartColor = inWishlist ? '#e74c3c' : '#77736D';
+                const heartBorder = inWishlist ? '#e74c3c' : '#E8E1D7';
+
+                // Check if product is in cart
+                const cart = getCart ? getCart() : [];
+                const inCart = cart.some(item => item.id == product.id);
+
                 html += `
-                            <div class="product-card" onclick="window.location.href='/shop/${product.slug}'">
-                                <div class="product-image">
-                                    ${imageHtml}
-                                    ${badgeHtml}
-                                </div>
-                                <div class="product-info">
-                                    <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
-                                    <div class="product-name">
-                                            <a href="/shop/${product.slug}">${product.name}</a>
-                                    </div>
-                                    <div class="product-meta">
-                                        ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
-                                        ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
-                                    </div>
-                                    <div class="product-price">
-                                        <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
-                                    </div>
-                                    <div class="product-stock ${stockClass}">
-                                        <i class="fas fa-${stockIcon}"></i>
-                                        ${stockText} ${stockExtra}
-                                    </div>
-                                </div>
+                    <div class="product-card" style="position:relative;cursor:pointer;" onclick="window.location.href='/shop/${product.slug}'">
+                        <div class="product-image" style="position:relative;">
+                            ${imageHtml}
+                            ${badgeHtml}
+                            
+                            <!-- Wishlist Heart Button -->
+                            <button type="button" 
+                                class="wishlist-btn" 
+                                data-product-id="${product.id}"
+                                data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                data-product-price="${product.price}"
+                                data-product-slug="${product.slug}"
+                                data-product-image="${firstImage || ''}"
+                                onclick="event.stopPropagation(); toggleWishlist(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.slug}', '${firstImage || ''}');"
+                                style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid ${heartBorder};border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+                                aria-label="Add to wishlist">
+                                <i class="${heartIcon}" style="font-size:14px;color:${heartColor};transition:all 0.3s ease;"></i>
+                            </button>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
+                            <div class="product-name">
+                                ${product.name}
                             </div>
-                        `;
+                            <div class="product-meta">
+                                ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
+                                ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
+                            </div>
+                            <div class="product-price">
+                                <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
+                            </div>
+                            <div class="product-stock ${stockClass}">
+                                <i class="fas fa-${stockIcon}"></i>
+                                ${stockText} ${stockExtra}
+                            </div>
+                            <div style="margin-top:10px;">
+                                <button type="button" 
+                                    class="add-to-cart-btn" 
+                                    data-product-id="${product.id}"
+                                    data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                    data-product-price="${product.price}"
+                                    data-product-slug="${product.slug}"
+                                    data-product-image="${firstImage || ''}"
+                                    onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.slug}', '${firstImage || ''}');"
+                                    style="width:100%;padding:8px 16px;background:${inCart ? '#27ae60' : '#B89B5E'};color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                    <i class="${inCart ? 'fas fa-check' : 'fas fa-cart-plus'}" style="font-size:12px;"></i> 
+                                    ${inCart ? 'In Cart' : 'Add to Cart'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
             });
 
             html += '</div>';
             container.innerHTML = html;
+
+            // Re-initialize wishlist buttons after rendering
+            if (typeof initWishlistButtons === 'function') {
+                initWishlistButtons();
+            }
+            
+            // Re-initialize cart button states after rendering
+            if (typeof updateCartButtonStates === 'function') {
+                updateCartButtonStates();
+            }
         }
 
         function renderPagination(current, last, total) {

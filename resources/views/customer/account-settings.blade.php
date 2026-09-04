@@ -1,6 +1,6 @@
 @extends('frontend.layouts.customer-layout')
 
-@section('title', 'Account Settings - ShopEase')
+@section('title', 'Account Settings - Aethelweave')
 @section('styles')
     <style>
         /* ================================

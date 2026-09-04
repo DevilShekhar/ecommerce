@@ -1,9 +1,12 @@
 @extends('frontend.layouts.customer-layout')
 
-@section('title', 'My Dashboard - ShopEase')
+@section('title', 'My Dashboard - Aethelweave')
 
 @section('styles')
     <style>
+        /* =========================================================
+           DASHBOARD STYLES
+        ========================================================= */
         .welcome-card h3 {
             font-weight: 700;
             color: #0f172a;
@@ -11,7 +14,7 @@
         }
 
         .dashboard-banner-img {
-            height: 200px;
+            height: 500px;
             object-fit: cover;
             border-radius: 8px;
         }
@@ -40,7 +43,7 @@
 
         .category-icons {
             display: flex;
-            gap: 20px;
+            gap: 16px;
             flex-wrap: wrap;
         }
 
@@ -51,6 +54,8 @@
             text-decoration: none;
             color: #334155;
             transition: all 0.2s;
+            flex: 0 0 auto;
+            min-width: 60px;
         }
 
         .cat-item:hover {
@@ -69,11 +74,19 @@
             font-size: 20px;
             color: #2878f0;
             margin-bottom: 6px;
+            overflow: hidden;
+        }
+
+        .cat-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .cat-item span {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 500;
+            text-align: center;
         }
 
         .profile-card {
@@ -93,6 +106,9 @@
             font-size: 22px;
             font-weight: 700;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .edit-profile-link {
@@ -176,7 +192,7 @@
 
         .order-status-row {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
         }
 
@@ -202,22 +218,18 @@
             background: #fef3c7;
             color: #d97706;
         }
-
         .status-icon.confirmed {
             background: #dbeafe;
             color: #2563eb;
         }
-
         .status-icon.shipped {
             background: #e0e7ff;
             color: #4f46e5;
         }
-
         .status-icon.delivered {
             background: #d1fae5;
             color: #059669;
         }
-
         .status-icon.cancelled {
             background: #fee2e2;
             color: #dc2626;
@@ -269,6 +281,13 @@
             justify-content: center;
             color: #2878f0;
             flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .top-cat-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .top-cat span {
@@ -278,7 +297,7 @@
 
         .product-slider {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
             gap: 15px;
         }
 
@@ -407,79 +426,6 @@
             color: #64748b;
         }
 
-        @media (max-width: 768px) {
-            .order-status-row {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .profile-stats {
-                grid-template-columns: repeat(3, 1fr);
-            }
-
-            .benefits-bar {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .product-slider {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .top-categories {
-                grid-template-columns: 1fr;
-            }
-
-            .category-icons {
-                gap: 10px;
-            }
-
-            .cat-item {
-                flex: 0 0 calc(20% - 10px);
-            }
-
-
-
-            .banner-overlay h4 {
-                font-size: 14px;
-            }
-
-            .banner-overlay {
-                padding: 6px 12px;
-                bottom: 10px;
-                left: 10px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .order-status-row {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .benefits-bar {
-                grid-template-columns: 1fr;
-            }
-
-            .product-slider {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .cat-item {
-                flex: 0 0 calc(25% - 10px);
-            }
-
-            .cat-icon {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-
-            .cat-item span {
-                font-size: 10px;
-            }
-
-            .dashboard-banner-img {
-                height: 100px;
-            }
-        }
         .offer-badge {
             position: absolute;
             top: 8px;
@@ -498,534 +444,460 @@
         .offer-badge.fixed {
             background: #f59e0b;
         }
+
+        @media (max-width: 992px) {
+            .order-status-row {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .order-status-row {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .profile-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .benefits-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .product-slider {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .top-categories {
+                grid-template-columns: 1fr;
+            }
+            .category-icons {
+                gap: 10px;
+            }
+            .cat-item {
+                flex: 0 0 calc(20% - 10px);
+            }
+            .banner-overlay h4 {
+                font-size: 14px;
+            }
+            .banner-overlay {
+                padding: 6px 12px;
+                bottom: 10px;
+                left: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .order-status-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .benefits-bar {
+                grid-template-columns: 1fr;
+            }
+            .product-slider {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .cat-item {
+                flex: 0 0 calc(25% - 10px);
+            }
+            .cat-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+            .cat-item span {
+                font-size: 10px;
+            }
+            .dashboard-banner-img {
+                height: 100px;
+            }
+            .profile-stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     </style>
 @endsection
 
 @section('content')
-    <!-- Welcome + Profile -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-8">
-            <div class="welcome-card">
-                <h3>Welcome back, {{ explode(' ', $user->name)[0] }}! 👋</h3>
-                <p class="text-muted mb-4">What are you shopping for today?</p>
 
-                <div class="category-icons">
-                    @foreach($categories->take(6) as $cat)
-                        <a href="{{ route('customer.products', ['category' => $cat->slug]) }}" class="cat-item">
-                            <div class="cat-icon"><i class="bi bi-tag"></i></div>
-                            <span>{{ $cat->name }}</span>
-                        </a>
-                    @endforeach
-                    <a href="{{ route('customer.products') }}" class="cat-item">
-                        <div class="cat-icon"><i class="bi bi-three-dots"></i></div>
-                        <span>More Categories</span>
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="welcome-card">
+            <h3>Welcome back, {{ explode(' ', $user->name)[0] }}! 👋</h3>
+            <p class="text-muted mb-3">What are you shopping for today?</p>
+
+            <div class="category-icons">
+                @foreach($categories as $cat)
+                    <a href="{{ route('customer.products', ['category' => $cat->slug]) }}" class="cat-item">
+                        <div class="cat-icon">
+                            @if($cat->image)
+                                <img src="{{ asset('storage/' . $cat->image) }}" alt="{{ $cat->name }}">
+                            @else
+                                <i class="bi bi-tag"></i>
+                            @endif
+                        </div>
+                        <span>{{ $cat->name }}</span>
                     </a>
-                </div>
+                @endforeach
             </div>
         </div>
+    </div>
+</div>
 
-        <div class="col-lg-4">
-            <div class="profile-card">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="profile-avatar d-flex align-items-center justify-content-center">
-                        {{ strtoupper(substr(trim($user->name), 0, 1)) }}
-                    </div>
-
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="profile-card">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="profile-avatar d-flex align-items-center justify-content-center">
+                    {{ strtoupper(substr(trim($user->name), 0, 1)) }}
+                </div>
+                <div>
+                    <h5 class="mb-0">{{ $user->name }}</h5>
+                    <small class="text-muted">{{ $user->email }}</small>
                     <div>
-                        <h5 class="mb-0">{{ $user->name }}</h5>
-                        <small class="text-muted">{{ $user->email }}</small>
-                        <div>
-                            <a href="{{ route('account.settings') }}" class="edit-profile-link">Edit Profile</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="profile-stats">
-                    <div class="stat-box">
-                        <h4>{{ $orderCount ?? 0 }}</h4>
-                        <span>Orders</span>
-                        <a href="{{ route('customer.orders.index') }}">View all orders</a>
-                    </div>
-                    <div class="stat-box">
-                        <h4 id="wishlistCountDisplay">{{ $wishlistCount }}</h4>
-                        <span>Wishlist</span>
-                        <a href="{{ route('customer.wishlist') }}">View wishlist</a>
-                    </div>
-                    <div class="stat-box">
-                        <h4>{{ $couponCount ?? 0 }}</h4>
-                        <span>Coupons</span>
-                        <a href="#">View coupons</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dynamic Banners -->
-    @if(isset($banners) && $banners->count() > 0)
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="dashboard-banner-slider">
-                    <div id="dashboardBannerCarousel" class="carousel slide" data-bs-ride="carousel">
-
-                        <!-- Indicators -->
-                        @if($banners->count() > 1)
-                            <div class="carousel-indicators">
-                                @foreach($banners as $index => $banner)
-                                    <button type="button"
-                                        data-bs-target="#dashboardBannerCarousel"
-                                        data-bs-slide-to="{{ $index }}"
-                                        class="{{ $index === 0 ? 'active' : '' }}"
-                                        @if($index === 0) aria-current="true" @endif
-                                        aria-label="Slide {{ $index + 1 }}">
-                                    </button>
-                                @endforeach
-                            </div>
-                        @endif
-
-                        <!-- Banner Items -->
-                        <div class="carousel-inner">
-                            @foreach($banners as $index => $banner)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <a href="{{ $banner->link_url ?? '#' }}"
-                                        class="banner-link"
-                                        @if(($banner->link_type ?? '') === 'custom_url') target="_blank" @endif>
-
-                                        <img src="{{ asset('storage/' . $banner->image) }}"
-                                            class="d-block w-100 dashboard-banner-img"
-                                            alt="{{ $banner->title ?? 'Banner' }}">
-
-                                        @if($banner->title)
-                                            <div class="banner-overlay">
-                                                <h4>{{ $banner->title }}</h4>
-                                                @if($banner->subtitle)
-                                                    <p style="margin:0;font-size:12px;opacity:0.9;">{{ $banner->subtitle }}</p>
-                                                @endif
-                                            </div>
-                                        @endif
-                                    </a>
-                                </div>
-                            @endforeach
-                        </div>
-
-                        <!-- Controls -->
-                        @if($banners->count() > 1)
-                            <button class="carousel-control-prev"
-                                type="button"
-                                data-bs-target="#dashboardBannerCarousel"
-                                data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                                <span class="visually-hidden">Previous</span>
-                            </button>
-                            <button class="carousel-control-next"
-                                type="button"
-                                data-bs-target="#dashboardBannerCarousel"
-                                data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                                <span class="visually-hidden">Next</span>
-                            </button>
-                        @endif
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    @endif
-
-    {{-- =============================================
-        SENT OFFERS & COUPONS
-    ============================================= --}}
-    @if(isset($sentOffers) && $sentOffers->count() > 0)
-        <div class="row g-4 mb-4">
-            <div class="col-12">
-                <div class="section-card">
-
-                    <div class="section-header">
-                        <div>
-                            <h5>Offers & Coupons For You</h5>
-                            <small class="text-muted">
-                                Exclusive offers and coupons sent to you
-                            </small>
-                        </div>
-
-                        <span style="
-                            background:#f1f6ff;
-                            color:#2878f0;
-                            padding:5px 10px;
-                            border-radius:20px;
-                            font-size:12px;
-                            font-weight:600;
-                        ">
-                            {{ $sentOffers->count() }} Available
-                        </span>
-                    </div>
-
-                    <div class="row g-3">
-
-                        @foreach($sentOffers as $sentOffer)
-
-                            @php
-                                $offer = $sentOffer->offer;
-                            @endphp
-
-                            <div class="col-lg-4 col-md-6">
-
-                                <div style="
-                                    border:1px solid #e5eaf1;
-                                    border-radius:12px;
-                                    padding:18px;
-                                    height:100%;
-                                    background:#fff;
-                                    position:relative;
-                                    overflow:hidden;
-                                ">
-
-                                    {{-- Discount Badge --}}
-                                    @if($offer)
-                                        <div style="
-                                            position:absolute;
-                                            top:12px;
-                                            right:12px;
-                                            background:#ef4444;
-                                            color:#fff;
-                                            font-size:11px;
-                                            font-weight:700;
-                                            padding:4px 8px;
-                                            border-radius:5px;
-                                        ">
-                                            @if($offer->discount_type === 'percentage')
-                                                {{ rtrim(rtrim(number_format($offer->discount_value, 2), '0'), '.') }}% OFF
-                                            @else
-                                                ₹{{ number_format($offer->discount_value, 0) }} OFF
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    {{-- Offer --}}
-                                    @if($offer)
-                                        <div style="padding-right:75px;">
-                                            <h6 style="
-                                                margin:0 0 6px;
-                                                font-size:15px;
-                                                font-weight:700;
-                                                color:#172033;
-                                            ">
-                                                {{ $offer->title }}
-                                            </h6>
-
-                                            @if(!empty($offer->description))
-                                                <p style="
-                                                    margin:0;
-                                                    font-size:12px;
-                                                    color:#64748b;
-                                                ">
-                                                    {{ Str::limit($offer->description, 100) }}
-                                                </p>
-                                            @endif
-                                        </div>
-                                    @endif
-
-                                    {{-- Coupon --}}
-                                    @if($sentOffer->coupon_code)
-                                        <div style="
-                                            margin-top:15px;
-                                            padding:10px 12px;
-                                            background:#f8fafc;
-                                            border:1px dashed #2878f0;
-                                            border-radius:8px;
-                                            display:flex;
-                                            justify-content:space-between;
-                                            align-items:center;
-                                        ">
-                                            <div>
-                                                <small style="
-                                                    display:block;
-                                                    font-size:10px;
-                                                    color:#64748b;
-                                                    margin-bottom:2px;
-                                                ">
-                                                    COUPON CODE
-                                                </small>
-
-                                                <strong style="
-                                                    font-size:15px;
-                                                    color:#2878f0;
-                                                    letter-spacing:1px;
-                                                ">
-                                                    {{ $sentOffer->coupon_code }}
-                                                </strong>
-                                            </div>
-
-                                            <button type="button"
-                                                class="btn btn-sm btn-outline-primary"
-                                                onclick="copyCoupon('{{ $sentOffer->coupon_code }}', this)"
-                                                style="font-size:11px;">
-                                                <i class="bi bi-copy"></i>
-                                                Copy
-                                            </button>
-                                        </div>
-                                    @endif
-
-                                    {{-- Sent Date --}}
-                                    <div style="
-                                        margin-top:12px;
-                                        font-size:11px;
-                                        color:#94a3b8;
-                                    ">
-                                        <i class="bi bi-calendar3"></i>
-
-                                        Sent
-                                        {{ $sentOffer->sent_at
-                                            ? $sentOffer->sent_at->format('d M Y')
-                                            : '-' }}
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        @endforeach
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    @endif
-
-    <!-- Orders + Top Categories -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-7">
-            <div class="section-card">
-                <div class="section-header">
-                    <h5>Your Orders</h5>
-                    <a href="{{ route('customer.orders.index') }}" class="view-all">View All Orders</a>
-                </div>
-                <div class="order-status-row">
-                    <div class="order-status-item">
-                        <div class="status-icon pending"><i class="bi bi-clock"></i></div>
-                        <span class="status-label">Pending</span>
-                        <strong>{{ $orderStatusCounts['pending'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon confirmed"><i class="bi bi-check-circle"></i></div>
-                        <span class="status-label">Confirmed</span>
-                        <strong>{{ $orderStatusCounts['confirmed'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon confirmed"><i class="bi bi-check-circle"></i></div>
-                        <span class="status-label">Processing</span>
-                        <strong>{{ $orderStatusCounts['processing'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon confirmed"><i class="bi bi-check-circle"></i></div>
-                        <span class="status-label">Packed</span>
-                        <strong>{{ $orderStatusCounts['packed'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon shipped"><i class="bi bi-truck"></i></div>
-                        <span class="status-label">Shipped</span>
-                        <strong>{{ $orderStatusCounts['shipped'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon shipped"><i class="bi bi-truck"></i></div>
-                        <span class="status-label">Out Of Delivery</span>
-                        <strong>{{ $orderStatusCounts['out_for_delivery'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon delivered"><i class="bi bi-box-seam"></i></div>
-                        <span class="status-label">Delivered</span>
-                        <strong>{{ $orderStatusCounts['delivered'] ?? 0 }}</strong>
-                    </div>
-                    <div class="order-status-item">
-                        <div class="status-icon cancelled"><i class="bi bi-x-circle"></i></div>
-                        <span class="status-label">Cancelled</span>
-                        <strong>{{ $orderStatusCounts['cancelled'] ?? 0 }}</strong>
-                    </div>
-                </div>
-
-                @if(isset($recentOrders) && $recentOrders->count() > 0)
-                    <div style="margin-top: 15px; border-top: 1px solid #e5eaf1; padding-top: 15px;">
-                        <p style="font-size: 13px; font-weight: 600; color: #172033; margin-bottom: 10px;">Recent Orders</p>
-                        @foreach($recentOrders->take(3) as $order)
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                <div>
-                                    <span style="font-size: 13px; font-weight: 500;">Order #{{ $order->order_number }}</span>
-                                    <span style="font-size: 12px; color: #64748b; display: block;">{{ $order->created_at->format('d M Y') }}</span>
-                                </div>
-                                <div>
-                                    <span style="font-size: 13px; font-weight: 600;">₹{{ number_format($order->total_amount, 0) }}</span>
-                                    <span class="badge bg-{{ $order->status == 'delivered' ? 'success' : ($order->status == 'cancelled' ? 'danger' : 'warning') }}"
-                                        style="font-size: 10px; margin-left: 8px;">
-                                        {{ ucfirst($order->status) }}
-                                    </span>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p style="text-align: center; color: #94a3b8; padding: 20px 0; margin: 0;">
-                        <i class="bi bi-inbox" style="font-size: 30px; display: block; margin-bottom: 8px;"></i>
-                        No orders yet. Start shopping!
-                    </p>
-                @endif
-            </div>
-        </div>
-
-        <div class="col-lg-5">
-            <div class="section-card">
-                <div class="section-header">
-                    <h5>Top Categories</h5>
-                    <a href="{{ route('customer.products') }}" class="view-all">View All</a>
-                </div>
-                <div class="top-categories">
-                    @foreach($categories->take(6) as $cat)
-                        <a href="{{ route('customer.products', ['category' => $cat->slug]) }}" class="top-cat">
-                            <div class="top-cat-placeholder"><i class="bi bi-tag"></i></div>
-                            <span>{{ $cat->name }}</span>
+                        <a href="{{ route('account.settings') }}" class="edit-profile-link">
+                            <i class="bi bi-pencil"></i> Edit Profile
                         </a>
-                    @endforeach
-                </div>
-
-                @if(isset($recentlyViewed) && $recentlyViewed->count() > 0)
-                    <div style="margin-top: 15px; border-top: 1px solid #e5eaf1; padding-top: 15px;">
-                        <p style="font-size: 13px; font-weight: 600; color: #172033; margin-bottom: 10px;">Recently Viewed</p>
-                        <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px;">
-                            @foreach($recentlyViewed->take(4) as $product)
-                                <a href="{{ route('customer.orders.show', $product->id) }}" style="text-decoration: none; flex: 0 0 80px; text-align: center;">
-                                    @php
-                                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                                        $firstImage = $images[0] ?? null;
-                                        if ($firstImage) {
-                                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                                            $imgUrl = asset($firstImage);
-                                        } else {
-                                            $imgUrl = null;
-                                        }
-                                    @endphp
-                                    @if($imgUrl)
-                                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px;">
-                                    @else
-                                        <div style="width: 70px; height: 70px; background: #f1f5f9; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
-                                            <i class="bi bi-image"></i>
-                                        </div>
-                                    @endif
-                                    <span style="font-size: 10px; color: #64748b; display: block; margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                                        {{ $product->name }}
-                                    </span>
-                                </a>
-                            @endforeach
-                        </div>
                     </div>
-                @endif
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-box">
+                    <h4>{{ $orderCount ?? 0 }}</h4>
+                    <span>Orders</span>
+                    <a href="{{ route('customer.orders.index') }}">View all</a>
+                </div>
+                <div class="stat-box">
+                    <h4 id="wishlistCountDisplay">{{ $wishlistCount }}</h4>
+                    <span>Wishlist</span>
+                    <a href="{{ route('customer.wishlist') }}">View all</a>
+                </div>
+                <div class="stat-box">
+                    <h4>{{ $couponCount ?? 0 }}</h4>
+                    <span>Coupons</span>
+                    <a href="#">View all</a>
+                </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Recommended Products -->
+<!-- Dynamic Banners -->
+@if(isset($banners) && $banners->count() > 0)
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="section-card">
                 <div class="section-header">
-                    <h5>Recommended for You</h5>
-                    <a href="{{ route('customer.products') }}" class="view-all">View All</a>
+                    <h5><i class="bi bi-images"></i> Featured Offers</h5>
                 </div>
-
-                <div class="product-slider">
-                    @forelse($recommendedProducts as $product)
-                        @php
-                            $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
-                            $firstImage = $images[0] ?? null;
-                            if ($firstImage) {
-                                $firstImage = preg_replace('#^storage/#', '', $firstImage);
-                                $imgUrl = asset($firstImage);
-                            } else {
-                                $imgUrl = null;
-                            }
-                        @endphp
-
-                        <div class="product-card" data-product-id="{{ $product->id }}">
-                            <a href="{{ route('customer.products', $product->id) }}" style="text-decoration: none; color: inherit;">
-                                <div class="product-img">
-                                    @if($imgUrl)
-                                        <img src="{{ $imgUrl }}" alt="{{ $product->name }}"
-                                            onerror="this.src='{{ asset('images/placeholder.png') }}'">
-                                    @else
-                                        <div class="no-img"><i class="bi bi-image"></i></div>
-                                    @endif
-
-                                    {{-- OFFER BADGE --}}
-                                    @if(isset($product->active_offer) && $product->active_offer)
-                                        <div class="offer-badge {{ $product->active_offer->discount_type === 'fixed' ? 'fixed' : '' }}">
-                                            @if($product->active_offer->discount_type === 'percentage')
-                                                {{ rtrim(rtrim(number_format($product->active_offer->discount_value, 2), '0'), '.') }}% OFF
-                                            @else
-                                                ₹{{ number_format($product->active_offer->discount_value, 0) }} OFF
+                <div id="dashboardBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+                    @if($banners->count() > 1)
+                        <div class="carousel-indicators">
+                            @foreach($banners as $index => $banner)
+                                <button type="button" data-bs-target="#dashboardBannerCarousel"
+                                    data-bs-slide-to="{{ $index }}" class="{{ $index === 0 ? 'active' : '' }}"
+                                    aria-label="Slide {{ $index + 1 }}"></button>
+                            @endforeach
+                        </div>
+                    @endif
+                    <div class="carousel-inner">
+                        @foreach($banners as $index => $banner)
+                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                <a href="{{ $banner->link_url ?? '#' }}" class="banner-link" target="_blank">
+                                    <img src="{{ asset('storage/' . $banner->image) }}"
+                                        class="d-block w-100 dashboard-banner-img"
+                                        alt="{{ $banner->title ?? 'Banner' }}">
+                                    @if($banner->title)
+                                        <div class="banner-overlay">
+                                            <h4>{{ $banner->title }}</h4>
+                                            @if($banner->subtitle)
+                                                <p style="margin:0;font-size:12px;opacity:0.9;">{{ $banner->subtitle }}</p>
                                             @endif
                                         </div>
                                     @endif
-
-                                    <button class="wishlist-btn" data-product-id="{{ $product->id }}"
-                                        onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
-                                </div>
-                                <div class="product-info">
-                                    <h6>{{ $product->name }}</h6>
-                                    <div class="price">
-                                        @if(isset($product->active_offer) && $product->active_offer)
-                                            @php
-                                                $original = $product->price;
-                                                if ($product->active_offer->discount_type === 'percentage') {
-                                                    $discounted = $original - ($original * $product->active_offer->discount_value / 100);
-                                                } else {
-                                                    $discounted = max(0, $original - $product->active_offer->discount_value);
-                                                }
-                                            @endphp
-                                            <span class="current ">
-                                                ₹{{ number_format($original, 0) }}
-                                            </span>
-                                        @else
-                                            <span class="current">₹{{ number_format($product->price, 0) }}</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    @empty
-                        <p class="text-muted" style="grid-column: 1 / -1; text-align: center; padding: 40px 0;">
-                            <i class="bi bi-box" style="font-size: 30px; display: block; margin-bottom: 8px;"></i>
-                            No products available.
-                        </p>
-                    @endforelse
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                    @if($banners->count() > 1)
+                        <button class="carousel-control-prev" type="button" data-bs-target="#dashboardBannerCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#dashboardBannerCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
+@endif
 
-    <!-- Benefits -->
-    <div class="benefits-bar">
-        <div class="benefit-item">
-            <i class="bi bi-truck"></i>
-            <div><strong>Free Shipping</strong><small>On orders above ₹999</small></div>
-        </div>
-        <div class="benefit-item">
-            <i class="bi bi-arrow-repeat"></i>
-            <div><strong>30 Days Returns</strong><small>Easy returns & refunds</small></div>
-        </div>
-        <div class="benefit-item">
-            <i class="bi bi-shield-check"></i>
-            <div><strong>Secure Payments</strong><small>100% secure payments</small></div>
-        </div>
-        <div class="benefit-item">
-            <i class="bi bi-headset"></i>
-            <div><strong>24/7 Support</strong><small>We're here to help</small></div>
-        </div>
-        <div class="benefit-item">
-            <i class="bi bi-tag"></i>
-            <div><strong>Best Prices</strong><small>Guaranteed best prices</small></div>
+<!-- Sent Offers & Coupons -->
+@if(isset($sentOffers) && $sentOffers->count() > 0)
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="section-card">
+                <div class="section-header">
+                    <div>
+                        <h5>🎯 Offers & Coupons For You</h5>
+                        <small class="text-muted">Exclusive offers and coupons sent to you</small>
+                    </div>
+                    <span style="background:#f1f6ff;color:#2878f0;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;">
+                        {{ $sentOffers->count() }} Available
+                    </span>
+                </div>
+                <div class="row g-3">
+                    @foreach($sentOffers as $sentOffer)
+                        @php $offer = $sentOffer->offer; @endphp
+                        <div class="col-lg-4 col-md-6">
+                            <div style="border:1px solid #e5eaf1;border-radius:12px;padding:18px;height:100%;background:#fff;position:relative;overflow:hidden;transition:all 0.3s ease;">
+                                <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg, #2878f0, #1a5fc7);"></div>
+                                @if($offer)
+                                    <div style="position:absolute;top:12px;right:12px;background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;">
+                                        @if($offer->discount_type === 'percentage')
+                                            {{ rtrim(rtrim(number_format($offer->discount_value, 2), '0'), '.') }}% OFF
+                                        @else
+                                            ₹{{ number_format($offer->discount_value, 0) }} OFF
+                                        @endif
+                                    </div>
+                                    <div style="padding-right:75px;">
+                                        <h6 style="margin:0 0 6px;font-size:15px;font-weight:700;color:#172033;">{{ $offer->title }}</h6>
+                                        @if(!empty($offer->description))
+                                            <p style="margin:0;font-size:12px;color:#64748b;">{{ Str::limit($offer->description, 100) }}</p>
+                                        @endif
+                                    </div>
+                                @endif
+                                @if($sentOffer->coupon_code)
+                                    <div style="margin-top:15px;padding:10px 12px;background:#f8fafc;border:1px dashed #2878f0;border-radius:8px;display:flex;justify-content:space-between;align-items:center;">
+                                        <div>
+                                            <small style="display:block;font-size:9px;color:#64748b;margin-bottom:2px;">COUPON CODE</small>
+                                            <strong style="font-size:14px;color:#2878f0;letter-spacing:1px;">{{ $sentOffer->coupon_code }}</strong>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="copyCoupon('{{ $sentOffer->coupon_code }}', this)" style="font-size:10px;padding:4px 10px;">
+                                            <i class="bi bi-copy"></i> Copy
+                                        </button>
+                                    </div>
+                                @endif
+                                <div style="margin-top:12px;font-size:11px;color:#94a3b8;">
+                                    <i class="bi bi-calendar3"></i> Sent {{ $sentOffer->sent_at ? $sentOffer->sent_at->format('d M Y') : '-' }}
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
         </div>
     </div>
+@endif
+
+<!-- Orders + Top Categories -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-7">
+        <div class="section-card">
+            <div class="section-header">
+                <h5>📦 Your Orders</h5>
+                <a href="{{ route('customer.orders.index') }}" class="view-all">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="order-status-row">
+                <div class="order-status-item">
+                    <div class="status-icon pending"><i class="bi bi-clock"></i></div>
+                    <span class="status-label">Pending</span>
+                    <strong>{{ $orderStatusCounts['pending'] ?? 0 }}</strong>
+                </div>
+                <div class="order-status-item">
+                    <div class="status-icon confirmed"><i class="bi bi-check-circle"></i></div>
+                    <span class="status-label">Confirmed</span>
+                    <strong>{{ $orderStatusCounts['confirmed'] ?? 0 }}</strong>
+                </div>
+                <div class="order-status-item">
+                    <div class="status-icon shipped"><i class="bi bi-truck"></i></div>
+                    <span class="status-label">Shipped</span>
+                    <strong>{{ $orderStatusCounts['shipped'] ?? 0 }}</strong>
+                </div>
+                <div class="order-status-item">
+                    <div class="status-icon delivered"><i class="bi bi-box-seam"></i></div>
+                    <span class="status-label">Delivered</span>
+                    <strong>{{ $orderStatusCounts['delivered'] ?? 0 }}</strong>
+                </div>
+            </div>
+            @if(isset($recentOrders) && $recentOrders->count() > 0)
+                <div style="margin-top:16px;border-top:1px solid #e5eaf1;padding-top:14px;">
+                    <p style="font-size:13px;font-weight:600;color:#172033;margin-bottom:10px;">Recent Orders</p>
+                    @foreach($recentOrders->take(3) as $order)
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;">
+                            <div>
+                                <span style="font-size:13px;font-weight:500;">Order #{{ $order->order_number }}</span>
+                                <span style="font-size:11px;color:#64748b;display:block;">{{ $order->created_at->format('d M Y') }}</span>
+                            </div>
+                            <div>
+                                <span style="font-size:13px;font-weight:600;">₹{{ number_format($order->total_amount, 0) }}</span>
+                                <span class="badge bg-{{ $order->status == 'delivered' ? 'success' : ($order->status == 'cancelled' ? 'danger' : 'warning') }}" style="font-size:9px;margin-left:8px;padding:3px 8px;">
+                                    {{ ucfirst($order->status) }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p style="text-align:center;color:#94a3b8;padding:20px 0;margin:0;">
+                    <i class="bi bi-inbox" style="font-size:30px;display:block;margin-bottom:8px;"></i>
+                    No orders yet. Start shopping!
+                </p>
+            @endif
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="section-card">
+            <div class="section-header">
+                <h5>🏷️ Top Categories</h5>
+                <a href="{{ route('customer.products') }}" class="view-all">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="top-categories">
+                @foreach($categories->take(6) as $cat)
+                    <a href="{{ route('customer.products', ['category' => $cat->slug]) }}" class="top-cat">
+                        <div class="top-cat-placeholder">
+                            @if($cat->image)
+                                <img src="{{ asset('storage/' . $cat->image) }}" alt="{{ $cat->name }}">
+                            @else
+                                <i class="bi bi-tag"></i>
+                            @endif
+                        </div>
+                        <span>{{ $cat->name }}</span>
+                    </a>
+                @endforeach
+            </div>
+            @if(isset($recentlyViewed) && $recentlyViewed->count() > 0)
+                <div style="margin-top:16px;border-top:1px solid #e5eaf1;padding-top:14px;">
+                    <p style="font-size:13px;font-weight:600;color:#172033;margin-bottom:10px;">👁️ Recently Viewed</p>
+                    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:5px;">
+                        @foreach($recentlyViewed->take(4) as $product)
+                            <a href="{{ route('customer.orders.show', $product->id) }}" style="text-decoration:none;flex:0 0 80px;text-align:center;">
+                                @php
+                                    $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                                    $firstImage = $images[0] ?? null;
+                                    if ($firstImage) {
+                                        $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                                        $imgUrl = asset($firstImage);
+                                    } else {
+                                        $imgUrl = null;
+                                    }
+                                @endphp
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $product->name }}" style="width:70px;height:70px;object-fit:cover;border-radius:8px;">
+                                @else
+                                    <div style="width:70px;height:70px;background:#f1f5f9;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#94a3b8;">
+                                        <i class="bi bi-image"></i>
+                                    </div>
+                                @endif
+                                <span style="font-size:9px;color:#64748b;display:block;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                    {{ $product->name }}
+                                </span>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="section-card">
+            <div class="section-header">
+                <h5>⭐ Recommended for You</h5>
+                <a href="{{ route('customer.products') }}" class="view-all">View All <i class="bi bi-arrow-right"></i></a>
+            </div>
+            <div class="product-slider">
+                @forelse($recommendedProducts as $product)
+                    @php
+                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                        $firstImage = $images[0] ?? null;
+                        if ($firstImage) {
+                            $firstImage = preg_replace('#^storage/#', '', $firstImage);
+                            $imgUrl = asset($firstImage);
+                        } else {
+                            $imgUrl = null;
+                        }
+                    @endphp
+                    <div class="product-card" data-product-id="{{ $product->id }}">
+                        <a href="{{ route('customer.products.detail', $product->slug) }}" style="text-decoration:none;color:inherit;">
+                            <div class="product-img">
+                                @if($imgUrl)
+                                    <img src="{{ $imgUrl }}" alt="{{ $product->name }}" onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                                @else
+                                    <div class="no-img"><i class="bi bi-image"></i></div>
+                                @endif
+                                @if(isset($product->active_offer) && $product->active_offer)
+                                    <div class="offer-badge {{ $product->active_offer->discount_type === 'fixed' ? 'fixed' : '' }}">
+                                        @if($product->active_offer->discount_type === 'percentage')
+                                            {{ rtrim(rtrim(number_format($product->active_offer->discount_value, 2), '0'), '.') }}% OFF
+                                        @else
+                                            ₹{{ number_format($product->active_offer->discount_value, 0) }} OFF
+                                        @endif
+                                    </div>
+                                @endif
+                                <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                            <div class="product-info">
+                                <h6>{{ $product->name }}</h6>
+                                <div class="price">
+                                    @if(isset($product->active_offer) && $product->active_offer)
+                                        @php
+                                            $original = $product->price;
+                                            if ($product->active_offer->discount_type === 'percentage') {
+                                                $discounted = $original - ($original * $product->active_offer->discount_value / 100);
+                                            } else {
+                                                $discounted = max(0, $original - $product->active_offer->discount_value);
+                                            }
+                                        @endphp
+                                        <span class="current" style="color:#ef4444;">₹{{ number_format($discounted, 0) }}</span>
+                                        <span style="font-size:11px;color:#94a3b8;text-decoration:line-through;margin-left:4px;">₹{{ number_format($original, 0) }}</span>
+                                    @else
+                                        <span class="current">₹{{ number_format($product->price, 0) }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                @empty
+                    <p class="text-muted" style="grid-column:1/-1;text-align:center;padding:40px 0;">
+                        <i class="bi bi-box" style="font-size:30px;display:block;margin-bottom:8px;"></i>
+                        No products available.
+                    </p>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Benefits -->
+<div class="row g-4">
+    <div class="col-12">
+        <div class="benefits-bar">
+            <div class="benefit-item">
+                <i class="bi bi-truck"></i>
+                <div><strong>Free Shipping</strong><small>On orders above ₹999</small></div>
+            </div>
+            <div class="benefit-item">
+                <i class="bi bi-arrow-repeat"></i>
+                <div><strong>30 Days Returns</strong><small>Easy returns & refunds</small></div>
+            </div>
+            <div class="benefit-item">
+                <i class="bi bi-shield-check"></i>
+                <div><strong>Secure Payments</strong><small>100% secure payments</small></div>
+            </div>
+            <div class="benefit-item">
+                <i class="bi bi-headset"></i>
+                <div><strong>24/7 Support</strong><small>We're here to help</small></div>
+            </div>
+            <div class="benefit-item">
+                <i class="bi bi-tag"></i>
+                <div><strong>Best Prices</strong><small>Guaranteed best prices</small></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -1093,7 +965,6 @@
                         }
                         saveWishlist();
 
-                        // Update wishlist count in sidebar and stat box
                         document.querySelectorAll('.badge-count').forEach(el => {
                             const link = el.closest('a');
                             if (link && link.href && link.href.includes('/customer/wishlist')) {
@@ -1143,10 +1014,29 @@
             });
         }
 
+        function copyCoupon(code, button) {
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                button.style.background = '#22c55e';
+                button.style.color = '#fff';
+                button.style.borderColor = '#22c55e';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '';
+                    button.style.color = '';
+                    button.style.borderColor = '';
+                }, 2000);
+            }).catch(() => {
+                alert('Copy: ' + code);
+            });
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             loadWishlist();
         });
 
         window.toggleWishlist = toggleWishlist;
+        window.copyCoupon = copyCoupon;
     </script>
 @endsection

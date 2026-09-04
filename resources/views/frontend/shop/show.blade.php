@@ -162,28 +162,81 @@
             background: var(--text)
         }
 
+        /* Gallery Wishlist Button */
         .gallery-wishlist {
             position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 42px;
-            height: 42px;
+            top: 12px;
+            right: 12px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #E8E1D7;
             border-radius: 50%;
-            background: rgba(255, 255, 255, .95);
-            border: 1px solid var(--border);
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
             cursor: pointer;
-            transition: .3s;
-            color: var(--text-light)
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 0;
+            color: #77736D;
         }
 
         .gallery-wishlist:hover {
-            color: var(--gold);
-            border-color: var(--gold);
-            transform: scale(1.05)
+            background: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        .gallery-wishlist i {
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-wishlist.active {
+            border-color: #e74c3c;
+            background: #fff;
+        }
+
+        .gallery-wishlist.active i {
+            color: #e74c3c;
+        }
+
+        .gallery-wishlist.wishlist-active {
+            border-color: #e74c3c;
+            background: #fff;
+        }
+
+        .gallery-wishlist.wishlist-active i {
+            color: #e74c3c;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .gallery-wishlist {
+                top: 10px;
+                right: 10px;
+                width: 32px;
+                height: 32px;
+            }
+
+            .gallery-wishlist i {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .gallery-wishlist {
+                top: 8px;
+                right: 8px;
+                width: 28px;
+                height: 28px;
+            }
+
+            .gallery-wishlist i {
+                font-size: 12px;
+            }
         }
 
         .gallery-expand {
@@ -1530,7 +1583,21 @@
                     @elseif($product->created_at >= now()->subDays(30))
                         <span class="gallery-badge new">New</span>
                     @endif
-                    <button class="gallery-wishlist"><i class="bi bi-heart"></i></button>
+                    @php
+                        $productId = $product->id;
+                        $productName = $product->name;
+                        $productPrice = $product->price;
+                        $productSlug = $product->slug;
+                        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+                        $primaryImage = !empty($images) ? $images[0] : null;
+                    @endphp
+                    <button class="gallery-wishlist wishlist-btn" data-product-id="{{ $product->id }}"
+                        data-product-name="{{ $product->name }}" data-product-price="{{ $product->price }}"
+                        data-product-slug="{{ $product->slug }}" data-product-image="{{ $primaryImage }}"
+                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->slug }}', '{{ $primaryImage }}');"
+                        aria-label="Add to wishlist">
+                        <i class="bi bi-heart"></i>
+                    </button>
                     @if(count($images) > 1)
                         <button class="gallery-arrow prev" onclick="previousImage()"><i class="bi bi-chevron-left"></i></button>
                         <button class="gallery-arrow next" onclick="nextImage()"><i class="bi bi-chevron-right"></i></button>
@@ -1579,13 +1646,15 @@
                 <div class="purchase-row">
                     @if($product->stock > 0)
                         @auth
-                            <button type="button" class="btn-add-cart"
-                                onclick="window.location.href='{{ route('customer.products', ['category_id' => $product->category_id]) }}'">
-                                <i class="bi bi-bag-plus"></i> Make It Yours
+                            <button type="button" class="btn-add-cart add-to-cart-btn" data-product-id="{{ $product->id }}"
+                                data-product-name="{{ addslashes($product->name) }}" data-product-price="{{ $product->price }}"
+                                data-product-slug="{{ $product->slug }}" data-product-image="{{ $primaryImage }}"
+                                onclick="event.stopPropagation(); addToCartFromCard(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->slug }}', '{{ $primaryImage }}');">
+                                <i class="bi bi-bag-plus"></i> <span class="btn-text">Make It Yours</span>
                             </button>
                         @else
                             <button type="button" class="btn-add-cart" onclick="window.location.href='{{ route('login') }}'">
-                                <i class="bi bi-bag-plus"></i> Make It Yours
+                                <i class="bi bi-bag-plus"></i> Login to Buy
                             </button>
                         @endauth
                     @else
@@ -1594,7 +1663,13 @@
                         </button>
                     @endif
                 </div>
-                <div class="view-count"><i class="bi bi-eye"></i> 32 people are viewing this item</div>
+                <div class="view-count">
+                    <i class="bi bi-eye"></i>
+                    <span id="viewCount"></span> people are viewing this item
+                </div>
+                <script>
+                    document.getElementById('viewCount').textContent = Math.floor(Math.random() * 50) + 10;
+                </script>
                 <div class="quick-info">
                     @if($product->brand)
                     <div class="quick-info-item"><strong>Brand:</strong> {{ $product->brand->name }}</div>@endif
@@ -1901,25 +1976,59 @@
                 </div>
                 <div class="related-grid">
                     @foreach($recommendations as $related)
-                        @php $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
-                        $relFirst = $relImages[0] ?? null; @endphp
-                        <div class="related-card">
-                            <div class="related-image">
-                                @if($relFirst)<img src="{{ asset($relFirst) }}" alt="{{ $related->name }}" loading="lazy">@else<div
-                                    style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
-                                    <i class="bi bi-image" style="font-size:40px;"></i>
-                                </div>@endif
-                                @if($related->created_at >= now()->subDays(30))<span class="related-badge">New</span>@endif
-                                <button class="related-wishlist"><i class="bi bi-heart"></i></button>
+                        @php 
+                                                                                                    $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
+                            $relFirst = $relImages[0] ?? null;
+                            $productId = $related->id;
+                            $productName = $related->name;
+                            $productPrice = $related->price;
+                            $productSlug = $related->slug;
+                        @endphp
+                        <!-- Entire card is clickable -->
+                        <div class="related-card" style="position:relative;cursor:pointer;"
+                            onclick="window.location.href='{{ route('shop.show', $related->slug) }}'">
+                            <div class="related-image" style="position:relative;">
+                                @if($relFirst)
+                                    <img src="{{ asset($relFirst) }}" alt="{{ $related->name }}" loading="lazy">
+                                @else
+                                    <div
+                                        style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#D5CFC5;">
+                                        <i class="bi bi-image" style="font-size:40px;"></i>
+                                    </div>
+                                @endif
+                                @if($related->created_at >= now()->subDays(30))
+                                    <span class="related-badge">New</span>
+                                @endif
+
+                                <!-- Wishlist Button (stops propagation to prevent redirect) -->
+                                <button class="related-wishlist wishlist-btn" data-product-id="{{ $productId }}"
+                                    data-product-name="{{ addslashes($productName) }}" data-product-price="{{ $productPrice }}"
+                                    data-product-slug="{{ $productSlug }}" data-product-image="{{ $relFirst }}"
+                                    onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $relFirst }}');"
+                                    aria-label="Add to wishlist">
+                                    <i class="bi bi-heart"></i>
+                                </button>
                             </div>
                             <div class="related-content">
                                 <div class="related-category">{{ $related->category->name ?? 'Jewellery' }}</div>
-                                <h3 class="related-title"><a
-                                        href="{{ route('shop.show', $related->slug) }}">{{ Str::limit($related->name, 32) }}</a>
+                                <h3 class="related-title">
+                                    {{ Str::limit($related->name, 32) }}
                                 </h3>
                                 <div class="related-price">
-                                    ₹{{ number_format($related->price, 2) }}@if($related->compare_price && $related->compare_price > $related->price)<span
-                                    class="related-original">₹{{ number_format($related->compare_price, 2) }}</span>@endif</div>
+                                    ₹{{ number_format($related->price, 2) }}
+                                    @if($related->compare_price && $related->compare_price > $related->price)
+                                        <span class="related-original">₹{{ number_format($related->compare_price, 2) }}</span>
+                                    @endif
+                                </div>
+                                <!-- Add to Cart Button (stops propagation to prevent redirect) -->
+                                <button type="button" class="btn-add-cart-compact add-to-cart-btn"
+                                    data-product-id="{{ $productId }}" data-product-name="{{ addslashes($productName) }}"
+                                    data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                    data-product-image="{{ $relFirst }}"
+                                    onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $relFirst }}');">
+                                    <i class="bi bi-cart-plus"></i>
+                                    <span class="btn-text">Add to Cart</span>
+                                </button>
                             </div>
                         </div>
                     @endforeach
@@ -2084,5 +2193,197 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') closeImageModal();
         });
+        function doSearch(query) {
+            const results = document.getElementById('searchResults');
+            const clearBtn = document.getElementById('clearBtn');
+            const links = document.getElementById('categoryLinks');
+            const hint = document.getElementById('searchHint');
+
+            if (!results) return;
+
+            query = query.trim();
+
+            // Empty search
+            if (query.length === 0) {
+                if (clearBtn) clearBtn.style.display = 'none';
+                results.style.display = 'none';
+                results.innerHTML = '';
+                if (links) links.style.display = 'flex';
+                if (hint) hint.style.display = 'block';
+                clearTimeout(searchTimeout);
+                return;
+            }
+
+            // Search started
+            if (clearBtn) clearBtn.style.display = 'flex';
+            if (links) links.style.display = 'none';
+            if (hint) hint.style.display = 'none';
+
+            results.style.display = 'block';
+            results.innerHTML = `
+            <div class="search-loading">
+                    <i class="bi bi-hourglass-split"></i>
+                    Searching...
+                </div>
+            `;
+
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+
+            // Delay search by 300ms
+            searchTimeout = setTimeout(() => {
+                const searchUrl = `/search?q=${encodeURIComponent(query)}`;
+
+                fetch(searchUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Search request failed');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let html = '';
+
+                        // ==========================================
+                        // CATEGORIES
+                        // ==========================================
+                        if (data.categories && data.categories.length > 0) {
+                            html += `
+                        <div class="search-categories">
+                            <h4 class="search-section-title">Categories</h4>
+                            <div class="search-cat-pills">
+                    `;
+
+                            data.categories.forEach(category => {
+                                html += `
+                            <a href="/shop?category=${encodeURIComponent(category.slug)}" class="search-cat-pill">
+                                ${escapeHtml(category.name)}
+                            </a>
+                        `;
+                            });
+
+                            html += `
+                            </div>
+                        </div>
+                    `;
+                        }
+
+                        // ==========================================
+                        // PRODUCTS
+                        // ==========================================
+                        if (data.products && data.products.length > 0) {
+                            html += `
+                        <div class="search-products">
+                            <h4 class="search-section-title">Products</h4>
+                    `;
+
+                            data.products.forEach(product => {
+                                // ==========================================
+                                // GET ONLY FIRST IMAGE
+                                // ==========================================
+                                let imageUrl = '';
+
+                                if (product.image) {
+                                    const imagesArray = product.image
+                                        .split(',')
+                                        .map(s => s.trim())
+                                        .filter(Boolean);
+
+                                    // ONLY FIRST IMAGE
+                                    const firstImage = imagesArray[0] || '';
+
+                                    if (firstImage) {
+                                        if (firstImage.startsWith('/storage/')) {
+                                            // Already correct
+                                            imageUrl = firstImage;
+                                        } else if (firstImage.startsWith('storage/')) {
+                                            // Add leading slash
+                                            imageUrl = '/' + firstImage;
+                                        } else {
+                                            // uploads/products/...
+                                            imageUrl = '/storage/' + firstImage.replace(/^\/+/, '');
+                                        }
+                                    }
+                                }
+                                html += `
+                                    <a href="/shop/${encodeURIComponent(product.slug)}" class="search-product-item">
+                                `;
+                                if (imageUrl) {
+                                    html += `
+                                <img
+                                    src="${imageUrl}"
+                                    alt="${escapeHtml(product.name ?? '')}"
+                                    class="search-product-img"
+                                    loading="lazy"
+                                    onerror="
+                                        this.onerror=null;
+                                        this.style.display='none';
+                                        this.nextElementSibling.style.display='flex';
+                                    "
+                                >
+                                <div class="search-product-img-placeholder" style="display:none;">
+                                    <i class="bi bi-gem"></i>
+                                </div>
+                            `;
+                                } else {
+                                    html += `
+                                <div class="search-product-img-placeholder">
+                                    <i class="bi bi-gem"></i>
+                                </div>
+                            `;
+                                }
+
+                                // ==========================================
+                                // PRODUCT DETAILS
+                                // ==========================================
+                                html += `
+                                <div class="search-product-info">
+                                    <div class="search-product-name">
+                                        ${escapeHtml(product.name ?? '')}
+                                    </div>
+                                    <div class="search-product-price">
+                                        ₹${formatPrice(product.price)}
+                                    </div>
+                                </div>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        `;
+                            });
+
+                            html += `
+                        </div>
+                    `;
+                        }
+
+                        // ==========================================
+                        // NO RESULTS
+                        // ==========================================
+                        if (!html) {
+                            html = `
+                        <div class="search-empty">
+                            <i class="bi bi-search"></i>
+                            <span>No results found for “${escapeHtml(query)}”</span>
+                        </div>
+                    `;
+                        }
+                        results.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        results.innerHTML = `
+                    <div class="search-error">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Unable to load search results. Please try again.</span>
+                    </div>
+                `;
+                    });
+            }, 300);
+        }
     </script>
 @endpush

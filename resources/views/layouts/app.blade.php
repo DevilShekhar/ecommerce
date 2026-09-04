@@ -295,8 +295,8 @@
                         <a class="image" href="{{ 'profile' }}"><img
                                 src="{{ asset('assets/admin/images/profile_av.jpg') }}" alt="User"></a>
                         <div class="detail">
-                            <h4>{{ Auth::user()->name }}</h4>
-                            <small>{{ Auth::user()->role->name ?? 'User' }}</small>
+                            <h4>{{ Auth::user()?->name ?? 'Guest' }}</h4>
+                            <small>{{ Auth::user()?->role?->name ?? 'User' }}</small>
                         </div>
                     </div>
                 </li>
@@ -436,7 +436,7 @@
                         </ul>
                     </li>
                 @endcan
-                @if(auth()->user()->role?->name === 'SuperAdmin')
+                @if(auth()->user()?->role?->name === 'SuperAdmin')
 
                     <li class="{{ request()->routeIs('orders.*') ? 'active open' : '' }}">
 
@@ -469,7 +469,7 @@
                             <li class="{{ request()->routeIs('admin.banners.index') ? 'active' : '' }}">
                                 <a href="{{ route('admin.banners.index') }}">
                                     <i class="zmdi zmdi-view-list"></i>
-                                   Banenrs
+                                    Banenrs
                                 </a>
                             </li>
 
@@ -523,15 +523,16 @@
                         </ul>
                     </li>
                 @endcan
-                @if(auth()->user()->role?->name === 'SuperAdmin')
-
-                    <li>
-                        <a href="{{ route('admin.contact-submissions.index') }}">
-                            <i class="zmdi zmdi-email"></i>
-                            <span>Contact Submissions</span>
-                        </a>
-                    </li>
-                @endif
+                @auth
+                    @if(auth()->user()?->role?->name === 'SuperAdmin')
+                        <li>
+                            <a href="{{ route('admin.contact-submissions.index') }}">
+                                <i class="zmdi zmdi-email"></i>
+                                <span>Contact Submissions</span>
+                            </a>
+                        </li>
+                    @endif
+                @endauth
     </aside>
     <!-- Page Content -->
     <main>
