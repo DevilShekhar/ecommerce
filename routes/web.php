@@ -3,7 +3,7 @@
 use App\Http\Controllers\admin\BannerController;
 use App\Http\Controllers\admin\BlogController;
 use App\Http\Controllers\admin\BrandController;
-use App\Http\Controllers\admin\CheckoutController;
+use App\Http\Controllers\Admin\CheckoutController;
 use App\Http\Controllers\Admin\ContactSubmissionController;
 use App\Http\Controllers\admin\CouponController;
 use App\Http\Controllers\Admin\CustomerAccountController;
