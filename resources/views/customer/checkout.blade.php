@@ -657,234 +657,238 @@
 
                     <div class="summary-card">
 
-    <div class="summary-header">
-        <h5>Price Details</h5>
-    </div>
+                        <div class="summary-header">
+                            <h5>Price Details</h5>
+                        </div>
 
-    @php
-        /*
-        |--------------------------------------------------------------------------
-        | CALCULATE SUBTOTAL BASED ON SELLING PRICE
-        |--------------------------------------------------------------------------
-        */
-        $subtotal = 0;
-        $originalSubtotal = 0;
-        $totalDiscount = 0;
-        $hasDiscountItems = false;
+                        @php
+                            /*
+                            |--------------------------------------------------------------------------
+                            | CALCULATE SUBTOTAL BASED ON SELLING PRICE
+                            |--------------------------------------------------------------------------
+                            */
+                            $subtotal = 0;
+                            $originalSubtotal = 0;
+                            $totalDiscount = 0;
+                            $hasDiscountItems = false;
 
-        foreach ($cart as $cartItem) {
-            $product = \App\Models\Product::find($cartItem['id'] ?? null);
-            $quantity = (int) ($cartItem['quantity'] ?? 1);
+                            foreach ($cart as $cartItem) {
+                                $product = \App\Models\Product::find($cartItem['id'] ?? null);
+                                $quantity = (int) ($cartItem['quantity'] ?? 1);
 
-            // Get selling price (discounted price)
-            $sellingPrice = (float) ($cartItem['selling_price'] ?? $product?->selling_price ?? $cartItem['price'] ?? $product?->price ?? 0);
+                                // Get selling price (discounted price)
+                                $sellingPrice = (float) ($cartItem['selling_price'] ?? $product?->selling_price ?? $cartItem['price'] ?? $product?->price ?? 0);
 
-            // Get original price
-            $originalPrice = (float) ($cartItem['price'] ?? $product?->price ?? 0);
+                                // Get original price
+                                $originalPrice = (float) ($cartItem['price'] ?? $product?->price ?? 0);
 
-            // Check for active offer
-            $activeOffer = $cartItem['active_offer'] ?? $product?->activeOffer ?? $product?->active_offer ?? null;
+                                // Check for active offer
+                                $activeOffer = $cartItem['active_offer'] ?? $product?->activeOffer ?? $product?->active_offer ?? null;
 
-            if ($activeOffer) {
-                $discountValue = (float) $activeOffer->discount_value;
-                if ($activeOffer->discount_type === 'percentage') {
-                    $sellingPrice = $originalPrice - ($originalPrice * $discountValue / 100);
-                } else {
-                    $sellingPrice = $originalPrice - $discountValue;
-                }
-                $sellingPrice = max(0, $sellingPrice);
-            }
+                                if ($activeOffer) {
+                                    $discountValue = (float) $activeOffer->discount_value;
+                                    if ($activeOffer->discount_type === 'percentage') {
+                                        $sellingPrice = $originalPrice - ($originalPrice * $discountValue / 100);
+                                    } else {
+                                        $sellingPrice = $originalPrice - $discountValue;
+                                    }
+                                    $sellingPrice = max(0, $sellingPrice);
+                                }
 
-            // Add to subtotals
-            $subtotal += $sellingPrice * $quantity;
-            $originalSubtotal += $originalPrice * $quantity;
+                                // Add to subtotals
+                                $subtotal += $sellingPrice * $quantity;
+                                $originalSubtotal += $originalPrice * $quantity;
 
-            if ($originalPrice > $sellingPrice) {
-                $hasDiscountItems = true;
-                $totalDiscount += ($originalPrice - $sellingPrice) * $quantity;
-            }
-        }
+                                if ($originalPrice > $sellingPrice) {
+                                    $hasDiscountItems = true;
+                                    $totalDiscount += ($originalPrice - $sellingPrice) * $quantity;
+                                }
+                            }
 
-        $shippingAmount = (float) ($shipping ?? 0);
-        $couponDiscount = (float) ($discount ?? 0);
-        $finalTotal = max(0, $subtotal + $shippingAmount - $couponDiscount);
+                            $shippingAmount = (float) ($shipping ?? 0);
+                            $couponDiscount = (float) ($discount ?? 0);
+                            $finalTotal = max(0, $subtotal + $shippingAmount - $couponDiscount);
 
-        // Format numbers
-        $formattedSubtotal = number_format($subtotal, 0);
-        $formattedOriginalSubtotal = number_format($originalSubtotal, 0);
-        $formattedTotalDiscount = number_format($totalDiscount, 0);
-        $formattedFinalTotal = number_format($finalTotal, 0);
-        $formattedCouponDiscount = number_format($couponDiscount, 0);
-        $formattedShipping = number_format($shippingAmount, 0);
+                            // Format numbers
+                            $formattedSubtotal = number_format($subtotal, 0);
+                            $formattedOriginalSubtotal = number_format($originalSubtotal, 0);
+                            $formattedTotalDiscount = number_format($totalDiscount, 0);
+                            $formattedFinalTotal = number_format($finalTotal, 0);
+                            $formattedCouponDiscount = number_format($couponDiscount, 0);
+                            $formattedShipping = number_format($shippingAmount, 0);
 
-        // Check if coupon is applied from session
-        $appliedCouponCode = session()->get('applied_coupon_code');
-        $hasCoupon = !empty($appliedCouponCode);
-    @endphp
+                            // Check if coupon is applied from session
+                            $appliedCouponCode = session()->get('applied_coupon_code');
+                            $hasCoupon = !empty($appliedCouponCode);
+                        @endphp
 
-    {{-- PRICE (Subtotal based on selling price) --}}
-    <div class="summary-row">
+                        {{-- PRICE (Subtotal based on selling price) --}}
+                        <div class="summary-row">
 
-        <span>
-            Price ({{ $cartCount ?? count($cart) }} items)
-        </span>
+                            <span>
+                                Price ({{ $cartCount ?? count($cart) }} items)
+                            </span>
 
-        <div style="text-align:right;">
-            @if($hasDiscountItems)
-                <span style="color:#94a3b8;text-decoration:line-through;font-size:12px;display:block;">
-                    ₹{{ $formattedOriginalSubtotal }}
-                </span>
-            @endif
-            <strong id="subtotalDisplay" style="color:#198754;">
-                ₹{{ $formattedSubtotal }}
-            </strong>
-        </div>
+                            <div style="text-align:right;">
+                                @if($hasDiscountItems)
+                                    <span style="color:#94a3b8;text-decoration:line-through;font-size:12px;display:block;">
+                                        ₹{{ $formattedOriginalSubtotal }}
+                                    </span>
+                                @endif
+                                <strong id="subtotalDisplay" style="color:#198754;">
+                                    ₹{{ $formattedSubtotal }}
+                                </strong>
+                            </div>
 
-    </div>
+                        </div>
 
-    {{-- DISCOUNT (from product discounts) --}}
-    @if($totalDiscount > 0)
-        <div class="summary-row" style="background:#f0fdf4;padding:6px 0;border-radius:4px;">
-            <span style="color:#16a34a;">
-                <i class="bi bi-tag-fill me-1"></i> Product Discount
-            </span>
-            <span class="discount-value" style="color:#16a34a;">
-                -₹{{ $formattedTotalDiscount }}
-            </span>
-        </div>
-    @endif
+                        {{-- DISCOUNT (from product discounts) --}}
+                        @if($totalDiscount > 0)
+                            <div class="summary-row" style="background:#f0fdf4;padding:6px 0;border-radius:4px;">
+                                <span style="color:#16a34a;">
+                                    <i class="bi bi-tag-fill me-1"></i> Product Discount
+                                </span>
+                                <span class="discount-value" style="color:#16a34a;">
+                                    -₹{{ $formattedTotalDiscount }}
+                                </span>
+                            </div>
+                        @endif
 
-    {{-- DELIVERY --}}
-    <div class="summary-row">
-        <span>Delivery Charges</span>
-        @if($shippingAmount > 0)
-            <strong>
-                ₹{{ $formattedShipping }}
-            </strong>
-        @else
-            <span class="free-shipping">
-                FREE
-            </span>
-        @endif
-    </div>
+                        {{-- DELIVERY --}}
+                        <div class="summary-row">
+                            <span>Delivery Charges</span>
+                            @if($shippingAmount > 0)
+                                <strong>
+                                    ₹{{ $formattedShipping }}
+                                </strong>
+                            @else
+                                <span class="free-shipping">
+                                    FREE
+                                </span>
+                            @endif
+                        </div>
 
-    {{-- COUPON --}}
-    <div class="coupon-wrapper">
+                        {{-- COUPON --}}
+                        <div class="coupon-wrapper">
 
-        <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code"
-            value="{{ $appliedCouponCode ?: '' }}" {{ $hasCoupon ? 'readonly' : '' }}>
+                            <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code"
+                                value="{{ $appliedCouponCode ?: '' }}" {{ $hasCoupon ? 'readonly' : '' }}>
 
-        <button type="button" class="btn {{ $hasCoupon ? 'btn-success' : 'btn-outline-primary' }}" id="applyCouponBtn">
-            @if($hasCoupon)
-                Applied ✅
-            @else
-                Apply
-            @endif
-        </button>
+                            <button type="button" class="btn {{ $hasCoupon ? 'btn-success' : 'btn-outline-primary' }}"
+                                id="applyCouponBtn">
+                                @if($hasCoupon)
+                                    Applied ✅
+                                @else
+                                    Apply
+                                @endif
+                            </button>
 
-    </div>
+                        </div>
 
-    {{-- COUPON DISCOUNT ROW --}}
-    <div class="summary-total coupon-discount-row" id="couponDiscountRow" style="{{ $hasCoupon && $couponDiscount > 0 ? 'display:flex;' : 'display:none;' }};">
+                        {{-- COUPON DISCOUNT ROW --}}
+                        <div class="summary-total coupon-discount-row" id="couponDiscountRow"
+                            style="{{ $hasCoupon && $couponDiscount > 0 ? 'display:flex;' : 'display:none;' }};">
 
-        <span>
+                            <span>
 
-            Coupon Discount
+                                Coupon Discount
 
-            @if($hasCoupon)
-                <small id="appliedCouponCode" style="color:#64748b;font-size:11px;">
-                    ({{ $appliedCouponCode }})
-                </small>
-            @endif
+                                @if($hasCoupon)
+                                    <small id="appliedCouponCode" style="color:#64748b;font-size:11px;">
+                                        ({{ $appliedCouponCode }})
+                                    </small>
+                                @endif
 
-        </span>
+                            </span>
 
-        <strong class="text-success" id="discountDisplay">
-            - ₹{{ $formattedCouponDiscount }}
-        </strong>
+                            <strong class="text-success" id="discountDisplay">
+                                - ₹{{ $formattedCouponDiscount }}
+                            </strong>
 
-    </div>
+                        </div>
 
-    <div class="summary-divider"></div>
+                        <div class="summary-divider"></div>
 
-    {{-- SUBTOTAL --}}
-    <div class="summary-total">
+                        {{-- SUBTOTAL --}}
+                        <div class="summary-total">
 
-        <span>Subtotal</span>
+                            <span>Subtotal</span>
 
-        <strong id="subtotalDisplay2" style="color:#198754;">
-            ₹{{ $formattedFinalTotal }}
-        </strong>
+                            <strong id="subtotalDisplay2" style="color:#198754;">
+                                ₹{{ $formattedFinalTotal }}
+                            </strong>
 
-    </div>
+                        </div>
 
-    {{-- TOTAL --}}
-    <div class="summary-total" style="border-top:2px solid #e5eaf1;padding-top:12px;margin-top:4px;">
+                        {{-- TOTAL --}}
+                        <div class="summary-total" style="border-top:2px solid #e5eaf1;padding-top:12px;margin-top:4px;">
 
-        <span style="font-size:16px;font-weight:700;">Total Amount</span>
+                            <span style="font-size:16px;font-weight:700;">Total Amount</span>
 
-        <strong id="totalDisplay" data-original-total="{{ $finalTotal }}" style="font-size:20px;color:#0f172a;">
-            ₹{{ $formattedFinalTotal }}
-        </strong>
+                            <strong id="totalDisplay" data-original-total="{{ $finalTotal }}"
+                                style="font-size:20px;color:#0f172a;">
+                                ₹{{ $formattedFinalTotal }}
+                            </strong>
 
-    </div>
+                        </div>
 
-    <div class="tax-note">
-        Inclusive of applicable taxes
-    </div>
+                        <div class="tax-note">
+                            Inclusive of applicable taxes
+                        </div>
 
-    {{-- =================================================
-    STOCK CHECK
-    ================================================== --}}
-    @php
-        $hasOutOfStock = false;
-        foreach ($cart as $cartItem) {
-            $cartProduct = \App\Models\Product::find($cartItem['id'] ?? null);
-            if ($cartProduct && $cartProduct->stock <= 0) {
-                $hasOutOfStock = true;
-                break;
-            }
-        }
-    @endphp
+                        {{-- =================================================
+                        STOCK CHECK
+                        ================================================== --}}
+                        @php
+                            $hasOutOfStock = false;
+                            foreach ($cart as $cartItem) {
+                                $cartProduct = \App\Models\Product::find($cartItem['id'] ?? null);
+                                if ($cartProduct && $cartProduct->stock <= 0) {
+                                    $hasOutOfStock = true;
+                                    break;
+                                }
+                            }
+                        @endphp
 
-    {{-- CONTINUE BUTTON --}}
-    <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' }}>
+                        {{-- CONTINUE BUTTON --}}
+                        <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' }}>
 
-        <i class="bi bi-arrow-right me-2"></i>
+                            <i class="bi bi-arrow-right me-2"></i>
 
-        @if($hasOutOfStock)
-            Out of Stock Items in Cart
-        @else
-            Continue
-        @endif
+                            @if($hasOutOfStock)
+                                Out of Stock Items in Cart
+                            @else
+                                Continue
+                            @endif
 
-    </button>
+                        </button>
 
-    {{-- STOCK WARNING --}}
-    @if($hasOutOfStock)
-        <div style="padding:8px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;margin-top:10px;font-size:12px;color:#dc2626;">
-            <i class="bi bi-exclamation-triangle-fill me-1"></i>
-            Please remove out of stock items to proceed with checkout.
-        </div>
-    @endif
+                        {{-- STOCK WARNING --}}
+                        @if($hasOutOfStock)
+                            <div
+                                style="padding:8px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;margin-top:10px;font-size:12px;color:#dc2626;">
+                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                                Please remove out of stock items to proceed with checkout.
+                            </div>
+                        @endif
 
-    {{-- PLACE ORDER --}}
-    <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
+                        {{-- PLACE ORDER --}}
+                        <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
 
-        <i class="bi bi-lock-fill me-2"></i>
-        Place Order
+                            <i class="bi bi-lock-fill me-2"></i>
+                            Place Order
 
-    </button>
+                        </button>
 
-    <div class="secure-note text-center text-muted small mt-3">
+                        <div class="secure-note text-center text-muted small mt-3">
 
-        <i class="bi bi-shield-check me-1"></i>
+                            <i class="bi bi-shield-check me-1"></i>
 
-        Safe and secure payments
+                            Safe and secure payments
 
-    </div>
+                        </div>
 
-</div>
+                    </div>
 
 
                     {{-- =====================================================
@@ -2023,7 +2027,10 @@
             const discountDisplay = document.getElementById('discountDisplay');
             const couponDiscountRow = document.getElementById('couponDiscountRow');
             const appliedCouponCode = document.getElementById('appliedCouponCode');
-            const originalTotal = parseFloat(totalDisplay.dataset.originalTotal) || 0;
+
+            const originalTotal = totalDisplay
+                ? (parseFloat(totalDisplay.dataset.originalTotal) || 0)
+                : 0;
 
             function formatAmount(amount) {
                 return new Intl.NumberFormat('en-IN', {
@@ -2032,20 +2039,24 @@
                 }).format(amount);
             }
 
-            if (applyCouponBtn) {
+            if (applyCouponBtn && couponCodeInput && totalDisplay) {
+
                 applyCouponBtn.addEventListener('click', function () {
+
                     const couponCode = couponCodeInput.value.trim();
 
                     if (!couponCode) {
-                        showToast('error', 'Coupon Required', 'Please enter a coupon code.');
+                        showToast(
+                            'error',
+                            'Coupon Required',
+                            'Please enter a coupon code.'
+                        );
                         return;
                     }
 
-                    console.log('=== APPLYING COUPON ===');
-                    console.log('Coupon Code:', couponCode);
-
                     applyCouponBtn.disabled = true;
-                    applyCouponBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Applying...';
+                    applyCouponBtn.innerHTML =
+                        '<span class="spinner-border spinner-border-sm me-1"></span>Applying...';
 
                     fetch("{{ route('checkout.applyCoupon') }}", {
                         method: 'POST',
@@ -2059,45 +2070,69 @@
                             order_amount: originalTotal
                         })
                     })
-                        .then(response => {
-                            console.log('Coupon Response Status:', response.status);
+                        .then(function (response) {
                             return response.json();
                         })
-                        .then(data => {
-                            console.log('Coupon Response Data:', data);
+                        .then(function (data) {
 
                             if (data.success) {
-                                // Update all displays
-                                totalDisplay.textContent = '₹' + formatAmount(data.final_amount);
-                                discountDisplay.textContent = '- ₹' + formatAmount(data.discount_amount);
-                                couponDiscountRow.style.display = 'flex';
-                                couponDiscountRow.style.background = '#f0fdf4';
-                                couponDiscountRow.style.padding = '8px 0';
-                                appliedCouponCode.textContent = '(' + data.coupon.code + ')';
+
+                                totalDisplay.textContent =
+                                    '₹' + formatAmount(data.final_amount);
+
+                                if (discountDisplay) {
+                                    discountDisplay.textContent =
+                                        '- ₹' + formatAmount(data.discount_amount);
+                                }
+
+                                if (couponDiscountRow) {
+                                    couponDiscountRow.style.display = 'flex';
+                                    couponDiscountRow.style.background = '#f0fdf4';
+                                    couponDiscountRow.style.padding = '8px 0';
+                                }
+
+                                if (appliedCouponCode) {
+                                    appliedCouponCode.textContent =
+                                        '(' + data.coupon.code + ')';
+                                }
+
                                 couponCodeInput.value = data.coupon.code;
                                 couponCodeInput.setAttribute('readonly', true);
+
                                 applyCouponBtn.innerHTML = 'Applied ✅';
                                 applyCouponBtn.classList.remove('btn-outline-primary');
                                 applyCouponBtn.classList.add('btn-success');
 
-                                // Update the original total for reference
                                 totalDisplay.dataset.originalTotal = data.final_amount;
 
-                                // Show success message
-                                showToast('success', 'Coupon Applied!', data.message);
+                                showToast(
+                                    'success',
+                                    'Coupon Applied!',
+                                    data.message
+                                );
 
-                                console.log('Updated Total:', data.final_amount);
-                                console.log('Discount Amount:', data.discount_amount);
                             } else {
-                                console.error('Coupon application failed:', data.message);
-                                showToast('error', 'Error', data.message || 'Failed to apply coupon.');
+
+                                showToast(
+                                    'error',
+                                    'Error',
+                                    data.message || 'Failed to apply coupon.'
+                                );
+
                                 applyCouponBtn.disabled = false;
                                 applyCouponBtn.innerHTML = 'Apply';
                             }
                         })
-                        .catch(error => {
-                            console.error('❌ Coupon error:', error);
-                            showToast('error', 'Coupon Error', error.message || 'Something went wrong while applying the coupon.');
+                        .catch(function (error) {
+
+                            console.error('Coupon error:', error);
+
+                            showToast(
+                                'error',
+                                'Coupon Error',
+                                'Something went wrong while applying the coupon.'
+                            );
+
                             applyCouponBtn.disabled = false;
                             applyCouponBtn.innerHTML = 'Apply';
                         });

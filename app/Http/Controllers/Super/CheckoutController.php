@@ -659,12 +659,6 @@ class CheckoutController extends Controller
                     'message' => 'This coupon is currently inactive and cannot be used.',
                 ], 400);
             }
-            if (! $coupon) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid coupon code.',
-                ], 404);
-            }
 
             // Check if coupon is valid
             $now = now();
@@ -718,6 +712,10 @@ class CheckoutController extends Controller
             ]);
 
             session()->save();
+            // Mark coupon as used/inactive
+            $coupon->update([
+                'status' => 0,
+            ]);
 
             Log::info('Coupon applied and session saved:', [
                 'code' => $couponCode,
