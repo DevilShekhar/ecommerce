@@ -226,31 +226,6 @@
 
                                     </div>
 
-
-                                    <!-- Description -->
-                                    <div class="col-md-12">
-
-                                        <div class="form-group">
-
-                                            <label>
-                                                Description
-                                            </label>
-
-                                            <textarea name="description"
-                                                      rows="4"
-                                                      class="form-control @error('description') is-invalid @enderror"
-                                                      placeholder="Enter Category Description">{{ old('description', $productCategory->description) }}</textarea>
-
-                                            @error('description')
-                                                <span class="invalid-feedback">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-
-                                        </div>
-
-                                    </div>
-
                                 </div>
 
                             </div>
