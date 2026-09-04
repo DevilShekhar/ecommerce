@@ -1,6 +1,6 @@
 @extends('frontend.layouts.customer-layout')
 
-@section('title', 'Order ' . $order->order_number . ' - ShopEase')
+@section('title', 'Order ' . $order->order_number . ' - Aethelweave')
 
 @section('content')
 

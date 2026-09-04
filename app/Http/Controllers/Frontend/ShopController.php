@@ -40,7 +40,17 @@ class ShopController extends Controller
 
         // Apply filters
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+
+            $category = ProductCategory::query()->where('slug', $request->category)
+                ->where('status', 1)
+                ->first();
+
+            if ($category) {
+                $query->where('category_id', $category->id);
+            } else {
+                // No matching category = no products
+                $query->whereRaw('1 = 0');
+            }
         }
 
         if ($request->filled('sub_category')) {
@@ -125,33 +135,33 @@ class ShopController extends Controller
      * Show single product details
      */
     public function show($slug)
-{
-    $product = Product::with([
-        'category',
-        'brand',
-        'subCategory',
-        'creator'
-    ])
-    ->where('slug', $slug)
-    ->where('status', 1)
-    ->firstOrFail();
+    {
+        $product = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+            'creator',
+        ])
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
 
-    $relatedProducts = Product::with([
-        'category',
-        'brand',
-        'subCategory'
-    ])
-    ->where('status', 1)
-    ->where('category_id', $product->category_id)
-    ->where('id', '!=', $product->id)
-    ->limit(4)
-    ->get();
+        $relatedProducts = Product::with([
+            'category',
+            'brand',
+            'subCategory',
+        ])
+            ->where('status', 1)
+            ->where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->limit(4)
+            ->get();
 
-    return view('frontend.shop.show', compact(
-        'product',
-        'relatedProducts'
-    ));
-}
+        return view('frontend.shop.show', compact(
+            'product',
+            'relatedProducts'
+        ));
+    }
 
     /**
      * Get subcategories for a category (AJAX)
@@ -173,7 +183,17 @@ class ShopController extends Controller
             'subCategory',
         ])->where('status', 1);
         if ($request->filled('category')) {
-            $query->where('category_id', $request->category);
+
+            $category = ProductCategory::query()->where('slug', $request->category)
+                ->where('status', 1)
+                ->first();
+
+            if ($category) {
+                $query->where('category_id', $category->id);
+            } else {
+                // No matching category = no products
+                $query->whereRaw('1 = 0');
+            }
         }
         if ($request->filled('sub_category')) {
             $query->where('sub_category_id', $request->sub_category);
@@ -253,5 +273,76 @@ class ShopController extends Controller
             'last_page' => $products->lastPage(),
             'total' => $products->total(),
         ]);
+    }
+
+    public function customerCategoryProducts(Request $request)
+    {
+        $categorySlug = $request->query('category');
+
+        // Get selected category using slug
+        $category = ProductCategory::query()->where('slug', $categorySlug)
+            ->where('status', 1)
+            ->firstOrFail();
+
+        // Get all active products of selected category
+        $products = Product::with(['category', 'brand', 'subCategory'])
+            ->query()
+            ->where('status', 1)
+            ->where('category_id', $category->id)
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        // Sidebar categories
+        $categories = ProductCategory::query()->where('status', 1)
+            ->withCount('products')
+            ->get();
+
+        // Sidebar brands
+        $brands = Brand::query()->where('status', 1)->get();
+
+        // Materials
+        $materials = Product::query()
+            ->where('status', 1)
+            ->whereNotNull('variants')
+            ->distinct()
+            ->pluck('variants')
+            ->filter()
+            ->values();
+
+        // Subcategories
+        $subCategories = SubCategory::query()->where('category_id', $category->id)
+            ->where('status', 1)
+            ->get(['id', 'name']);
+
+        // Price range
+        $priceRange = [
+            'min' => Product::query()->where('status', 1)->min('price') ?? 0,
+            'max' => Product::query()->where('status', 1)->max('price') ?? 100000,
+        ];
+
+        $filters = [
+            'category' => $category->slug,
+            'sub_category' => $request->sub_category,
+            'brand' => $request->brand,
+            'material' => $request->material,
+            'min_price' => $request->min_price,
+            'max_price' => $request->max_price,
+            'search' => $request->search,
+        ];
+
+        $sort = $request->sort ?? 'newest';
+
+        return view('frontend.shop.index', compact(
+            'products',
+            'categories',
+            'brands',
+            'materials',
+            'subCategories',
+            'priceRange',
+            'filters',
+            'sort',
+            'category'
+        ));
     }
 }

@@ -7,6 +7,7 @@ use App\Models\ProductCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Str;
 
 class ProductCategoryController extends Controller
 {
@@ -33,7 +34,9 @@ class ProductCategoryController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_ads' => 'nullable|string',
             'meta_keyword' => 'nullable|string',
+            'slug' => 'nullable|string|max:255|unique:product_categories,slug',
         ]);
+        $validatedData['slug'] = \Illuminate\Support\Str::slug($request->name);
 
         // Upload category image
         if ($request->hasFile('image')) {
@@ -71,9 +74,27 @@ class ProductCategoryController extends Controller
             'meta_keyword' => 'nullable|string',
         ]);
 
+        // Generate slug automatically from category name
+        $slug = \Illuminate\Support\Str::slug($request->name);
+
+        // Make sure slug is unique except current category
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (
+            ProductCategory::query()->where('slug', $slug)
+                ->where('id', '!=', $id)
+                ->exists()
+        ) {
+            $slug = $originalSlug.'-'.$counter;
+            $counter++;
+        }
+
+        $validatedData['slug'] = $slug;
+
+        // Delete old image and upload new image
         if ($request->hasFile('image')) {
 
-            // Delete old image
             if (
                 $productCategory->image &&
                 Storage::disk('public')->exists($productCategory->image)
@@ -81,7 +102,6 @@ class ProductCategoryController extends Controller
                 Storage::disk('public')->delete($productCategory->image);
             }
 
-            // Store new image
             $validatedData['image'] = $request->file('image')
                 ->store('categories', 'public');
         }

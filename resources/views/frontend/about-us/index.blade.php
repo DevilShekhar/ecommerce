@@ -312,8 +312,8 @@
     <section class="testimonials-section">
         <div class="testimonials-container">
             <div class="testimonials-header">
-                <span class="testimonials-subtitle">Testimonials</span>
-                <h2 class="testimonials-title">What Our Customers Say</h2>
+                <span class="section-badge">Testimonials</span>
+                <h2 class="section-title">What Our Customers Say</h2>
                 <div class="testimonials-divider"></div>
             </div>
             <div class="testimonials-grid">

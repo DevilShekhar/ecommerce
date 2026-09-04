@@ -11,7 +11,6 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductNotification;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -100,6 +99,11 @@ class CheckoutController extends Controller
         $user = Auth::user();
 
         $cart = session()->get('cart', []);
+
+        // If cart is empty, check if we have localStorage data from AJAX
+        if (empty($cart) && request()->has('cart_data')) {
+            $cart = json_decode(request()->get('cart_data'), true);
+        }
 
         if ($cart instanceof Collection) {
             $cart = $cart->toArray();
@@ -249,6 +253,58 @@ class CheckoutController extends Controller
             'hasLowStock',
             'recommendedProducts'
         ));
+    }
+
+    public function syncCart(Request $request)
+    {
+        $cart = $request->input('cart', []);
+
+        if (empty($cart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No cart data found',
+            ]);
+        }
+
+        $sessionCart = [];
+
+        foreach ($cart as $item) {
+            if (empty($item['id'])) {
+                continue;
+            }
+
+            $sessionCart[] = [
+                'id' => $item['id'],
+                'name' => $item['name'] ?? '',
+                'price' => $item['price'] ?? 0,
+                'quantity' => isset($item['quantity']) ? max(1, (int) $item['quantity']) : 1,
+                'image' => $item['image'] ?? null,
+                'slug' => $item['slug'] ?? null,
+            ];
+        }
+
+        if (empty($sessionCart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No valid cart items found',
+            ]);
+        }
+
+        session()->put('cart', $sessionCart);
+        session()->save();
+
+        $subtotal = collect($sessionCart)->sum(function ($item) {
+            return (float) $item['price'] * (int) $item['quantity'];
+        });
+
+        session()->put('cart_subtotal', $subtotal);
+        session()->save();
+
+        return response()->json([
+            'success' => true,
+            'cart' => $sessionCart,
+            'subtotal' => $subtotal,
+        ]);
     }
 
     public function removeFromCart($key)
@@ -573,6 +629,7 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
+
     public function applyCoupon(Request $request)
     {
         try {

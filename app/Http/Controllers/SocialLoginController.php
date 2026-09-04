@@ -12,7 +12,7 @@ class SocialLoginController extends Controller
 {
     public function redirectGoogle()
     {
-        return Socialite::driver('google')->with(['prompt' => 'select_account consent',])->redirect();
+        return Socialite::driver('google')->with(['prompt' => 'select_account consent'])->redirect();
     }
 
     public function handleGoogle()
@@ -41,6 +41,20 @@ class SocialLoginController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        // Check if there's a redirect URL stored in session
+        if (session()->has('url.intended')) {
+            $redirectUrl = session()->get('url.intended');
+            session()->forget('url.intended');
+            return redirect()->to($redirectUrl);
+        }
+
+        // Check if there's a redirect_after_login in sessionStorage (passed via session)
+        if (session()->has('redirect_after_login')) {
+            $redirectUrl = session()->get('redirect_after_login');
+            session()->forget('redirect_after_login');
+            return redirect()->to($redirectUrl);
+        }
+
+        return redirect()->route('customer.dashboard');
     }
 }

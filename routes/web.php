@@ -33,10 +33,10 @@ use App\Http\Controllers\Frontend\TermsConditionsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SocialLoginController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Models\Product;
 use App\Models\ProductCategory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/server', function () {
     return view('errors.500');
@@ -45,6 +45,13 @@ Route::get('/server', function () {
 //     return view('frontend.layouts.app');
 // });
 
+// Add this route before your auth routes
+Route::get('/login/redirect', function () {
+    $redirect = request()->get('redirect', route('customer.dashboard'));
+    session()->put('url.intended', $redirect);
+
+    return redirect()->route('login');
+})->name('login.redirect');
 // Social Login Routes
 Route::get('/auth/google', [SocialLoginController::class, 'redirectGoogle'])->name('google.login');
 Route::get('/auth/google/callback', [SocialLoginController::class, 'handleGoogle']);
@@ -56,17 +63,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
 Route::get('/about-us', [AboutUsController::class, 'index'])
     ->name('about-us');
 Route::get('/terms-conditions', [TermsConditionsController::class, 'index'])
     ->name('terms-conditions');
 Route::get('/contact-us', [ContactUsController::class, 'index'])
     ->name('contact-us');
-
 Route::post('/contact-inquiry', [ContactSubmissionController::class, 'storeInquiry'])
     ->name('contact-inquiry.store');
-
 Route::get('/disclaimer', [DisclaimerController::class, 'index'])
     ->name('disclaimer');
 Route::get('/', [FrontendPageController::class, 'home'])
@@ -74,6 +78,19 @@ Route::get('/', [FrontendPageController::class, 'home'])
 Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])
     ->name('privacy-policy.index');
 
+Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/shops', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/{slug}', [ShopController::class, 'show'])
+    ->name('shop.show');
+    Route::get('/customer/products/{slug}', [DashboardController::class, 'customerProductDetail'])
+    ->name('customer.products.detail');
+Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
+    ->name('shop.subcategories');
+Route::get('/shops/filter', [ShopController::class, 'filter'])
+    ->name('shop.filter');
+Route::get('/customer-shop', [ShopController::class, 'customerCategoryProducts'])
+    ->name('customer.shop.category');
+Route::get('/shops/filter', [ShopController::class, 'filter'])->name('shop.filter');
 Route::prefix('admin')
     ->middleware(['auth'])
     ->name('admin.')
@@ -113,23 +130,13 @@ Route::prefix('admin')
         Route::put('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'update'])->name('privacy-policies.update');
         Route::delete('/privacy-policies/{privacyPolicy}', [PrivacyPolicyController::class, 'destroy'])->name('privacy-policies.destroy');
 
-        Route::get('/sections', [HomeSectionController::class,'adminIndex'])->name('sections.index');
-        Route::get('/sections/create', [HomeSectionController::class,'create'])->name('sections.create');
-        Route::post('/sections', [ HomeSectionController::class,'store'])->name('sections.store');
-        Route::get('/sections/{homeSection}/edit', [HomeSectionController::class,'edit'])->name('sections.edit');
-        Route::put('/sections/{homeSection}', [HomeSectionController::class,'update'])->name('sections.update');
-        Route::delete('/sections/{homeSection}', [HomeSectionController::class,'destroy'])->name('sections.destroy');
+        Route::get('/sections', [HomeSectionController::class, 'adminIndex'])->name('sections.index');
+        Route::get('/sections/create', [HomeSectionController::class, 'create'])->name('sections.create');
+        Route::post('/sections', [HomeSectionController::class, 'store'])->name('sections.store');
+        Route::get('/sections/{homeSection}/edit', [HomeSectionController::class, 'edit'])->name('sections.edit');
+        Route::put('/sections/{homeSection}', [HomeSectionController::class, 'update'])->name('sections.update');
+        Route::delete('/sections/{homeSection}', [HomeSectionController::class, 'destroy'])->name('sections.destroy');
     });
-
-// Add after your about-us route
-Route::get('/shops', [ShopController::class, 'index'])
-    ->name('shop.index');
-Route::get('/shop/{slug}', [ShopController::class, 'show'])
-    ->name('shop.show');
-Route::get('/get-subcategories/{categoryId}', [ShopController::class, 'getSubCategories'])
-    ->name('shop.subcategories');
-
-Route::get('/shops/filter', [ShopController::class, 'filter'])->name('shop.filter');
 
 // Admin Routes
 Route::middleware('auth')->group(function () {
@@ -194,7 +201,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
     Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'dest'])->name('wishlist.remove');
 });
-// =============================================
+
+Route::post('/checkout/sync-cart', [CheckoutController::class, 'syncCart'])
+    ->name('checkout.sync-cart');
+Route::get('/customer/wishlist/filter', [WishlistController::class, 'filter'])
+    ->name('customer.wishlist.filter');
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
@@ -213,7 +224,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/customer/wishlist/toggle/{productId}', [WishlistController::class, 'toggle'])->name('customer.wishlist.toggle');
     Route::delete('/customer/wishlist/remove/{id}', [WishlistController::class, 'destroy'])->name('customer.wishlist.remove');
     Route::get('/customer/products', [DashboardController::class, 'customerProducts'])->name('customer.products');
-
 
     Route::get('/checkout', [CheckoutController::class, 'checkout'])->name('checkout');
     Route::post('/customer/cart/add/{productId}', [CheckoutController::class, 'addToCart'])->name('cart.add');
@@ -237,7 +247,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/orders/rating', [OrderController::class, 'submitRating'])->name('customer.orders.rating');
 
     // Products / Shop
-    Route::get('/shop', [ProductController::class, 'index'])->name('shop');
+    // Route::get('/shop', [ProductController::class, 'index'])->name('shop');
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('product.details');
 
     Route::get('/category/{category}', [ProductController::class, 'byCategory'])->name('product.category');
@@ -280,10 +290,18 @@ Route::get('/customer/product-detail/{id}', [ProductController::class, 'getDetai
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 Route::get('/search', function (Request $request) {
     $q = $request->input('q');
-    if (!$q) return response()->json(['products' => [], 'categories' => []]);
+    if (! $q) {
+        return response()->json(['products' => [], 'categories' => []]);
+    }
 
     return response()->json([
-        'categories' => ProductCategory::query()->where('name', 'LIKE', "%{$q}%")->limit(5)->get(['id','name']),
-        'products' => Product::query()->where('name', 'LIKE', "%{$q}%")->limit(8)->get(['id','name','slug','price','image'])
-]);
+        'categories' => ProductCategory::query()
+            ->where('name', 'LIKE', "%{$q}%")
+            ->where('status', 1)
+            ->limit(5)
+            ->get(['id', 'name', 'slug']),
+        'products' => Product::query()
+            ->where('name', 'LIKE', "%{$q}%")
+            ->limit(8)->get(['id', 'name', 'slug', 'price', 'image']),
+    ]);
 });

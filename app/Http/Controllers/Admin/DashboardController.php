@@ -18,6 +18,7 @@ use App\Models\UserOffer;
 use App\Models\Wishlist;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -259,6 +260,54 @@ class DashboardController extends Controller
         ));
     }
 
+    public function customerProductDetail($slug)
+    {
+        $product = Product::query()->where('slug', $slug)->firstOrFail();
+
+        // Get product details
+        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+        $firstImage = $images[0] ?? null;
+        if ($firstImage) {
+            $firstImage = preg_replace('#^storage/#', '', $firstImage);
+            $imgUrl = asset($firstImage);
+        } else {
+            $imgUrl = null;
+        }
+
+        // Get active offers
+        $now = now()->toDateString();
+        $activeOffers = Offer::query()->where('status', 1)
+            ->whereDate('start_date', '<=', $now)
+            ->whereDate('end_date', '>=', $now)
+            ->get();
+
+        // Get product with offers
+        $product->active_offer = $activeOffers->first(function ($o) use ($product) {
+            return $o->apply_to === 'product' && $o->product_id == $product->id;
+        });
+        if (! $product->active_offer) {
+            $product->active_offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'category' && $o->product_category_id == $product->category_id;
+            });
+        }
+
+        // Get related products (recommendations)
+        $recommendedProducts = Product::query()
+            ->where('status', 1)
+            ->where('id', '!=', $product->id)
+            ->when($product->category_id, function ($query) use ($product) {
+                return $query->where('category_id', $product->category_id);
+            })
+            ->latest()
+            ->take(6)
+            ->get();
+              $categories = ProductCategory::query()->where('status', 1)
+            ->withCount('products')
+            ->get();
+
+        return view('customer.products', compact('product', 'imgUrl', 'recommendedProducts','categories'));
+    }
+
     public function downloadReport()
     {
         $user = Auth::user();
@@ -383,7 +432,7 @@ class DashboardController extends Controller
     /**
      * Customer Dashboard
      */
-    public function customerDashboard()
+    public function customerDashboard(Request $request)
     {
         $user = Auth::user();
 
@@ -403,14 +452,23 @@ class DashboardController extends Controller
         // Categories
         $categories = ProductCategory::query()->where('status', 1)
             ->latest()
-            ->take(7)
             ->get();
 
-        // Recommended Products
-        $recommendedProducts = Product::query()->where('status', 1)
-            ->latest()
-            ->take(8)
-            ->get();
+        // Get selected category from request
+        $selectedCategory = null;
+        if ($request->has('category')) {
+            $selectedCategory = ProductCategory::query()->where('slug', $request->category)->first();
+        }
+
+        // Get recommended products (filter by category if selected)
+        $recommendedProducts = Product::query()->where('status', 1);
+
+        if ($selectedCategory) {
+            $recommendedProducts = $recommendedProducts->where('category_id', $selectedCategory->id);
+        }
+
+        $recommendedProducts = $recommendedProducts->latest()->take(8)->get();
+
         $banners = Banner::query()->where('status', 1)
             ->orderBy('sort_order', 'asc')
             ->orderByDesc('id')
@@ -426,7 +484,7 @@ class DashboardController extends Controller
             'delivered' => Order::where('order_status', 'delivered')->count(),
             'cancelled' => Order::where('order_status', 'cancelled')->count(),
         ];
-        // Inside the controller method
+
         $now = now()->toDateString();
 
         $activeOffers = Offer::query()->where('status', 1)
@@ -469,14 +527,15 @@ class DashboardController extends Controller
             'banners',
             'orderStatusCounts',
             'couponCount',
-            'sentOffers'
+            'sentOffers',
+            'selectedCategory'  // <-- ADD THIS
         ));
     }
 
     /**
      * Customer Products
      */
-    public function customerProducts()
+    public function customerProducts(Request $request)
     {
         $user = Auth::user();
 
@@ -498,10 +557,23 @@ class DashboardController extends Controller
             ->latest()
             ->take(7)
             ->get();
-        $recommendedProducts = Product::query()->where('status', 1)
+
+        // Get selected category from request
+        $selectedCategory = null;
+        if ($request->has('category')) {
+            $selectedCategory = ProductCategory::query()->where('slug', $request->category)->first();
+        }
+
+        // Get recommended products (filter by category if selected)
+        $recommendedProducts = Product::query()
+            ->where('status', 1)
+            ->when($selectedCategory, function ($query) use ($selectedCategory) {
+                return $query->where('category_id', $selectedCategory->id);
+            })
             ->latest()
             ->take(8)
             ->get();
+
         // Inside the controller method
         $now = now()->toDateString();
 
@@ -527,7 +599,9 @@ class DashboardController extends Controller
             'user',
             'wishlistProducts',
             'wishlistCount',
-            'categories', 'recommendedProducts'
+            'categories',
+            'recommendedProducts',
+            'selectedCategory'
         ));
     }
 
