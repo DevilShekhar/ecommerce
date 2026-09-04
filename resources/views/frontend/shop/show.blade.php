@@ -1625,12 +1625,12 @@
                     {{-- Original Price --}}
                     @if($product->price > $product->selling_price)
                         <span class="original-price" style="
-                                            color:#888;
-                                            text-decoration:line-through;
-                                            text-decoration-thickness:1px;
-                                            margin-left:6px;
-                                            font-size:13px;
-                                        ">
+                                                    color:#888;
+                                                    text-decoration:line-through;
+                                                    text-decoration-thickness:1px;
+                                                    margin-left:6px;
+                                                    font-size:13px;
+                                                ">
                             ₹{{ number_format($product->price, 2) }}
                         </span>
                     @endif
@@ -1672,7 +1672,10 @@
                     <span id="viewCount"></span> people are viewing this item
                 </div>
                 <script>
-                    document.getElementById('viewCount').textContent = Math.floor(Math.random() * 50) + 10;
+                    let previous = parseInt(localStorage.getItem('viewCount')) || 10;
+                    let current = previous + Math.floor(Math.random() * 2) + 2;
+                    document.getElementById('viewCount').textContent = current;
+                    localStorage.setItem('viewCount', current);
                 </script>
                 <div class="quick-info">
                     @if($product->brand)
@@ -2008,8 +2011,7 @@
                                 <button class="related-wishlist wishlist-btn" data-product-id="{{ $productId }}"
                                     data-product-name="{{ addslashes($productName) }}"
                                     data-product-selling-price="{{ $related->selling_price }}"
-                                    data-product-slug="{{ $productSlug }}"
-                                    data-product-image="{{ $relFirst }}"
+                                    data-product-slug="{{ $productSlug }}" data-product-image="{{ $relFirst }}"
                                     onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $related->selling_price }}, '{{ $productSlug }}', '{{ $relFirst }}', {{ $related->price }});"
                                     aria-label="Add to wishlist">
                                     <i class="bi bi-heart"></i>
@@ -2027,22 +2029,20 @@
 
                                     @if($related->price > $related->selling_price)
                                         <span class="related-original" style="
-                                                                            color:#888;
-                                                                            text-decoration:line-through;
-                                                                            text-decoration-thickness:1px;
-                                                                            margin-left:6px;
-                                                                            font-size:13px;
-                                                                        ">
+                                                                                            color:#888;
+                                                                                            text-decoration:line-through;
+                                                                                            text-decoration-thickness:1px;
+                                                                                            margin-left:6px;
+                                                                                            font-size:13px;
+                                                                                        ">
                                             ₹{{ number_format($related->price, 2) }}
                                         </span>
                                     @endif
                                 </div>
                                 <!-- Add to Cart Button (stops propagation to prevent redirect) -->
                                 <button type="button" class="btn-add-cart-compact add-to-cart-btn"
-                                    data-product-id="{{ $productId }}"
-                                    data-product-name="{{ addslashes($productName) }}"
-                                    data-product-price="{{ $related->selling_price }}"
-                                    data-product-slug="{{ $productSlug }}"
+                                    data-product-id="{{ $productId }}" data-product-name="{{ addslashes($productName) }}"
+                                    data-product-price="{{ $related->selling_price }}" data-product-slug="{{ $productSlug }}"
                                     data-product-image="{{ $relFirst }}"
                                     onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $related->selling_price }}, '{{ $productSlug }}', '{{ $relFirst }}', {{ $related->price }});">
                                     <i class="bi bi-cart-plus"></i>
@@ -2213,226 +2213,226 @@
             if (event.key === 'Escape') closeImageModal();
         });
         function doSearch(query) {
-    const results = document.getElementById('searchResults');
-    const clearBtn = document.getElementById('clearBtn');
-    const links = document.getElementById('categoryLinks');
-    const hint = document.getElementById('searchHint');
+            const results = document.getElementById('searchResults');
+            const clearBtn = document.getElementById('clearBtn');
+            const links = document.getElementById('categoryLinks');
+            const hint = document.getElementById('searchHint');
 
-    if (!results) return;
+            if (!results) return;
 
-    query = query.trim();
+            query = query.trim();
 
-    // Empty search
-    if (query.length === 0) {
-        if (clearBtn) clearBtn.style.display = 'none';
-        results.style.display = 'none';
-        results.innerHTML = '';
-        if (links) links.style.display = 'flex';
-        if (hint) hint.style.display = 'block';
-        clearTimeout(searchTimeout);
-        return;
-    }
-
-    // Search started
-    if (clearBtn) clearBtn.style.display = 'flex';
-    if (links) links.style.display = 'none';
-    if (hint) hint.style.display = 'none';
-
-    results.style.display = 'block';
-    results.innerHTML = `
-        <div class="search-loading">
-            <i class="bi bi-hourglass-split"></i>
-            Searching...
-        </div>
-    `;
-
-    // Clear previous timeout
-    clearTimeout(searchTimeout);
-
-    // Delay search by 300ms
-    searchTimeout = setTimeout(() => {
-        const searchUrl = `/search?q=${encodeURIComponent(query)}`;
-
-        fetch(searchUrl, {
-            method: 'GET',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Search request failed');
-            }
-            return response.json();
-        })
-        .then(data => {
-            let html = '';
-
-            // ==========================================
-            // CATEGORIES
-            // ==========================================
-            if (data.categories && data.categories.length > 0) {
-                html += `
-                    <div class="search-categories">
-                        <h4 class="search-section-title">Categories</h4>
-                        <div class="search-cat-pills">
-                `;
-
-                data.categories.forEach(category => {
-                    html += `
-                        <a href="/shop?category=${encodeURIComponent(category.slug)}" class="search-cat-pill">
-                            ${escapeHtml(category.name)}
-                        </a>
-                    `;
-                });
-
-                html += `
-                        </div>
-                    </div>
-                `;
+            // Empty search
+            if (query.length === 0) {
+                if (clearBtn) clearBtn.style.display = 'none';
+                results.style.display = 'none';
+                results.innerHTML = '';
+                if (links) links.style.display = 'flex';
+                if (hint) hint.style.display = 'block';
+                clearTimeout(searchTimeout);
+                return;
             }
 
-            // ==========================================
-            // PRODUCTS - UPDATED WITH BOTH PRICES
-            // ==========================================
-            if (data.products && data.products.length > 0) {
-                html += `
-                    <div class="search-products">
-                        <h4 class="search-section-title">Products</h4>
-                `;
+            // Search started
+            if (clearBtn) clearBtn.style.display = 'flex';
+            if (links) links.style.display = 'none';
+            if (hint) hint.style.display = 'none';
 
-                data.products.forEach(product => {
-                    // ==========================================
-                    // GET ONLY FIRST IMAGE
-                    // ==========================================
-                    let imageUrl = '';
-
-                    if (product.image) {
-                        const imagesArray = product.image
-                            .split(',')
-                            .map(s => s.trim())
-                            .filter(Boolean);
-
-                        const firstImage = imagesArray[0] || '';
-
-                        if (firstImage) {
-                            if (firstImage.startsWith('/storage/')) {
-                                imageUrl = firstImage;
-                            } else if (firstImage.startsWith('storage/')) {
-                                imageUrl = '/' + firstImage;
-                            } else {
-                                imageUrl = '/storage/' + firstImage.replace(/^\/+/, '');
-                            }
-                        }
-                    }
-
-                    // ==========================================
-                    // GET PRICES - SELLING & ORIGINAL
-                    // ==========================================
-                    const sellingPrice = product.selling_price || product.price || 0;
-                    const originalPrice = product.price || 0;
-                    const hasDiscount = parseFloat(originalPrice) > parseFloat(sellingPrice);
-
-                    html += `
-                        <a href="/shop/${encodeURIComponent(product.slug)}" class="search-product-item">
-                    `;
-
-                    // Product Image
-                    if (imageUrl) {
-                        html += `
-                            <img
-                                src="${imageUrl}"
-                                alt="${escapeHtml(product.name ?? '')}"
-                                class="search-product-img"
-                                loading="lazy"
-                                onerror="
-                                    this.onerror=null;
-                                    this.style.display='none';
-                                    this.nextElementSibling.style.display='flex';
-                                "
-                            >
-                            <div class="search-product-img-placeholder" style="display:none;">
-                                <i class="bi bi-gem"></i>
-                            </div>
-                        `;
-                    } else {
-                        html += `
-                            <div class="search-product-img-placeholder">
-                                <i class="bi bi-gem"></i>
-                            </div>
-                        `;
-                    }
-
-                    // ==========================================
-                    // PRODUCT DETAILS WITH BOTH PRICES
-                    // ==========================================
-                    html += `
-                            <div class="search-product-info">
-                                <div class="search-product-name">
-                                    ${escapeHtml(product.name ?? '')}
-                                </div>
-                                <div class="search-product-price">
-                                    <span style="color:#198754;font-weight:700;">
-                                        ₹${formatPrice(sellingPrice)}
-                                    </span>
-                                    ${hasDiscount ? `
-                                        <span style="
-                                            color:#888;
-                                            font-size:12px;
-                                            margin-left:5px;
-                                            text-decoration:line-through;
-                                            text-decoration-thickness:1px;
-                                        ">
-                                            ₹${formatPrice(originalPrice)}
-                                        </span>
-                                        <span style="
-                                            color:#e74c3c;
-                                            font-size:10px;
-                                            margin-left:5px;
-                                            font-weight:600;
-                                            background:#fef0ef;
-                                            padding:1px 6px;
-                                            border-radius:3px;
-                                        ">
-                                            ${Math.round(((parseFloat(originalPrice) - parseFloat(sellingPrice)) / parseFloat(originalPrice)) * 100)}% OFF
-                                        </span>
-                                    ` : ''}
-                                </div>
-                            </div>
-                            <i class="bi bi-chevron-right"></i>
-                        </a>
-                    `;
-                });
-
-                html += `
-                    </div>
-                `;
-            }
-
-            // ==========================================
-            // NO RESULTS
-            // ==========================================
-            if (!html) {
-                html = `
-                    <div class="search-empty">
-                        <i class="bi bi-search"></i>
-                        <span>No results found for “${escapeHtml(query)}”</span>
-                    </div>
-                `;
-            }
-            results.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Search error:', error);
+            results.style.display = 'block';
             results.innerHTML = `
-                <div class="search-error">
-                    <i class="bi bi-exclamation-circle"></i>
-                    <span>Unable to load search results. Please try again.</span>
-                </div>
-            `;
-        });
-    }, 300);
-}
+            <div class="search-loading">
+                <i class="bi bi-hourglass-split"></i>
+                Searching...
+            </div>
+        `;
+
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+
+            // Delay search by 300ms
+            searchTimeout = setTimeout(() => {
+                const searchUrl = `/search?q=${encodeURIComponent(query)}`;
+
+                fetch(searchUrl, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Search request failed');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        let html = '';
+
+                        // ==========================================
+                        // CATEGORIES
+                        // ==========================================
+                        if (data.categories && data.categories.length > 0) {
+                            html += `
+                        <div class="search-categories">
+                            <h4 class="search-section-title">Categories</h4>
+                            <div class="search-cat-pills">
+                    `;
+
+                            data.categories.forEach(category => {
+                                html += `
+                            <a href="/shop?category=${encodeURIComponent(category.slug)}" class="search-cat-pill">
+                                ${escapeHtml(category.name)}
+                            </a>
+                        `;
+                            });
+
+                            html += `
+                            </div>
+                        </div>
+                    `;
+                        }
+
+                        // ==========================================
+                        // PRODUCTS - UPDATED WITH BOTH PRICES
+                        // ==========================================
+                        if (data.products && data.products.length > 0) {
+                            html += `
+                        <div class="search-products">
+                            <h4 class="search-section-title">Products</h4>
+                    `;
+
+                            data.products.forEach(product => {
+                                // ==========================================
+                                // GET ONLY FIRST IMAGE
+                                // ==========================================
+                                let imageUrl = '';
+
+                                if (product.image) {
+                                    const imagesArray = product.image
+                                        .split(',')
+                                        .map(s => s.trim())
+                                        .filter(Boolean);
+
+                                    const firstImage = imagesArray[0] || '';
+
+                                    if (firstImage) {
+                                        if (firstImage.startsWith('/storage/')) {
+                                            imageUrl = firstImage;
+                                        } else if (firstImage.startsWith('storage/')) {
+                                            imageUrl = '/' + firstImage;
+                                        } else {
+                                            imageUrl = '/storage/' + firstImage.replace(/^\/+/, '');
+                                        }
+                                    }
+                                }
+
+                                // ==========================================
+                                // GET PRICES - SELLING & ORIGINAL
+                                // ==========================================
+                                const sellingPrice = product.selling_price || product.price || 0;
+                                const originalPrice = product.price || 0;
+                                const hasDiscount = parseFloat(originalPrice) > parseFloat(sellingPrice);
+
+                                html += `
+                            <a href="/shop/${encodeURIComponent(product.slug)}" class="search-product-item">
+                        `;
+
+                                // Product Image
+                                if (imageUrl) {
+                                    html += `
+                                <img
+                                    src="${imageUrl}"
+                                    alt="${escapeHtml(product.name ?? '')}"
+                                    class="search-product-img"
+                                    loading="lazy"
+                                    onerror="
+                                        this.onerror=null;
+                                        this.style.display='none';
+                                        this.nextElementSibling.style.display='flex';
+                                    "
+                                >
+                                <div class="search-product-img-placeholder" style="display:none;">
+                                    <i class="bi bi-gem"></i>
+                                </div>
+                            `;
+                                } else {
+                                    html += `
+                                <div class="search-product-img-placeholder">
+                                    <i class="bi bi-gem"></i>
+                                </div>
+                            `;
+                                }
+
+                                // ==========================================
+                                // PRODUCT DETAILS WITH BOTH PRICES
+                                // ==========================================
+                                html += `
+                                <div class="search-product-info">
+                                    <div class="search-product-name">
+                                        ${escapeHtml(product.name ?? '')}
+                                    </div>
+                                    <div class="search-product-price">
+                                        <span style="color:#198754;font-weight:700;">
+                                            ₹${formatPrice(sellingPrice)}
+                                        </span>
+                                        ${hasDiscount ? `
+                                            <span style="
+                                                color:#888;
+                                                font-size:12px;
+                                                margin-left:5px;
+                                                text-decoration:line-through;
+                                                text-decoration-thickness:1px;
+                                            ">
+                                                ₹${formatPrice(originalPrice)}
+                                            </span>
+                                            <span style="
+                                                color:#e74c3c;
+                                                font-size:10px;
+                                                margin-left:5px;
+                                                font-weight:600;
+                                                background:#fef0ef;
+                                                padding:1px 6px;
+                                                border-radius:3px;
+                                            ">
+                                                ${Math.round(((parseFloat(originalPrice) - parseFloat(sellingPrice)) / parseFloat(originalPrice)) * 100)}% OFF
+                                            </span>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        `;
+                            });
+
+                            html += `
+                        </div>
+                    `;
+                        }
+
+                        // ==========================================
+                        // NO RESULTS
+                        // ==========================================
+                        if (!html) {
+                            html = `
+                        <div class="search-empty">
+                            <i class="bi bi-search"></i>
+                            <span>No results found for “${escapeHtml(query)}”</span>
+                        </div>
+                    `;
+                        }
+                        results.innerHTML = html;
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        results.innerHTML = `
+                    <div class="search-error">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <span>Unable to load search results. Please try again.</span>
+                    </div>
+                `;
+                    });
+            }, 300);
+        }
     </script>
 @endpush

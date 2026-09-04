@@ -41,7 +41,7 @@ class ProductCategoryController extends Controller
         // Upload category image
         if ($request->hasFile('image')) {
             $validatedData['image'] = $request->file('image')
-                ->store('categories', 'public');
+                ->store('product-categories', 'public');
         }
 
         $validatedData['created_by'] = Auth::id();
@@ -103,7 +103,7 @@ class ProductCategoryController extends Controller
             }
 
             $validatedData['image'] = $request->file('image')
-                ->store('categories', 'public');
+                ->store('product-categories', 'public');
         }
 
         $productCategory->update($validatedData);

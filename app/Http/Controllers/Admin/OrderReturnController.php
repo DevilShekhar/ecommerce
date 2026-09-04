@@ -7,7 +7,6 @@ use App\Models\OrderReturn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Razorpay\Api\Api;
 
 class OrderReturnController extends Controller
 {
@@ -132,62 +131,30 @@ class OrderReturnController extends Controller
     //         'Refund marked successfully.'
     //     );
     // }
-    public function refund(OrderReturn $return)
+    public function refund(Request $request, OrderReturn $return)
     {
-        $order = $return->order;
+        abort_unless(Auth::user()->hasRole('SuperAdmin'), 403);
 
-        if (! $order || ! $order->razorpay_payment_id) {
-            return back()->with('error', 'Razorpay payment ID not found.');
+        if ($return->status !== 'approved') {
+            return back()->with('error', 'Only approved returns can be refunded.');
         }
 
-        if ($return->refund_status === 'refunded') {
-            return back()->with('error', 'This refund has already been processed.');
-        }
-
-        try {
-            $return->update([
-                'refund_status' => 'processing',
-            ]);
-
-            $api = new Api(
-                config('services.razorpay.key'),
-                config('services.razorpay.secret')
-            );
-
-            $refund = $api->payment
-                ->fetch($order->razorpay_payment_id)
-                ->refund([
-                    'amount' => (int) round($return->refund_amount * 100),
-                ]);
-
+        DB::transaction(function () use ($return) {
             $return->update([
                 'status' => 'refunded',
                 'refund_status' => 'refunded',
-                'refund_method' => 'razorpay',
-                'refund_transaction_id' => $refund->id,
+                'refund_method' => 'Manual',
+                'refund_transaction_id' => 'REF-'.strtoupper(uniqid()),
                 'refunded_at' => now(),
                 'refunded_by' => Auth::id(),
             ]);
 
-            $order->update([
+            $return->order->update([
                 'order_status' => 'refunded',
+                'payment_status' => 'refunded',
             ]);
+        });
 
-            return back()->with(
-                'success',
-                'Refund processed successfully through Razorpay.'
-            );
-
-        } catch (\Exception $e) {
-
-            $return->update([
-                'refund_status' => 'failed',
-            ]);
-
-            return back()->with(
-                'error',
-                'Refund failed: '.$e->getMessage()
-            );
-        }
+        return back()->with('success', 'Refund marked successfully.');
     }
 }

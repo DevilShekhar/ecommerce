@@ -501,6 +501,10 @@
             }
         }
     </style>
+
+    <!-- =============================================
+                        SHOP HEADER
+                    ============================================= -->
     <section class="shop-header">
         <h1><i class="fas fa-store"></i> All Jewellery</h1>
         <p>Discover our curated collection of timeless pieces</p>
@@ -509,6 +513,10 @@
             <span id="breadcrumbCategory"></span>
         </div>
     </section>
+
+    <!-- =============================================
+                        SHOP CONTENT
+                    ============================================= -->
     <div class="shop-container">
         <div class="shop-layout">
 
@@ -530,6 +538,15 @@
                                     </option>
                                 @endforeach
                             </select>
+                        </div>
+                         <!-- Subcategories (dynamically loaded) -->
+                        <div id="subcategoryContainer" style="display:none; margin-top: 12px;">
+                            <div class="filter-group">
+                                <label for="subcategory">Sub Category</label>
+                                <select name="subcategory" id="subcategory" onchange="applyFilters()">
+                                    <option value="">All Subcategories</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
 
@@ -666,18 +683,96 @@
             applyFilters();
         });
 
-        function getFilters() {
-            return {
-                category: document.getElementById('category').value,
-                brand: document.getElementById('brand') ? document.getElementById('brand').value : '',
-                material: document.getElementById('material') ? document.getElementById('material').value : '',
-                min_price: document.getElementById('min_price').value,
-                max_price: document.getElementById('max_price').value,
-                search: document.getElementById('search').value,
-                sort: document.getElementById('sort').value,
-                page: currentPage
-            };
+        // =============================================
+// LOAD SUBCATEGORIES
+// =============================================
+function loadSubcategories(categorySlug) {
+    const container = document.getElementById('subcategoryContainer');
+    const subcategorySelect = document.getElementById('subcategory');
+
+    if (!categorySlug) {
+        container.style.display = 'none';
+        subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
+        applyFilters();
+        return;
+    }
+
+    // Show loading state
+    container.style.display = 'block';
+    subcategorySelect.innerHTML = '<option value="">Loading...</option>';
+    subcategorySelect.disabled = true;
+
+    // Fetch subcategories
+    fetch(`/get-subcategories/${categorySlug}`, {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        subcategorySelect.innerHTML = '<option value="">All Subcategories</option>';
+
+        if (data.success && data.subcategories.length > 0) {
+            data.subcategories.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub.slug;
+                option.textContent = sub.name;
+                subcategorySelect.appendChild(option);
+            });
+            subcategorySelect.disabled = false;
+        } else {
+            subcategorySelect.innerHTML = '<option value="">No Subcategories</option>';
+            subcategorySelect.disabled = true;
+        }
+
+        // Apply filters to refresh products
+        applyFilters();
+    })
+    .catch(error => {
+        console.error('Error loading subcategories:', error);
+        subcategorySelect.innerHTML = '<option value="">Error loading</option>';
+        subcategorySelect.disabled = true;
+    });
+}
+
+// Update getFilters function to include subcategory
+function getFilters() {
+    return {
+        category: document.getElementById('category').value,
+        subcategory: document.getElementById('subcategory') ? document.getElementById('subcategory').value : '',
+        brand: document.getElementById('brand') ? document.getElementById('brand').value : '',
+        material: document.getElementById('material') ? document.getElementById('material').value : '',
+        min_price: document.getElementById('min_price').value,
+        max_price: document.getElementById('max_price').value,
+        search: document.getElementById('search').value,
+        sort: document.getElementById('sort').value,
+        page: currentPage
+    };
+}
+
+// Update resetFilters function to reset subcategory
+function resetFilters() {
+    document.getElementById('category').value = '';
+    document.getElementById('subcategory').value = '';
+    document.getElementById('subcategoryContainer').style.display = 'none';
+    if (document.getElementById('brand')) document.getElementById('brand').value = '';
+    if (document.getElementById('material')) document.getElementById('material').value = '';
+    document.getElementById('min_price').value = '';
+    document.getElementById('max_price').value = '';
+    document.getElementById('search').value = '';
+    document.getElementById('sort').value = 'newest';
+    currentPage = 1;
+    applyFilters(1);
+}
+
+// On page load, check if a category is already selected
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedCategory = document.getElementById('category').value;
+    if (selectedCategory) {
+        loadSubcategories(selectedCategory);
+    }
+});
 
         function applyFilters(page = 1) {
             if (page) currentPage = page;
@@ -739,138 +834,117 @@
         }
 
         function renderProducts(products) {
-    const container = document.getElementById('productsContainer');
+            const container = document.getElementById('productsContainer');
 
-    if (!products || products.length === 0) {
-        container.innerHTML = `
-            <div class="no-products">
-                <i class="fas fa-box-open"></i>
-                <h3>No products found</h3>
-                <p>Try adjusting your filters or search terms.</p>
-            </div>
-        `;
-        return;
-    }
-
-    let html = '<div class="products-grid">';
-
-    products.forEach(product => {
-        const images = product.image ? product.image.split(',').map(s => s.trim()) : [];
-        const firstImage = images.length > 0 ? images[0] : null;
-        const imageHtml = firstImage ?
-            `<img src="${firstImage}" alt="${product.name}" loading="lazy">` :
-            `<img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image" loading="lazy">`;
-
-        const badgeHtml = product.is_featured == 2 ?
-            `<span class="product-badge featured">Featured</span>` :
-            product.is_featured == 1 ?
-                `<span class="product-badge">Popular</span>` :
-                '';
-
-        const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
-        const stockIcon = product.stock > 0 ? 'check-circle' : 'times-circle';
-        const stockText = product.stock > 0 ? 'In Stock' : 'Out of Stock';
-        const stockExtra = product.stock > 0 && product.stock < 10 ? `(${product.stock} left)` : '';
-
-        // Get selling price and original price
-        const sellingPrice = product.selling_price || product.price;
-        const originalPrice = product.price;
-        const hasDiscount = parseFloat(originalPrice) > parseFloat(sellingPrice);
-
-        // Check if product is in wishlist
-        const inWishlist = isInWishlist ? isInWishlist(product.id) : false;
-        const heartIcon = inWishlist ? 'fas fa-heart' : 'far fa-heart';
-        const heartColor = inWishlist ? '#e74c3c' : '#77736D';
-        const heartBorder = inWishlist ? '#e74c3c' : '#E8E1D7';
-
-        // Check if product is in cart
-        const cart = getCart ? getCart() : [];
-        const inCart = cart.some(item => item.id == product.id);
-
-        html += `
-            <div class="product-card" style="position:relative;cursor:pointer;" onclick="window.location.href='/shop/${product.slug}'">
-                <div class="product-image" style="position:relative;">
-                    ${imageHtml}
-                    ${badgeHtml}
-
-                    ${hasDiscount ? `
-                        <span style="position:absolute;top:10px;left:10px;background:#e74c3c;color:#fff;padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;z-index:2;box-shadow:0 2px 8px rgba(231,76,60,0.3);">
-                            ${Math.round(((parseFloat(originalPrice) - parseFloat(sellingPrice)) / parseFloat(originalPrice)) * 100)}% OFF
-                        </span>
-                    ` : ''}
-
-                    <!-- Wishlist Heart Button -->
-                    <button type="button"
-                        class="wishlist-btn"
-                        data-product-id="${product.id}"
-                        data-product-name="${product.name.replace(/'/g, "\\'")}"
-                        data-product-price="${sellingPrice}"
-                        data-product-slug="${product.slug}"
-                        data-product-image="${firstImage || ''}"
-                        onclick="event.stopPropagation(); toggleWishlist(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug}', '${firstImage || ''}', ${originalPrice});"
-                        style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid ${heartBorder};border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
-                        aria-label="Add to wishlist">
-                        <i class="${heartIcon}" style="font-size:14px;color:${heartColor};transition:all 0.3s ease;"></i>
-                    </button>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
-                    <div class="product-name">
-                        ${product.name}
+            if (!products || products.length === 0) {
+                container.innerHTML = `
+                    <div class="no-products">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No products found</h3>
+                        <p>Try adjusting your filters or search terms.</p>
                     </div>
-                    <div class="product-meta">
-                        ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
-                        ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
-                    </div>
-                    <div class="product-price">
-                        <span class="current" style="color:#198754;font-weight:700;">
-                            ₹${parseFloat(sellingPrice).toFixed(2)}
-                        </span>
-                        ${hasDiscount ? `
-                            <span style="color:#888;font-size:13px;margin-left:6px;text-decoration:line-through;text-decoration-thickness:1px;">
-                                ₹${parseFloat(originalPrice).toFixed(2)}
-                            </span>
-                            <span style="color:#e74c3c;font-size:11px;margin-left:5px;font-weight:600;background:#fef0ef;padding:1px 6px;border-radius:3px;">
-                                ${Math.round(((parseFloat(originalPrice) - parseFloat(sellingPrice)) / parseFloat(originalPrice)) * 100)}% OFF
-                            </span>
-                        ` : ''}
-                    </div>
-                    <div class="product-stock ${stockClass}">
-                        <i class="fas fa-${stockIcon}"></i>
-                        ${stockText} ${stockExtra}
-                    </div>
-                    <div style="margin-top:10px;">
-                        <button type="button"
-                            class="add-to-cart-btn"
-                            data-product-id="${product.id}"
-                            data-product-name="${product.name.replace(/'/g, "\\'")}"
-                            data-product-price="${sellingPrice}"
-                            data-product-slug="${product.slug}"
-                            data-product-image="${firstImage || ''}"
-                            onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug}', '${firstImage || ''}', ${originalPrice});"
-                            style="width:100%;padding:8px 16px;background:${inCart ? '#27ae60' : '#B89B5E'};color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:6px;">
-                            <i class="${inCart ? 'fas fa-check' : 'fas fa-cart-plus'}" style="font-size:12px;"></i>
-                            ${inCart ? 'In Cart' : 'Add to Cart'}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
-    });
+                `;
+                return;
+            }
 
-    html += '</div>';
-    container.innerHTML = html;
+            let html = '<div class="products-grid">';
 
-    // Re-initialize wishlist buttons after rendering
-    if (typeof initWishlistButtons === 'function') {
-        initWishlistButtons();
-    }
+            products.forEach(product => {
+                const images = product.image ? product.image.split(',').map(s => s.trim()) : [];
+                const firstImage = images.length > 0 ? images[0] : null;
+                const imageHtml = firstImage ?
+                    `<img src="${firstImage}" alt="${product.name}" loading="lazy">` :
+                    `<img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image" loading="lazy">`;
 
-    // Re-initialize cart button states after rendering
-    if (typeof updateCartButtonStates === 'function') {
-        updateCartButtonStates();
-    }
-}
+                const badgeHtml = product.is_featured == 2 ?
+                    `<span class="product-badge featured">Featured</span>` :
+                    product.is_featured == 1 ?
+                        `<span class="product-badge">Popular</span>` :
+                        '';
+
+                const stockClass = product.stock > 0 ? 'in-stock' : 'out-of-stock';
+                const stockIcon = product.stock > 0 ? 'check-circle' : 'times-circle';
+                const stockText = product.stock > 0 ? 'In Stock' : 'Out of Stock';
+                const stockExtra = product.stock > 0 && product.stock < 10 ? `(${product.stock} left)` : '';
+
+                // Check if product is in wishlist
+                const inWishlist = isInWishlist ? isInWishlist(product.id) : false;
+                const heartIcon = inWishlist ? 'fas fa-heart' : 'far fa-heart';
+                const heartColor = inWishlist ? '#e74c3c' : '#77736D';
+                const heartBorder = inWishlist ? '#e74c3c' : '#E8E1D7';
+
+                // Check if product is in cart
+                const cart = getCart ? getCart() : [];
+                const inCart = cart.some(item => item.id == product.id);
+
+                html += `
+                    <div class="product-card" style="position:relative;cursor:pointer;" onclick="window.location.href='/shop/${product.slug}'">
+                        <div class="product-image" style="position:relative;">
+                            ${imageHtml}
+                            ${badgeHtml}
+
+                            <!-- Wishlist Heart Button -->
+                            <button type="button"
+                                class="wishlist-btn"
+                                data-product-id="${product.id}"
+                                data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                data-product-price="${product.price}"
+                                data-product-slug="${product.slug}"
+                                data-product-image="${firstImage || ''}"
+                                onclick="event.stopPropagation(); toggleWishlist(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.slug}', '${firstImage || ''}');"
+                                style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid ${heartBorder};border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+                                aria-label="Add to wishlist">
+                                <i class="${heartIcon}" style="font-size:14px;color:${heartColor};transition:all 0.3s ease;"></i>
+                            </button>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-category">${product.category ? product.category.name : 'Uncategorized'}</div>
+                            <div class="product-name">
+                                ${product.name}
+                            </div>
+                            <div class="product-meta">
+                                ${product.brand ? `<span><i class="fas fa-tag"></i> ${product.brand.name}</span>` : ''}
+                                ${product.variants ? `<span><i class="fas fa-gem"></i> ${product.variants}</span>` : ''}
+                            </div>
+                            <div class="product-price">
+                                <span class="current">₹${parseFloat(product.price).toFixed(2)}</span>
+                            </div>
+                            <div class="product-stock ${stockClass}">
+                                <i class="fas fa-${stockIcon}"></i>
+                                ${stockText} ${stockExtra}
+                            </div>
+                            <div style="margin-top:10px;">
+                                <button type="button"
+                                    class="add-to-cart-btn"
+                                    data-product-id="${product.id}"
+                                    data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                    data-product-price="${product.price}"
+                                    data-product-slug="${product.slug}"
+                                    data-product-image="${firstImage || ''}"
+                                    onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.slug}', '${firstImage || ''}');"
+                                    style="width:100%;padding:8px 16px;background:${inCart ? '#27ae60' : '#B89B5E'};color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:6px;">
+                                    <i class="${inCart ? 'fas fa-check' : 'fas fa-cart-plus'}" style="font-size:12px;"></i>
+                                    ${inCart ? 'In Cart' : 'Add to Cart'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+
+            // Re-initialize wishlist buttons after rendering
+            if (typeof initWishlistButtons === 'function') {
+                initWishlistButtons();
+            }
+
+            // Re-initialize cart button states after rendering
+            if (typeof updateCartButtonStates === 'function') {
+                updateCartButtonStates();
+            }
+        }
 
         function renderPagination(current, last, total) {
             const container = document.getElementById('paginationContainer');

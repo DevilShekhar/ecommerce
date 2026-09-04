@@ -797,6 +797,8 @@
             <!-- Logo -->
             @php
                 $siteLogo = \App\Models\Logo::first();
+                // Get all categories for dropdown
+                $allCategories = \App\Models\ProductCategory::where('status', 1)->get();
             @endphp
 
             <a href="{{ url('/') }}" class="navbar-logo">
@@ -814,7 +816,61 @@
             <!-- Nav Links - Desktop -->
             <ul class="nav-links-desktop">
                 <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}">Shop</a></li>
+
+                <!-- Shop with Dropdown -->
+                <li class="nav-item-dropdown">
+                    <a href="{{ route('shop.index') }}" class="nav-link-dropdown">
+                        Shop <i class="bi bi-chevron-down" style="font-size:10px;margin-left:4px;"></i>
+                    </a>
+
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu-categories">
+                        <div class="dropdown-inner">
+                            <div class="dropdown-categories-grid">
+                                @if(isset($allCategories) && $allCategories->count() > 0)
+                                    @foreach($allCategories as $category)
+                                        <a href="{{ route('shop', ['category' => $category->slug]) }}"
+                                            class="dropdown-category-item">
+                                            @if($category->image)
+                                                <img src="{{ asset('storage/' . $category->image) }}" alt="{{ $category->name }}"
+                                                    class="dropdown-category-icon">
+                                            @else
+                                                <span class="dropdown-category-icon-placeholder">
+                                                    <i class="bi bi-tag"></i>
+                                                </span>
+                                            @endif
+                                            <div class="dropdown-category-info">
+                                                <span class="dropdown-category-name">{{ $category->name }}</span>
+                                            </div>
+                                            <i class="bi bi-chevron-right dropdown-category-arrow"></i>
+                                        </a>
+                                    @endforeach
+                                @else
+                                    <a href="{{ route('shop.index') }}" class="dropdown-category-item">
+                                        <span class="dropdown-category-icon-placeholder">
+                                            <i class="bi bi-grid"></i>
+                                        </span>
+                                        <div class="dropdown-category-info">
+                                            <span class="dropdown-category-name">All Products</span>
+                                            <span class="dropdown-category-count">View All</span>
+                                        </div>
+                                        <i class="bi bi-chevron-right dropdown-category-arrow"></i>
+                                    </a>
+                                @endif
+                            </div>
+
+                            <!-- View All Link -->
+                            <div class="dropdown-footer">
+                                <a href="{{ route('shop.index') }}" class="dropdown-view-all">
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                                    View All Categories
+                                    <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
                 <li><a href="{{ route('about-us') }}">About</a></li>
                 <li><a href="{{ route('contact-us') }}">Contact</a></li>
             </ul>
@@ -858,7 +914,24 @@
         <div class="mobile-menu">
             <ul>
                 <li><a href="/">Home</a></li>
-                <li><a href="{{ route('shop.index') }}">Shop</a></li>
+                <li>
+                    <a href="{{ route('shop.index') }}">Shop</a>
+                    <!-- Mobile Sub Categories -->
+                    @if(isset($allCategories) && $allCategories->count() > 0)
+                        <ul class="mobile-sub-menu">
+                            @foreach($allCategories as $category)
+                                <li>
+                                    <a href="{{ route('shop', ['category' => $category->slug]) }}">
+                                        <i class="bi bi-tag" style="font-size:12px;color:#B89B5E;"></i>
+                                        {{ $category->name }}
+                                    </a>
+                                </li>
+                            @endforeach
+                            <li><a href="{{ route('shop.index') }}" style="color:#B89B5E;font-weight:600;">View All →</a>
+                            </li>
+                        </ul>
+                    @endif
+                </li>
                 <li><a href="#" onclick="event.preventDefault(); toggleWishlistPanel();"><i class="bi bi-heart"
                             style="color:#B89B5E;"></i> Wishlist <span id="mobileWishlistCount"
                             style="background:#B89B5E;color:#fff;padding:1px 8px;border-radius:50%;font-size:10px;margin-left:5px;">0</span></a>
@@ -1463,11 +1536,88 @@
 
         function clearAllWishlist() {
             if (getWishlist().length === 0) return;
-            if (confirm('Are you sure you want to clear your entire wishlist?')) {
+
+            // Create toast container if it doesn't exist
+            let toastContainer = document.getElementById('wishlist-toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'wishlist-toast-container';
+                toastContainer.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+            width: 100%;
+        `;
+                document.body.appendChild(toastContainer);
+            }
+
+            // Remove any existing confirmation
+            const existing = document.getElementById('clear-wishlist-confirm');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'clear-wishlist-confirm';
+            toast.style.cssText = `
+        background: #fff;
+        padding: 16px 18px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-left: 4px solid #e74c3c;
+        font-size: 14px;
+        color: #292725;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        animation: slideInRight 0.3s ease;
+    `;
+
+            toast.innerHTML = `
+        <div style="margin-bottom:12px;font-weight:500;">
+            Clear entire wishlist?
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button id="confirmClearWishlist" style="
+                flex:1;
+                padding:8px 0;
+                background:#e74c3c;
+                color:#fff;
+                border:none;
+                border-radius:8px;
+                font-size:13px;
+                font-weight:600;
+                cursor:pointer;
+            ">Yes, Clear</button>
+            <button id="cancelClearWishlist" style="
+                flex:1;
+                padding:8px 0;
+                background:#f4efe7;
+                color:#292725;
+                border:none;
+                border-radius:8px;
+                font-size:13px;
+                font-weight:600;
+                cursor:pointer;
+            ">Cancel</button>
+        </div>
+    `;
+
+            toastContainer.appendChild(toast);
+
+            // Confirm
+            document.getElementById('confirmClearWishlist').onclick = function () {
                 saveWishlist([]);
                 renderWishlistPanel();
+                toast.remove();
                 showToast('Wishlist cleared', 'removed');
-            }
+            };
+
+            // Cancel
+            document.getElementById('cancelClearWishlist').onclick = function () {
+                toast.remove();
+            };
         }
 
         function initWishlistButtons() {
@@ -1822,13 +1972,93 @@
 
         function clearAllCart() {
             if (getCart().length === 0) return;
-            if (confirm('Are you sure you want to clear your entire cart?')) {
+
+            // Create a custom confirmation toast
+            let toastContainer = document.getElementById('wishlist-toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'wishlist-toast-container';
+                toastContainer.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 360px;
+            width: 100%;
+        `;
+                document.body.appendChild(toastContainer);
+            }
+
+            // Remove any existing clear confirmation
+            const existing = document.getElementById('clear-cart-confirm');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.id = 'clear-cart-confirm';
+            toast.style.cssText = `
+        background: #fff;
+        padding: 16px 18px;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        border-left: 4px solid #e74c3c;
+        font-size: 14px;
+        color: #292725;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        animation: slideInRight 0.3s ease;
+    `;
+
+            toast.innerHTML = `
+        <div style="margin-bottom:12px;font-weight:500;">
+            Clear entire cart?
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button id="confirmClearCart" style="
+                flex:1;
+                padding:8px 0;
+                background:#e74c3c;
+                color:#fff;
+                border:none;
+                border-radius:8px;
+                font-size:13px;
+                font-weight:600;
+                cursor:pointer;
+            ">Yes, Clear</button>
+            <button id="cancelClearCart" style="
+                flex:1;
+                padding:8px 0;
+                background:#f4efe7;
+                color:#292725;
+                border:none;
+                border-radius:8px;
+                font-size:13px;
+                font-weight:600;
+                cursor:pointer;
+            ">Cancel</button>
+        </div>
+    `;
+
+            toastContainer.appendChild(toast);
+
+            // Confirm
+            document.getElementById('confirmClearCart').onclick = function () {
                 saveCart([]);
                 renderCartPanel();
                 updateCartCount();
+                toast.remove();
                 showToast('Cart cleared', 'removed');
-            }
+            };
+
+            // Cancel
+            document.getElementById('cancelClearCart').onclick = function () {
+                toast.remove();
+            };
         }
+
+
+
 
         // =============================================
         // TOAST NOTIFICATION
