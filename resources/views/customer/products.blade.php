@@ -1935,20 +1935,17 @@
                         const hasDiscount = originalPrice > sellingPrice;
 
                         let priceHtml = `
-                    <span style="color:#198754;font-weight:700;font-size:24px;">
-                        ₹${parseFloat(sellingPrice).toFixed(0)}
-                    </span>
-                `;
+                        `;
 
                         if (hasDiscount) {
                             priceHtml += `
-                        <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
-                            ₹${parseFloat(originalPrice).toFixed(0)}
-                        </span>
-                        <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
-                            ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
-                        </span>
-                    `;
+                                <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
+                                    ₹${parseFloat(originalPrice).toFixed(0)}
+                                </span>
+                                <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
+                                    ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
+                                </span>
+                            `;
                         }
 
                         document.getElementById('modalProductPrice').innerHTML = priceHtml;
