@@ -816,8 +816,22 @@
                         } else {
                             $imgUrl = null;
                         }
+                        $sellingPrice = $product->selling_price ?? $product->price ?? 0;
+                        $originalPrice = $product->price ?? 0;
+                        $hasDiscount = $originalPrice > $sellingPrice;
+                        $hasActiveOffer = isset($product->active_offer) && $product->active_offer;
+                        $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+                        if ($hasActiveOffer) {
+                            $offerDiscount = 0;
+                            if ($product->active_offer->discount_type === 'percentage') {
+                                $offerDiscount = round($product->active_offer->discount_value);
+                            } else {
+                                $offerDiscount = round(($product->active_offer->discount_value / $originalPrice) * 100);
+                            }
+                        }
+                        $inCart = false;
                     @endphp
-                    <div class="product-card" data-product-id="{{ $product->id }}">
+                    <div class="product-card" data-product-id="{{ $product->id }}" style="position:relative;">
                         <a href="{{ route('customer.products.detail', $product->slug) }}" style="text-decoration:none;color:inherit;">
                             <div class="product-img">
                                 @if($imgUrl)
@@ -825,7 +839,13 @@
                                 @else
                                     <div class="no-img"><i class="bi bi-image"></i></div>
                                 @endif
-                                @if(isset($product->active_offer) && $product->active_offer)
+
+                                <!-- Discount Badge -->
+                                @if($hasDiscount)
+                                    <div class="offer-badge">
+                                        {{ $discountPercent }}% OFF
+                                    </div>
+                                @elseif($hasActiveOffer)
                                     <div class="offer-badge {{ $product->active_offer->discount_type === 'fixed' ? 'fixed' : '' }}">
                                         @if($product->active_offer->discount_type === 'percentage')
                                             {{ rtrim(rtrim(number_format($product->active_offer->discount_value, 2), '0'), '.') }}% OFF
@@ -834,6 +854,7 @@
                                         @endif
                                     </div>
                                 @endif
+
                                 <button class="wishlist-btn" data-product-id="{{ $product->id }}" onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
                                     <i class="bi bi-heart"></i>
                                 </button>
@@ -841,7 +862,19 @@
                             <div class="product-info">
                                 <h6>{{ $product->name }}</h6>
                                 <div class="price">
-                                    @if(isset($product->active_offer) && $product->active_offer)
+                                    @if($hasDiscount)
+                                        <!-- Show selling price and original price -->
+                                        <span class="current" style="color:#198754;font-weight:700;">
+                                            ₹{{ number_format($sellingPrice, 0) }}
+                                        </span>
+                                        <span style="font-size:11px;color:#94a3b8;text-decoration:line-through;margin-left:4px;">
+                                            ₹{{ number_format($originalPrice, 0) }}
+                                        </span>
+                                        <span style="font-size:10px;color:#ef4444;font-weight:600;background:#fef0ef;padding:1px 6px;border-radius:3px;margin-left:4px;">
+                                            {{ $discountPercent }}% OFF
+                                        </span>
+                                    @elseif($hasActiveOffer)
+                                        <!-- Active offer logic -->
                                         @php
                                             $original = $product->price;
                                             if ($product->active_offer->discount_type === 'percentage') {
@@ -853,11 +886,29 @@
                                         <span class="current" style="color:#ef4444;">₹{{ number_format($discounted, 0) }}</span>
                                         <span style="font-size:11px;color:#94a3b8;text-decoration:line-through;margin-left:4px;">₹{{ number_format($original, 0) }}</span>
                                     @else
+                                        <!-- No discount -->
                                         <span class="current">₹{{ number_format($product->price, 0) }}</span>
                                     @endif
                                 </div>
                             </div>
                         </a>
+
+                        <!-- ============================================= -->
+                        <!-- ADD TO CART BUTTON - INSIDE PRODUCT CARD      -->
+                        <!-- ============================================= -->
+                        <div style="padding:0 12px 12px 12px;margin-top:-4px;">
+                            <button type="button" class="add-to-cart-btn"
+                                data-product-id="{{ $product->id }}"
+                                data-product-name="{{ addslashes($product->name) }}"
+                                data-product-price="{{ $sellingPrice }}"
+                                data-product-slug="{{ $product->slug }}"
+                                data-product-image="{{ $imgUrl ?? '' }}"
+                                onclick="event.stopPropagation(); addToCartFromCard(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $sellingPrice }}, '{{ $product->slug }}', '{{ $imgUrl ?? '' }}', {{ $originalPrice }});"
+                                style="width:100%;padding:6px 12px;background:#3b82f6;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
+                                <i class="bi bi-cart-plus" style="font-size:12px;"></i>
+                                <span class="btn-text">Add to Cart</span>
+                            </button>
+                        </div>
                     </div>
                 @empty
                     <p class="text-muted" style="grid-column:1/-1;text-align:center;padding:40px 0;">
@@ -1038,5 +1089,180 @@
 
         window.toggleWishlist = toggleWishlist;
         window.copyCoupon = copyCoupon;
+        function addToCartFromCard(button, productId, productName, productPrice, productSlug, productImage, originalPrice = null) {
+            event.stopPropagation();
+
+            let cart = getCart();
+            const existingIndex = cart.findIndex(item => item.id == productId);
+
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="bi bi-arrow-repeat" style="font-size:12px;animation:spin 1s linear infinite;"></i> Adding...';
+            button.style.opacity = '0.7';
+            button.disabled = true;
+
+            setTimeout(() => {
+                const sellingPriceValue = Number(productPrice);
+                const originalPriceValue = (originalPrice !== null && originalPrice !== undefined)
+                    ? Number(originalPrice)
+                    : sellingPriceValue;
+
+                console.log('Adding to cart:', {
+                    productId,
+                    productName,
+                    selling_price: sellingPriceValue,
+                    price: originalPriceValue,
+                    hasDiscount: originalPriceValue > sellingPriceValue
+                });
+
+                if (existingIndex > -1) {
+                    cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+                    cart[existingIndex].selling_price = sellingPriceValue;
+                    cart[existingIndex].price = originalPriceValue;
+                    showToast('Quantity updated in cart', 'added');
+                } else {
+                    cart.push({
+                        id: productId,
+                        name: productName,
+                        selling_price: sellingPriceValue,
+                        price: originalPriceValue,
+                        slug: productSlug,
+                        image: productImage,
+                        quantity: 1
+                    });
+                    showToast('Added to cart 🛒', 'added');
+                }
+
+                saveCart(cart);
+
+                button.innerHTML = '<i class="bi bi-check-lg" style="font-size:12px;"></i> In Cart';
+                button.style.background = '#27ae60';
+                button.disabled = false;
+                button.style.opacity = '1';
+
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.style.background = '#B89B5E';
+                }, 2000);
+
+                if (document.getElementById('cartPanel')?.classList.contains('open')) {
+                    renderCartPanel();
+                }
+            }, 400);
+        }
+        function getCart() {
+            try {
+                const cart = localStorage.getItem('cart');
+                return cart ? JSON.parse(cart) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+        function showToast(message, type) {
+            let toastContainer = document.getElementById('wishlist-toast-container');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'wishlist-toast-container';
+                toastContainer.style.cssText = `
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 350px;
+            width: 100%;
+        `;
+                document.body.appendChild(toastContainer);
+            }
+
+            const toast = document.createElement('div');
+            const bgColor = type === 'added' ? '#27ae60' : '#e74c3c';
+            toast.style.cssText = `
+        background: #fff;
+        padding: 12px 18px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        border-left: 4px solid ${bgColor};
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        animation: slideInRight 0.3s ease;
+        font-size: 14px;
+        color: #292725;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    `;
+
+            const icon = document.createElement('i');
+            icon.className = type === 'added' ? 'bi bi-heart-fill' : 'bi bi-heart';
+            icon.style.color = bgColor;
+            icon.style.fontSize = '18px';
+
+            const text = document.createElement('span');
+            text.textContent = message;
+
+            toast.appendChild(icon);
+            toast.appendChild(text);
+            toastContainer.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease forwards';
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        function updateCartCount() {
+            const cart = getCart();
+            const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+            const cartCount = document.getElementById('cartCount');
+            if (cartCount) cartCount.textContent = totalItems;
+
+            const mobileCartCount = document.getElementById('mobileCartCount');
+            if (mobileCartCount) mobileCartCount.textContent = totalItems;
+        }
+
+        function addToCartFromWishlist(productId) {
+            event.stopPropagation();
+
+            const wishlist = getWishlist();
+            const product = wishlist.find(item => item.id == productId);
+
+            if (!product) {
+                showToast('Product not found', 'removed');
+                return;
+            }
+
+            let cart = getCart();
+            const existingIndex = cart.findIndex(item => item.id == productId);
+
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity = (cart[existingIndex].quantity || 1) + 1;
+                showToast('Quantity updated in cart', 'added');
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    selling_price: Number(product.selling_price || product.price || 0),
+                    price: Number(product.price || product.selling_price || 0),
+                    slug: product.slug,
+                    image: product.image,
+                    quantity: 1
+                });
+                showToast('Added to cart 🛒', 'added');
+            }
+
+            saveCart(cart);
+
+            if (document.getElementById('cartPanel')?.classList.contains('open')) {
+                renderCartPanel();
+            }
+        }
     </script>
 @endsection

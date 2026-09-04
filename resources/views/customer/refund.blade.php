@@ -117,7 +117,6 @@
                             @endphp
 
                             <tr>
-
                                 {{-- PRODUCT --}}
                                 <td class="ps-4">
                                     <div class="return-product">
@@ -136,9 +135,58 @@
                                                 {{ $product?->name ?? 'Product Not Available' }}
                                             </div>
 
+                                            {{-- PRICE DISPLAY WITH SELLING AND ORIGINAL PRICE --}}
+                                            @php
+                                                $orderItem = $return->orderItem;
+                                                $productItem = $orderItem?->product ?? $product;
+
+                                                // Get selling price (what was actually paid)
+                                                $sellingPrice = (float) (
+                                                    $orderItem?->selling_price ??
+                                                    $productItem?->selling_price ??
+                                                    $orderItem?->price ??
+                                                    $productItem?->price ??
+                                                    0
+                                                );
+
+                                                // Get original price
+                                                $originalPrice = (float) (
+                                                    $productItem?->price ??
+                                                    $orderItem?->price ??
+                                                    0
+                                                );
+
+                                                // Check if there's a discount
+                                                $hasDiscount = $originalPrice > $sellingPrice && $sellingPrice > 0;
+                                                $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+                                            @endphp
+
+                                            <div class="product-meta" style="margin-top:4px;">
+                                                @if($hasDiscount)
+                                                    <span style="color:#198754;font-weight:600;font-size:13px;">
+                                                        ₹{{ number_format($sellingPrice, 2) }}
+                                                    </span>
+                                                    <span
+                                                        style="color:#94a3b8;font-size:11px;text-decoration:line-through;text-decoration-thickness:1px;margin-left:4px;">
+                                                        ₹{{ number_format($originalPrice, 2) }}
+                                                    </span>
+                                                    <span
+                                                        style="background:#fef2f2;color:#ef4444;font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;margin-left:4px;">
+                                                        {{ $discountPercent }}% OFF
+                                                    </span>
+                                                @else
+                                                    <span style="color:#198754;font-weight:600;font-size:13px;">
+                                                        ₹{{ number_format($sellingPrice, 2) }}
+                                                    </span>
+                                                @endif
+                                                <span style="color:#94a3b8;font-size:11px;margin-left:4px;">
+                                                    × {{ $return->quantity ?? 1 }}
+                                                </span>
+                                            </div>
+
                                             @if($return->orderItem)
-                                                <div class="product-meta">
-                                                    Order Item {{ $return->orderItem->id }}
+                                                <div class="product-meta" style="font-size:10px;color:#94a3b8;margin-top:2px;">
+                                                    Order Item #{{ $return->orderItem->id }}
                                                 </div>
                                             @endif
                                         </div>
@@ -212,12 +260,53 @@
 
                                 {{-- REFUND AMOUNT --}}
                                 <td>
+                                    @php
+                                        $orderItem = $return->orderItem;
+                                        $productItem = $orderItem?->product ?? $product;
+
+                                        // Get selling price (what was actually paid)
+                                        $sellingPrice = (float) (
+                                            $orderItem?->selling_price ??
+                                            $productItem?->selling_price ??
+                                            $orderItem?->price ??
+                                            $productItem?->price ??
+                                            0
+                                        );
+
+                                        // Get original price
+                                        $originalPrice = (float) (
+                                            $productItem?->price ??
+                                            $orderItem?->price ??
+                                            0
+                                        );
+
+                                        // Check if there's a discount
+                                        $hasDiscount = $originalPrice > $sellingPrice && $sellingPrice > 0;
+                                        $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+
+                                        $quantity = $return->quantity ?? 1;
+                                        $refundAmount = $return->refund_amount ?? 0;
+                                    @endphp
+
                                     <div class="refund-amount">
-                                        ₹{{ number_format($return->refund_amount ?? 0, 2) }}
+                                        {{-- Refund Amount (Selling Price) --}}
+                                        <div style="color:#198754;font-weight:700;font-size:14px;">
+                                            ₹{{ number_format($refundAmount, 2) }}
+                                        </div>
+
+                                        {{-- Original Price (crossed out) - if there's a discount --}}
+                                        @if($hasDiscount && $refundAmount > 0)
+                                            <div
+                                                style="color:#94a3b8;font-size:11px;text-decoration:line-through;text-decoration-thickness:1px;">
+                                                ₹{{ number_format($originalPrice * $quantity, 2) }}
+                                            </div>
+                                            <span
+                                                style="background:#fef2f2;color:#ef4444;font-size:8px;font-weight:700;padding:1px 6px;border-radius:3px;margin-top:2px;display:inline-block;">
+                                                {{ $discountPercent }}% OFF
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
-
-
                                 {{-- REFUND STATUS --}}
                                 <td>
                                     @if($refundStatus === 'refunded')
@@ -364,7 +453,7 @@
 
 @endsection
 <script>
-     document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         const tooltipTriggerList = document.querySelectorAll(
             '[data-bs-toggle="tooltip"]'
         );

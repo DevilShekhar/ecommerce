@@ -91,6 +91,11 @@
                                         @endif
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <strong>Selling Price</strong>
+                                        <span class="text-primary font-weight-bold"
+                                            style="font-size: 16px;">₹{{ number_format($product->selling_price, 2) }}</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <strong>Price</strong>
                                         <span class="text-success font-weight-bold"
                                             style="font-size: 16px;">₹{{ number_format($product->price, 2) }}</span>

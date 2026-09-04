@@ -141,6 +141,14 @@
                                                     value="{{ old('price', $product->price) }}" placeholder="0.00" required>
                                             </div>
                                         </div>
+                                        <!-- Selling Price -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Selling Price <span class="text-danger">*</span></label>
+                                                <input type="number" step="0.01" name="selling_price" class="form-control"
+                                                    value="{{ old('selling_price', $product->selling_price) }}" placeholder="0.00" required>
+                                            </div>
+                                        </div>
 
                                         <!-- Stock Quantity -->
                                         <div class="col-md-4">

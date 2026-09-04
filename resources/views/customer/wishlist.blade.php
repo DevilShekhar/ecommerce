@@ -36,11 +36,11 @@
 .wishlist-product-name{font-size:14px;font-weight:600;color:#0f172a}
 .wishlist-product-variant{font-size:12px;color:#64748b}
 
-/* Price */
-.wishlist-price{display:flex;align-items:center;flex-wrap:wrap;gap:4px}
-.current-price{font-size:15px;font-weight:700;color:#0f172a}
-.old-price{font-size:12px;color:#94a3b8;text-decoration:line-through}
-.discount-badge{background:#fef2f2;color:#ef4444;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px}
+/* Price - UPDATED */
+.wishlist-price{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.current-price{font-size:15px;font-weight:700;color:#198754}
+.old-price{font-size:12px;color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px}
+.discount-badge{background:#fef2f2;color:#ef4444;font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px}
 
 /* Stock */
 .stock-status{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:#16a34a}
@@ -150,11 +150,11 @@
                                             $imgUrl = asset($firstImage);
                                         }
                                     }
-                                    $originalPrice = $product->original_price ?? null;
-                                    $discount = null;
-                                    if ($originalPrice && $originalPrice > $product->price) {
-                                        $discount = round((($originalPrice - $product->price) / $originalPrice) * 100);
-                                    }
+                                    // GET SELLING PRICE AND ORIGINAL PRICE
+                                    $sellingPrice = $product->selling_price ?? $product->price ?? 0;
+                                    $originalPrice = $product->price ?? 0;
+                                    $hasDiscount = $originalPrice > $sellingPrice;
+                                    $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
                                 @endphp
                                 @if($product)
                                     <tr class="wishlist-item product-details-trigger" data-wishlist-id="{{ $item->id }}" data-product-id="{{ $product->id }}">
@@ -175,11 +175,18 @@
                                             </div>
                                         </td>
                                         <td>
+                                            <!-- PRICE DISPLAY WITH BOTH PRICES -->
                                             <div class="wishlist-price">
-                                                <span class="current-price">₹{{ number_format($product->price, 0) }}</span>
-                                                @if($originalPrice && $originalPrice > $product->price)
-                                                    <span class="old-price">₹{{ number_format($originalPrice, 0) }}</span>
-                                                    <span class="discount-badge">{{ $discount }}% OFF</span>
+                                                <span class="current-price" style="color:#198754;font-weight:700;">
+                                                    ₹{{ number_format($sellingPrice, 0) }}
+                                                </span>
+                                                @if($hasDiscount)
+                                                    <span class="old-price" style="color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px;font-size:12px;">
+                                                        ₹{{ number_format($originalPrice, 0) }}
+                                                    </span>
+                                                    <span class="discount-badge" style="background:#fef2f2;color:#ef4444;font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;">
+                                                        {{ $discountPercent }}% OFF
+                                                    </span>
                                                 @endif
                                             </div>
                                         </td>
@@ -247,6 +254,10 @@
                                             $recImage = asset($recImage);
                                         }
                                     }
+                                    // Get prices for recommended products
+                                    $recSellingPrice = $recommended->selling_price ?? $recommended->price ?? 0;
+                                    $recOriginalPrice = $recommended->price ?? 0;
+                                    $recHasDiscount = $recOriginalPrice > $recSellingPrice;
                                 @endphp
                                 <div class="col-xl-3 col-lg-3 col-md-4 col-6">
                                     <div class="recommendation-card">
@@ -260,7 +271,19 @@
                                         </div>
                                         <div class="recommendation-info">
                                             <h6>{{ $recommended->name }}</h6>
-                                            <div class="recommendation-price">₹{{ number_format($recommended->price, 0) }}</div>
+                                            <div class="recommendation-price">
+                                                <span style="color:#198754;font-weight:700;">
+                                                    ₹{{ number_format($recSellingPrice, 0) }}
+                                                </span>
+                                                @if($recHasDiscount)
+                                                    <span style="color:#94a3b8;font-size:11px;text-decoration:line-through;text-decoration-thickness:1px;margin-left:4px;">
+                                                        ₹{{ number_format($recOriginalPrice, 0) }}
+                                                    </span>
+                                                    <span style="color:#ef4444;font-size:9px;font-weight:600;background:#fef2f2;padding:1px 6px;border-radius:3px;margin-left:4px;">
+                                                        {{ round((($recOriginalPrice - $recSellingPrice) / $recOriginalPrice) * 100) }}% OFF
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -568,9 +591,9 @@
                             if (p.is_futured) {
                                 action.innerHTML = `<button class="product-modal-notify"><i class="bi bi-bell me-2"></i> Notify Me</button>`;
                             } else if (p.is_out_of_stock) {
-                                action.innerHTML = `<button class="product-modal-add-cart" disabled><i class="bi bi-x-circle me-2"></i> Out of Stock</button>`;
+                                action.innerHTML = ``;
                             } else {
-                                action.innerHTML = `<form action="{{ url('/cart/add') }}/${p.id}" method="POST"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="product-modal-add-cart"><i class="bi bi-cart3 me-2"></i> Add to Cart</button></form>`;
+                                action.innerHTML = ``;
                             }
                         }
                         if (loader) loader.style.display = 'none';

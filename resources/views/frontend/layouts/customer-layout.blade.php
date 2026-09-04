@@ -51,6 +51,20 @@
             min-width: max-content;
         }
 
+        /* Active menu item */
+        .horizontal-sidebar .sidebar-menu li.active>a {
+            background: #cde2f1;
+            color: #2878f0;
+            border-radius: 8px;
+        }
+
+        /* Optional hover */
+        .horizontal-sidebar .sidebar-menu li>a:hover {
+            background: #e3f2fd;
+            color: #2878f0;
+            border-radius: 8px;
+        }
+
         .horizontal-sidebar .sidebar-menu li a,
         .horizontal-sidebar .sidebar-menu li button {
             display: flex;
@@ -570,15 +584,9 @@
             <li>
                 <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
             </li>
-            <li>
-                <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
-            </li>
             <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
                 <a href="{{ route('customer.returns.index') }}"><i class="bi bi-arrow-return-left"></i> Returns &
                     Refunds</a>
-            </li>
-            <li>
-                <a href="#"><i class="bi bi-star"></i> My Reviews</a>
             </li>
             <li>
                 <a href="{{ route('account.settings') }}"><i class="bi bi-gear"></i> Account Settings</a>
@@ -716,15 +724,9 @@
                 <li>
                     <a href="{{ route('account.settings') }}"><i class="bi bi-geo-alt"></i> Addresses</a>
                 </li>
-                <li>
-                    <a href="#"><i class="bi bi-ticket-perforated"></i> Coupons & Offers</a>
-                </li>
                 <li class="@if(Route::currentRouteName() == 'customer.returns.index') active @endif">
                     <a href="{{ route('customer.returns.index') }}"><i class="bi bi-arrow-return-left"></i> Returns &
                         Refunds</a>
-                </li>
-                <li>
-                    <a href="#"><i class="bi bi-star"></i> My Reviews</a>
                 </li>
                 <li>
                     <a href="{{ route('account.settings') }}"><i class="bi bi-gear"></i> Account Settings</a>
