@@ -1592,9 +1592,9 @@
                         $primaryImage = !empty($images) ? $images[0] : null;
                     @endphp
                     <button class="gallery-wishlist wishlist-btn" data-product-id="{{ $product->id }}"
-                        data-product-name="{{ $product->name }}" data-product-price="{{ $product->price }}"
+                        data-product-name="{{ $product->name }}" data-product-price="{{ $product->selling_price }}"
                         data-product-slug="{{ $product->slug }}" data-product-image="{{ $primaryImage }}"
-                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->slug }}', '{{ $primaryImage }}');"
+                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->selling_price }}, '{{ $product->slug }}', '{{ $primaryImage }}', {{ $product->price }});"
                         aria-label="Add to wishlist">
                         <i class="bi bi-heart"></i>
                     </button>
@@ -1617,9 +1617,22 @@
                     <a href="#reviews" class="review-link">(120 Reviews)</a>
                 </div>
                 <div class="price-row">
-                    <span class="product-price">₹{{ number_format($product->price, 2) }}</span>
-                    @if($product->compare_price && $product->compare_price > $product->price)
-                        <span class="original-price">₹{{ number_format($product->compare_price, 2) }}</span>
+                    {{-- Selling Price --}}
+                    <span class="product-price" style="color:#198754;font-weight:700;">
+                        ₹{{ number_format($product->selling_price, 2) }}
+                    </span>
+
+                    {{-- Original Price --}}
+                    @if($product->price > $product->selling_price)
+                        <span class="original-price" style="
+                                            color:#888;
+                                            text-decoration:line-through;
+                                            text-decoration-thickness:1px;
+                                            margin-left:6px;
+                                            font-size:13px;
+                                        ">
+                            ₹{{ number_format($product->price, 2) }}
+                        </span>
                     @endif
                 </div>
                 <div class="certified-badge"><i class="bi bi-check-circle-fill"></i> BIS Hallmarked & Certified</div>
@@ -1627,16 +1640,6 @@
                 <div class="info-divider"></div>
                 <div class="option-group">
                     <div class="option-label">Material <span>{{ $product->variants ?? 'Premium Jewellery' }}</span></div>
-                </div>
-                <div class="option-group">
-                    <div class="option-label">Quantity</div>
-                    <div class="quantity-area">
-                        <div class="quantity-control">
-                            <button type="button" onclick="decreaseQuantity()">−</button>
-                            <input type="number" id="quantity" value="1" min="1" max="{{ $product->stock }}">
-                            <button type="button" onclick="increaseQuantity()">+</button>
-                        </div>
-                    </div>
                 </div>
                 <div class="stock-status {{ $product->stock > 0 ? 'in' : 'out' }}">
                     <i class="bi bi-{{ $product->stock > 0 ? 'check-circle-fill' : 'x-circle-fill' }}"></i>
@@ -1647,9 +1650,10 @@
                     @if($product->stock > 0)
                         @auth
                             <button type="button" class="btn-add-cart add-to-cart-btn" data-product-id="{{ $product->id }}"
-                                data-product-name="{{ addslashes($product->name) }}" data-product-price="{{ $product->price }}"
-                                data-product-slug="{{ $product->slug }}" data-product-image="{{ $primaryImage }}"
-                                onclick="event.stopPropagation(); addToCartFromCard(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->price }}, '{{ $product->slug }}', '{{ $primaryImage }}');">
+                                data-product-name="{{ addslashes($product->name) }}"
+                                data-product-price="{{ $product->selling_price }}" data-product-slug="{{ $product->slug }}"
+                                data-product-image="{{ $primaryImage }}"
+                                onclick="event.stopPropagation(); addToCartFromCard(this, {{ $product->id }}, '{{ addslashes($product->name) }}', {{ $product->selling_price }}, '{{ $product->slug }}', '{{ $primaryImage }}', {{ $product->price }});">
                                 <i class="bi bi-bag-plus"></i> <span class="btn-text">Make It Yours</span>
                             </button>
                         @else
@@ -1976,8 +1980,8 @@
                 </div>
                 <div class="related-grid">
                     @foreach($recommendations as $related)
-                        @php 
-                                                                                                    $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
+                        @php
+                            $relImages = $related->image ? array_map('trim', explode(',', $related->image)) : [];
                             $relFirst = $relImages[0] ?? null;
                             $productId = $related->id;
                             $productName = $related->name;
@@ -2002,9 +2006,11 @@
 
                                 <!-- Wishlist Button (stops propagation to prevent redirect) -->
                                 <button class="related-wishlist wishlist-btn" data-product-id="{{ $productId }}"
-                                    data-product-name="{{ addslashes($productName) }}" data-product-price="{{ $productPrice }}"
-                                    data-product-slug="{{ $productSlug }}" data-product-image="{{ $relFirst }}"
-                                    onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $relFirst }}');"
+                                    data-product-name="{{ addslashes($productName) }}"
+                                    data-product-selling-price="{{ $related->selling_price }}"
+                                    data-product-slug="{{ $productSlug }}"
+                                    data-product-image="{{ $relFirst }}"
+                                    onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $related->selling_price }}, '{{ $productSlug }}', '{{ $relFirst }}', {{ $related->price }});"
                                     aria-label="Add to wishlist">
                                     <i class="bi bi-heart"></i>
                                 </button>
@@ -2015,17 +2021,30 @@
                                     {{ Str::limit($related->name, 32) }}
                                 </h3>
                                 <div class="related-price">
-                                    ₹{{ number_format($related->price, 2) }}
-                                    @if($related->compare_price && $related->compare_price > $related->price)
-                                        <span class="related-original">₹{{ number_format($related->compare_price, 2) }}</span>
+                                    <span style="color:#198754;font-weight:700;">
+                                        ₹{{ number_format($related->selling_price, 2) }}
+                                    </span>
+
+                                    @if($related->price > $related->selling_price)
+                                        <span class="related-original" style="
+                                                                            color:#888;
+                                                                            text-decoration:line-through;
+                                                                            text-decoration-thickness:1px;
+                                                                            margin-left:6px;
+                                                                            font-size:13px;
+                                                                        ">
+                                            ₹{{ number_format($related->price, 2) }}
+                                        </span>
                                     @endif
                                 </div>
                                 <!-- Add to Cart Button (stops propagation to prevent redirect) -->
                                 <button type="button" class="btn-add-cart-compact add-to-cart-btn"
-                                    data-product-id="{{ $productId }}" data-product-name="{{ addslashes($productName) }}"
-                                    data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                    data-product-id="{{ $productId }}"
+                                    data-product-name="{{ addslashes($productName) }}"
+                                    data-product-price="{{ $related->selling_price }}"
+                                    data-product-slug="{{ $productSlug }}"
                                     data-product-image="{{ $relFirst }}"
-                                    onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $relFirst }}');">
+                                    onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $related->selling_price }}, '{{ $productSlug }}', '{{ $relFirst }}', {{ $related->price }});">
                                     <i class="bi bi-cart-plus"></i>
                                     <span class="btn-text">Add to Cart</span>
                                 </button>
@@ -2194,196 +2213,226 @@
             if (event.key === 'Escape') closeImageModal();
         });
         function doSearch(query) {
-            const results = document.getElementById('searchResults');
-            const clearBtn = document.getElementById('clearBtn');
-            const links = document.getElementById('categoryLinks');
-            const hint = document.getElementById('searchHint');
+    const results = document.getElementById('searchResults');
+    const clearBtn = document.getElementById('clearBtn');
+    const links = document.getElementById('categoryLinks');
+    const hint = document.getElementById('searchHint');
 
-            if (!results) return;
+    if (!results) return;
 
-            query = query.trim();
+    query = query.trim();
 
-            // Empty search
-            if (query.length === 0) {
-                if (clearBtn) clearBtn.style.display = 'none';
-                results.style.display = 'none';
-                results.innerHTML = '';
-                if (links) links.style.display = 'flex';
-                if (hint) hint.style.display = 'block';
-                clearTimeout(searchTimeout);
-                return;
+    // Empty search
+    if (query.length === 0) {
+        if (clearBtn) clearBtn.style.display = 'none';
+        results.style.display = 'none';
+        results.innerHTML = '';
+        if (links) links.style.display = 'flex';
+        if (hint) hint.style.display = 'block';
+        clearTimeout(searchTimeout);
+        return;
+    }
+
+    // Search started
+    if (clearBtn) clearBtn.style.display = 'flex';
+    if (links) links.style.display = 'none';
+    if (hint) hint.style.display = 'none';
+
+    results.style.display = 'block';
+    results.innerHTML = `
+        <div class="search-loading">
+            <i class="bi bi-hourglass-split"></i>
+            Searching...
+        </div>
+    `;
+
+    // Clear previous timeout
+    clearTimeout(searchTimeout);
+
+    // Delay search by 300ms
+    searchTimeout = setTimeout(() => {
+        const searchUrl = `/search?q=${encodeURIComponent(query)}`;
+
+        fetch(searchUrl, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
             }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Search request failed');
+            }
+            return response.json();
+        })
+        .then(data => {
+            let html = '';
 
-            // Search started
-            if (clearBtn) clearBtn.style.display = 'flex';
-            if (links) links.style.display = 'none';
-            if (hint) hint.style.display = 'none';
+            // ==========================================
+            // CATEGORIES
+            // ==========================================
+            if (data.categories && data.categories.length > 0) {
+                html += `
+                    <div class="search-categories">
+                        <h4 class="search-section-title">Categories</h4>
+                        <div class="search-cat-pills">
+                `;
 
-            results.style.display = 'block';
-            results.innerHTML = `
-            <div class="search-loading">
-                    <i class="bi bi-hourglass-split"></i>
-                    Searching...
-                </div>
-            `;
-
-            // Clear previous timeout
-            clearTimeout(searchTimeout);
-
-            // Delay search by 300ms
-            searchTimeout = setTimeout(() => {
-                const searchUrl = `/search?q=${encodeURIComponent(query)}`;
-
-                fetch(searchUrl, {
-                    method: 'GET',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Search request failed');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        let html = '';
-
-                        // ==========================================
-                        // CATEGORIES
-                        // ==========================================
-                        if (data.categories && data.categories.length > 0) {
-                            html += `
-                        <div class="search-categories">
-                            <h4 class="search-section-title">Categories</h4>
-                            <div class="search-cat-pills">
+                data.categories.forEach(category => {
+                    html += `
+                        <a href="/shop?category=${encodeURIComponent(category.slug)}" class="search-cat-pill">
+                            ${escapeHtml(category.name)}
+                        </a>
                     `;
+                });
 
-                            data.categories.forEach(category => {
-                                html += `
-                            <a href="/shop?category=${encodeURIComponent(category.slug)}" class="search-cat-pill">
-                                ${escapeHtml(category.name)}
-                            </a>
-                        `;
-                            });
-
-                            html += `
-                            </div>
+                html += `
                         </div>
-                    `;
-                        }
-
-                        // ==========================================
-                        // PRODUCTS
-                        // ==========================================
-                        if (data.products && data.products.length > 0) {
-                            html += `
-                        <div class="search-products">
-                            <h4 class="search-section-title">Products</h4>
-                    `;
-
-                            data.products.forEach(product => {
-                                // ==========================================
-                                // GET ONLY FIRST IMAGE
-                                // ==========================================
-                                let imageUrl = '';
-
-                                if (product.image) {
-                                    const imagesArray = product.image
-                                        .split(',')
-                                        .map(s => s.trim())
-                                        .filter(Boolean);
-
-                                    // ONLY FIRST IMAGE
-                                    const firstImage = imagesArray[0] || '';
-
-                                    if (firstImage) {
-                                        if (firstImage.startsWith('/storage/')) {
-                                            // Already correct
-                                            imageUrl = firstImage;
-                                        } else if (firstImage.startsWith('storage/')) {
-                                            // Add leading slash
-                                            imageUrl = '/' + firstImage;
-                                        } else {
-                                            // uploads/products/...
-                                            imageUrl = '/storage/' + firstImage.replace(/^\/+/, '');
-                                        }
-                                    }
-                                }
-                                html += `
-                                    <a href="/shop/${encodeURIComponent(product.slug)}" class="search-product-item">
-                                `;
-                                if (imageUrl) {
-                                    html += `
-                                <img
-                                    src="${imageUrl}"
-                                    alt="${escapeHtml(product.name ?? '')}"
-                                    class="search-product-img"
-                                    loading="lazy"
-                                    onerror="
-                                        this.onerror=null;
-                                        this.style.display='none';
-                                        this.nextElementSibling.style.display='flex';
-                                    "
-                                >
-                                <div class="search-product-img-placeholder" style="display:none;">
-                                    <i class="bi bi-gem"></i>
-                                </div>
-                            `;
-                                } else {
-                                    html += `
-                                <div class="search-product-img-placeholder">
-                                    <i class="bi bi-gem"></i>
-                                </div>
-                            `;
-                                }
-
-                                // ==========================================
-                                // PRODUCT DETAILS
-                                // ==========================================
-                                html += `
-                                <div class="search-product-info">
-                                    <div class="search-product-name">
-                                        ${escapeHtml(product.name ?? '')}
-                                    </div>
-                                    <div class="search-product-price">
-                                        ₹${formatPrice(product.price)}
-                                    </div>
-                                </div>
-                                <i class="bi bi-chevron-right"></i>
-                            </a>
-                        `;
-                            });
-
-                            html += `
-                        </div>
-                    `;
-                        }
-
-                        // ==========================================
-                        // NO RESULTS
-                        // ==========================================
-                        if (!html) {
-                            html = `
-                        <div class="search-empty">
-                            <i class="bi bi-search"></i>
-                            <span>No results found for “${escapeHtml(query)}”</span>
-                        </div>
-                    `;
-                        }
-                        results.innerHTML = html;
-                    })
-                    .catch(error => {
-                        console.error('Search error:', error);
-                        results.innerHTML = `
-                    <div class="search-error">
-                        <i class="bi bi-exclamation-circle"></i>
-                        <span>Unable to load search results. Please try again.</span>
                     </div>
                 `;
-                    });
-            }, 300);
-        }
+            }
+
+            // ==========================================
+            // PRODUCTS - UPDATED WITH BOTH PRICES
+            // ==========================================
+            if (data.products && data.products.length > 0) {
+                html += `
+                    <div class="search-products">
+                        <h4 class="search-section-title">Products</h4>
+                `;
+
+                data.products.forEach(product => {
+                    // ==========================================
+                    // GET ONLY FIRST IMAGE
+                    // ==========================================
+                    let imageUrl = '';
+
+                    if (product.image) {
+                        const imagesArray = product.image
+                            .split(',')
+                            .map(s => s.trim())
+                            .filter(Boolean);
+
+                        const firstImage = imagesArray[0] || '';
+
+                        if (firstImage) {
+                            if (firstImage.startsWith('/storage/')) {
+                                imageUrl = firstImage;
+                            } else if (firstImage.startsWith('storage/')) {
+                                imageUrl = '/' + firstImage;
+                            } else {
+                                imageUrl = '/storage/' + firstImage.replace(/^\/+/, '');
+                            }
+                        }
+                    }
+
+                    // ==========================================
+                    // GET PRICES - SELLING & ORIGINAL
+                    // ==========================================
+                    const sellingPrice = product.selling_price || product.price || 0;
+                    const originalPrice = product.price || 0;
+                    const hasDiscount = parseFloat(originalPrice) > parseFloat(sellingPrice);
+
+                    html += `
+                        <a href="/shop/${encodeURIComponent(product.slug)}" class="search-product-item">
+                    `;
+
+                    // Product Image
+                    if (imageUrl) {
+                        html += `
+                            <img
+                                src="${imageUrl}"
+                                alt="${escapeHtml(product.name ?? '')}"
+                                class="search-product-img"
+                                loading="lazy"
+                                onerror="
+                                    this.onerror=null;
+                                    this.style.display='none';
+                                    this.nextElementSibling.style.display='flex';
+                                "
+                            >
+                            <div class="search-product-img-placeholder" style="display:none;">
+                                <i class="bi bi-gem"></i>
+                            </div>
+                        `;
+                    } else {
+                        html += `
+                            <div class="search-product-img-placeholder">
+                                <i class="bi bi-gem"></i>
+                            </div>
+                        `;
+                    }
+
+                    // ==========================================
+                    // PRODUCT DETAILS WITH BOTH PRICES
+                    // ==========================================
+                    html += `
+                            <div class="search-product-info">
+                                <div class="search-product-name">
+                                    ${escapeHtml(product.name ?? '')}
+                                </div>
+                                <div class="search-product-price">
+                                    <span style="color:#198754;font-weight:700;">
+                                        ₹${formatPrice(sellingPrice)}
+                                    </span>
+                                    ${hasDiscount ? `
+                                        <span style="
+                                            color:#888;
+                                            font-size:12px;
+                                            margin-left:5px;
+                                            text-decoration:line-through;
+                                            text-decoration-thickness:1px;
+                                        ">
+                                            ₹${formatPrice(originalPrice)}
+                                        </span>
+                                        <span style="
+                                            color:#e74c3c;
+                                            font-size:10px;
+                                            margin-left:5px;
+                                            font-weight:600;
+                                            background:#fef0ef;
+                                            padding:1px 6px;
+                                            border-radius:3px;
+                                        ">
+                                            ${Math.round(((parseFloat(originalPrice) - parseFloat(sellingPrice)) / parseFloat(originalPrice)) * 100)}% OFF
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    `;
+                });
+
+                html += `
+                    </div>
+                `;
+            }
+
+            // ==========================================
+            // NO RESULTS
+            // ==========================================
+            if (!html) {
+                html = `
+                    <div class="search-empty">
+                        <i class="bi bi-search"></i>
+                        <span>No results found for “${escapeHtml(query)}”</span>
+                    </div>
+                `;
+            }
+            results.innerHTML = html;
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            results.innerHTML = `
+                <div class="search-error">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <span>Unable to load search results. Please try again.</span>
+                </div>
+            `;
+        });
+    }, 300);
+}
     </script>
 @endpush

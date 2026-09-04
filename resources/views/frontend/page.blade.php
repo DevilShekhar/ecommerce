@@ -343,12 +343,15 @@
                             @php
                                 $productId = $product->id;
                                 $productName = $product->name;
-                                $productPrice = $product->price;
+                                $sellingPrice = $product->selling_price;
+                                $originalPrice = $product->price;
+                                $hasDiscount = $originalPrice > $sellingPrice; 
                                 $productSlug = $product->slug;
                                 $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
                                 $primaryImage = !empty($images) ? $images[0] : null;
                                 $hasMultipleImages = count($images) > 1;
                             @endphp
+
                             <div class="slider-slide" style="flex:0 0 20%;min-width:200px;">
                                 <div class="product-card-compact"
                                     style="cursor:pointer;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #E8E1D7;transition:all 0.3s ease;height:100%;display:block;text-decoration:none;position:relative;">
@@ -379,6 +382,25 @@
                                                     loading="lazy">
                                             @endif
 
+                                            <!-- DISCOUNT BADGE - Show only if discount exists -->
+                                            @if($hasDiscount)
+                                                        <span style="
+                                                    position:absolute;
+                                                    top:10px;
+                                                    left:10px;
+                                                    background:#e74c3c;
+                                                    color:#fff;
+                                                    padding:3px 10px;
+                                                    border-radius:4px;
+                                                    font-size:10px;
+                                                    font-weight:700;
+                                                    z-index:2;
+                                                    box-shadow:0 2px 8px rgba(231,76,60,0.3);
+                                                ">
+                                                            {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
+                                                        </span>
+                                            @endif
+
                                             <!-- Stock Badge -->
                                             <span class="stock-badge-compact"
                                                 style="position:absolute;bottom:10px;right:10px;background:#E8F5E9;color:#27AE60;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:600;z-index:2;">In</span>
@@ -395,30 +417,59 @@
                                                 style="font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:500;color:#292725;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
                                                 {{ Str::limit($productName, 20) }}
                                             </h5>
+
+                                            <!-- PRICE DISPLAY - Shows both prices if discount exists -->
                                             <div class="product-price-compact"
-                                                style="font-size:16px;font-weight:700;color:#292725;margin-bottom:8px;">
-                                                ₹{{ number_format($productPrice, 0) }}
+                                                style="font-size:16px;font-weight:700;color:#198754;margin-bottom:8px;">
+                                                ₹{{ number_format($sellingPrice, 0) }}
+
+                                                @if($hasDiscount)
+                                                            <span style="
+                                                        color:#888;
+                                                        font-size:13px;
+                                                        font-weight:400;
+                                                        text-decoration:line-through;
+                                                        text-decoration-thickness:1px;
+                                                        margin-left:5px;
+                                                    ">
+                                                                ₹{{ number_format($originalPrice, 0) }}
+                                                            </span>
+                                                            <span style="
+                                                        color:#e74c3c;
+                                                        font-size:11px;
+                                                        font-weight:600;
+                                                        margin-left:5px;
+                                                        background:#fef0ef;
+                                                        padding:1px 6px;
+                                                        border-radius:3px;
+                                                    ">
+                                                                {{ round((($originalPrice - $sellingPrice) / $originalPrice) * 100) }}% OFF
+                                                            </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </a>
 
                                     <!-- Wishlist Heart Button -->
-                                    <button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
-                                        data-product-name="{{ $productName }}" data-product-price="{{ $productPrice }}"
-                                        data-product-slug="{{ $productSlug }}" data-product-image="{{ $primaryImage }}"
-                                        onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');"
-                                        style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
-                                        aria-label="Add to wishlist">
-                                        <i class="bi bi-heart" style="font-size:14px;color:#77736D;transition:all 0.3s ease;"></i>
-                                    </button>
+                                    <!-- Wishlist Heart Button - NOW PASSING BOTH PRICES -->
+<button type="button" class="wishlist-btn" data-product-id="{{ $productId }}"
+    data-product-name="{{ addslashes($productName) }}"
+    data-product-price="{{ $sellingPrice }}"
+    data-product-slug="{{ $productSlug }}"
+    data-product-image="{{ $primaryImage }}"
+    onclick="event.stopPropagation(); toggleWishlist(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $sellingPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}', {{ $originalPrice }});"
+    style="position:absolute;top:10px;right:10px;z-index:5;background:rgba(255,255,255,0.9);border:1px solid #E8E1D7;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.3s ease;box-shadow:0 2px 8px rgba(0,0,0,0.08);padding:0;"
+    aria-label="Add to wishlist">
+    <i class="bi bi-heart" style="font-size:14px;color:#77736D;transition:all 0.3s ease;"></i>
+</button>
 
-                                    <!-- Add to Cart Button (outside the link) -->
+                                    <!-- Add to Cart Button - NOW PASSING BOTH PRICES -->
                                     <div class="product-action-compact" style="padding:0 14px 16px;">
                                         <button type="button" class="add-to-cart-btn" data-product-id="{{ $productId }}"
                                             data-product-name="{{ addslashes($productName) }}"
-                                            data-product-price="{{ $productPrice }}" data-product-slug="{{ $productSlug }}"
+                                            data-product-price="{{ $sellingPrice }}" data-product-slug="{{ $productSlug }}"
                                             data-product-image="{{ $primaryImage }}"
-                                            onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $productPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}');"
+                                            onclick="event.stopPropagation(); addToCartFromCard(this, {{ $productId }}, '{{ addslashes($productName) }}', {{ $sellingPrice }}, '{{ $productSlug }}', '{{ $primaryImage }}', {{ $originalPrice }});"
                                             style="width:100%;padding:6px 12px;background:#B89B5E;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;cursor:pointer;transition:all 0.3s ease;display:flex;align-items:center;justify-content:center;gap:4px;">
                                             <i class="bi bi-cart-plus" style="font-size:12px;"></i>
                                             <span class="btn-text">Add</span>
@@ -1503,7 +1554,7 @@
             container.addEventListener('mouseleave', () => isPaused = false);
             startAutoSlide();
         });
-        
+
     </script>
 
 

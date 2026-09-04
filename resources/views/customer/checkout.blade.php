@@ -285,7 +285,36 @@
 
                                         /*
                                         |--------------------------------------------------------------------------
-                                        | ACTIVE OFFER
+                                        | PRICES - SELLING PRICE & ORIGINAL PRICE
+                                        |--------------------------------------------------------------------------
+                                        */
+
+                                        // Get selling price from product (this is the discounted price)
+                                        $sellingPrice = (float) (
+                                            $item['selling_price']
+                                            ?? $product?->selling_price
+                                            ?? $item['price']
+                                            ?? $product?->price
+                                            ?? 0
+                                        );
+
+                                        // Get original price from product
+                                        $originalPrice = (float) (
+                                            $item['price']
+                                            ?? $product?->price
+                                            ?? 0
+                                        );
+
+                                        // Check if there's a discount
+                                        $hasDiscount = $originalPrice > $sellingPrice;
+
+                                        // Calculate discount percentage
+                                        $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+
+
+                                        /*
+                                        |--------------------------------------------------------------------------
+                                        | ACTIVE OFFER (from offers table)
                                         |--------------------------------------------------------------------------
                                         */
 
@@ -295,32 +324,10 @@
                                             ?? $product?->active_offer
                                             ?? null;
 
-
-                                        /*
-                                        |--------------------------------------------------------------------------
-                                        | ORIGINAL PRICE
-                                        |--------------------------------------------------------------------------
-                                        */
-
-                                        $originalPrice = (float) (
-                                            $item['original_price']
-                                            ?? $product?->price
-                                            ?? $item['price']
-                                            ?? 0
-                                        );
-
-
-                                        /*
-                                        |--------------------------------------------------------------------------
-                                        | DISCOUNTED PRICE
-                                        |--------------------------------------------------------------------------
-                                        */
-
-                                        $discountedPrice = $originalPrice;
-
+                                        // If active offer exists, use its discounted price
                                         if ($activeOffer) {
 
-                                            $discountValue = (float) 
+                                            $discountValue = (float)
                                                 $activeOffer->discount_value;
 
                                             if (
@@ -328,7 +335,7 @@
                                                 'percentage'
                                             ) {
 
-                                                $discountedPrice =
+                                                $sellingPrice =
                                                     $originalPrice -
                                                     (
                                                         $originalPrice *
@@ -338,16 +345,16 @@
 
                                             } else {
 
-                                                $discountedPrice =
+                                                $sellingPrice =
                                                     $originalPrice -
                                                     $discountValue;
                                             }
-                                        }
 
-                                        $discountedPrice = max(
-                                            0,
-                                            $discountedPrice
-                                        );
+                                            $sellingPrice = max(
+                                                0,
+                                                $sellingPrice
+                                            );
+                                        }
 
 
                                         /*
@@ -357,7 +364,7 @@
                                         */
 
                                         $itemTotal =
-                                            $discountedPrice *
+                                            $sellingPrice *
                                             $currentQty;
 
 
@@ -406,7 +413,7 @@
                                             ?? 'Product';
 
                                     @endphp
-                                    <div class="cart-item" data-cart-key="{{ $key }}" data-price="{{ $discountedPrice }}"
+                                    <div class="cart-item" data-cart-key="{{ $key }}" data-price="{{ $sellingPrice }}"
                                         data-original-price="{{ $originalPrice }}" data-stock="{{ $stock }}">
 
 
@@ -440,135 +447,60 @@
                                             </div>
 
 
-                                            {{-- PRICE --}}
+                                            {{-- PRICE - SHOW BOTH SELLING AND ORIGINAL --}}
                                             <div class="cart-item-price">
 
-                                                @if($activeOffer)
+                                                {{-- SELLING PRICE (green) --}}
+                                                <span style="color:#198754;font-weight:700;font-size:15px;">
+                                                    ₹{{ number_format($sellingPrice, 0) }}
+                                                </span>
 
-                                                    {{-- DISCOUNTED PRICE --}}
+                                                {{-- ORIGINAL PRICE (crossed out) --}}
+                                                @if($hasDiscount || $activeOffer)
                                                     <span
-                                                        style="
-                                                                                                                                            color:#ef4444;
-                                                                                                                                            font-weight:700;
-                                                                                                                                        ">
-                                                        ₹{{ number_format($discountedPrice, 0) }}
-                                                    </span>
-
-
-                                                    {{-- ORIGINAL PRICE --}}
-                                                    <span
-                                                        style="
-                                                                                                                                            color:#94a3b8;
-                                                                                                                                            text-decoration:line-through;
-                                                                                                                                            font-size:12px;
-                                                                                                                                            margin-left:5px;
-                                                                                                                                        ">
+                                                        style="color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px;font-size:12px;margin-left:5px;">
                                                         ₹{{ number_format($originalPrice, 0) }}
                                                     </span>
 
-
-                                                    {{-- DISCOUNT --}}
+                                                    {{-- DISCOUNT PERCENTAGE BADGE --}}
                                                     <span
-                                                        style="
-                                                                                                                                            color:#16a34a;
-                                                                                                                                            font-size:11px;
-                                                                                                                                            font-weight:600;
-                                                                                                                                            margin-left:5px;
-                                                                                                                                                 ">
-
-                                                        @if($activeOffer->discount_type === 'percentage')
-
-                                                                                {{
-                                                            rtrim(
-                                                                rtrim(
-                                                                    number_format(
-                                                                        $activeOffer->discount_value,
-                                                                        2
-                                                                    ),
-                                                                    '0'
-                                                                ),
-                                                                '.'
-                                                            )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }}% OFF
-
-                                                        @else
-
-                                                                                    ₹{{ number_format(
-                                                                $activeOffer->discount_value,
-                                                                0
-                                                            ) }} OFF
-
+                                                        style="background:#fef2f2;color:#ef4444;font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;margin-left:5px;">
+                                                        @if($hasDiscount)
+                                                            {{ $discountPercent }}% OFF
+                                                        @elseif($activeOffer)
+                                                            @if($activeOffer->discount_type === 'percentage')
+                                                                {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}%
+                                                                OFF
+                                                            @else
+                                                                ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
+                                                            @endif
                                                         @endif
-
                                                     </span>
-
-
-                                                    <div
-                                                        style="
-                                                                                                                                                                                                                                                                                                                                                    font-size:11px;
-                                                                                                                                                                                                                                                                                                                                                    color:#64748b;
-                                                                                                                                                                                                                                                                                                                                                    margin-top:2px;
-                                                                                                                                                                                                                                                                                                                                                ">
-                                                        per item
-                                                    </div>
-
-                                                @else
-
-                                                    <span>
-                                                        ₹{{ number_format($originalPrice, 0) }}
-                                                    </span>
-
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                                                                                                                    font-size:11px;
-                                                                                                                                                                                                                                                                                                                                                    color:#64748b;
-                                                                                                                                                                                                                                                                                                                                                    margin-left:3px;
-                                                                                                                                                                                                                                                                                                                                                ">
-                                                        per item
-                                                    </span>
-
                                                 @endif
+
+                                                <div style="font-size:11px;color:#64748b;margin-top:2px;">
+                                                    per item
+                                                </div>
 
                                             </div>
 
 
-                                            {{-- OFFER APPLIED --}}
+                                            {{-- OFFER APPLIED (if active offer exists) --}}
                                             @if($activeOffer)
 
                                                 <div
-                                                    style="
-                                                                                                                                                                                                                                                                                                                                                margin-top:5px;
-                                                                                                                                                                                                                                                                                                                                                display:inline-flex;
-                                                                                                                                                                                                                                                                                                                                                align-items:center;
-                                                                                                                                                                                                                                                                                                                                                gap:4px;
-                                                                                                                                                                                                                                                                                                                                                color:#16a34a;
-                                                                                                                                                                                                                                                                                                                                                font-size:11px;
-                                                                                                                                                                                                                                                                                                                                                font-weight:600;
-                                                                                                                                                                                                                                                                                                                                            ">
+                                                    style="margin-top:5px;display:inline-flex;align-items:center;gap:4px;color:#16a34a;font-size:11px;font-weight:600;">
 
                                                     <i class="bi bi-tag-fill"></i>
 
                                                     @if($activeOffer->discount_type === 'percentage')
 
-                                                                        {{
-                                                        rtrim(
-                                                            rtrim(
-                                                                number_format(
-                                                                    $activeOffer->discount_value,
-                                                                    2
-                                                                ),
-                                                                '0'
-                                                            ),
-                                                            '.'
-                                                        )
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }}% offer applied
+                                                        {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}% offer
+                                                        applied
 
                                                     @else
 
-                                                                            ₹{{ number_format(
-                                                            $activeOffer->discount_value,
-                                                            0
-                                                        ) }} offer applied
+                                                        ₹{{ number_format($activeOffer->discount_value, 0) }} offer applied
 
                                                     @endif
 
@@ -584,12 +516,7 @@
 
                                                     <i class="bi bi-x-circle-fill"></i>
 
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                                                                                                                    color:#ef4444;
-                                                                                                                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                                                                                                                ">
+                                                    <span style="color:#ef4444;font-size:12px;font-weight:600;">
                                                         Out of Stock
                                                     </span>
 
@@ -601,15 +528,8 @@
 
                                                     <i class="bi bi-exclamation-triangle-fill"></i>
 
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                                                                                                                    color:#f59e0b;
-                                                                                                                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                                                                                                                ">
-                                                        Only {{ $stock }}
-                                                        {{ $stock == 1 ? 'item' : 'items' }}
-                                                        left in stock
+                                                    <span style="color:#f59e0b;font-size:12px;font-weight:600;">
+                                                        Only {{ $stock }} {{ $stock == 1 ? 'item' : 'items' }} left in stock
                                                     </span>
 
                                                 </div>
@@ -620,12 +540,7 @@
 
                                                     <i class="bi bi-check-circle-fill"></i>
 
-                                                    <span
-                                                        style="
-                                                                                                                                                                                                                                                                                                                                                    color:#16a34a;
-                                                                                                                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                                                                                                                    font-weight:600;
-                                                                                                                                                                                                                                                                                                                                                ">
+                                                    <span style="color:#16a34a;font-size:12px;font-weight:600;">
                                                         In Stock
                                                     </span>
 
@@ -694,35 +609,20 @@
 
                                             @else
 
-                                                                    {{-- ORIGINAL TOTAL --}}
-                                                                    @if($activeOffer)
+                                                {{-- ORIGINAL TOTAL (crossed out) --}}
+                                                @if($hasDiscount || $activeOffer)
+                                                    <div>
+                                                        <span
+                                                            style="color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px;font-size:12px;">
+                                                            ₹{{ number_format($originalPrice * $currentQty, 0) }}
+                                                        </span>
+                                                    </div>
+                                                @endif
 
-                                                                                        <div>
-
-                                                                                            <span
-                                                                                                style="
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        color:#94a3b8;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        text-decoration:line-through;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        font-size:12px;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ">
-                                                                                                ₹{{ number_format(
-                                                                            $originalPrice * $currentQty,
-                                                                            0
-                                                                        ) }}
-                                                                                            </span>
-
-                                                                                        </div>
-
-                                                                    @endif
-
-
-                                                                    {{-- DISCOUNTED TOTAL --}}
-                                                                    <strong style="{{ $activeOffer ? 'color:#ef4444;' : '' }}">
-                                                                        ₹{{ number_format(
-                                                    $itemTotal,
-                                                    0
-                                                ) }}
-                                                                    </strong>
+                                                {{-- SELLING TOTAL --}}
+                                                <strong style="{{ ($hasDiscount || $activeOffer) ? 'color:#198754;' : '' }}">
+                                                    ₹{{ number_format($itemTotal, 0) }}
+                                                </strong>
 
                                             @endif
 
@@ -757,203 +657,234 @@
 
                     <div class="summary-card">
 
-                        <div class="summary-header">
-                            <h5>Price Details</h5>
-                        </div>
+    <div class="summary-header">
+        <h5>Price Details</h5>
+    </div>
+
+    @php
+        /*
+        |--------------------------------------------------------------------------
+        | CALCULATE SUBTOTAL BASED ON SELLING PRICE
+        |--------------------------------------------------------------------------
+        */
+        $subtotal = 0;
+        $originalSubtotal = 0;
+        $totalDiscount = 0;
+        $hasDiscountItems = false;
+
+        foreach ($cart as $cartItem) {
+            $product = \App\Models\Product::find($cartItem['id'] ?? null);
+            $quantity = (int) ($cartItem['quantity'] ?? 1);
+
+            // Get selling price (discounted price)
+            $sellingPrice = (float) ($cartItem['selling_price'] ?? $product?->selling_price ?? $cartItem['price'] ?? $product?->price ?? 0);
+
+            // Get original price
+            $originalPrice = (float) ($cartItem['price'] ?? $product?->price ?? 0);
+
+            // Check for active offer
+            $activeOffer = $cartItem['active_offer'] ?? $product?->activeOffer ?? $product?->active_offer ?? null;
+
+            if ($activeOffer) {
+                $discountValue = (float) $activeOffer->discount_value;
+                if ($activeOffer->discount_type === 'percentage') {
+                    $sellingPrice = $originalPrice - ($originalPrice * $discountValue / 100);
+                } else {
+                    $sellingPrice = $originalPrice - $discountValue;
+                }
+                $sellingPrice = max(0, $sellingPrice);
+            }
+
+            // Add to subtotals
+            $subtotal += $sellingPrice * $quantity;
+            $originalSubtotal += $originalPrice * $quantity;
+
+            if ($originalPrice > $sellingPrice) {
+                $hasDiscountItems = true;
+                $totalDiscount += ($originalPrice - $sellingPrice) * $quantity;
+            }
+        }
+
+        $shippingAmount = (float) ($shipping ?? 0);
+        $couponDiscount = (float) ($discount ?? 0);
+        $finalTotal = max(0, $subtotal + $shippingAmount - $couponDiscount);
+
+        // Format numbers
+        $formattedSubtotal = number_format($subtotal, 0);
+        $formattedOriginalSubtotal = number_format($originalSubtotal, 0);
+        $formattedTotalDiscount = number_format($totalDiscount, 0);
+        $formattedFinalTotal = number_format($finalTotal, 0);
+        $formattedCouponDiscount = number_format($couponDiscount, 0);
+        $formattedShipping = number_format($shippingAmount, 0);
+
+        // Check if coupon is applied from session
+        $appliedCouponCode = session()->get('applied_coupon_code');
+        $hasCoupon = !empty($appliedCouponCode);
+    @endphp
+
+    {{-- PRICE (Subtotal based on selling price) --}}
+    <div class="summary-row">
+
+        <span>
+            Price ({{ $cartCount ?? count($cart) }} items)
+        </span>
+
+        <div style="text-align:right;">
+            @if($hasDiscountItems)
+                <span style="color:#94a3b8;text-decoration:line-through;font-size:12px;display:block;">
+                    ₹{{ $formattedOriginalSubtotal }}
+                </span>
+            @endif
+            <strong id="subtotalDisplay" style="color:#198754;">
+                ₹{{ $formattedSubtotal }}
+            </strong>
+        </div>
+
+    </div>
+
+    {{-- DISCOUNT (from product discounts) --}}
+    @if($totalDiscount > 0)
+        <div class="summary-row" style="background:#f0fdf4;padding:6px 0;border-radius:4px;">
+            <span style="color:#16a34a;">
+                <i class="bi bi-tag-fill me-1"></i> Product Discount
+            </span>
+            <span class="discount-value" style="color:#16a34a;">
+                -₹{{ $formattedTotalDiscount }}
+            </span>
+        </div>
+    @endif
+
+    {{-- DELIVERY --}}
+    <div class="summary-row">
+        <span>Delivery Charges</span>
+        @if($shippingAmount > 0)
+            <strong>
+                ₹{{ $formattedShipping }}
+            </strong>
+        @else
+            <span class="free-shipping">
+                FREE
+            </span>
+        @endif
+    </div>
+
+    {{-- COUPON --}}
+    <div class="coupon-wrapper">
+
+        <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code"
+            value="{{ $appliedCouponCode ?: '' }}" {{ $hasCoupon ? 'readonly' : '' }}>
 
+        <button type="button" class="btn {{ $hasCoupon ? 'btn-success' : 'btn-outline-primary' }}" id="applyCouponBtn">
+            @if($hasCoupon)
+                Applied ✅
+            @else
+                Apply
+            @endif
+        </button>
 
-                        {{-- PRICE --}}
-                        <div class="summary-row">
+    </div>
 
-                            <span>
-                                Price ({{ $cartCount ?? count($cart) }} items)
-                            </span>
+    {{-- COUPON DISCOUNT ROW --}}
+    <div class="summary-total coupon-discount-row" id="couponDiscountRow" style="{{ $hasCoupon && $couponDiscount > 0 ? 'display:flex;' : 'display:none;' }};">
 
-                            <strong id="subtotalDisplay">
-                                ₹{{ number_format($subtotal ?? 0, 0) }}
-                            </strong>
+        <span>
 
-                        </div>
+            Coupon Discount
 
+            @if($hasCoupon)
+                <small id="appliedCouponCode" style="color:#64748b;font-size:11px;">
+                    ({{ $appliedCouponCode }})
+                </small>
+            @endif
 
-                        @php
-                            $shippingAmount = (float) ($shipping ?? 0);
-                            $discountAmount = (float) ($discount ?? 0);
-                            $finalTotal = max(0, ($subtotal ?? 0) + $shippingAmount - $discountAmount);
-                        @endphp
-                        {{-- DELIVERY --}}
-                        <div class="summary-row">
-                            <span>Delivery Charges</span>
-                            @if($shippingAmount > 0)
-                                <strong>
-                                    ₹{{ number_format($shippingAmount, 0) }}
-                                </strong>
-                            @else
-                                <span class="free-shipping">
-                                    FREE
-                                </span>
-                            @endif
+        </span>
 
-                        </div>
-                        {{-- DISCOUNT --}}
-                        @if($discountAmount > 0)
+        <strong class="text-success" id="discountDisplay">
+            - ₹{{ $formattedCouponDiscount }}
+        </strong>
 
-                            <div class="summary-row">
+    </div>
 
-                                <span>Discount</span>
+    <div class="summary-divider"></div>
 
-                                <span class="discount-value">
-                                    -₹{{ number_format($discountAmount, 0) }}
-                                </span>
+    {{-- SUBTOTAL --}}
+    <div class="summary-total">
 
-                            </div>
+        <span>Subtotal</span>
 
-                        @endif
-                        {{-- COUPON --}}
-                        <div class="coupon-wrapper">
+        <strong id="subtotalDisplay2" style="color:#198754;">
+            ₹{{ $formattedFinalTotal }}
+        </strong>
 
-                            <input type="text" id="couponCode" class="form-control" placeholder="Enter coupon code">
+    </div>
 
-                            <button type="button" class="btn btn-outline-primary" id="applyCouponBtn">
-                                Apply
-                            </button>
+    {{-- TOTAL --}}
+    <div class="summary-total" style="border-top:2px solid #e5eaf1;padding-top:12px;margin-top:4px;">
 
-                        </div>
+        <span style="font-size:16px;font-weight:700;">Total Amount</span>
 
+        <strong id="totalDisplay" data-original-total="{{ $finalTotal }}" style="font-size:20px;color:#0f172a;">
+            ₹{{ $formattedFinalTotal }}
+        </strong>
 
-                        <div class="summary-divider"></div>
+    </div>
 
+    <div class="tax-note">
+        Inclusive of applicable taxes
+    </div>
 
-                        {{-- SUBTOTAL --}}
-                        <div class="summary-total">
+    {{-- =================================================
+    STOCK CHECK
+    ================================================== --}}
+    @php
+        $hasOutOfStock = false;
+        foreach ($cart as $cartItem) {
+            $cartProduct = \App\Models\Product::find($cartItem['id'] ?? null);
+            if ($cartProduct && $cartProduct->stock <= 0) {
+                $hasOutOfStock = true;
+                break;
+            }
+        }
+    @endphp
 
-                            <span>Subtotal</span>
+    {{-- CONTINUE BUTTON --}}
+    <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '' }}>
 
-                            <strong id="subtotalDisplay2">
-                                ₹{{ number_format($finalTotal, 0) }}
-                            </strong>
+        <i class="bi bi-arrow-right me-2"></i>
 
-                        </div>
+        @if($hasOutOfStock)
+            Out of Stock Items in Cart
+        @else
+            Continue
+        @endif
 
+    </button>
 
-                        {{-- COUPON DISCOUNT --}}
-                        <div class="summary-total coupon-discount-row" id="couponDiscountRow" style="display:none;">
+    {{-- STOCK WARNING --}}
+    @if($hasOutOfStock)
+        <div style="padding:8px 16px;background:#fef2f2;border:1px solid #fecaca;border-radius:4px;margin-top:10px;font-size:12px;color:#dc2626;">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            Please remove out of stock items to proceed with checkout.
+        </div>
+    @endif
 
-                            <span>
+    {{-- PLACE ORDER --}}
+    <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
 
-                                Coupon Discount
+        <i class="bi bi-lock-fill me-2"></i>
+        Place Order
 
-                                <small id="appliedCouponCode"></small>
+    </button>
 
-                            </span>
+    <div class="secure-note text-center text-muted small mt-3">
 
-                            <strong class="text-success" id="discountDisplay">
-                                - ₹0
-                            </strong>
+        <i class="bi bi-shield-check me-1"></i>
 
-                        </div>
+        Safe and secure payments
 
+    </div>
 
-                        {{-- TOTAL --}}
-                        <div class="summary-total">
-
-                            <span>Total Amount</span>
-
-                            <strong id="totalDisplay" data-original-total="{{ $finalTotal }}">
-                                ₹{{ number_format($finalTotal, 0) }}
-                            </strong>
-
-                        </div>
-
-
-                        <div class="tax-note">
-                            Inclusive of applicable taxes
-                        </div>
-
-
-                        {{-- =================================================
-                        STOCK CHECK
-                        ================================================== --}}
-                        @php
-
-                            $hasOutOfStock = false;
-
-                            foreach ($cart as $cartItem) {
-
-                                $cartProduct = \App\Models\Product::find(
-                                    $cartItem['id'] ?? null
-                                );
-
-                                if (
-                                    $cartProduct &&
-                                    $cartProduct->stock <= 0
-                                ) {
-                                    $hasOutOfStock = true;
-                                    break;
-                                }
-                            }
-
-                        @endphp
-
-
-                        {{-- CONTINUE BUTTON --}}
-                        <button class="continue-btn" id="continueBtn" type="button" {{ $hasOutOfStock
-                ? 'disabled style="opacity:0.5;cursor:not-allowed;"'
-                : ''
-                                                                                                                                                                    }}>
-
-                            <i class="bi bi-arrow-right me-2"></i>
-
-                            @if($hasOutOfStock)
-                                Out of Stock Items in Cart
-                            @else
-                                Continue
-                            @endif
-
-                        </button>
-
-
-                        {{-- STOCK WARNING --}}
-                        @if($hasOutOfStock)
-
-                            <div
-                                style="
-                                                                                                                                                                                                                                                    padding:8px 16px;
-                                                                                                                                                                                                                                                    background:#fef2f2;
-                                                                                                                                                                                                                                                    border:1px solid #fecaca;
-                                                                                                                                                                                                                                                    border-radius:4px;
-                                                                                                                                                                                                                                                    margin-top:10px;
-                                                                                                                                                                                                                                                    font-size:12px;
-                                                                                                                                                                                                                                                    color:#dc2626;
-                                                                                                                                                                                                                                                ">
-
-                                <i class="bi bi-exclamation-triangle-fill me-1"></i>
-
-                                Please remove out of stock items to proceed with checkout.
-
-                            </div>
-
-                        @endif
-
-
-                        {{-- PLACE ORDER --}}
-                        <button class="payment-btn" id="placeOrderBtn" type="button" style="display:none;">
-
-                            <i class="bi bi-lock-fill me-2"></i>
-                            Place Order
-
-                        </button>
-
-
-                        <div class="secure-note text-center text-muted small mt-3">
-
-                            <i class="bi bi-shield-check me-1"></i>
-
-                            Safe and secure payments
-
-                        </div>
-
-                    </div>
+</div>
 
 
                     {{-- =====================================================

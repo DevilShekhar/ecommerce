@@ -122,7 +122,14 @@
                                                     value="{{ old('price') }}" placeholder="0.00" required>
                                             </div>
                                         </div>
-
+                                        <!-- Selling Price -->
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Selling Price <span class="text-danger">*</span></label>
+                                                <input type="number" step="0.01" name="selling_price" class="form-control"
+                                                    value="{{ old('selling_price') }}" placeholder="0.00" required>
+                                            </div>
+                                        </div>
                                         <!-- Stock -->
                                         <div class="col-md-4">
                                             <div class="form-group">
@@ -151,7 +158,8 @@
 
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label class="font-weight-bold">Product Images (Multiple Allowed)</label>
+                                                <label class="font-weight-bold">Product Images (Multiple
+                                                    Allowed)</label>
 
                                                 <!-- File Input -->
                                                 <input type="file" name="images[]" id="product_images" class="form-control"
@@ -369,4 +377,27 @@
         document.getElementById('product_images').files = selectedFiles.files;
         renderPreviews();
     }
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const priceInput = document.getElementById('price');
+        const sellingPriceInput = document.getElementById('selling_price');
+
+        function validateSellingPrice() {
+
+            const price = parseFloat(priceInput.value) || 0;
+            const sellingPrice = parseFloat(sellingPriceInput.value) || 0;
+
+            if (sellingPrice > price) {
+                sellingPriceInput.setCustomValidity(
+                    'Selling price cannot be greater than price.'
+                );
+            } else {
+                sellingPriceInput.setCustomValidity('');
+            }
+        }
+
+        priceInput.addEventListener('input', validateSellingPrice);
+        sellingPriceInput.addEventListener('input', validateSellingPrice);
+
+    });
 </script>

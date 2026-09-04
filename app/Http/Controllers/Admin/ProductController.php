@@ -58,6 +58,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255|unique:products,name',
             'sku' => 'required|string|max:100|unique:products,sku',
             'price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0|lte:price',
             'stock' => 'required|integer|min:0',
             'variants' => 'nullable|string',
             'specification' => 'nullable|string',
@@ -86,6 +87,7 @@ class ProductController extends Controller
         $validated['updated_by'] = Auth::id();
 
         Product::create($validated);
+
         return redirect()->route('admin.products.index')
             ->with('success', 'Product created successfully.');
     }
@@ -144,6 +146,7 @@ class ProductController extends Controller
             ],
 
             'price' => 'required|numeric|min:0',
+            'selling_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
 
             'variants' => 'nullable|string',
