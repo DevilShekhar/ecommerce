@@ -597,7 +597,7 @@
                                                 <span class="additional-status-badge return-rejected-badge"><i
                                                         class="zmdi zmdi-close-circle"></i> Return Rejected</span>
                                             @elseif($returnRequest->status === 'refunded')
-                                                <span class="additional-status-badge refunded-badge"><i class="zmdi zmdi-money"></i>
+                                                <span class="additional-status-badge refunded-badge"><i class="zmdi zmdi-money-box"></i>
                                                     Refunded</span>
                                             @else
                                                 <span
@@ -696,26 +696,34 @@
                                 </div>
                             @endif
                             @if($isSuperAdmin && $returnRequest->status === 'approved' && $returnRequest->id)
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="refund-box mb-3">
-                                            <div class="return-action-title mb-1">Return Approved</div>
-                                            <div class="text-muted mb-2">The return request has been approved. Refund can now be
-                                                processed.</div>
-                                            <div class="refund-amount">₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}
-                                            </div>
-                                            <small class="text-muted">Refund Amount</small>
-                                        </div>
-                                        <form action="{{ route('orders.returns.refund', $returnRequest->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-primary btn-block"
-                                                onclick="event.preventDefault();Swal.fire({title:'Process Refund?',text:'Are you sure?',icon:'warning',showCancelButton:true,confirmButtonText:'Yes, Refund'}).then(r=>{if(r.isConfirmed)this.form.submit()})">
-                                                <i class="zmdi zmdi-money"></i>
-                                                Process Refund</button>
-                                        </form>
-                                    </div>
-                                </div>
+                                                <hr>
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="refund-box mb-3">
+                                                            <div class="return-action-title mb-1">Return Approved</div>
+                                                            <div class="text-muted mb-2">The return request has been approved. Refund can now be
+                                                                processed.</div>
+                                                            <div class="refund-amount">₹{{ number_format($returnRequest->refund_amount ?? 0, 2) }}
+                                                            </div>
+                                                            <small class="text-muted">Refund Amount</small>
+                                                        </div>
+                                                        <form action="{{ route('orders.returns.refund', $returnRequest->id) }}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-primary btn-sm" onclick="event.preventDefault();Swal.fire({
+                                                                    title:'Process Refund?',
+                                                                    text:'Are you sure?',
+                                                                    icon:'warning',
+                                                                    showCancelButton:true,
+                                                                    confirmButtonText:'Yes, Refund'
+                                                                }).then(r=>{
+                                                                    if(r.isConfirmed)this.form.submit()
+                                                                })">
+                                                                <i class="zmdi zmdi-money-box"></i>
+                                                                Process Refund
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </div>
                             @endif
                             @if($returnRequest->status === 'rejected')
                                 <div class="alert alert-danger return-alert mt-3 mb-0">
@@ -785,7 +793,7 @@
                                     <div class="alert alert-danger mb-0"><i class="zmdi zmdi-close-circle"></i> Return request has
                                         been rejected.</div>
                                 @elseif($returnRequest->status === 'refunded')
-                                    <div class="alert alert-success mb-0"><i class="zmdi zmdi-money"></i> Refund has been completed.
+                                    <div class="alert alert-success mb-0"><i class="zmdi zmdi-money-box"></i></i> Refund has been completed.
                                     </div>
                                 @endif
                             @endif
@@ -942,7 +950,7 @@
                                             </div>
                                         @elseif($returnRequest->status === 'refunded')
                                             <div class="additional-status-badge refunded-badge">
-                                                <i class="zmdi zmdi-money"></i> Refunded
+                                                <i class="zmdi zmdi-money-box"></i> Refunded
                                                 @if($returnRequest->refunded_at)
                                                     <small class="ml-2">
                                                         {{ $returnRequest->refunded_at instanceof \Carbon\Carbon ? $returnRequest->refunded_at->format('d M Y, h:i A') : $returnRequest->refunded_at }}

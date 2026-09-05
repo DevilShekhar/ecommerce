@@ -194,7 +194,7 @@
                                         {{ ucwords(str_replace('_', ' ', $trackingStatus)) }}
                                     </span>
                                 </div>
-                                @if($trackingStatus === 'pending')
+                                @if($trackingStatus === 'confirmed')
                                     <div class="tracking-action-section">
                                         <div class="tracking-action-info">
                                             <div>

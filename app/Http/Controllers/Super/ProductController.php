@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Super;
 use App\Http\Controllers\Controller;
 use App\Models\Brand;
 use App\Models\InventoryTransaction;
+use App\Models\Offer;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\SubCategory;
@@ -121,44 +122,33 @@ class ProductController extends Controller
     /**
      * Update the specified product in storage.
      */
-    /**
-     * Update the specified product in storage.
-     */
     public function update(Request $request, Product $product)
     {
         $validated = $request->validate([
             'category_id' => 'required|exists:product_categories,id',
             'sub_category_id' => 'required|exists:sub_category,id',
             'brand_id' => 'nullable|exists:brands,id',
-
             'name' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('products', 'name')->ignore($product->id),
             ],
-
             'sku' => [
                 'required',
                 'string',
                 'max:100',
                 Rule::unique('products', 'sku')->ignore($product->id),
             ],
-
             'price' => 'required|numeric|min:0',
             'selling_price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-
             'variants' => 'nullable|string',
-
             'specification' => 'nullable|string',
             'description' => 'nullable|string',
-
-            'is_featured' => 'required|in:0,1,2',
+            'is_futured' => 'required|in:0,1,2',
             'status' => 'required|in:0,1',
-
             'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
-
             'meta_title' => 'nullable|string|max:255',
             'meta_keywords' => 'nullable|string',
             'meta_description' => 'nullable|string',
@@ -359,5 +349,93 @@ class ProductController extends Controller
                 'message' => 'Server error: '.$e->getMessage(),
             ], 500);
         }
+    }
+
+    public function getProduct($slug)
+    {
+        $product = Product::with(['category', 'brand', 'subCategory'])
+            ->where('slug', $slug)
+            ->where('status', 1)
+            ->firstOrFail();
+
+        // Get product images
+        $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+        $imageUrls = [];
+        foreach ($images as $img) {
+            $img = preg_replace('#^storage/#', '', $img);
+            $imageUrls[] = asset($img);
+        }
+        if (empty($imageUrls)) {
+            $imageUrls[] = asset('images/placeholder.png');
+        }
+
+        // Get active offers
+        $now = now()->toDateString();
+        $activeOffers = Offer::query()
+            ->where('status', 1)
+            ->whereDate('start_date', '<=', $now)
+            ->whereDate('end_date', '>=', $now)
+            ->get();
+
+        // Apply offer to product
+        $offer = $activeOffers->first(function ($o) use ($product) {
+            return $o->apply_to === 'product' && $o->product_id == $product->id;
+        });
+        if (!$offer) {
+            $offer = $activeOffers->first(function ($o) use ($product) {
+                return $o->apply_to === 'category' && $o->product_category_id == $product->category_id;
+            });
+        }
+        $product->active_offer = $offer;
+
+        // Calculate prices
+        $sellingPrice = (float) ($product->selling_price ?? $product->price ?? 0);
+        $originalPrice = (float) ($product->price ?? 0);
+
+        if ($offer) {
+            if ($offer->discount_type === 'percentage') {
+                $sellingPrice = $originalPrice - ($originalPrice * $offer->discount_value / 100);
+            } else {
+                $sellingPrice = max(0, $originalPrice - $offer->discount_value);
+            }
+        }
+
+        $product->calculated_selling_price = $sellingPrice;
+        $product->calculated_original_price = $originalPrice;
+        $product->has_discount = $originalPrice > $sellingPrice;
+        $product->discount_percent = $product->has_discount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+
+        // Related products (same category)
+        $relatedProducts = Product::where('status', 1)
+            ->where('id', '!=', $product->id)
+            ->where('category_id', $product->category_id)
+            ->where('stock', '>', 0)
+            ->latest()
+            ->take(4)
+            ->get();
+
+        // Apply offers to related products
+        $relatedProducts->each(function ($p) use ($activeOffers) {
+            $offer = $activeOffers->first(function ($o) use ($p) {
+                return $o->apply_to === 'product' && $o->product_id == $p->id;
+            });
+            if (!$offer) {
+                $offer = $activeOffers->first(function ($o) use ($p) {
+                    return $o->apply_to === 'category' && $o->product_category_id == $p->category_id;
+                });
+            }
+            $p->active_offer = $offer;
+        });
+
+        // Categories for breadcrumb
+        $categories = ProductCategory::where('status', 1)->get();
+
+        return view('customer.product-details', compact(
+            'product',
+            'imageUrls',
+            'relatedProducts',
+            'categories',
+            'offer'
+        ));
     }
 }

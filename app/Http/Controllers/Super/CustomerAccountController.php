@@ -440,7 +440,7 @@ class CustomerAccountController extends Controller
         ])
             ->where('user_id', $userId)
             ->latest()
-            ->paginate(10);
+            ->paginate(20);
         $categories = ProductCategory::query()
             ->where('status', 1)
             ->get();

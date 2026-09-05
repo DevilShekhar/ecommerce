@@ -82,9 +82,9 @@
                                     </li>
                                     <li class="list-group-item d-flex justify-content-between align-items-center">
                                         <strong>Product Tag</strong>
-                                        @if($product->is_featured == 1)
+                                        @if($product->is_futured == 1)
                                             <span class="badge badge-warning">Featured</span>
-                                        @elseif($product->is_featured == 2)
+                                        @elseif($product->is_futured == 2)
                                             <span class="badge badge-info">New</span>
                                         @else
                                             <span class="badge badge-light">Normal</span>

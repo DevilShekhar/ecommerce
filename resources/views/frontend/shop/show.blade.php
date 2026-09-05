@@ -1576,9 +1576,9 @@
                         <div class="main-gallery-image" style="display:flex;align-items:center;justify-content:center;"><i
                                 class="bi bi-image" style="font-size:60px;color:#D5CFC5;"></i></div>
                     @endif
-                    @if($product->is_featured == 2)
+                    @if($product->is_futured == 2)
                         <span class="gallery-badge featured">Featured</span>
-                    @elseif($product->is_featured == 1)
+                    @elseif($product->is_futured == 1)
                         <span class="gallery-badge popular">Popular</span>
                     @elseif($product->created_at >= now()->subDays(30))
                         <span class="gallery-badge new">New</span>

@@ -163,7 +163,7 @@ class DashboardController extends Controller
             )
             ->groupBy('brands.id', 'brands.name')
             ->orderByDesc('total_products')
-            ->take(10)
+            ->take(20)
             ->get();
 
         $categoryWiseProducts = ProductCategory::select(
@@ -302,7 +302,6 @@ class DashboardController extends Controller
                 return $query->where('category_id', $product->category_id);
             })
             ->latest()
-            ->take(6)
             ->get();
               $categories = ProductCategory::query()->where('status', 1)
             ->withCount('products')
@@ -326,69 +325,42 @@ class DashboardController extends Controller
             ->count();
 
         $totalProducts = Product::count();
-
         $activeProducts = Product::query()->where('status', 1)->count();
-
         $totalBrands = Brand::count();
-
         $activeBrands = Brand::query()->where('status', 1)->count();
-
         $totalCategories = ProductCategory::count();
-
         $totalCoupons = Coupon::count();
-
         $activeCoupons = Coupon::query()->where('status', 1)->count();
-
         $totalOffers = Offer::count();
-
         $activeOffers = Offer::query()->where('status', 1)->count();
-
         $totalStock = Product::sum('stock');
-
         $outOfStockProducts = Product::query()->where('stock', '<=', 0)->count();
-
         $lowStockProducts = Product::query()->where('stock', '>', 0)
             ->where('stock', '<=', 5)
             ->count();
-
         $totalRatings = ProductRating::count();
-
         $averageRating = ProductRating::avg('rating') ?? 0;
-
         $totalStockIn = InventoryTransaction::where('type', 'stock_in')
             ->sum('quantity');
-
         $totalStockOut = InventoryTransaction::where('type', 'stock_out')
             ->sum('quantity');
-
         $todayStockIn = InventoryTransaction::where('type', 'stock_in')
             ->whereDate('created_at', today())
             ->sum('quantity');
-
         $todayStockOut = InventoryTransaction::where('type', 'stock_out')
             ->whereDate('created_at', today())
             ->sum('quantity');
-
         $recentProducts = Product::with('category')
             ->latest()
-            ->take(10)
             ->get();
-
         $lowStockProductList = Product::with('category')
             ->where('stock', '>', 0)
             ->where('stock', '<=', 5)
             ->orderBy('stock')
-            ->take(10)
             ->get();
-
-        $recentInventoryTransactions = InventoryTransaction::with([
-            'product',
-            'creator',
-        ])
+        $recentInventoryTransactions = InventoryTransaction::with(['product','creator',])
             ->latest()
-            ->take(10)
             ->get();
-
         $data = compact(
             'user',
             'totalCustomers',
@@ -558,7 +530,6 @@ class DashboardController extends Controller
         // Categories
         $categories = ProductCategory::query()->where('status', 1)
             ->latest()
-            ->take(7)
             ->get();
 
         // Get selected category from request

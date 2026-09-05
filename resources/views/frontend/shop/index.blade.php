@@ -640,7 +640,7 @@
         </div>
     </div>
 
-  
+
 <script>
     let currentPage = 1;
     let isLoading = false;
@@ -895,9 +895,9 @@
                 `<img src="${firstImage}" alt="${product.name}" loading="lazy">` :
                 `<img src="https://via.placeholder.com/400x400/f0e8dc/8a7a6a?text=No+Image" alt="No image" loading="lazy">`;
 
-            const badgeHtml = product.is_featured == 2 ?
+            const badgeHtml = product.is_futured == 2 ?
                 `<span class="product-badge featured">Featured</span>` :
-                product.is_featured == 1 ?
+                product.is_futured == 1 ?
                     `<span class="product-badge">Popular</span>` :
                     '';
 

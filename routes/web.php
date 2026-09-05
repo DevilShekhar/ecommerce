@@ -326,3 +326,4 @@ Route::get('/get-subcategories/{categorySlug}', function ($categorySlug) {
         'subcategories' => $subcategories,
     ]);
 })->name('get.subcategories');
+Route::get('/product/{slug}', [ProductController::class, 'getProduct'])->name('product.show');

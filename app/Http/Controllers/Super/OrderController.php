@@ -30,7 +30,7 @@ class OrderController extends Controller
             ])
                 ->withCount('items')
                 ->latest()
-                ->paginate(10);
+                ->paginate(20);
 
             // Add status timestamps to each order
             $orders->each(function ($order) {
@@ -56,7 +56,7 @@ class OrderController extends Controller
             ])
             ->withCount('items')
             ->latest()
-            ->paginate(10);
+            ->paginate(20);
 
         // Add status timestamps to each order
         $orders->each(function ($order) {
@@ -120,7 +120,7 @@ class OrderController extends Controller
         ])
             ->withCount('items')
             ->latest()
-            ->paginate(10);
+            ->paginate(20);
 
         // Super Admin can view any order
         if ($user->role?->name !== 'SuperAdmin') {
