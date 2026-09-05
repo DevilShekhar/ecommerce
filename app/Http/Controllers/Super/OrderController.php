@@ -30,7 +30,7 @@ class OrderController extends Controller
             ])
                 ->withCount('items')
                 ->latest()
-                ->paginate(10);
+                ->paginate(30);
 
             // Add status timestamps to each order
             $orders->each(function ($order) {

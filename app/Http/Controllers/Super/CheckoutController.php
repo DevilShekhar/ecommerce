@@ -452,11 +452,46 @@ class CheckoutController extends Controller
             }
 
             $orderNumber = 'ORD-'.date('YmdHis').'-'.strtoupper(substr(uniqid(), -5));
+            $addresses = $user->address;
+
+            if (is_string($addresses)) {
+                $addresses = json_decode($addresses, true);
+            }
+
+            if (! is_array($addresses)) {
+                $addresses = [];
+            }
+
+            // Get selected address
+            $selectedAddress = null;
+
+            if ($request->filled('address_id')) {
+                $selectedAddress = collect($addresses)->first(function ($address) use ($request) {
+                    return isset($address['id']) &&
+                        (string) $address['id'] === (string) $request->address_id;
+                });
+            }
+
+            // If no address_id found, use default address
+            if (! $selectedAddress) {
+                $selectedAddress = collect($addresses)->first(function ($address) {
+                    return ! empty($address['is_default']);
+                });
+            }
+
+            // Final fallback
+            if (! $selectedAddress) {
+                $selectedAddress = $addresses[0] ?? [];
+            }
 
             $order = Order::create([
                 'order_number' => $orderNumber,
                 'user_id' => $user->id,
-                'address_id' => $request->address_id,
+                'shipping_address' => $selectedAddress['address'] ?? null,
+                'shipping_city' => $selectedAddress['city'] ?? null,
+                'shipping_state' => $selectedAddress['state'] ?? null,
+                'shipping_country' => $selectedAddress['country'] ?? null,
+                'shipping_pincode' => $selectedAddress['pincode'] ?? null,
                 'subtotal' => $subtotal,
                 'discount_amount' => $discount,
                 'discount_type' => $discountType,
