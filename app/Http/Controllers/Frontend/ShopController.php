@@ -107,7 +107,7 @@ class ShopController extends Controller
         }
 
         // Get products with pagination
-        $products = $query->paginate(12)->withQueryString();
+        $products = $query->paginate(20)->withQueryString();
 
         // Get current filters for view
         $filters = [
@@ -264,7 +264,7 @@ class ShopController extends Controller
                 $query->orderBy('created_at', 'desc');
                 break;
         }
-        $products = $query->paginate(12);
+        $products = $query->paginate(20);
 
         return response()->json([
             'success' => true,
@@ -289,7 +289,7 @@ class ShopController extends Controller
             ->where('status', 1)
             ->where('category_id', $category->id)
             ->latest()
-            ->paginate(12)
+            ->paginate(20)
             ->withQueryString();
 
         // Sidebar categories

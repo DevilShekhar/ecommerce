@@ -211,7 +211,6 @@ class CheckoutController extends Controller
         $total = $subtotal + $shipping - $discount;
         $categories = ProductCategory::query()->where('status', 1)
             ->latest()
-            ->take(7)
             ->get();
         $recommendedProducts = Product::query()
             ->where('status', 1)

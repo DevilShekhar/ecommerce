@@ -13,7 +13,7 @@ class ContactSubmissionController extends Controller
     {
         if (Auth::user()->role?->name !== 'SuperAdmin') {
             abort(403, 'Unauthorized action.');
-        } $submissions = ContactSubmission::latest('created_at')->paginate(15);
+        } $submissions = ContactSubmission::latest('created_at')->paginate(20);
 
         return view('admin.contact_submissions.index', compact('submissions'));
     }

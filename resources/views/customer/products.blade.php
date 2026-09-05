@@ -21,8 +21,8 @@
         }
 
         /* =========================================================
-                   PAGE
-                ========================================================= */
+                                   PAGE
+                                ========================================================= */
 
         .wishlist-page {
             min-height: 100vh;
@@ -31,8 +31,8 @@
         }
 
         /* =========================================================
-                   HEADER
-                ========================================================= */
+                                   HEADER
+                                ========================================================= */
 
         .wishlist-heading {
             display: flex;
@@ -106,8 +106,8 @@
         }
 
         /* =========================================================
-                   SERVICE STRIP
-                ========================================================= */
+                                   SERVICE STRIP
+                                ========================================================= */
 
         .wishlist-services {
             display: grid;
@@ -161,8 +161,8 @@
         }
 
         /* =========================================================
-                   FILTER SECTION - FOR RECOMMENDED PRODUCTS
-                ========================================================= */
+                                   FILTER SECTION - FOR RECOMMENDED PRODUCTS
+                                ========================================================= */
 
         .recommended-filter-section {
             background: #ffffff;
@@ -280,8 +280,8 @@
         }
 
         /* =========================================================
-                   PRODUCT AREA
-                ========================================================= */
+                                   PRODUCT AREA
+                                ========================================================= */
 
         .wishlist-products-section {
             width: 100%;
@@ -337,8 +337,8 @@
         }
 
         /* =========================================================
-                   PRODUCT GRID
-                ========================================================= */
+                                   PRODUCT GRID
+                                ========================================================= */
 
         .wishlist-grid {
             display: grid;
@@ -347,8 +347,8 @@
         }
 
         /* =========================================================
-                   PRODUCT CARD
-                ========================================================= */
+                                   PRODUCT CARD
+                                ========================================================= */
 
         .jewel-product-card {
             background: #fff;
@@ -368,8 +368,8 @@
         }
 
         /* =========================================================
-                   IMAGE
-                ========================================================= */
+                                   IMAGE
+                                ========================================================= */
 
         .jewel-product-image {
             height: 245px;
@@ -401,8 +401,8 @@
         }
 
         /* =========================================================
-                   BADGES
-                ========================================================= */
+                                   BADGES
+                                ========================================================= */
 
         .jewel-badge {
             position: absolute;
@@ -431,8 +431,8 @@
         }
 
         /* =========================================================
-                   HEART
-                ========================================================= */
+                                   HEART
+                                ========================================================= */
 
         .jewel-heart {
             position: absolute;
@@ -468,8 +468,8 @@
         }
 
         /* =========================================================
-                   STOCK
-                ========================================================= */
+                                   STOCK
+                                ========================================================= */
 
         .jewel-stock {
             position: absolute;
@@ -493,8 +493,8 @@
         }
 
         /* =========================================================
-                   PRODUCT INFO
-                ========================================================= */
+                                   PRODUCT INFO
+                                ========================================================= */
 
         .jewel-product-info {
             padding: 11px 12px 12px;
@@ -522,8 +522,8 @@
         }
 
         /* =========================================================
-                   RATING
-                ========================================================= */
+                                   RATING
+                                ========================================================= */
 
         .jewel-rating {
             display: flex;
@@ -544,8 +544,8 @@
         }
 
         /* =========================================================
-                   PRICE
-                ========================================================= */
+                                   PRICE
+                                ========================================================= */
 
         .jewel-price-row {
             display: flex;
@@ -574,8 +574,8 @@
         }
 
         /* =========================================================
-                   CART BUTTON
-                ========================================================= */
+                                   CART BUTTON
+                                ========================================================= */
 
         .jewel-cart-btn {
             width: 100%;
@@ -614,8 +614,8 @@
         }
 
         /* =========================================================
-                   EMPTY
-                ========================================================= */
+                                   EMPTY
+                                ========================================================= */
 
         .wishlist-empty {
             background: #fff;
@@ -672,8 +672,8 @@
         }
 
         /* =========================================================
-                   RECOMMENDED - FILTERED SECTION
-                ========================================================= */
+                                   RECOMMENDED - FILTERED SECTION
+                                ========================================================= */
 
         .recommended-section {
             margin-top: 20px;
@@ -728,8 +728,8 @@
         }
 
         /* =========================================================
-                   PRODUCT MODAL
-                ========================================================= */
+                                   PRODUCT MODAL
+                                ========================================================= */
 
         #productDetailsModal .modal-content {
             border: 0;
@@ -742,8 +742,8 @@
         }
 
         /* =========================================================
-                   RESPONSIVE
-                ========================================================= */
+                                   RESPONSIVE
+                                ========================================================= */
 
         @media(max-width:1200px) {
             .wishlist-grid {
@@ -1096,10 +1096,6 @@
 
                                 {{-- Actions --}}
                                 <div class="filter-actions">
-                                    <button type="button" class="btn-filter btn-filter-primary"
-                                        onclick="applyRecommendedFilters()">
-                                        <i class="fas fa-search"></i> Apply
-                                    </button>
                                     <button type="button" class="btn-filter btn-filter-secondary"
                                         onclick="resetRecommendedFilters()">
                                         <i class="fas fa-undo"></i> Reset
@@ -1143,331 +1139,192 @@
 
                         </div>
 
-                        <div class="recommended-grid" id="recommendedProductsGrid">
-
-                            @foreach($recommendedProducts as $product)
-
-                                @php
-
-                                    $images = $product->image
-                                        ? array_map(
-                                            'trim',
-                                            explode(',', $product->image)
-                                        )
-                                        : [];
-
-                                    $firstImage = $images[0] ?? null;
-
-                                    if ($firstImage) {
-
-                                        $firstImage = preg_replace(
-                                            '#^storage/#',
-                                            '',
-                                            $firstImage
-                                        );
-
-                                        $imgUrl = asset($firstImage);
-
-                                    } else {
-
-                                        $imgUrl = null;
-
-                                    }
-
-
-                                    // =============================================
-                                    // GET SELLING PRICE AND ORIGINAL PRICE
-                                    // =============================================
-
-                                    // Selling price (from product's selling_price field)
-                                    $sellingPrice = (float) ($product->selling_price ?? $product->price ?? 0);
-
-                                    // Original price (from product's price field)
-                                    $originalPrice = (float) ($product->price ?? 0);
-
-                                    // Check if there's a discount
-                                    $hasDiscount = $originalPrice > $sellingPrice;
-
-                                    // Calculate discount percentage
-                                    $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
-
-
-                                    // =============================================
-                                    // ACTIVE OFFER (from offers table)
-                                    // =============================================
-
-                                    $activeOffer =
-                                        $product->active_offer ?? null;
-
-                                    // If active offer exists, it overrides the selling price
-                                    if ($activeOffer) {
-
-                                        if (
-                                            $activeOffer->discount_type
-                                            === 'percentage'
-                                        ) {
-
-                                            $sellingPrice =
-                                                $originalPrice -
-                                                (
-                                                    $originalPrice *
-                                                    $activeOffer->discount_value
-                                                    / 100
-                                                );
-
-                                        } else {
-
-                                            $sellingPrice =
-                                                max(
-                                                    0,
-                                                    $originalPrice -
-                                                    $activeOffer->discount_value
-                                                );
-
-                                        }
-
-                                        // Recalculate discount if active offer gives better discount
-                                        $hasDiscount = $originalPrice > $sellingPrice;
-                                        $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
-                                    }
-
-
-                                    $isFutured =
-                                        isset($product->is_futured) &&
-                                        $product->is_futured == 1;
-
-                                    $isNew =
-                                        isset($product->is_futured) &&
-                                        $product->is_futured == 2;
-
-                                    $isOutOfStock =
-                                        $product->stock !== null &&
-                                        $product->stock <= 0;
-
-                                @endphp
-
-
-                                <div>
-
-                                    <div class="jewel-product-card product-details-trigger" data-product-id="{{ $product->id }}">
-
-                                        {{-- IMAGE --}}
-
-                                        <div class="jewel-product-image">
-
-                                            @if($imgUrl)
-
-                                                <img src="{{ $imgUrl }}" alt="{{ $product->name }}" loading="lazy"
-                                                    onerror="this.src='{{ asset('images/placeholder.png') }}'">
-
-                                            @else
-
-                                                <div class="jewel-no-image">
-                                                    <i class="bi bi-image"></i>
-                                                </div>
-
-                                            @endif
-
-
-                                            {{-- BADGE --}}
-
-                                            @if($activeOffer)
-
-                                                <span class="jewel-badge offer">
-
-                                                    @if($activeOffer->discount_type === 'percentage')
-
-                                                                            {{ rtrim(
-                                                            rtrim(
-                                                                number_format(
-                                                                    $activeOffer->discount_value,
-                                                                    2
-                                                                ),
-                                                                '0'
-                                                            ),
-                                                            '.'
-                                                        ) }}% OFF
-
-                                                    @else
-
-                                                                            ₹{{ number_format(
-                                                            $activeOffer->discount_value,
-                                                            0
-                                                        ) }} OFF
-
-                                                    @endif
-
-                                                </span>
-
-                                            @elseif($isFutured)
-
-                                                <span class="jewel-badge featured">
-                                                    <i class="bi bi-stars"></i>
-                                                    Featured
-                                                </span>
-
-                                            @elseif($isNew)
-
-                                                <span class="jewel-badge new">
-                                                    New
-                                                </span>
-
-                                            @endif
-
-
-                                            {{-- HEART --}}
-
-                                            <button type="button" class="jewel-heart wishlist-btn"
-                                                data-product-id="{{ $product->id }}" onclick="
-                                                                                                event.preventDefault();
-                                                                                                event.stopPropagation();
-                                                                                                toggleWishlist(this)
-                                                                                            ">
-
-                                                <i class="bi bi-heart"></i>
-
-                                            </button>
-
-
-                                            {{-- STOCK --}}
-
-                                            @if($product->stock !== null)
-
-                                                                <span class="jewel-stock
-                                                                                                                                                                                {{ $isOutOfStock
-                                                ? 'out-stock'
-                                                : 'in-stock' }}">
-
-                                                                    {{ $isOutOfStock
-                                                ? 'Out of Stock'
-                                                : 'In Stock' }}
-
-                                                                </span>
-
-                                            @endif
-
-                                        </div>
-
-
-                                        {{-- INFO --}}
-
-                                        <div class="jewel-product-info">
-
-                                            <div class="jewel-category">
-                                                {{ $product->category->name ?? 'Product' }}
-                                            </div>
-
-
-                                            <div class="jewel-product-name" title="{{ $product->name }}">
-
-                                                {{ Str::limit($product->name, 25) }}
-
-                                            </div>
-
-
-                                            <div class="jewel-rating">
-
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-fill"></i>
-                                                <i class="bi bi-star-half"></i>
-
-                                                <span>
-                                                    4.8
-                                                </span>
-
-                                            </div>
-
-
-                                            {{-- PRICE ROW --}}
-                                            <div class="jewel-price-row">
-
-                                                {{-- SELLING PRICE (green) --}}
-                                                <span class="jewel-price" style="color:#198754;font-weight:700;font-size:15px;">
-                                                    ₹{{ number_format($sellingPrice, 0) }}
-                                                </span>
-
-                                                {{-- ORIGINAL PRICE (crossed out) --}}
-                                                @if($hasDiscount)
-                                                    <span class="jewel-old-price"
-                                                        style="color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px;font-size:12px;">
-                                                        ₹{{ number_format($originalPrice, 0) }}
-                                                    </span>
-
-                                                    {{-- DISCOUNT PERCENTAGE BADGE --}}
-                                                    <span
-                                                        style="background:#fef2f2;color:#ef4444;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;margin-left:4px;">
-                                                        {{ $discountPercent }}% OFF
-                                                    </span>
-                                                @endif
-
-                                                {{-- ACTIVE OFFER BADGE (if different from selling price discount) --}}
-                                                @if($activeOffer && $hasDiscount)
-                                                    <span
-                                                        style="background:#f0fdf4;color:#16a34a;font-size:8px;font-weight:600;padding:2px 8px;border-radius:3px;margin-left:4px;border:1px solid #bbf7d0;">
-                                                        <i class="bi bi-tag-fill"></i>
-                                                        @if($activeOffer->discount_type === 'percentage')
-                                                            {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}%
-                                                            OFF
-                                                        @else
-                                                            ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
-                                                        @endif
-                                                    </span>
-                                                @endif
-
-                                            </div>
-
-
-                                            @if($isFutured)
-
-                                                <button type="button" class="jewel-cart-btn notify notify-me-btn"
-                                                    data-product-id="{{ $product->id }}" onclick="
-                                                                                                                    event.preventDefault();
-                                                                                                                    event.stopPropagation();
-                                                                                                                ">
-
-                                                    <i class="bi bi-bell"></i>
-                                                    Notify Me
-
-                                                </button>
-
-                                            @elseif($isOutOfStock)
-
-                                                <button type="button" class="jewel-cart-btn" disabled>
-
-                                                    <i class="bi bi-x-circle"></i>
-                                                    Out of Stock
-
-                                                </button>
-
-                                            @else
-
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST"
-                                                    onclick="event.stopPropagation();">
-
-                                                    @csrf
-
-                                                    <button type="submit" class="jewel-cart-btn">
-
-                                                        <i class="bi bi-bag-plus"></i>
-                                                        Add to Cart
-
-                                                    </button>
-
-                                                </form>
-
-                                            @endif
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
+                       <div class="recommended-grid" id="recommendedProductsGrid">
+    @foreach($recommendedProducts as $product)
+        @php
+            $images = $product->image ? array_map('trim', explode(',', $product->image)) : [];
+            $imageUrls = [];
+            foreach ($images as $img) {
+                $img = preg_replace('#^storage/#', '', $img);
+                $imageUrls[] = asset($img);
+            }
+            if (empty($imageUrls)) {
+                $imageUrls = [asset('images/placeholder.png')];
+            }
+
+            $sellingPrice = (float) ($product->selling_price ?? $product->price ?? 0);
+            $originalPrice = (float) ($product->price ?? 0);
+            $hasDiscount = $originalPrice > $sellingPrice;
+            $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+
+            $activeOffer = $product->active_offer ?? null;
+            if ($activeOffer) {
+                if ($activeOffer->discount_type === 'percentage') {
+                    $sellingPrice = $originalPrice - ($originalPrice * $activeOffer->discount_value / 100);
+                } else {
+                    $sellingPrice = max(0, $originalPrice - $activeOffer->discount_value);
+                }
+                $hasDiscount = $originalPrice > $sellingPrice;
+                $discountPercent = $hasDiscount ? round((($originalPrice - $sellingPrice) / $originalPrice) * 100) : 0;
+            }
+
+            $isFutured = isset($product->is_futured) && $product->is_futured == 1;
+            $isNew = isset($product->is_futured) && $product->is_futured == 2;
+            $isOutOfStock = $product->stock !== null && $product->stock <= 0;
+            $hasMultipleImages = count($imageUrls) > 1;
+        @endphp
+
+        {{-- Product Card as Anchor Tag --}}
+        <a href="{{ route('product.show', $product->slug) }}" 
+           class="product-card-link" 
+           style="text-decoration:none;color:inherit;display:block;"
+           onclick="event.stopPropagation();">
+            
+            <div class="jewel-product-card" data-product-id="{{ $product->id }}">
+                {{-- IMAGE WITH AUTO CAROUSEL --}}
+                <div class="jewel-product-image" style="position:relative;overflow:hidden;">
+                    <div class="product-image-carousel" data-product-id="{{ $product->id }}"
+                        style="width:100%;height:100%;position:relative;">
+
+                        @foreach($imageUrls as $index => $imgUrl)
+                            <img src="{{ $imgUrl }}" alt="{{ $product->name }}" loading="lazy"
+                                class="carousel-image {{ $index === 0 ? 'active' : '' }}"
+                                data-index="{{ $index }}"
+                                style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;opacity:{{ $index === 0 ? '1' : '0' }};transition:opacity 0.6s ease-in-out;"
+                                onerror="this.src='{{ asset('images/placeholder.png') }}'">
+                        @endforeach
+                    </div>
+
+                    {{-- Image Navigation Dots --}}
+                    @if($hasMultipleImages)
+                        <div class="image-dots"
+                            style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);z-index:10;display:flex;gap:6px;">
+                            @foreach($imageUrls as $index => $imgUrl)
+                                <span class="dot {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}"
+                                    style="width:8px;height:8px;border-radius:50%;background:{{ $index === 0 ? '#b18a45' : 'rgba(255,255,255,0.6)' }};cursor:pointer;transition:all 0.3s ease;display:inline-block;"></span>
                             @endforeach
-
                         </div>
+                    @endif
+
+                    {{-- Navigation Arrows --}}
+                    @if($hasMultipleImages)
+                        <button type="button" class="carousel-arrow prev"
+                            onclick="event.stopPropagation(); changeImage(this.closest('.jewel-product-card'), -1)"
+                            style="position:absolute;top:50%;left:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:all 0.3s ease;opacity:0.7;font-size:12px;color:#333;">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button type="button" class="carousel-arrow next"
+                            onclick="event.stopPropagation(); changeImage(this.closest('.jewel-product-card'), 1)"
+                            style="position:absolute;top:50%;right:5px;transform:translateY(-50%);z-index:10;background:rgba(255,255,255,0.85);border:none;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.15);transition:all 0.3s ease;opacity:0.7;font-size:12px;color:#333;">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    @endif
+
+                    {{-- BADGE --}}
+                    @if($activeOffer)
+                        <span class="jewel-badge offer">
+                            @if($activeOffer->discount_type === 'percentage')
+                                {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}% OFF
+                            @else
+                                ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
+                            @endif
+                        </span>
+                    @elseif($isFutured)
+                        <span class="jewel-badge featured">
+                            <i class="bi bi-stars"></i> Featured
+                        </span>
+                    @elseif($isNew)
+                        <span class="jewel-badge new">New</span>
+                    @endif
+
+                    {{-- HEART --}}
+                    <button type="button" class="jewel-heart wishlist-btn"
+                        data-product-id="{{ $product->id }}"
+                        onclick="event.preventDefault(); event.stopPropagation(); toggleWishlist(this)">
+                        <i class="bi bi-heart"></i>
+                    </button>
+
+                    {{-- STOCK --}}
+                    @if($product->stock !== null)
+                        <span class="jewel-stock {{ $isOutOfStock ? 'out-stock' : 'in-stock' }}">
+                            {{ $isOutOfStock ? 'Out of Stock' : 'In Stock' }}
+                        </span>
+                    @endif
+                </div>
+
+                {{-- INFO --}}
+                <div class="jewel-product-info">
+                    <div class="jewel-category">
+                        {{ $product->category->name ?? 'Product' }}
+                    </div>
+
+                    <div class="jewel-product-name" title="{{ $product->name }}">
+                        {{ Str::limit($product->name, 25) }}
+                    </div>
+
+                    <div class="jewel-rating">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                        <span>4.8</span>
+                    </div>
+
+                    {{-- PRICE ROW --}}
+                    <div class="jewel-price-row">
+                        <span class="jewel-price" style="color:#198754;font-weight:700;font-size:15px;">
+                            ₹{{ number_format($sellingPrice, 0) }}
+                        </span>
+
+                        @if($hasDiscount)
+                            <span class="jewel-old-price"
+                                style="color:#94a3b8;text-decoration:line-through;text-decoration-thickness:1px;font-size:12px;">
+                                ₹{{ number_format($originalPrice, 0) }}
+                            </span>
+                            <span
+                                style="background:#fef2f2;color:#ef4444;font-size:9px;font-weight:700;padding:2px 8px;border-radius:3px;margin-left:4px;">
+                                {{ $discountPercent }}% OFF
+                            </span>
+                        @endif
+
+                        @if($activeOffer && $hasDiscount)
+                            <span
+                                style="background:#f0fdf4;color:#16a34a;font-size:8px;font-weight:600;padding:2px 8px;border-radius:3px;margin-left:4px;border:1px solid #bbf7d0;">
+                                <i class="bi bi-tag-fill"></i>
+                                @if($activeOffer->discount_type === 'percentage')
+                                    {{ rtrim(rtrim(number_format($activeOffer->discount_value, 2), '0'), '.') }}% OFF
+                                @else
+                                    ₹{{ number_format($activeOffer->discount_value, 0) }} OFF
+                                @endif
+                            </span>
+                        @endif
+                    </div>
+
+                    @if($isFutured)
+                        <button type="button" class="jewel-cart-btn notify notify-me-btn"
+                            data-product-id="{{ $product->id }}"
+                            onclick="event.preventDefault(); event.stopPropagation();">
+                            <i class="bi bi-bell"></i> Notify Me
+                        </button>
+                    @elseif($isOutOfStock)
+                        <button type="button" class="jewel-cart-btn" disabled>
+                            <i class="bi bi-x-circle"></i> Out of Stock
+                        </button>
+                    @else
+                        <form action="{{ route('cart.add', $product->id) }}" method="POST"
+                            onclick="event.stopPropagation();">
+                            @csrf
+                            <button type="submit" class="jewel-cart-btn">
+                                <i class="bi bi-bag-plus"></i> Add to Cart
+                            </button>
+                        </form>
+                    @endif
+                </div>
+            </div>
+        </a>
+    @endforeach
+</div>
 
                     </div>
 
@@ -1533,26 +1390,26 @@
 
 
                         <div style="
-                                                            text-align:center;
-                                                            padding:30px 20px;
-                                                            background:#fff;
-                                                            border:1px solid var(--s-border);
-                                                            border-radius:8px;
-                                                        ">
+                                                                                            text-align:center;
+                                                                                            padding:30px 20px;
+                                                                                            background:#fff;
+                                                                                            border:1px solid var(--s-border);
+                                                                                            border-radius:8px;
+                                                                                        ">
 
                             <i class="bi bi-box" style="
-                                                                font-size:38px;
-                                                                color:#d5cfc5;
-                                                                display:block;
-                                                                margin-bottom:10px;
-                                                            ">
+                                                                                                font-size:38px;
+                                                                                                color:#d5cfc5;
+                                                                                                display:block;
+                                                                                                margin-bottom:10px;
+                                                                                            ">
                             </i>
 
                             <p style="
-                                                                color:#77736d;
-                                                                font-size:11px;
-                                                                margin:0;
-                                                            ">
+                                                                                                color:#77736d;
+                                                                                                font-size:11px;
+                                                                                                margin:0;
+                                                                                            ">
 
                                 @if(isset($selectedCategory))
 
@@ -1594,186 +1451,79 @@
     {{-- =========================================================
     PRODUCT DETAILS MODAL
     ========================================================= --}}
-
     <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-hidden="true">
-
         <div class="modal-dialog modal-dialog-centered modal-lg">
-
             <div class="modal-content">
-
-                <button type="button" class="btn-close position-absolute" style="
-                                    right:20px;
-                                    top:20px;
-                                    z-index:10;
-                                " data-bs-dismiss="modal">
+                <button type="button" class="btn-close position-absolute" style="right: 20px; top: 20px; z-index: 10;"
+                    data-bs-dismiss="modal">
                 </button>
 
-
                 <div class="modal-body p-4">
-
                     <div id="productModalLoader" class="text-center py-5">
-
-                        <div class="spinner-border" style="color:var(--s-primary);">
-                        </div>
-
+                        <div class="spinner-border" style="color: var(--s-primary);"></div>
                     </div>
 
-
-                    <div id="productModalContent" style="display:none;">
-
+                    <div id="productModalContent" style="display: none;">
                         <div class="row g-4">
-
                             <div class="col-md-6">
-
-                                <div style="
-                                                    height:430px;
-                                                    background:#f8f6f1;
-                                                    border-radius:8px;
-                                                    overflow:hidden;
-                                                ">
-
-                                    <img id="modalProductImage" src="" alt="Product" style="
-                                                        width:100%;
-                                                        height:100%;
-                                                        object-fit:contain;
-                                                    ">
-
+                                <div style="height: 430px; background: #f8f6f1; border-radius: 8px; overflow: hidden;">
+                                    <img id="modalProductImage" src="" alt="Product"
+                                        style="width: 100%; height: 100%; object-fit: contain;">
                                 </div>
-
                             </div>
 
-
                             <div class="col-md-6">
-
-                                <span id="modalProductCategory" style="
-                                                    color:var(--s-primary);
-                                                    font-size:10px;
-                                                    font-weight:700;
-                                                    text-transform:uppercase;
-                                                    letter-spacing:.7px;
-                                                ">
+                                <span id="modalProductCategory"
+                                    style="color: var(--s-primary); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px;">
                                 </span>
 
-
-                                <h3 id="modalProductName" style="
-                                                    font-family:'Cormorant Garamond',serif;
-                                                    font-size:30px;
-                                                    margin:7px 0 10px;
-                                                    font-weight:600;
-                                                    color:var(--s-text);
-                                                ">
+                                <h3 id="modalProductName"
+                                    style="font-family: 'Cormorant Garamond', serif; font-size: 30px; margin: 7px 0 10px; font-weight: 600; color: var(--s-text);">
                                 </h3>
 
-
-                                <div style="
-                                                    color:var(--s-gold);
-                                                    margin-bottom:14px;
-                                                    font-size:11px;
-                                                ">
-
+                                <div style="color: var(--s-gold); margin-bottom: 14px; font-size: 11px;">
                                     <i class="bi bi-star-fill"></i>
                                     <i class="bi bi-star-fill"></i>
                                     <i class="bi bi-star-fill"></i>
                                     <i class="bi bi-star-fill"></i>
                                     <i class="bi bi-star-half"></i>
-
-                                    <span style="
-                                                        color:#999;
-                                                        font-size:10px;
-                                                        margin-left:5px;
-                                                    ">
-
+                                    <span style="color: #999; font-size: 10px; margin-left: 5px;">
                                         4.8 Reviews
-
                                     </span>
-
                                 </div>
 
-
-                                <div id="modalProductPrice" style="
-                                                    font-size:24px;
-                                                    font-weight:800;
-                                                    margin-bottom:15px;
-                                                    color:var(--s-text);
-                                                ">
+                                <div id="modalProductPrice"
+                                    style="font-size: 24px; font-weight: 800; margin-bottom: 15px; color: var(--s-text);">
                                 </div>
 
-
-                                <div id="modalProductDescription" style="
-                                                    color:#6b6862;
-                                                    font-size:12px;
-                                                    line-height:1.7;
-                                                    border-top:1px solid #eee;
-                                                    border-bottom:1px solid #eee;
-                                                    padding:13px 0;
-                                                    margin-bottom:16px;
-                                                ">
+                                <div id="modalProductDescription"
+                                    style="color: #6b6862; font-size: 12px; line-height: 1.7; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 13px 0; margin-bottom: 16px;">
                                 </div>
 
-
-                                <div style="
-                                                    display:grid;
-                                                    grid-template-columns:1fr 1fr;
-                                                    gap:15px;
-                                                    margin-bottom:18px;
-                                                ">
-
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 18px;">
                                     <div>
-
-                                        <small style="
-                                                            color:#999;
-                                                            display:block;
-                                                            font-size:9px;
-                                                            margin-bottom:3px;
-                                                        ">
-
+                                        <small style="color: #999; display: block; font-size: 9px; margin-bottom: 3px;">
                                             Availability
-
                                         </small>
-
-                                        <strong id="modalProductStock" style="font-size:11px;">
-                                        </strong>
-
+                                        <strong id="modalProductStock" style="font-size: 11px;"></strong>
                                     </div>
-
 
                                     <div>
-
-                                        <small style="
-                                                            color:#999;
-                                                            display:block;
-                                                            font-size:9px;
-                                                            margin-bottom:3px;
-                                                        ">
-
+                                        <small style="color: #999; display: block; font-size: 9px; margin-bottom: 3px;">
                                             Category
-
                                         </small>
-
-                                        <strong id="modalProductCategoryInfo" style="font-size:11px;">
-                                        </strong>
-
+                                        <strong id="modalProductCategoryInfo" style="font-size: 11px;"></strong>
                                     </div>
-
                                 </div>
-
 
                                 <div id="modalProductAction"></div>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 
     <script>
 
@@ -1812,7 +1562,78 @@
         /* =========================================================
            FILTER RECOMMENDED PRODUCTS - AJAX
         ========================================================= */
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get filter elements
+            const categoryFilter = document.getElementById('recCategoryFilter');
+            const minPriceFilter = document.getElementById('recMinPrice');
+            const maxPriceFilter = document.getElementById('recMaxPrice');
+            const sortFilter = document.getElementById('recSortFilter');
 
+            // Function to apply filters (debounced for price)
+            let priceTimeout;
+
+            function triggerFilter() {
+                // Clear any pending timeout
+                if (priceTimeout) {
+                    clearTimeout(priceTimeout);
+                }
+
+                // Apply filter immediately for dropdowns, with debounce for price inputs
+                const isPriceChange = document.activeElement === minPriceFilter ||
+                    document.activeElement === maxPriceFilter;
+
+                if (isPriceChange) {
+                    // Debounce price inputs (wait 500ms after user stops typing)
+                    priceTimeout = setTimeout(function () {
+                        applyRecommendedFilters();
+                    }, 500);
+                } else {
+                    // Apply immediately for dropdown changes
+                    applyRecommendedFilters();
+                }
+            }
+
+            // Add event listeners for dropdowns (change event)
+            if (categoryFilter) {
+                categoryFilter.addEventListener('change', triggerFilter);
+            }
+
+            if (sortFilter) {
+                sortFilter.addEventListener('change', triggerFilter);
+            }
+
+            // Add event listeners for price inputs (input event for real-time)
+            if (minPriceFilter) {
+                minPriceFilter.addEventListener('input', triggerFilter);
+            }
+
+            if (maxPriceFilter) {
+                maxPriceFilter.addEventListener('input', triggerFilter);
+            }
+
+            // Also trigger on Enter key in price inputs
+            if (minPriceFilter) {
+                minPriceFilter.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (priceTimeout) clearTimeout(priceTimeout);
+                        applyRecommendedFilters();
+                    }
+                });
+            }
+
+            if (maxPriceFilter) {
+                maxPriceFilter.addEventListener('keypress', function (e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (priceTimeout) clearTimeout(priceTimeout);
+                        applyRecommendedFilters();
+                    }
+                });
+            }
+
+            console.log('Auto-filter initialized for recommended products');
+        });
         function applyRecommendedFilters() {
             const category = document.getElementById('recCategoryFilter').value;
             const minPrice = document.getElementById('recMinPrice').value;
@@ -1827,13 +1648,13 @@
 
             const container = document.getElementById('recommendedProductsGrid');
             container.innerHTML = `
-                        <div class="no-products-found" style="grid-column:1/-1;text-align:center;padding:40px 20px;">
-                            <div class="spinner-border" style="color:var(--s-primary);width:2rem;height:2rem;" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                            <p style="color:#999;font-size:12px;margin-top:10px;">Loading products...</p>
-                        </div>
-                    `;
+                                        <div class="no-products-found" style="grid-column:1/-1;text-align:center;padding:40px 20px;">
+                                            <div class="spinner-border" style="color:var(--s-primary);width:2rem;height:2rem;" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                            <p style="color:#999;font-size:12px;margin-top:10px;">Loading products...</p>
+                                        </div>
+                                    `;
 
             fetch(`{{ route('customer.wishlist.filter') }}?${params.toString()}`, {
                 headers: {
@@ -1847,21 +1668,21 @@
                         container.innerHTML = data.html;
                     } else {
                         container.innerHTML = `
-                                <div class="no-products-found">
-                                    <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
-                                    <p>${data.message || 'Failed to load products.'}</p>
-                                </div>
-                            `;
+                                                <div class="no-products-found">
+                                                    <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
+                                                    <p>${data.message || 'Failed to load products.'}</p>
+                                                </div>
+                                            `;
                     }
                 })
                 .catch(error => {
                     console.error('Filter error:', error);
                     container.innerHTML = `
-                            <div class="no-products-found">
-                                <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
-                                <p>Something went wrong. Please try again.</p>
-                            </div>
-                        `;
+                                            <div class="no-products-found">
+                                                <i class="bi bi-exclamation-circle" style="color:#ef4444;"></i>
+                                                <p>Something went wrong. Please try again.</p>
+                                            </div>
+                                        `;
                 });
         }
 
@@ -1935,17 +1756,17 @@
                         const hasDiscount = originalPrice > sellingPrice;
 
                         let priceHtml = `
-                            `;
+                                            `;
 
                         if (hasDiscount) {
                             priceHtml += `
-                                    <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
-                                        ₹${parseFloat(originalPrice).toFixed(0)}
-                                    </span>
-                                    <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
-                                        ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
-                                    </span>
-                                `;
+                                                    <span style="color:#94a3b8;text-decoration:line-through;font-size:16px;margin-left:10px;">
+                                                        ₹${parseFloat(originalPrice).toFixed(0)}
+                                                    </span>
+                                                    <span style="background:#fef2f2;color:#ef4444;font-size:12px;font-weight:700;padding:2px 10px;border-radius:3px;margin-left:8px;">
+                                                        ${Math.round(((originalPrice - sellingPrice) / originalPrice) * 100)}% OFF
+                                                    </span>
+                                                `;
                         }
 
                         document.getElementById('modalProductPrice').innerHTML = priceHtml;
@@ -1974,34 +1795,34 @@
                         if (actionEl) {
                             if (product.is_futured) {
                                 actionEl.innerHTML = `
-                                <button class="btn btn-outline-secondary w-100" style="padding:12px;font-weight:600;">
-                                    <i class="bi bi-bell me-2"></i> Notify Me
-                                </button>
-                            `;
+                                                <button class="btn btn-outline-secondary w-100" style="padding:12px;font-weight:600;">
+                                                    <i class="bi bi-bell me-2"></i> Notify Me
+                                                </button>
+                                            `;
                             } else if (product.is_out_of_stock || product.stock <= 0) {
                                 actionEl.innerHTML = `
-                                <button class="btn btn-secondary w-100" disabled style="padding:12px;font-weight:600;cursor:not-allowed;">
-                                    <i class="bi bi-x-circle me-2"></i> Out of Stock
-                                </button>
-                            `;
+                                                <button class="btn btn-secondary w-100" disabled style="padding:12px;font-weight:600;cursor:not-allowed;">
+                                                    <i class="bi bi-x-circle me-2"></i> Out of Stock
+                                                </button>
+                                            `;
                             } else {
                                 // Check if product is in cart
                                 const cart = getCart ? getCart() : [];
                                 const inCart = cart.some(item => item.id == product.id);
 
                                 actionEl.innerHTML = `
-                                <button type="button" class="btn btn-primary w-100 add-to-cart-btn"
-                                    data-product-id="${product.id}"
-                                    data-product-name="${product.name.replace(/'/g, "\\'")}"
-                                    data-product-price="${sellingPrice}"
-                                    data-product-slug="${product.slug || ''}"
-                                    data-product-image="${product.image || ''}"
-                                    onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug || ''}', '${product.image || ''}', ${originalPrice});"
-                                    style="padding:12px;font-weight:600;">
-                                    <i class="bi ${inCart ? 'bi-check-lg' : 'bi-cart-plus'} me-2"></i>
-                                    ${inCart ? 'In Cart' : 'Add to Cart'}
-                                </button>
-                            `;
+                                                <button type="button" class="btn btn-primary w-100 add-to-cart-btn"
+                                                    data-product-id="${product.id}"
+                                                    data-product-name="${product.name.replace(/'/g, "\\'")}"
+                                                    data-product-price="${sellingPrice}"
+                                                    data-product-slug="${product.slug || ''}"
+                                                    data-product-image="${product.image || ''}"
+                                                    onclick="event.stopPropagation(); addToCartFromCard(this, ${product.id}, '${product.name.replace(/'/g, "\\'")}', ${sellingPrice}, '${product.slug || ''}', '${product.image || ''}', ${originalPrice});"
+                                                    style="padding:12px;font-weight:600;">
+                                                    <i class="bi ${inCart ? 'bi-check-lg' : 'bi-cart-plus'} me-2"></i>
+                                                    ${inCart ? 'In Cart' : 'Add to Cart'}
+                                                </button>
+                                            `;
                             }
                         }
 
@@ -2016,11 +1837,11 @@
                         if (content) {
                             content.style.display = 'block';
                             content.innerHTML = `
-                            <div class="text-center py-4">
-                                <i class="bi bi-exclamation-circle" style="font-size:40px;color:#ef4444;"></i>
-                                <p class="mt-2 text-danger">${error.message || 'Failed to load product details.'}</p>
-                            </div>
-                        `;
+                                            <div class="text-center py-4">
+                                                <i class="bi bi-exclamation-circle" style="font-size:40px;color:#ef4444;"></i>
+                                                <p class="mt-2 text-danger">${error.message || 'Failed to load product details.'}</p>
+                                            </div>
+                                        `;
                         }
                     });
             });
@@ -2152,35 +1973,35 @@
                 toastContainer = document.createElement('div');
                 toastContainer.id = 'wishlist-toast-container';
                 toastContainer.style.cssText = `
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    z-index: 99999;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                    max-width: 350px;
-                    width: 100%;
-                `;
+                                    position: fixed;
+                                    bottom: 20px;
+                                    right: 20px;
+                                    z-index: 99999;
+                                    display: flex;
+                                    flex-direction: column;
+                                    gap: 10px;
+                                    max-width: 350px;
+                                    width: 100%;
+                                `;
                 document.body.appendChild(toastContainer);
             }
 
             const toast = document.createElement('div');
             const bgColor = type === 'added' ? '#27ae60' : '#e74c3c';
             toast.style.cssText = `
-                background: #fff;
-                padding: 12px 18px;
-                border-radius: 10px;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-                border-left: 4px solid ${bgColor};
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                animation: slideInRight 0.3s ease;
-                font-size: 14px;
-                color: #292725;
-                font-family: 'Plus Jakarta Sans', sans-serif;
-            `;
+                                background: #fff;
+                                padding: 12px 18px;
+                                border-radius: 10px;
+                                box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+                                border-left: 4px solid ${bgColor};
+                                display: flex;
+                                align-items: center;
+                                gap: 12px;
+                                animation: slideInRight 0.3s ease;
+                                font-size: 14px;
+                                color: #292725;
+                                font-family: 'Plus Jakarta Sans', sans-serif;
+                            `;
 
             const icon = document.createElement('i');
             icon.className = type === 'added' ? 'bi bi-heart-fill' : 'bi bi-heart';
@@ -2203,4 +2024,153 @@
         }
     </script>
 
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize all product carousels
+            document.querySelectorAll('.jewel-product-card').forEach(card => {
+                const images = card.querySelectorAll('.carousel-image');
+
+                if (images.length > 1) {
+                    // Start auto rotation for this product
+                    startAutoRotate(card);
+
+                    // Pause on hover
+                    card.addEventListener('mouseenter', function () {
+                        this.dataset.autoRotate = 'paused';
+                    });
+
+                    card.addEventListener('mouseleave', function () {
+                        this.dataset.autoRotate = 'running';
+                        // Reset the timer
+                        stopAutoRotate(this);
+                        startAutoRotate(this);
+                    });
+                }
+            });
+        });
+
+        // Store all carousel intervals
+        const carouselIntervals = {};
+
+        function startAutoRotate(card) {
+            const productId = card.dataset.productId;
+
+            // Clear existing interval
+            stopAutoRotate(card);
+
+            // Don't auto-rotate if paused
+            if (card.dataset.autoRotate === 'paused') {
+                return;
+            }
+
+            const images = card.querySelectorAll('.carousel-image');
+            if (images.length <= 1) return;
+
+            // Start new interval
+            const intervalId = setInterval(function () {
+                // Check if card is still in DOM and not paused
+                if (!document.body.contains(card) || card.dataset.autoRotate === 'paused') {
+                    stopAutoRotate(card);
+                    return;
+                }
+
+                changeImage(card, 1);
+            }, 3000); // Change image every 3 seconds
+
+            // Store interval ID
+            carouselIntervals[productId] = intervalId;
+        }
+
+        function stopAutoRotate(card) {
+            const productId = card.dataset.productId;
+            if (carouselIntervals[productId]) {
+                clearInterval(carouselIntervals[productId]);
+                delete carouselIntervals[productId];
+            }
+        }
+
+        function changeImage(card, direction) {
+            const images = card.querySelectorAll('.carousel-image');
+            if (images.length <= 1) return;
+
+            // Find current active image
+            let currentIndex = 0;
+            images.forEach((img, index) => {
+                if (img.classList.contains('active')) {
+                    currentIndex = index;
+                }
+            });
+
+            // Calculate new index
+            let newIndex = currentIndex + direction;
+            if (newIndex < 0) newIndex = images.length - 1;
+            if (newIndex >= images.length) newIndex = 0;
+
+            // Update images
+            images.forEach((img, index) => {
+                img.classList.remove('active');
+                img.style.opacity = '0';
+                if (index === newIndex) {
+                    img.classList.add('active');
+                    img.style.opacity = '1';
+                }
+            });
+
+            // Update dots
+            const dots = card.querySelectorAll('.dot');
+            dots.forEach((dot, index) => {
+                dot.classList.remove('active');
+                dot.style.background = 'rgba(255,255,255,0.6)';
+                if (index === newIndex) {
+                    dot.classList.add('active');
+                    dot.style.background = '#b18a45';
+                }
+            });
+
+            // Reset auto-rotate timer when manually changed
+            if (card.dataset.autoRotate !== 'paused') {
+                stopAutoRotate(card);
+                startAutoRotate(card);
+            }
+        }
+
+        // Also add click handlers for dots
+        document.addEventListener('click', function (e) {
+            const dot = e.target.closest('.dot');
+            if (dot) {
+                e.stopPropagation();
+                const card = dot.closest('.jewel-product-card');
+                const index = parseInt(dot.dataset.index);
+
+                // Change to specific image
+                const images = card.querySelectorAll('.carousel-image');
+                images.forEach((img, i) => {
+                    img.classList.remove('active');
+                    img.style.opacity = '0';
+                    if (i === index) {
+                        img.classList.add('active');
+                        img.style.opacity = '1';
+                    }
+                });
+
+                // Update dots
+                const dots = card.querySelectorAll('.dot');
+                dots.forEach((d, i) => {
+                    d.classList.remove('active');
+                    d.style.background = 'rgba(255,255,255,0.6)';
+                    if (i === index) {
+                        d.classList.add('active');
+                        d.style.background = '#b18a45';
+                    }
+                });
+
+                // Reset auto-rotate timer
+                if (card.dataset.autoRotate !== 'paused') {
+                    stopAutoRotate(card);
+                    startAutoRotate(card);
+                }
+            }
+        });
+    </script>
 @endsection

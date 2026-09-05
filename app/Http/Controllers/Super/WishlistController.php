@@ -22,7 +22,7 @@ class WishlistController extends Controller
         $wishlistItems = Wishlist::with('product')
             ->where('user_id', $user->id)
             ->latest()
-            ->paginate(12);
+            ->paginate(20);
 
         $wishlistCount = Wishlist::query()->where('user_id', $user->id)->count();
 

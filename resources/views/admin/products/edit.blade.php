@@ -163,10 +163,10 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Product Tag / Type <span class="text-danger">*</span></label>
-                                                <select name="is_featured" class="form-control">
-                                                    <option value="0" {{ old('is_featured', $product->is_featured) == '0' ? 'selected' : '' }}>Normal Product</option>
-                                                    <option value="1" {{ old('is_featured', $product->is_featured) == '1' ? 'selected' : '' }}>Featured Product</option>
-                                                    <option value="2" {{ old('is_featured', $product->is_featured) == '2' ? 'selected' : '' }}>New Product</option>
+                                                <select name="is_futured" class="form-control">
+                                                    <option value="0" {{ old('is_futured', $product->is_futured) == '0' ? 'selected' : '' }}>Normal Product</option>
+                                                    <option value="1" {{ old('is_futured', $product->is_futured) == '1' ? 'selected' : '' }}>Featured Product</option>
+                                                    <option value="2" {{ old('is_futured', $product->is_futured) == '2' ? 'selected' : '' }}>New Product</option>
                                                 </select>
                                             </div>
                                         </div>
