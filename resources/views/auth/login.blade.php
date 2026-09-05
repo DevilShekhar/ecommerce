@@ -9,7 +9,9 @@
     <link rel="icon" href="{{ asset('assets/admin/images/favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('assets/admin/plugins/bootstrap/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         /* ============================================
                    ROOT VARIABLES
@@ -167,10 +169,12 @@
         }
 
         @keyframes floatAnim {
+
             0%,
             100% {
                 transform: translateY(0) rotate(0deg);
             }
+
             50% {
                 transform: translateY(-20px) rotate(5deg);
             }
@@ -1165,6 +1169,156 @@
                 font-size: 12px;
             }
         }
+        .social-login-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* ================================
+   SOCIAL LOGIN BUTTONS
+================================ */
+
+.btn-social-premium {
+    width: 100%;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 13px 18px;
+
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    color: #2c2a29;
+    text-decoration: none;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    transition: all 0.25s ease;
+}
+
+.btn-social-premium:hover {
+    border-color: #cfc8bb;
+    background: #faf9f7;
+    color: #2c2a29;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+}
+
+.social-icon {
+    width: 20px;
+    height: 20px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+.social-icon.facebook {
+    font-size: 20px;
+    color: #1877f2;
+}
+
+/* ================================
+   EXPLORE COLLECTION
+================================ */
+
+.btn-explore-premium {
+    width: 100%;
+    min-height: 62px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+    padding: 10px 14px;
+
+    background: linear-gradient(
+        135deg,
+        #2c2a29 0%,
+        #46413c 100%
+    );
+
+    border: 1px solid #2c2a29;
+    border-radius: 10px;
+
+    color: #ffffff;
+    text-decoration: none;
+
+    transition: all 0.3s ease;
+}
+
+.btn-explore-premium:hover {
+    color: #ffffff;
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 22px rgba(44, 42, 41, 0.20);
+}
+
+/* Gem Icon */
+.explore-icon {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+}
+
+.explore-icon i {
+    font-size: 19px;
+    color: #d8c39a;
+}
+
+/* Text */
+.explore-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    line-height: 1.3;
+}
+
+.explore-content strong {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1px;
+}
+
+.explore-content small {
+    margin-top: 3px;
+
+    font-size: 11px;
+    font-weight: 400;
+
+    color: rgba(255, 255, 255, 0.68);
+}
+
+/* Arrow */
+.explore-arrow {
+    font-size: 18px;
+    color: #d8c39a;
+
+    transition: transform 0.25s ease;
+}
+
+.btn-explore-premium:hover .explore-arrow {
+    transform: translateX(4px);
+}
     </style>
 </head>
 
@@ -1195,7 +1349,8 @@
                         <span class="highlight">Aethelweave</span>
                     </h1>
                     <p class="hero-desc">
-                        Discover timeless elegance with our curated collection of artisan jewellery, crafted with precision and passion.
+                        Discover timeless elegance with our curated collection of artisan jewellery, crafted with
+                        precision and passion.
                     </p>
                     <div class="trust-features">
                         <div class="trust-feature">
@@ -1321,14 +1476,44 @@
 
                         <!-- Social Login -->
                         <div class="social-login-grid">
+
+                            {{-- Google --}}
                             <a href="{{ route('google.login') }}" class="btn-social-premium">
-                                <span class="social-icon google">G</span>
-                                <span>Google</span>
+                                <span class="social-icon google">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill="#4285F4"
+                                            d="M21.35 12.27c0-.79-.07-1.55-.21-2.27H12v4.3h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.42z" />
+                                        <path fill="#34A853"
+                                            d="M12 21.67c2.63 0 4.84-.87 6.45-2.35l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.74 9.74 0 0 0 12 21.67z" />
+                                        <path fill="#FBBC05"
+                                            d="M6.54 13.76A5.85 5.85 0 0 1 6.23 12c0-.61.11-1.2.31-1.76V7.71H3.3A9.74 9.74 0 0 0 2.26 12c0 1.57.38 3.05 1.04 4.29l3.24-2.53z" />
+                                        <path fill="#EA4335"
+                                            d="M12 6.21c1.43 0 2.72.49 3.73 1.45l2.8-2.8C16.83 3.29 14.63 2.33 12 2.33a9.74 9.74 0 0 0-8.7 5.38l3.24 2.53C7.31 7.93 9.46 6.21 12 6.21z" />
+                                    </svg>
+                                </span>
+                                <span>Continue with Google</span>
                             </a>
+
+                            {{-- Facebook --}}
                             <a href="{{ route('facebook.login') }}" class="btn-social-premium">
                                 <i class="bi bi-facebook social-icon facebook"></i>
-                                <span>Facebook</span>
+                                <span>Continue with Facebook</span>
                             </a>
+
+                            {{-- Explore Products --}}
+                            <a href="/" class="btn-explore-premium">
+                                <span class="explore-icon">
+                                    <i class="bi bi-gem"></i>
+                                </span>
+
+                                <span class="explore-content">
+                                    <strong>Explore Our Collection</strong>
+                                    <small>Discover jewellery crafted for every moment</small>
+                                </span>
+
+                                <i class="bi bi-arrow-right explore-arrow"></i>
+                            </a>
+
                         </div>
                     </form>
                 </div>
@@ -1361,7 +1546,7 @@
         /**
          * Auto-dismiss alerts after 5 seconds
          */
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const alerts = document.querySelectorAll('.alert-modern');
             alerts.forEach(alert => {
                 setTimeout(() => {
@@ -1380,7 +1565,7 @@
         /**
          * Smooth scroll to top on form submit (optional)
          */
-        document.querySelector('form')?.addEventListener('submit', function() {
+        document.querySelector('form')?.addEventListener('submit', function () {
             // Small delay to allow the page to reload naturally
             // This ensures any error messages are visible
         });
