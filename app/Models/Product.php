@@ -117,9 +117,9 @@ class Product extends Model
     }
 
     public function getRouteKeyName()
-{
-    return 'slug';
-}
+    {
+        return 'slug';
+    }
 
     protected static function boot()
     {
@@ -157,5 +157,10 @@ class Product extends Model
         }
 
         return $slug;
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(ProductRating::class, 'product_id');
     }
 }

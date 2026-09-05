@@ -302,13 +302,12 @@ class DashboardController extends Controller
                 return $query->where('category_id', $product->category_id);
             })
             ->latest()
-            ->take(6)
             ->get();
-              $categories = ProductCategory::query()->where('status', 1)
+        $categories = ProductCategory::query()->where('status', 1)
             ->withCount('products')
             ->get();
 
-        return view('customer.products', compact('product', 'imgUrl', 'recommendedProducts','categories'));
+        return view('customer.products', compact('product', 'imgUrl', 'recommendedProducts', 'categories'));
     }
 
     public function downloadReport()
@@ -470,7 +469,7 @@ class DashboardController extends Controller
             $recommendedProducts = $recommendedProducts->where('category_id', $selectedCategory->id);
         }
 
-        $recommendedProducts = $recommendedProducts->latest()->take(8)->get();
+        $recommendedProducts = $recommendedProducts->latest()->get();
 
         $banners = Banner::query()->where('status', 1)
             ->orderBy('sort_order', 'asc')
@@ -574,7 +573,6 @@ class DashboardController extends Controller
                 return $query->where('category_id', $selectedCategory->id);
             })
             ->latest()
-            ->take(8)
             ->get();
 
         // Inside the controller method
@@ -645,5 +643,17 @@ class DashboardController extends Controller
                 'is_futured' => (int) ($product->is_futured ?? 0) === 1,
             ],
         ]);
+    }
+
+    public function topRatedProducts()
+    {
+        $topRatedProducts = Product::withCount('ratings')
+            ->withAvg('ratings', 'rating')
+            ->whereHas('ratings')
+            ->orderByDesc('ratings_avg_rating')
+            ->orderByDesc('ratings_count')
+            ->get();
+
+        return view('admin.products.top-rated', compact('topRatedProducts'));
     }
 }

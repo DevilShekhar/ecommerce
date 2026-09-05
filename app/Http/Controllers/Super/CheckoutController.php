@@ -216,7 +216,6 @@ class CheckoutController extends Controller
         $recommendedProducts = Product::query()
             ->where('status', 1)
             ->latest()
-            ->take(8)
             ->get();
 
         $recommendedProducts->each(function ($product) use ($activeOffers) {

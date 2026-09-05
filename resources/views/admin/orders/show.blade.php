@@ -1121,11 +1121,11 @@
                                         <div class="info-label">Location</div>
                                         <div class="info-value">
                                             {{ collect([
-        $order->shipping_city,
-        $order->shipping_state,
-        $order->shipping_country,
-        $order->shipping_pincode
-    ])->filter()->implode(', ') ?: '-' }}
+                                                $order->shipping_city,
+                                                $order->shipping_state,
+                                                $order->shipping_country,
+                                                $order->shipping_pincode
+                                            ])->filter()->implode(', ') ?: '-' }}
                                         </div>
                                     </div>
 
