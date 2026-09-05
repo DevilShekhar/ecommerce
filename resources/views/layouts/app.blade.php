@@ -433,6 +433,9 @@
                                     <a href="{{ route('admin.products.create') }}">Add Product</a>
                                 </li>
                             @endcan
+                            <li class="{{ request()->routeIs('top-rated-products.index') ? 'active' : '' }}">
+                                <a href="{{ route('top-rated-products.index') }}">Product Rating</a>
+                            </li>
                         </ul>
                     </li>
                 @endcan
