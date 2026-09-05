@@ -134,7 +134,7 @@
                                             {{-- Add Stock --}}
                                             <button type="button" class="btn btn-success btn-sm add-stock-btn"
                                                 data-toggle="modal" data-target="#addStockModal"
-                                                data-product-id="{{ $product->id }}" data-product-name="{{ $product->name }}"
+                                                data-product-id="{{ $product->slug }}" data-product-name="{{ $product->name }}"
                                                 data-product-sku="{{ $product->sku }}"
                                                 data-current-stock="{{ $product->stock ?? 0 }}" title="Add Stock">
                                                 <i class="zmdi zmdi-plus"></i>
