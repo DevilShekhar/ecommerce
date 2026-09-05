@@ -653,15 +653,19 @@
                                             </div>
                                             <p class="text-muted small">Approve this return request. Customer will be notified.</p>
                                             <form action="{{ route('orders.returns.approve', $returnRequest->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to APPROVE this return request?')">
+                                                onsubmit="return approveReturnConfirm(event, this)">
+
                                                 @csrf
+
                                                 <div class="form-group">
                                                     <label>Admin Note (Optional)</label>
                                                     <textarea name="admin_note" class="form-control" rows="2"
                                                         placeholder="Add any notes for the customer..."></textarea>
                                                 </div>
-                                                <button type="submit" class="btn btn-success btn-block"><i
-                                                        class="zmdi zmdi-check"></i> Approve Return</button>
+
+                                                <button type="submit" class="btn btn-success btn-block">
+                                                    <i class="zmdi zmdi-check"></i> Approve Return
+                                                </button>
                                             </form>
                                         </div>
                                     </div>
@@ -762,7 +766,8 @@
                         </div>
                         <div class="d-flex flex-wrap" style="gap:10px;">
                             @if($nextStatus && !$isReturnFlow && !in_array($currentStatus, ['delivered', 'returned', 'refunded', 'cancelled']))
-                                <form action="{{ route('orders.update-status', $order->id) }}" method="POST">
+                                <form action="{{ route('orders.update-status', $order->id) }}" method="POST"
+                                    class="update-status-form">
                                     @csrf
                                     <input type="hidden" name="status" value="{{ $nextStatus }}">
                                     <button type="submit" class="btn btn-primary"><i class="zmdi zmdi-arrow-right"></i> Mark as
@@ -1225,4 +1230,55 @@
             </div>
         </div>
     @endif
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.update-status-form').forEach(function (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const statusInput = form.querySelector('input[name="status"]');
+                    if (!statusInput) {
+                        return;
+                    }
+                    const status = statusInput.value;
+                    const statusLabel = status
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, function (letter) {
+                            return letter.toUpperCase();
+                        });
+                    Swal.fire({
+                        title: 'Update Order Status?',
+                        text: 'Are you sure you want to mark this order as ' + statusLabel + '?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, Update',
+                        cancelButtonText: 'Cancel'
+                    }).then(function (result) {
+                        if (result.isConfirmed) {
+                            HTMLFormElement.prototype.submit.call(form);
+                        }
+                    });
+                });
+            });
+        });
+        function approveReturnConfirm(event, form) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Approve Return Request?',
+                text: 'Are you sure you want to approve this return request?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Approve',
+                cancelButtonText: 'Cancel'
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    HTMLFormElement.prototype.submit.call(form);
+                }
+            });
+            return false;
+        }
+    </script>
 @endsection
